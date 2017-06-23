@@ -7,7 +7,7 @@ with PCI/HIPAA Compliance.
 # Features
 
  - [X] Encrypted Root Volume
- - [ ] [OSSEC](https://ossec.github.io/)
+ - [X] [OSSEC](https://ossec.github.io/)
 
 # opsZero
 
