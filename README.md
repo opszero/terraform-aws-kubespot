@@ -7,9 +7,27 @@ with PCI/HIPAA Compliance.
 # Features
 
  - [X] Encrypted Root Volume
- - [X] [OSSEC](https://ossec.github.io/)
+ - [X] [OSSEC](https://ossec.github.io/): File System Monitoring for Changes.
+ - [ ] Build Public Image on All Regions
+ - [ ] Support Different Logging Mechanisms for the Image
 
-# opsZero
+# Usage
+
+This image is created using [Packer](https://www.packer.io/) so you will need
+to install it. Once you are done edit [image.json](./image.json)
+
+Update the `region`, `aws_access_key` and `aws_secret_key` with the
+appropriate regions.
+
+To actually build the image run the following:
+
+```
+packer build image.json
+```
+
+# Brought To You By opsZero
+
+![opsZero](https://s3-us-west-2.amazonaws.com/assets.opszero.com/images/opsZero_kubernetes.png)
 
 This project is brought to you by [opsZero](https://www.opszero.com) we
 provide DevOps and Cloud Infrastructure as a Service for Startups. If you
