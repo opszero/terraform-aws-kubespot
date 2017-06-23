@@ -10,6 +10,7 @@ with PCI/HIPAA Compliance.
  - [X] [OSSEC](https://ossec.github.io/): File System Monitoring for Changes.
  - [ ] Build Public Image on All Regions
  - [ ] Support Different Logging Mechanisms for the Image
+ - [ ] 2FA Login
 
 # Usage
 
