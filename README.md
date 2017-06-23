@@ -25,6 +25,12 @@ To actually build the image run the following:
 packer build image.json
 ```
 
+To use this image with `kops` you need to pass in the AMI name listed.
+
+```
+kops create cluster --image AMI-NAME
+```
+
 # Brought To You By opsZero
 
 ![opsZero](https://s3-us-west-2.amazonaws.com/assets.opszero.com/images/opsZero_kubernetes.png)
