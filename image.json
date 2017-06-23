@@ -17,7 +17,7 @@
                 },
                 "most_recent": true
             },
-            "instance_type": "m3.large",
+            "instance_type": "m4.large",
             "ssh_username": "admin",
             "enhanced_networking": true,
             "encrypt_boot": true,
