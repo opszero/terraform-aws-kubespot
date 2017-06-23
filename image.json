@@ -1,0 +1,45 @@
+{
+    "variables": {
+        "ami": "k8s-1.6-debian-jessie-amd64-hvm-ebs-2017-05-02",
+        "region": "",
+        "aws_access_key": "",
+        "aws_secret_key": ""
+    },
+    "builders": [
+        {
+            "type": "amazon-ebs",
+            "region": "{{ user `region` }}",
+            "source_ami_filter": {
+                "filters": {
+                    "virtualization-type": "hvm",
+                    "root-device-type": "ebs",
+                    "name": "{{ user `ami` }}"
+                },
+                "most_recent": true
+            },
+            "instance_type": "m3.large",
+            "ssh_username": "admin",
+            "enhanced_networking": true,
+            "encrypt_boot": true,
+            "ami_name": "opszero-{{user `ami`}}-{{isotime `2006-01-02` | clean_ami_name}}-{{timestamp}}",
+            "access_key": "{{user `aws_access_key`}}",
+            "secret_key": "{{user `aws_secret_key`}}",
+            "tags": {
+                "image": "opsZero-auditKube"
+            }
+        }
+    ],
+    "provisioners": [
+        {
+            "type": "file",
+            "source": "files/ossec_preloaded-vars.conf",
+            "destination": "/home/admin/ossec_preloaded-vars.conf"
+        },
+        {
+            "scripts": [
+                "ami/ossec.sh"
+            ],
+            "type": "shell"
+        }
+    ]
+}
