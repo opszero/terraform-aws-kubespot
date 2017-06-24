@@ -32,6 +32,12 @@ To use this image with `kops` you need to pass in the AMI name listed.
 kops create cluster --image AMI-NAME
 ```
 
+# Base Image
+
+Base Image is created used the Stable Image here:
+
+https://github.com/kubernetes/kops/tree/master/channels
+
 # Brought To You By opsZero
 
 ![opsZero](https://s3-us-west-2.amazonaws.com/assets.opszero.com/images/opsZero_kubernetes.png)
