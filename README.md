@@ -40,7 +40,7 @@ Base Image is created used the Stable Image here:
 
 https://github.com/kubernetes/kops/tree/master/channels
 
-# Brought To You By opsZero
+# Project by opsZero
 
 <a href="https://www.opszero.com"><img src="http://assets.opszero.com.s3.amazonaws.com/images/opszero_11_29_2016.png" width="300px"/></a>
 
