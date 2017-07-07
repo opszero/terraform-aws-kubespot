@@ -1,5 +1,7 @@
 # auditkube
 
+![](http://assets.opszero.com.s3.amazonaws.com/images/auditkube.png =200x)
+
 Secure Images to use with [Kubernetes
 Kops](https://github.com/kubernetes/kops) to help create images which help
 with PCI/HIPAA Compliance.
