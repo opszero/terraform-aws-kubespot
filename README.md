@@ -11,7 +11,7 @@ with PCI/HIPAA Compliance.
  - [X] Encrypted Root Volume
  - [X] [OSSEC](https://ossec.github.io/): File System Monitoring for Changes.
  - [ ] Build Public Image on All Regions
- - [ ] Support Different Logging Mechanisms for the Image
+ - [X] Logging via LogDNA
  - [ ] 2FA Login
 
 # Usage

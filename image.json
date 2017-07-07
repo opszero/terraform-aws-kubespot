@@ -3,7 +3,8 @@
         "ami": "k8s-1.6-debian-jessie-amd64-hvm-ebs-2017-05-02",
         "region": "",
         "aws_access_key": "",
-        "aws_secret_key": ""
+        "aws_secret_key": "",
+        "logdna_agent_key": ""
     },
     "builders": [
         {
@@ -37,7 +38,8 @@
         },
         {
             "scripts": [
-                "ami/ossec.sh"
+                "ami/ossec.sh",
+                "export LOGDNA_AGENT_KEY={{user `logdna_agent_key` }} ami/logdna.sh"
             ],
             "type": "shell"
         }
