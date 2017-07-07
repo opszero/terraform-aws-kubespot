@@ -1,6 +1,6 @@
 # auditkube
 
-![](http://assets.opszero.com.s3.amazonaws.com/images/auditkube.png =200x)
+<img src="http://assets.opszero.com.s3.amazonaws.com/images/auditkube.png" width="200px" />
 
 Secure Images to use with [Kubernetes
 Kops](https://github.com/kubernetes/kops) to help create images which help
