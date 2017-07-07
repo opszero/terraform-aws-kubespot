@@ -42,7 +42,7 @@ https://github.com/kubernetes/kops/tree/master/channels
 
 # Brought To You By opsZero
 
-<img src="http://assets.opszero.com.s3.amazonaws.com/images/opszero_11_29_2016.png" width="300px"/>
+<a href="https://www.opszero.com"><img src="http://assets.opszero.com.s3.amazonaws.com/images/opszero_11_29_2016.png" width="300px"/></a>
 
 This project is brought to you by [opsZero](https://www.opszero.com) we
 provide DevOps and Cloud Infrastructure as a Service for Startups. If you
