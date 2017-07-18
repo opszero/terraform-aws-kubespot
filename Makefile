@@ -1,4 +1,4 @@
-release: aws-marketplace:
+release: aws-marketplace
 
 aws-marketplace:
 	# Need to remove encryption to put on AWS Marketplace
