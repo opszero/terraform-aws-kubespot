@@ -5,32 +5,29 @@
         "aws_access_key": "{{env `AWS_ACCESS_KEY` }}",
         "aws_secret_key": "{{env `AWS_SECRET_KEY` }}"
     },
-    "builders": [
-        {
-            "type": "amazon-ebs",
-            "region": "{{ user `region` }}",
-            "source_ami_filter": {
-                "filters": {
-                    "virtualization-type": "hvm",
-                    "root-device-type": "ebs",
-                    "name": "{{ user `ami` }}"
-                },
-                "most_recent": true
+    "builders": [{
+        "type": "amazon-ebs",
+        "region": "{{ user `region` }}",
+        "source_ami_filter": {
+            "filters": {
+                "virtualization-type": "hvm",
+                "root-device-type": "ebs",
+                "name": "{{ user `ami` }}"
             },
-            "instance_type": "m4.large",
-            "ssh_username": "admin",
-            "enhanced_networking": true,
-            "encrypt_boot": true,
-            "ami_name": "opszero-{{user `ami`}}-{{isotime `2006-01-02` | clean_ami_name}}-{{timestamp}}",
-            "access_key": "{{user `aws_access_key`}}",
-            "secret_key": "{{user `aws_secret_key`}}",
-            "tags": {
-                "image": "opsZero-auditKube"
-            }
+            "most_recent": true
+        },
+        "instance_type": "m4.large",
+        "ssh_username": "admin",
+        "enhanced_networking": true,
+        "encrypt_boot": true,
+        "ami_name": "opszero-{{user `ami`}}-{{isotime `2006-01-02` | clean_ami_name}}-{{timestamp}}",
+        "access_key": "{{user `aws_access_key`}}",
+        "secret_key": "{{user `aws_secret_key`}}",
+        "tags": {
+            "image": "opsZero-auditKube"
         }
-    ],
-    "provisioners": [
-        {
+    }],
+    "provisioners": [{
             "type": "file",
             "source": "files/ossec_preloaded-vars.conf",
             "destination": "/home/admin/ossec_preloaded-vars.conf"
@@ -40,6 +37,13 @@
                 "ami/ossec.sh"
             ],
             "type": "shell"
+        },
+        {
+            "type": "shell",
+            "inline": [
+                "rm -rf /home/admin/.ssh/authorized_keys",
+                "rm -rf /root/.ssh/authorized_keys"
+            ]
         }
     ]
 }
