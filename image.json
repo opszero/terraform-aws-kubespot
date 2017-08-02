@@ -41,8 +41,8 @@
         {
             "type": "shell",
             "inline": [
-                "rm -rf /home/admin/.ssh/authorized_keys",
-                "rm -rf /root/.ssh/authorized_keys"
+                "sudo rm -rf /home/admin/.ssh/authorized_keys",
+                "sudo rm -rf /root/.ssh/authorized_keys"
             ]
         }
     ]
