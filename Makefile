@@ -1,3 +1,6 @@
+build:
+	packer build image.json
+
 release: aws-marketplace
 
 aws-marketplace:
