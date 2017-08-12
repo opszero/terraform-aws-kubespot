@@ -1,12 +1,13 @@
 #!/bin/bash -ex
 
-ossec_version="2.9.0" ;
-ossec_checksum="abd5741dc474cbce5cc116f46a5ef2528c847918" ;
+ossec_version="2.9.1"
 
 sudo apt-get update -y && sudo apt-get install -y build-essential
 
 cd /tmp/
 wget https://github.com/ossec/ossec-hids/archive/${ossec_version}.tar.gz
+wget https://github.com/ossec/ossec-hids/releases/download/${ossec_version}/ossec-hids-${ossec_version}.tar.gz.asc
+gpg --verify ossec-hids-${ossec_version}.tar.gz.asc ${ossec_version}.tar.gz
 mv ${ossec_version}.tar.gz ossec-hids-${ossec_version}.tar.gz
 checksum=$(sha1sum ossec-hids-${ossec_version}.tar.gz | cut -d" " -f1)
 
