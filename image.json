@@ -16,7 +16,7 @@
             },
             "most_recent": true
         },
-        "instance_type": "m4.large",
+        "instance_type": "t2.medium",
         "ssh_username": "admin",
         "enhanced_networking": true,
         "encrypt_boot": true,
