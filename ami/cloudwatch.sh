@@ -23,6 +23,9 @@ then
     sudo echo "*/5 * * * * /etc/aws-scripts-mon/mon-put-instance-data.pl --mem-used-incl-cache-buff --mem-util --disk-space-util --disk-path=/ --from-cron" >> /tmp/new_crontab
     sudo crontab /tmp/new_crontab
     sudo rm /tmp/new_crontab
+
+    popd
+    popd
 else
     echo "Not Installing CloudWatch"
 fi
