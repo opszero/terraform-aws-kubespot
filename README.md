@@ -40,6 +40,10 @@ Base Image is created used the Stable Image here:
 
 https://github.com/kubernetes/kops/tree/master/channels
 
+# Supported Images
+
+ - [AWS Marketplace](https://aws.amazon.com/marketplace/pp/B075CNX5F8?qid=1504900511561&sr=0-1&ref_=srh_res_product_title)
+
 # Project by opsZero
 
 <a href="https://www.opszero.com"><img src="http://assets.opszero.com.s3.amazonaws.com/images/opszero_11_29_2016.png" width="300px"/></a>
