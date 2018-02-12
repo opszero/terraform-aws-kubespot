@@ -1,6 +1,6 @@
 {
     "variables": {
-        "ami": "kope.io/k8s-1.8-debian-jessie-amd64-hvm-ebs-2018-01-14",
+        "ami": "k8s-1.8-debian-jessie-amd64-hvm-ebs-2018-01-14",
         "region": "{{ env `AWS_REGION` }}",
         "aws_access_key": "{{env `AWS_ACCESS_KEY` }}",
         "aws_secret_key": "{{env `AWS_SECRET_KEY` }}"
