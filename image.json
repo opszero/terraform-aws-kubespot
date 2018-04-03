@@ -18,7 +18,6 @@
         },
         "instance_type": "t2.medium",
         "ssh_username": "admin",
-        "enhanced_networking": true,
         "encrypt_boot": true,
         "ami_name": "opszero-{{user `ami`}}-{{isotime `2006-01-02` | clean_ami_name}}-{{timestamp}}",
         "access_key": "{{user `aws_access_key`}}",
