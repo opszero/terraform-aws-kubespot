@@ -1,0 +1,112 @@
+ENV=$(shell basename $$PWD)
+
+CLUSTER_TLD=$(shell cat ../config.json | jq -r '.CLUSTER_TLD')
+CLUSTER_TLD_ROUTE53_ZONE_ID=$(shell cat ../config.json | jq -r '.CLUSTER_TLD_ROUTE53_ZONE_ID')
+
+CLUSTER_NAME=$(ENV).$(CLUSTER_TLD)
+KOPS_STATE_STORE=$(shell cat ../config.json| jq -r '.KOPS_STATE_STORE')
+
+export AWS_PROFILE=$(shell cat ../config.json | jq -r '.AWS_PROFILE')
+
+
+echo:
+	echo $(shell cat ../config.json | jq -r '.$(ENV).CLUSTER_MASTER_ZONES')
+	echo $(CLUSTER_NAME)
+	echo $(AWS_PROFILE)
+
+up: create-cluster
+down: delete-cluster
+
+ssh:
+	ssh-add ./k8s_$(ENV)_ssh
+	ssh -A -i ./k8s_$(ENV)_ssh admin@bastion.$(CLUSTER_NAME)
+
+create-cluster:
+	$(MAKE) create-ssh-key
+	$(MAKE) create-hosted-zone
+	$(MAKE) ./$(ENV)-kops.sh
+	$(MAKE) create-kops-cluster
+
+./%-kops.sh:
+	echo "#!/bin/bash" > $(ENV)-kops.sh
+	echo "export KOPS_STATE_STORE=$(KOPS_STATE_STORE)" >> $(ENV)-kops.sh
+	echo "export AWS_ACCESS_KEY_ID=$$(aws configure get $(AWS_PROFILE).aws_access_key_id)" >> $(ENV)-kops.sh
+	echo "export AWS_SECRET_ACCESS_KEY=$$(aws configure get $(AWS_PROFILE).aws_secret_access_key)" >> $(ENV)-kops.sh
+	echo "export AWS_DEFAULT_REGION=$$(aws configure get $(AWS_PROFILE).region)" >> $(ENV)-kops.sh
+	echo 'exec kops "$$@"' >> $(ENV)-kops.sh
+	chmod +x $(ENV)-kops.sh
+
+create-ssh-key:
+	$(MAKE) ./k8s_$(ENV)_ssh
+
+./k8s_%_ssh:
+	ssh-keygen -t rsa -b 4096 -C $(CLUSTER_NAME) -f k8s_$(ENV)_ssh
+
+create-hosted-zone:
+	#terraform import aws_route53_zone.main $(shell cat ../config.json | jq -r '.CLUSTER_TLD_ROUTE53_ZONE_ID')
+	echo 'provider "aws" {' > zone.tf
+	echo '    profile = "$(AWS_PROFILE)"' >> zone.tf
+	echo '}' >> zone.tf
+	echo 'resource "aws_route53_zone" "cluster" {' >> zone.tf
+	echo '  name = "$(CLUSTER_NAME)."' >> zone.tf
+	echo '}' >> zone.tf
+	echo 'resource "aws_route53_record" "cluster-ns" {' >> zone.tf
+	echo '  zone_id = "$(CLUSTER_TLD_ROUTE53_ZONE_ID)"' >> zone.tf
+	echo '  name = "$(CLUSTER_NAME)"' >> zone.tf
+	echo '  type = "NS"' >> zone.tf
+	echo '  ttl = "30"' >> zone.tf
+	echo '  records = [' >> zone.tf
+	echo '    "$${aws_route53_zone.cluster.name_servers.0}",' >> zone.tf
+	echo '    "$${aws_route53_zone.cluster.name_servers.1}",' >> zone.tf
+	echo '    "$${aws_route53_zone.cluster.name_servers.2}",' >> zone.tf
+	echo '    "$${aws_route53_zone.cluster.name_servers.3}"' >> zone.tf
+	echo '  ]' >> zone.tf
+	echo '}' >> zone.tf
+	terraform init
+	terraform plan
+	terraform apply
+
+create-kops-cluster:
+	./$(ENV)-kops.sh create cluster $(CLUSTER_NAME) \
+					    --cloud=aws \
+				            --zones $(shell cat ../config.json | jq -r '.$(ENV).CLUSTER_ZONES') \
+				            --master-zones $(shell cat ../config.json | jq -r '.$(ENV).CLUSTER_MASTER_ZONES') \
+                                            --master-size $(shell cat ../config.json | jq -r '.$(ENV).CLUSTER_MASTER_SIZE') \
+					    --node-size $(shell cat ../config.json | jq -r '.$(ENV).CLUSTER_NODE_SIZE') \
+					    --node-volume-size 300 \
+				            --node-count 3 \
+					    --ssh-public-key ./k8s_$(ENV)_ssh.pub \
+					    --network-cidr $(shell cat ../config.json | jq -r '.$(ENV).CIDR') \
+					    --image $(shell cat ../config.json | jq -r '.$(ENV).AMI') \
+                                            --bastion \
+					    --networking weave \
+					    --encrypt-etcd-storage \
+                                            --topology private
+	./$(ENV)-kops.sh update cluster $(CLUSTER_NAME) --yes #--target=terraform
+
+delete-cluster:
+	./$(ENV)-kops.sh delete cluster $(CLUSTER_NAME) --yes
+	$(MAKE) delete-hosted-zone
+	$(MAKE) delete-kubectl-config
+
+delete-kubectl-config:
+	aws --profile $(AWS_PROFILE) s3 rm $(KOPS_STATE_STORE)/kubectl/$(CLUSTER_NAME).config
+
+delete-hosted-zone:
+	terraform destroy
+
+config:
+	KUBECONFIG=./kubeconfig ./$(ENV)-kops.sh export kubecfg --name $(CLUSTER_NAME)
+	aws --profile $(AWS_PROFILE) s3 cp ./kubeconfig $(KOPS_STATE_STORE)/kubectl/$(CLUSTER_NAME).config
+
+rtb-%:
+	echo $@
+	echo 'resource "aws_route" "$@" {' > ../$(ENV)-to-dbs0-peering/$@.tf
+	echo '  route_table_id = "$@"' >> ../$(ENV)-to-dbs0-peering/$@.tf
+	echo '  destination_cidr_block = "172.31.0.0/16"' >> ../$(ENV)-to-dbs0-peering/$@.tf # The VPC CIDR
+	echo '  vpc_peering_connection_id = "$${aws_vpc_peering_connection.env_to_rds.id}"' >> ../$(ENV)-to-dbs0-peering/$@.tf
+	echo '}' >> ../$(ENV)-to-dbs0-peering/$@.tf
+
+create-tf-vpc-peering:
+	for route in $(shell aws ec2 --profile $(AWS_PROFILE) describe-route-tables --filter "Name=vpc-id,Values=vpc-6e400c16" | jq -r '.RouteTables[].RouteTableId'); do $(MAKE) $$route ; done
+

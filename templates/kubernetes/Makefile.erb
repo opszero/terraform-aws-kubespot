@@ -1,0 +1,42 @@
+KOPS_STATE_STORE=$(shell cat config.json | jq -r '.KOPS_STATE_STORE')
+
+export AWS_ACCESS_KEY_ID=$(shell cat aws.json | jq -r '.AWS_ACCESS_KEY_ID')
+export AWS_SECRET_ACCESS_KEY=$(shell cat aws.json | jq -r '.AWS_SECRET_ACCESS_KEY')
+export AWS_DEFAULT_REGION=$(shell cat aws.json | jq -r '.AWS_DEFAULT_REGION')
+
+check: ./aws.json
+	echo $(KOPS_STATE_STORE)
+	echo $${AWS_ACCESS_KEY_ID}
+
+# ./aws.json:
+# 	echo "Need to create an aws.json file"
+
+kops:
+	wget https://github.com/kubernetes/kops/releases/download/1.6.0/kops-linux-amd64#
+	chmod +x kops-linux-amd64
+	sudo mv kops-linux-amd64 /usr/local/bin/kops
+
+# kubectl:
+#         wget https://storage.googleapis.com/kubernetes-release/release/$(shell curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl                                                        
+#         chmod +x kubectl
+#         sudo mv kubectl /usr/local/bin/kubectl
+
+# jq:
+#         wget https://github.com/stedolan/jq/releases/download/jq-1.5/jq-linux64                                                                                                                                                             
+#         chmod +x jq-linux64
+#         sudo mv jq-linux64 /usr/local/bin/jq
+
+terraform:
+	wget -O terraform.zip https://releases.hashicorp.com/terraform/0.9.5/terraform_0.9.5_linux_amd64.zip
+	unzip -a terraform.zip
+	sudo mv terraform /usr/local/bin/terraform
+
+# mac-deps:
+# 	wget https://github.com/kubernetes/kops/releases/download/1.5.1/kops-darwin-amd64
+# 	chmod +x kops-darwin-amd64
+# 	sudo mv kops-darwin-amd64 /usr/local/bin/kops
+# 	brew install kubectl terraform jq
+
+create-kops-state-bucket:
+	echo $$AWS_ACCESS_KEY_ID
+	aws s3 mb $(KOPS_STATE_STORE)
