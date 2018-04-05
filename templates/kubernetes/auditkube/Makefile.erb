@@ -8,7 +8,7 @@ endif
 
 build: auditkube
 		cd ${AUDITKUBE_PATH} && \
-		AWS_REGION=$(shell aws configure get <%= KubernetesSetup.aws_profile %>.region) \
-		AWS_ACCESS_KEY=$(shell aws configure get <%= KubernetesSetup.aws_profile %>.aws_access_key_id) \
-		AWS_SECRET_KEY=$(shell aws configure get <%= KubernetesSetup.aws_profile %>.aws_secret_access_key) \
+		AWS_REGION=$(shell aws configure get <%= aws_config.profile %>.region) \
+		AWS_ACCESS_KEY=$(shell aws configure get <%= aws_config.profile %>.aws_access_key_id) \
+		AWS_SECRET_KEY=$(shell aws configure get <%= aws_config.profile %>.aws_secret_access_key) \
 		$(MAKE) -e build

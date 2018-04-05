@@ -4,14 +4,18 @@ require "erb"
 require "fileutils"
 require "date"
 
-class KubernetesCluster
+class AWSConfig
+  attr_accessor :cidr, :zones, :size, :vpc_id, :vpc_dest_name,
+   :cluster_tld,
+   :cluster_tld_route53_zone_id,
+   :profile
+
+  def initialize(profile)
+    @profile = profile
+  end
 end
 
 class KubernetesSetup
-  def self.aws_profile
-    ARGV[1]
-  end
-
   def self.path
     ARGV[0]
   end
@@ -49,6 +53,6 @@ class KubernetesTemplate
     end
   end
 end
-
+aws_config = AWSConfig.new(ARGV[1])
 KubernetesSetup.new
 File.open("cluster_dir", "w"){|f| f.write KubernetesSetup.cluster_dir}

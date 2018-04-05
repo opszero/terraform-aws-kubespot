@@ -101,12 +101,12 @@ config:
 
 rtb-%:
 	echo $@
-	echo 'resource "aws_route" "$@" {' > ../$(ENV)-to-dbs0-peering/$@.tf
-	echo '  route_table_id = "$@"' >> ../$(ENV)-to-dbs0-peering/$@.tf
-	echo '  destination_cidr_block = "172.31.0.0/16"' >> ../$(ENV)-to-dbs0-peering/$@.tf # The VPC CIDR
-	echo '  vpc_peering_connection_id = "$${aws_vpc_peering_connection.env_to_rds.id}"' >> ../$(ENV)-to-dbs0-peering/$@.tf
-	echo '}' >> ../$(ENV)-to-dbs0-peering/$@.tf
+	echo 'resource "aws_route" "$@" {' > ../$(ENV)-to-<%= puts "VPC destination name"; aws_config.vpc_dest_name = STDIN.gets.chomp %>/$@.tf
+	echo '  route_table_id = "$@"' >> ../$(ENV)-to-<%= aws_config.vpc_dest_name %>/$@.tf
+	echo '  destination_cidr_block = "<%= aws_config.cidr %>"' >> ../$(ENV)-to-<%= aws_config.vpc_dest_name %>/$@.tf # The VPC CIDR
+	echo '  vpc_peering_connection_id = "$${aws_vpc_peering_connection.env_to_rds.id}"' >> ../$(ENV)-to-<%= aws_config.vpc_dest_name %>/$@.tf
+	echo '}' >> ../$(ENV)-to-<%= aws_config.vpc_dest_name %>/$@.tf
 
 create-tf-vpc-peering:
-	for route in $(shell aws ec2 --profile $(AWS_PROFILE) describe-route-tables --filter "Name=vpc-id,Values=vpc-6e400c16" | jq -r '.RouteTables[].RouteTableId'); do $(MAKE) $$route ; done
+	for route in $(shell aws ec2 --profile $(AWS_PROFILE) describe-route-tables --filter "Name=vpc-id,Values=<%= puts "vpc-id: "; aws_config.vpc_id = STDIN.gets.chomp %>" | jq -r '.RouteTables[].RouteTableId'); do $(MAKE) $$route ; done
 
