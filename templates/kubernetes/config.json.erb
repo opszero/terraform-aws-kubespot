@@ -1,0 +1,14 @@
+{
+    "KOPS_STATE_STORE": "<%= puts "KOPS_STATE_STORE:"; STDIN.gets.chomp %>",
+    "CLUSTER_TLD": "<%= puts "CLUSTER_TLD:"; aws_config.cluster_tld = STDIN.gets.chomp %>",
+    "CLUSTER_TLD_ROUTE53_ZONE_ID": "<%= puts "CLUSTER_TLD_ROUTE53_ZONE_ID:"; aws_config.cluster_tld_route53_zone_id = STDIN.gets.chomp %>",
+    "AWS_PROFILE": "<%= aws_config.profile %>",
+    "<%= KubernetesSetup.cluster_name %>": {
+        "AMI": "GENERATED_AMI",
+        "CLUSTER_MASTER_ZONES": "<%= puts "CLUSTER_MASTER_ZONES:"; aws_config.zones = STDIN.gets.chomp %>",
+        "CLUSTER_ZONES": "<%= aws_config.zones %>",
+        "CLUSTER_MASTER_SIZE": "<%= puts "CLUSTER_MASTER_SIZE:"; aws_config.size = STDIN.gets.chomp %>",
+        "CLUSTER_NODE_SIZE": "<%= aws_config.size %>",
+        "CIDR": "<%= puts "CIDR:"; aws_config.cidr = STDIN.gets.chomp %>"
+    }
+}

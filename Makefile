@@ -1,0 +1,3 @@
+
+setup:
+	@sh setup.sh
