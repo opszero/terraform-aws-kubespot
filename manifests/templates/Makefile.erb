@@ -1,0 +1,36 @@
+ORG=<%= ORG %>
+ECR=<%= ECR %>/${ORG}
+REGION=<%= REGION %>
+
+CLUSTER=
+ifeq ($(ENV),prod)
+	CLUSTER=<%= PROD_CLUSTER %>
+	ENV=prod
+else
+	CLUSTER=<%= STAGING_CLUSTER %>
+	ENV=staging
+endif
+
+.PHONY=build-images
+build-images:
+	docker build -t ${ORG}/<%= base_name %> -f Dockerfile .
+	<%- apps.each do |app| -%>
+	docker build -t ${ORG}/<%= tag_name(app) %> -f Dockerfile.<%= app %> .
+	<%- end -%>
+
+.PHONY=push-images
+push-images:
+	@eval `aws ecr get-login --region ${REGION}`
+	<%- apps.each do |app| -%>
+	docker tag ${ORG}/<%= tag_name(app) %>:latest ${ECR}/<%= tag_name(app) %>:${CIRCLE_SHA1}
+	docker push ${ECR}/<%= tag_name(app) %>:${CIRCLE_SHA1}
+
+	<%- end -%>
+
+.PHONY=kube-deploy
+kube-deploy:
+	CLUSTER_NAME=${CLUSTER} ENV=${ENV} REGION=${REGION} ECR=${ECR} sh ./deploy/kube-deploy
+
+.PHONY=kube-context
+kube-context:
+	CLUSTER_NAME=${CLUSTER} REGION=${REGION} sh ./deploy/kube-context

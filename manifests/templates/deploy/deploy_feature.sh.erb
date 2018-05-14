@@ -1,0 +1,6 @@
+#!/bin/bash
+
+set -e
+
+make -e push-images
+make -e kube-deploy NAMESPACE=$(echo $CIRCLE_BRANCH | sed 's/[\/_]/-/g')
