@@ -1,8 +1,8 @@
 require "erb"
 require "fileutils"
 
-PROJECT=ENV["PROJECT"] || "sourcing"
-SERVICES=ENV["SERVICES"] || ""
+PROJECT=ENV["PROJECT"] || "matchingv2"
+SERVICES=ENV["SERVICES"] || "web"
 DEPLOYMENTS=ENV["DEPLOYMENTS"] || ""
 PROD_CLUSTER=ENV["PROD_CLUSTER"] || "prod05072018"
 STAGING_CLUSTER=ENV["STAGING_CLUSTER"] || "staging04022018"
@@ -12,8 +12,10 @@ REGION=ENV["REGION"] || "us-west-2"
 #ENV=ENV["ENV"] || "staging"
 ECR=ENV["ECR"] || "937487381041.dkr.ecr.us-west-2.amazonaws.com"
 BASE="base"
-PORT=ENV["PORT"] || "TODO"
-AWS_KUBECONFIG=ENV["AWS_KUBECONFIG"] || "rivi-infra.com/kubectl/${CLUSTER_NAME}.rivi-infra.com.config"
+PORT=ENV["PORT"] || "80"
+CLUSTER=ENV["CLUSTER"] || "${CLUSTER_NAME}.rivi-infra.com"
+AWS_KUBECONFIG=ENV["AWS_KUBECONFIG"] || "rivi-infra.com/kubectl/${CLUSTER}.config"
+
 
 class String
   def to_kube

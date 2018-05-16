@@ -2,6 +2,9 @@
 
 set -e
 
+NAMESPACE=${NAMESPACE:-default}
+CLUSTER=<%= CLUSTER %>
+
 if [ ! -f ./kubectl ]; then
    curl https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl -o kubectl && chmod +x ./kubectl
 fi
@@ -10,7 +13,6 @@ if [ ! -f ./kubeconfig ]; then
     aws --region=$REGION s3 cp s3://<%= AWS_KUBECONFIG %> kubeconfig
 fi
 
-NAMESPACE=${NAMESPACE:-default}
 if [ "$NAMESPACE" != "default" ]; then
     sed -i.bak s/NAMESPACE/$NAMESPACE/g deploy/namespace.json
     KUBECONFIG=kubeconfig ./kubectl apply -f deploy/namespace.json

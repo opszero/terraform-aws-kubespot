@@ -3,6 +3,7 @@
 set -e
 
 NAMESPACE=$(git branch | grep \* | awk '{print $2}' | sed 's/[\/_]/-/g')
+CLUSTER=<%= CLUSTER %>
 aws --region=$REGION s3 cp s3://<%= AWS_KUBECONFIG %> kubeconfig
 KUBECONFIG=kubeconfig kubectl config set-context $NAMESPACE --namespace=$NAMESPACE --cluster=$CLUSTER --user=$CLUSTER
 KUBECONFIG=kubeconfig kubectl config use-context $NAMESPACE
