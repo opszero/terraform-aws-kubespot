@@ -27,7 +27,6 @@ push-images:
 	docker push ${ECR}/<%= tag_name(app) %>:${CIRCLE_SHA1}
 
 	<%- end -%>
-
 .PHONY=kube-deploy
 kube-deploy:
 	CLUSTER_NAME=${CLUSTER} ENV=${ENV} REGION=${REGION} ECR=${ECR} sh ./deploy/kube-deploy
