@@ -65,7 +65,9 @@ write_template("manifests/templates/Makefile.erb", File.join(DIR, "Makefile"))
   "kube-deploy",
   "kube-context",
   "namespace.json",
-  "deploy_feature.sh"
+  "deploy_feature.sh",
+  "deploy_stage.sh",
+  "deploy_prod.sh",
 ].each do |f|
   write_template("manifests/templates/deploy/#{f}.erb", File.join(DIR, "deploy", f))
 end
