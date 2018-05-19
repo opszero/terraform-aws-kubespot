@@ -1,3 +1,4 @@
+require "yaml"
 require "erb"
 require "fileutils"
 
@@ -58,8 +59,11 @@ def image_name(name)
   File.join(ECR, ORG, tag_name(name))
 end
 FileUtils.mkdir_p(File.join(DIR, "deploy", "kubernetes"))
+
+#create Makefile
 write_template("manifests/templates/Makefile.erb", File.join(DIR, "Makefile"))
 
+# add deploy scripts
 [
   "envkubesecret.py",
   "kube-deploy",
@@ -72,14 +76,32 @@ write_template("manifests/templates/Makefile.erb", File.join(DIR, "Makefile"))
   write_template("manifests/templates/deploy/#{f}.erb", File.join(DIR, "deploy", f))
 end
 
+# add services
 services.each do |app|
   @app = app
   write_template("manifests/templates/deploy/kubernetes/service.yml.erb", File.join(DIR, "deploy", "kubernetes", "#{tag_name(app)}.yml"))
 end
+
+# add deployments
 deployments.each do |app|
   @app = app
   write_template("manifests/templates/deploy/kubernetes/deployment.yml.erb", File.join(DIR, "deploy", "kubernetes", "#{tag_name(app)}.yml"))
 end
+
+# update circle.yml
+circle_file = File.join(DIR, "circle.yml")
+if File.exist?(circle_file)
+  circle = YAML.load(File.read(circle_file))
+  circle["deployment"] = {"feature"=>{"branch"=>"/feature\\/.*/", "commands"=>["./deploy/deploy_feature.sh $CIRCLE_SHA1"]}, "staging"=>{"branch"=>"master", "commands"=>["./deploy/deploy_stage.sh $CIRCLE_SHA1"]}, "production"=>{"tag"=>"/prod-.*/", "commands"=>["./deploy/deploy_prod.sh $CIRCLE_SHA1"]}}
+  File.open(circle_file, "w") do |f|
+    f.write(circle.to_yaml)
+  end
+else
+  raise "circle doesn't exist"
+end
+
+
+
 
 
 

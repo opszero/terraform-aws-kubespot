@@ -1,7 +1,7 @@
 ORG=<%= ORG %>
 ECR=<%= ECR %>/${ORG}
 REGION=<%= REGION %>
-TAG=prod-$(shell date +"$*-%Y-%m-%d-%H-%M-%S")
+TAG=prod-$(shell date +"%Y-%m-%d-%H-%M-%S")
 
 CLUSTER=
 ifeq ($(ENV),prod)
