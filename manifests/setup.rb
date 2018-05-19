@@ -16,7 +16,6 @@ PORT=ENV["PORT"] || "80"
 CLUSTER=ENV["CLUSTER"] || "${CLUSTER_NAME}.rivi-infra.com"
 AWS_KUBECONFIG=ENV["AWS_KUBECONFIG"] || "rivi-infra.com/kubectl/${CLUSTER}.config"
 
-
 class String
   def to_kube
     self.gsub('_','-')
