@@ -1,6 +1,7 @@
 ORG=<%= ORG %>
 ECR=<%= ECR %>/${ORG}
 REGION=<%= REGION %>
+TAG=prod-$(shell date +"$*-%Y-%m-%d-%H-%M-%S")
 
 CLUSTER=
 ifeq ($(ENV),prod)
@@ -34,3 +35,8 @@ kube-deploy:
 .PHONY=kube-context
 kube-context:
 	CLUSTER_NAME=${CLUSTER} REGION=${REGION} sh ./deploy/kube-context
+
+.PHONY=release
+release:
+	git tag $(TAG)
+	git push origin $(TAG)

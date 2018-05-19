@@ -1,0 +1,16 @@
+#!/bin/bash
+
+SHA1=$1
+
+set -e
+
+# push to ECR
+make push-images ENV=staging
+# deploy to kubernetes
+make kube-deploy ENV=staging
+
+# deploy notifications
+WEB_MSG="Deployed $SHORT_SHA <%= PROJECT %> to staging"
+
+# send notification after staging is updating
+curl -X POST -H 'Content-type: application/json' --data '{"text": "'"$WEB_MSG"'"}' $SLACK_WEBHOOK
