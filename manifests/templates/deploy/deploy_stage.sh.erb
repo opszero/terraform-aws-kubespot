@@ -10,5 +10,5 @@ make push-images ENV=staging
 make kube-deploy ENV=staging
 
 # deploy notifications
-WEB_MSG="Deployed $SHORT_SHA <%= PROJECT %> to staging"
-curl -X POST -H 'Content-type: application/json' --data '{"text": "'"$WEB_MSG"'"}' $SLACK_WEBHOOK
+MSG="Deployed $SHORT_SHA <%= PROJECT %> to staging"
+curl -X POST -H 'Content-type: application/json' --data '{"text": "'"$MSG"'"}' $SLACK_WEBHOOK
