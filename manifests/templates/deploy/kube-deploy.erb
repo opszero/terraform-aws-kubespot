@@ -32,4 +32,9 @@ KUBECONFIG=kubeconfig ./kubectl --namespace=$NAMESPACE apply -f ./secret.json
 KUBECONFIG=kubeconfig ./kubectl --namespace=$NAMESPACE set image deployment/<%= kube_name(app) %> <%= kube_name(app) %>=${ECR}/<%= tag_name(app) %>:${CIRCLE_SHA1}
 <%- end %>
 
+# Wait for the rollout to complete
+<%- apps.each do |app| -%>
+KUBECONFIG=kubeconfig ./kubectl --namespace=$NAMESPACE rollout status deployment/<%= deployment/<%= kube_name(app) %>
+<%- end %>
+
 export CLUSTER=$(KUBECONFIG=kubeconfig ./kubectl --namespace=$NAMESPACE config get-contexts | grep "*" | awk '{print $3}')
