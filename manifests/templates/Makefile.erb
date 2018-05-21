@@ -37,5 +37,6 @@ kube-context:
 
 .PHONY=release
 release:
+	git checkout master && git pull
 	git tag $(TAG)
 	git push origin $(TAG)
