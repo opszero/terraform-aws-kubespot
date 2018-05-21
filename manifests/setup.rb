@@ -92,9 +92,9 @@ end
 circle_file = File.join(DIR, "circle.yml")
 if File.exist?(circle_file)
   circle = YAML.load(File.read(circle_file))
-  circle["deployment"] = {"feature"=>{"branch"=>"/feature\/.*/", "commands"=>["./deploy/deploy_feature.sh $CIRCLE_SHA1"]}, "staging"=>{"branch"=>"master", "commands"=>["./deploy/deploy_stage.sh $CIRCLE_SHA1"]}, "production"=>{"tag"=>"/prod-.*/", "commands"=>["./deploy/deploy_prod.sh $CIRCLE_SHA1"]}}
+  circle["deployment"] = {"feature"=>{"branch"=>/^(bug|epic|feature)\/.*/, "commands"=>["./deploy/deploy_feature.sh $CIRCLE_SHA1"]}, "staging"=>{"branch"=>"master", "commands"=>["./deploy/deploy_stage.sh $CIRCLE_SHA1"]}, "production"=>{"tag"=>/prod-.*/, "commands"=>["./deploy/deploy_prod.sh $CIRCLE_SHA1"]}}
   File.open(circle_file, "w") do |f|
-    f.write(circle.to_yaml)
+    f.write(circle.to_yaml.gsub("!ruby/regexp ", ""))
   end
 else
   raise "circle doesn't exist"
