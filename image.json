@@ -2,11 +2,11 @@
     "variables": {
         "ami": "k8s-1.8-debian-jessie-amd64-hvm-ebs-2018-01-14",
         "region": "{{ env `AWS_REGION` }}",
-        "aws_access_key": "{{env `AWS_ACCESS_KEY` }}",
-        "aws_secret_key": "{{env `AWS_SECRET_KEY` }}"
+        "profile": "{{env `AWS_PROFILE` }}"
     },
     "builders": [{
         "type": "amazon-ebs",
+        "profile": "{{ user `profile` }}",
         "region": "{{ user `region` }}",
         "source_ami_filter": {
             "filters": {
@@ -20,8 +20,6 @@
         "ssh_username": "admin",
         "encrypt_boot": true,
         "ami_name": "opszero-{{user `ami`}}-{{isotime `2006-01-02` | clean_ami_name}}-{{timestamp}}",
-        "access_key": "{{user `aws_access_key`}}",
-        "secret_key": "{{user `aws_secret_key`}}",
         "tags": {
             "image": "opszero-auditkube"
         }
@@ -33,7 +31,8 @@
         },
         {
             "scripts": [
-                "ami/ossec.sh"
+                "ami/ossec.sh",
+                "ami/performance.sh"
             ],
             "type": "shell"
         },
