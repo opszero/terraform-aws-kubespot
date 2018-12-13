@@ -2,14 +2,14 @@
     "variables": {
         "ami": "k8s-1.8-debian-jessie-amd64-hvm-ebs-2018-01-14",
         "region": "{{ env `AWS_REGION` }}",
-        "aws_access_key": "{{ env `AWS_ACCESS_KEY` }}",
-        "aws_secret_key": "{{ env `AWS_SECRET_KEY` }}",
+        "profile": "{{env `AWS_PROFILE` }}"
         "cloudwatch_aws_access_key_id": "{{ env `CLOUDWATCH_AWS_ACCESS_KEY_ID` }}",
         "cloudwatch_aws_secret_access_key": "{{ env `CLOUDWATCH_AWS_SECRET_ACCESS_KEY` }}",
         "logdna_agent_key": ""
     },
     "builders": [{
         "type": "amazon-ebs",
+        "profile": "{{ user `profile` }}",
         "region": "{{ user `region` }}",
         "source_ami_filter": {
             "filters": {
@@ -23,8 +23,6 @@
         "ssh_username": "admin",
         "encrypt_boot": true,
         "ami_name": "opszero-{{user `ami`}}-{{isotime `2006-01-02` | clean_ami_name}}-{{timestamp}}",
-        "access_key": "{{user `aws_access_key`}}",
-        "secret_key": "{{user `aws_secret_key`}}",
         "tags": {
             "image": "opszero-auditkube"
         }
@@ -37,7 +35,8 @@
         {
             "scripts": [
                 "ami/ossec.sh",
-                "ami/openscap.sh"
+                "ami/performance.sh",
+                "ami/openscap.sh",
                 "export LOGDNA_AGENT_KEY={{user `logdna_agent_key` }} ami/logdna.sh",
                 "ami/cloudwatch.sh {{user `cloudwatch_aws_access_key_id`}} {{user `cloudwatch_aws_secret_access_key`}}"
             ],
