@@ -1,37 +1,35 @@
 {
     "variables": {
-        "ami": "k8s-1.6-debian-jessie-amd64-hvm-ebs-2017-05-02",
-        "region": "",
-        "aws_access_key": "",
-        "aws_secret_key": "",
+        "ami": "k8s-1.8-debian-jessie-amd64-hvm-ebs-2018-01-14",
+        "region": "{{ env `AWS_REGION` }}",
+        "aws_access_key": "{{ env `AWS_ACCESS_KEY` }}",
+        "aws_secret_key": "{{ env `AWS_SECRET_KEY` }}",
+        "cloudwatch_aws_access_key_id": "{{ env `CLOUDWATCH_AWS_ACCESS_KEY_ID` }}",
+        "cloudwatch_aws_secret_access_key": "{{ env `CLOUDWATCH_AWS_SECRET_ACCESS_KEY` }}",
         "logdna_agent_key": ""
     },
-    "builders": [
-        {
-            "type": "amazon-ebs",
-            "region": "{{ user `region` }}",
-            "source_ami_filter": {
-                "filters": {
-                    "virtualization-type": "hvm",
-                    "root-device-type": "ebs",
-                    "name": "{{ user `ami` }}"
-                },
-                "most_recent": true
+    "builders": [{
+        "type": "amazon-ebs",
+        "region": "{{ user `region` }}",
+        "source_ami_filter": {
+            "filters": {
+                "virtualization-type": "hvm",
+                "root-device-type": "ebs",
+                "name": "{{ user `ami` }}"
             },
-            "instance_type": "m4.large",
-            "ssh_username": "admin",
-            "enhanced_networking": true,
-            "encrypt_boot": true,
-            "ami_name": "opszero-{{user `ami`}}-{{isotime `2006-01-02` | clean_ami_name}}-{{timestamp}}",
-            "access_key": "{{user `aws_access_key`}}",
-            "secret_key": "{{user `aws_secret_key`}}",
-            "tags": {
-                "image": "opsZero-auditKube"
-            }
+            "most_recent": true
+        },
+        "instance_type": "t2.medium",
+        "ssh_username": "admin",
+        "encrypt_boot": true,
+        "ami_name": "opszero-{{user `ami`}}-{{isotime `2006-01-02` | clean_ami_name}}-{{timestamp}}",
+        "access_key": "{{user `aws_access_key`}}",
+        "secret_key": "{{user `aws_secret_key`}}",
+        "tags": {
+            "image": "opszero-auditkube"
         }
-    ],
-    "provisioners": [
-        {
+    }],
+    "provisioners": [{
             "type": "file",
             "source": "files/ossec_preloaded-vars.conf",
             "destination": "/home/admin/ossec_preloaded-vars.conf"
@@ -39,9 +37,17 @@
         {
             "scripts": [
                 "ami/ossec.sh",
-                "export LOGDNA_AGENT_KEY={{user `logdna_agent_key` }} ami/logdna.sh"
+                "export LOGDNA_AGENT_KEY={{user `logdna_agent_key` }} ami/logdna.sh",
+                "ami/cloudwatch.sh {{user `cloudwatch_aws_access_key_id`}} {{user `cloudwatch_aws_secret_access_key`}}"
             ],
             "type": "shell"
+        },
+        {
+            "type": "shell",
+            "inline": [
+                "sudo rm -rf /home/admin/.ssh/authorized_keys",
+                "sudo rm -rf /root/.ssh/authorized_keys"
+            ]
         }
     ]
 }

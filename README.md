@@ -34,13 +34,33 @@ To use this image with `kops` you need to pass in the AMI name listed.
 kops create cluster --image AMI-NAME
 ```
 
+## Options
+
+### CloudWatch
+
+You can pass the environment variables `CLOUDWATCH_AWS_ACCESS_KEY_ID`
+and `CLOUDWATCH_AWS_SECRET_ACCESS_KEY` to push metrics into AWS
+CloudWatch. To do so make sure that the key has permissions to the
+following resources.
+
+```
+cloudwatch:PutMetricData
+cloudwatch:GetMetricStatistics
+cloudwatch:ListMetrics
+ec2:DescribeTags
+```
+
 # Base Image
 
 Base Image is created used the Stable Image here:
 
 https://github.com/kubernetes/kops/tree/master/channels
 
-# Brought To You By opsZero
+# Supported Images
+
+ - [AWS Marketplace](https://aws.amazon.com/marketplace/pp/B075CNX5F8?qid=1504900511561&sr=0-1&ref_=srh_res_product_title)
+
+# Project by opsZero
 
 <a href="https://www.opszero.com"><img src="http://assets.opszero.com.s3.amazonaws.com/images/opszero_11_29_2016.png" width="300px"/></a>
 
