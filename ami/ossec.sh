@@ -1,6 +1,6 @@
 #!/bin/bash -ex
 
-ossec_version="2.9.1"
+ossec_version="2.9.3"
 
 sudo apt-get update -y && sudo apt-get install -y build-essential
 
@@ -24,3 +24,19 @@ sudo apt-get purge -y build-essential
 sudo apt-get autoremove -y
 
 popd
+
+
+# # Add Apt sources.lst
+# wget -q -O - https://updates.atomicorp.com/installers/atomic | sudo bash
+
+# # Update apt data
+# sudo apt-get update -y
+
+# # Server
+# sudo apt-get install -y ossec-hids-server
+
+# # Agent
+# sudo apt-get install -y ossec-hids-agent
+
+# cp /home/admin/ossec_preloaded-vars.conf ./etc/preloaded-vars.conf
+# cat ./etc/preloaded-vars.conf
