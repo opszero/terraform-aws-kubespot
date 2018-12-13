@@ -2,8 +2,11 @@
     "variables": {
         "ami": "k8s-1.8-debian-jessie-amd64-hvm-ebs-2018-01-14",
         "region": "{{ env `AWS_REGION` }}",
-        "aws_access_key": "{{env `AWS_ACCESS_KEY` }}",
-        "aws_secret_key": "{{env `AWS_SECRET_KEY` }}"
+        "aws_access_key": "{{ env `AWS_ACCESS_KEY` }}",
+        "aws_secret_key": "{{ env `AWS_SECRET_KEY` }}",
+        "cloudwatch_aws_access_key_id": "{{ env `CLOUDWATCH_AWS_ACCESS_KEY_ID` }}",
+        "cloudwatch_aws_secret_access_key": "{{ env `CLOUDWATCH_AWS_SECRET_ACCESS_KEY` }}",
+        "logdna_agent_key": ""
     },
     "builders": [{
         "type": "amazon-ebs",
@@ -35,6 +38,8 @@
             "scripts": [
                 "ami/ossec.sh",
                 "ami/openscap.sh"
+                "export LOGDNA_AGENT_KEY={{user `logdna_agent_key` }} ami/logdna.sh",
+                "ami/cloudwatch.sh {{user `cloudwatch_aws_access_key_id`}} {{user `cloudwatch_aws_secret_access_key`}}"
             ],
             "type": "shell"
         },
