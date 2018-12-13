@@ -5,7 +5,8 @@
         "aws_access_key": "{{ env `AWS_ACCESS_KEY` }}",
         "aws_secret_key": "{{ env `AWS_SECRET_KEY` }}",
         "cloudwatch_aws_access_key_id": "{{ env `CLOUDWATCH_AWS_ACCESS_KEY_ID` }}",
-        "cloudwatch_aws_secret_access_key": "{{ env `CLOUDWATCH_AWS_SECRET_ACCESS_KEY` }}"
+        "cloudwatch_aws_secret_access_key": "{{ env `CLOUDWATCH_AWS_SECRET_ACCESS_KEY` }}",
+        "logdna_agent_key": ""
     },
     "builders": [{
         "type": "amazon-ebs",
@@ -36,6 +37,7 @@
         {
             "scripts": [
                 "ami/ossec.sh",
+                "export LOGDNA_AGENT_KEY={{user `logdna_agent_key` }} ami/logdna.sh",
                 "ami/cloudwatch.sh {{user `cloudwatch_aws_access_key_id`}} {{user `cloudwatch_aws_secret_access_key`}}"
             ],
             "type": "shell"
