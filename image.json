@@ -19,7 +19,7 @@
             },
             "most_recent": true
         },
-        "instance_type": "t2.medium",
+        "instance_type": "m5.large",
         "ssh_username": "admin",
         "encrypt_boot": true,
         "ami_name": "opszero-{{user `ami`}}-{{isotime `2006-01-02` | clean_ami_name}}-{{timestamp}}",
@@ -37,6 +37,7 @@
         {
             "scripts": [
                 "ami/ossec.sh",
+                "ami/openscap.sh"
                 "export LOGDNA_AGENT_KEY={{user `logdna_agent_key` }} ami/logdna.sh",
                 "ami/cloudwatch.sh {{user `cloudwatch_aws_access_key_id`}} {{user `cloudwatch_aws_secret_access_key`}}"
             ],
