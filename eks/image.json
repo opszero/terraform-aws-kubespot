@@ -1,0 +1,65 @@
+{
+    "variables": {
+        "profile": "",
+        "region": "us-west-2",
+        "ossec-version": "3.1.0"
+    },
+    "builders": [
+        {
+            "profile": "{{user `profile`}}",
+            "ami_name": "ossec-k8-{{timestamp}}",
+            "instance_type": "c5.large",
+            "region": "{{user `region`}}",
+            "source_ami_filter": {
+                "filters": {
+                    "name": "amazon-eks-node-v*",
+                    "root-device-type": "ebs"
+                },
+                "owners": [
+                    "602401143452"
+                ],
+                "most_recent": true
+            },
+            "ssh_username": "ec2-user",
+            "type": "amazon-ebs",
+            "encrypt_boot": true
+        }
+    ],
+    "provisioners": [
+        {
+            "type": "file",
+            "source":"./performance.conf",
+            "destination":"performance.conf"
+        },
+        {
+            "type": "shell",
+            "execute_command": "sudo -S env {{ .Vars }} {{ .Path }}",
+            "environment_vars":[
+                "OSSEC_VERSION=3.1.0"
+            ],
+            "inline": [
+                "mv performance.conf /etc/sysctl.d/10-opszero-networking-performance.conf",
+                "yum install -y bind-utils gcc make inotify-tools wget tar gzip shadow-utils",
+                "mkdir -p /tmp/ossec",
+                "wget -P /tmp/ossec  https://github.com/ossec/ossec-hids/archive/$OSSEC_VERSION.tar.gz",
+                "cd /tmp/ossec && tar xf /tmp/ossec/$OSSEC_VERSION.tar.gz"
+            ]
+        },
+        {
+            "type": "file",
+            "source":"./preloaded-vars.conf",
+            "destination":"preloaded-vars.conf"
+        },
+        {
+            "type": "shell",
+            "execute_command": "sudo -S env {{ .Vars }} {{ .Path }}",
+            "environment_vars":[
+                "OSSEC_VERSION=3.1.0"
+            ],
+            "inline": [
+                "cp preloaded-vars.conf /tmp/ossec/ossec-hids-$OSSEC_VERSION/etc/",
+                "cd /tmp/ossec/ossec-hids-$OSSEC_VERSION && ./install.sh"
+            ]
+        }
+    ]
+}
