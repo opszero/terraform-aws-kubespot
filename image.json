@@ -1,8 +1,9 @@
 {
     "variables": {
-        "ami": "k8s-1.8-debian-jessie-amd64-hvm-ebs-2018-01-14",
+        "kops_ami": "k8s-1.8-debian-jessie-amd64-hvm-ebs-2018-01-14",
+        "ubuntu_eks_ami": "ubuntu-eks/k8s_1.10/images/hvm-ssd/ubuntu-bionic-18.04-amd64-server-20181214",
         "region": "{{ env `AWS_REGION` }}",
-        "profile": "{{env `AWS_PROFILE` }}"
+        "profile": "{{env `AWS_PROFILE` }}",
         "cloudwatch_aws_access_key_id": "{{ env `CLOUDWATCH_AWS_ACCESS_KEY_ID` }}",
         "cloudwatch_aws_secret_access_key": "{{ env `CLOUDWATCH_AWS_SECRET_ACCESS_KEY` }}",
         "logdna_agent_key": ""
@@ -15,39 +16,30 @@
             "filters": {
                 "virtualization-type": "hvm",
                 "root-device-type": "ebs",
-                "name": "{{ user `ami` }}"
+                "name": "{{ user `ubuntu_eks_ami` }}"
             },
+            "owners": ["099720109477"],
             "most_recent": true
         },
         "instance_type": "m5.large",
-        "ssh_username": "admin",
+        "ssh_username": "ubuntu",
         "encrypt_boot": true,
-        "ami_name": "opszero-{{user `ami`}}-{{isotime `2006-01-02` | clean_ami_name}}-{{timestamp}}",
+        "ami_name": "opszero-auditkube-eks-ubuntu-{{isotime `2006-01-02` | clean_ami_name}}-{{timestamp}}",
         "tags": {
-            "image": "opszero-auditkube"
+            "image": "opszero-auditkube-eks-ubuntu"
         }
     }],
     "provisioners": [{
             "type": "file",
             "source": "files/ossec_preloaded-vars.conf",
-            "destination": "/home/admin/ossec_preloaded-vars.conf"
+            "destination": "/home/ubuntu/ossec_preloaded-vars.conf"
         },
         {
             "scripts": [
                 "ami/ossec.sh",
-                "ami/performance.sh",
-                "ami/openscap.sh",
-                "export LOGDNA_AGENT_KEY={{user `logdna_agent_key` }} ami/logdna.sh",
-                "ami/cloudwatch.sh {{user `cloudwatch_aws_access_key_id`}} {{user `cloudwatch_aws_secret_access_key`}}"
+                "ami/performance.sh"
             ],
             "type": "shell"
-        },
-        {
-            "type": "shell",
-            "inline": [
-                "sudo rm -rf /home/admin/.ssh/authorized_keys",
-                "sudo rm -rf /root/.ssh/authorized_keys"
-            ]
         }
     ]
 }

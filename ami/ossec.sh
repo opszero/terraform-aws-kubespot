@@ -1,6 +1,6 @@
-#!/bin/bash -ex
+#!/bin/bash
 
-ossec_version="2.9.3"
+ossec_version="3.1.0"
 
 sudo apt-get update -y && sudo apt-get install -y build-essential
 
@@ -14,7 +14,7 @@ mv ${ossec_version}.tar.gz ossec-hids-${ossec_version}.tar.gz
 
 tar xfz ossec-hids-${ossec_version}.tar.gz
 cd ossec-hids-${ossec_version}
-cp /home/admin/ossec_preloaded-vars.conf ./etc/preloaded-vars.conf
+cp /home/ubuntu/ossec_preloaded-vars.conf ./etc/preloaded-vars.conf
 cat ./etc/preloaded-vars.conf
 sudo bash ./install.sh
 sudo /var/ossec/bin/ossec-control start
@@ -38,5 +38,5 @@ popd
 # # Agent
 # sudo apt-get install -y ossec-hids-agent
 
-# cp /home/admin/ossec_preloaded-vars.conf ./etc/preloaded-vars.conf
+# cp /home/ubuntu/ossec_preloaded-vars.conf ./etc/preloaded-vars.conf
 # cat ./etc/preloaded-vars.conf
