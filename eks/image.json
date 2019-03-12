@@ -3,7 +3,8 @@
         "profile": "{{env `AWS_PROFILE`}}",
         "region": "{{env `AWS_REGION`}}",
         "source_ami": "{{env `AMI`}}",
-        "ossec-version": "3.1.0"
+        "ossec-version": "3.1.0",
+        "install_vanta": "{{env `INSTALL_VANTA`}}"
     },
     "builders": [{
         "profile": "{{user `profile`}}",
@@ -48,6 +49,13 @@
             "inline": [
                 "cp preloaded-vars.conf /tmp/ossec/ossec-hids-$OSSEC_VERSION/etc/",
                 "cd /tmp/ossec/ossec-hids-$OSSEC_VERSION && ./install.sh"
+            ]
+        },
+        {
+            "type": "shell",
+            "execute_command": "sudo -S env {{ .Vars }} {{ .Path }}",
+            "inline": [
+                "if [[ \"{{user `install_vanta`}}\" = \"true\" ]]; then cd /tmp && curl -L -o installer.rpm https://vanta.com/osquery/download/linux/r9pkxvva7c9r75c0nkc035j1n92zaqqv78hp89ed9z5zc67umm00/rpm && sudo rpm -i installer.rpm; fi"
             ]
         }
     ]
