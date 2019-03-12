@@ -1,40 +1,29 @@
 {
     "variables": {
-        "profile": "",
-        "region": "us-west-2",
+        "profile": "{{env `AWS_PROFILE`}}",
+        "region": "{{env `AWS_REGION`}}",
+        "source_ami": "{{env `AMI`}}",
         "ossec-version": "3.1.0"
     },
-    "builders": [
-        {
-            "profile": "{{user `profile`}}",
-            "ami_name": "ossec-k8-{{timestamp}}",
-            "instance_type": "c5.large",
-            "region": "{{user `region`}}",
-            "source_ami_filter": {
-                "filters": {
-                    "name": "amazon-eks-node-v*",
-                    "root-device-type": "ebs"
-                },
-                "owners": [
-                    "602401143452"
-                ],
-                "most_recent": true
-            },
-            "ssh_username": "ec2-user",
-            "type": "amazon-ebs",
-            "encrypt_boot": true
-        }
-    ],
-    "provisioners": [
-        {
+    "builders": [{
+        "profile": "{{user `profile`}}",
+        "ami_name": "ossec-k8-{{timestamp}}",
+        "instance_type": "c5.large",
+        "region": "{{user `region`}}",
+        "source_ami": "{{user `source_ami`}}",
+        "ssh_username": "ec2-user",
+        "type": "amazon-ebs",
+        "encrypt_boot": true
+    }],
+    "provisioners": [{
             "type": "file",
-            "source":"./performance.conf",
-            "destination":"performance.conf"
+            "source": "./performance.conf",
+            "destination": "performance.conf"
         },
         {
             "type": "shell",
             "execute_command": "sudo -S env {{ .Vars }} {{ .Path }}",
-            "environment_vars":[
+            "environment_vars": [
                 "OSSEC_VERSION=3.1.0"
             ],
             "inline": [
@@ -47,13 +36,13 @@
         },
         {
             "type": "file",
-            "source":"./preloaded-vars.conf",
-            "destination":"preloaded-vars.conf"
+            "source": "./preloaded-vars.conf",
+            "destination": "preloaded-vars.conf"
         },
         {
             "type": "shell",
             "execute_command": "sudo -S env {{ .Vars }} {{ .Path }}",
-            "environment_vars":[
+            "environment_vars": [
                 "OSSEC_VERSION=3.1.0"
             ],
             "inline": [
