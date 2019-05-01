@@ -4,7 +4,12 @@
         "region": "{{env `AWS_REGION`}}",
         "source_ami": "{{env `AMI`}}",
         "ossec-version": "3.1.0",
-        "install_vanta": "{{env `INSTALL_VANTA`}}"
+        "install_vanta": "{{env `INSTALL_VANTA`}}",
+        "install_foxpass": "{{env `INSTALL_FOXPASS`}}",
+        "foxpass_base_dn": "{{env `FOXPASS_BASE_DN`}}",
+        "foxpass_bind_user": "{{env `FOXPASS_BIND_USER`}}",
+        "foxpass_bind_pw": "{{env `FOXPASS_BIND_PW`}}",
+        "foxpass_api_key": "{{env `FOXPASS_API_KEY`}}"
     },
     "builders": [{
         "profile": "{{user `profile`}}",
@@ -28,6 +33,7 @@
                 "OSSEC_VERSION=3.1.0"
             ],
             "inline": [
+                "yum -y update --exclude=python-urllib3",
                 "mv performance.conf /etc/sysctl.d/10-opszero-networking-performance.conf",
                 "yum install -y bind-utils gcc make inotify-tools wget tar gzip shadow-utils",
                 "mkdir -p /tmp/ossec",
@@ -56,6 +62,13 @@
             "execute_command": "sudo -S env {{ .Vars }} {{ .Path }}",
             "inline": [
                 "if [[ \"{{user `install_vanta`}}\" = \"true\" ]]; then cd /tmp && curl -L -o installer.rpm https://vanta.com/osquery/download/linux/r9pkxvva7c9r75c0nkc035j1n92zaqqv78hp89ed9z5zc67umm00/rpm && sudo rpm -i installer.rpm; fi"
+            ]
+        },
+        {
+            "type": "shell",
+            "execute_command": "sudo -S env {{ .Vars }} {{ .Path }}",
+            "inline": [
+                "if [[ \"{{user `install_foxpass`}}\" = \"true\" ]]; then cd /tmp && wget https://raw.githubusercontent.com/foxpass/foxpass-setup/master/linux/amzn/2.0/foxpass_setup.py; python foxpass_setup.py --base-dn {{user `foxpass_base_dn`}}  --bind-user {{user `foxpass_bind_user`}} --bind-pw {{user `foxpass_bind_pw`}} --api-key {{user `foxpass_api_key`}}; fi"
             ]
         }
     ]
