@@ -5,6 +5,7 @@
         "source_ami": "{{env `AMI`}}",
         "ossec-version": "3.1.0",
         "install_vanta": "{{env `INSTALL_VANTA`}}",
+        "vanta_link": "{{env `VANTA_LINK`}}",
         "install_foxpass": "{{env `INSTALL_FOXPASS`}}",
         "foxpass_base_dn": "{{env `FOXPASS_BASE_DN`}}",
         "foxpass_bind_user": "{{env `FOXPASS_BIND_USER`}}",
@@ -61,7 +62,7 @@
             "type": "shell",
             "execute_command": "sudo -S env {{ .Vars }} {{ .Path }}",
             "inline": [
-                "if [[ \"{{user `install_vanta`}}\" = \"true\" ]]; then cd /tmp && curl -L -o installer.rpm https://vanta.com/osquery/download/linux/r9pkxvva7c9r75c0nkc035j1n92zaqqv78hp89ed9z5zc67umm00/rpm && sudo rpm -i installer.rpm; fi"
+                "if [[ \"{{user `install_vanta`}}\" = \"true\" ]]; then cd /tmp && curl -L -o installer.rpm {{user `vanta_link`}} && sudo rpm -i installer.rpm; fi"
             ]
         },
         {
