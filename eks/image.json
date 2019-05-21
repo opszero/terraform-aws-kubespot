@@ -72,5 +72,12 @@
                 "if [[ \"{{user `install_foxpass`}}\" = \"true\" ]]; then cd /tmp && wget https://raw.githubusercontent.com/foxpass/foxpass-setup/master/linux/amzn/2.0/foxpass_setup.py; python foxpass_setup.py --base-dn {{user `foxpass_base_dn`}}  --bind-user {{user `foxpass_bind_user`}} --bind-pw {{user `foxpass_bind_pw`}} --api-key {{user `foxpass_api_key`}}; fi"
             ]
         }
+    ],
+    "post-processors": [
+        [{
+            "output": "manifest.json",
+            "strip_path": true,
+            "type": "manifest"
+        }]
     ]
 }
