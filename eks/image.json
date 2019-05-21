@@ -14,7 +14,7 @@
     },
     "builders": [{
         "profile": "{{user `profile`}}",
-        "ami_name": "ossec-k8-{{timestamp}}",
+        "ami_name": "opszero-eks-{{timestamp}}",
         "instance_type": "c5.large",
         "region": "{{user `region`}}",
         "source_ami": "{{user `source_ami`}}",
