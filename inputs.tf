@@ -7,14 +7,11 @@ variable "zones" {
 }
 
 variable "eips" {
-  default = [
-    "eipalloc-9ae756a6",          # 50.112.60.170
-    "eipalloc-03faf6bf327775571", # 54.71.95.225
-  ]
+  default = []
 }
 
 variable "db_vpc_id" {
-  default = "vpc-03000c64"
+  default = ""
 }
 
 variable "vpc_peer_name" {

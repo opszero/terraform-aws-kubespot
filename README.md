@@ -5,11 +5,24 @@ AWS EKS Setup with some additional security to access the cluster.
 - FoxPass
 - Bastion
 
-### Inputs
+## Usage
 
-- **cluster-name** - The name that the cluster should be called
-- **zones** - (Default: [us-west-2a, us-west-2b]) The AZs the cluster should
-  live in
-- **eips** - The elastic IP addresses the master nodes should connect to
-- **db_vpc_id** - The VPC ID where the databases live
-- **vpc_peer_name** - (Default: eks-to-dbs) - What to name the peering
+```
+
+resource "aws_eip" "cluster" {
+  instance = "${aws_instance.web.id}"
+  vpc      = true
+}
+
+module "opszero-eks" {
+  source = "git::https://github.com/opszero/kubeseed.git"
+
+  cluster-name = "cluster-eks"
+  zones = ["us-west-2a", "us-west-2b"]
+  eips = ["${aws_eip.cluster}]
+  db_vpc_id = ""
+  vpc_peer_name = ""
+  ec2_keypair = ""
+  aws_profile = ""
+}
+```
