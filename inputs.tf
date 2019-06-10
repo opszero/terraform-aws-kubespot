@@ -25,3 +25,8 @@ variable "ec2_keypair" {
 variable "aws_profile" {
   default = "opszero"
 }
+
+variable "iam_users" {
+  type    = list(string)
+  default = []
+}

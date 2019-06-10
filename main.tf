@@ -330,6 +330,8 @@ resource "aws_autoscaling_group" "nodes_green" {
   ]
 }
 
+data "aws_caller_identity" "current" {}
+
 locals {
   config-map-aws-auth = <<CONFIGMAPAWSAUTH
 apiVersion: v1
@@ -344,16 +346,13 @@ data:
       groups:
         - system:bootstrappers
         - system:nodes
-    - rolearn: arn:aws:iam::355934147401:role/developer
-      username: system:node:{{EC2PrivateDNSName}}
-      groups:
-        - system:bootstrappers
-        - system:nodes
   mapUsers: |
-    - userarn: arn:aws:iam::355934147401:user/ekoslow
-      username: ekoslow
+    %{for user in var.iam_users}
+    - userarn: arn:aws:iam::${data.aws_caller_identity.current.account_id}:user/${user}
+      username: ${user}
       groups:
         - system:masters
+    %{endfor}
 CONFIGMAPAWSAUTH
 }
 
