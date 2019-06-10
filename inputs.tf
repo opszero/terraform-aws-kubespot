@@ -1,5 +1,5 @@
 variable "cluster-name" {
-  type = "string"
+  type = string
 }
 
 variable "zones" {
@@ -27,6 +27,6 @@ variable "aws_profile" {
 }
 
 variable "iam_users" {
-  type    = list(string)
   default = []
 }
+

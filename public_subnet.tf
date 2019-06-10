@@ -1,35 +1,33 @@
 resource "aws_subnet" "public" {
   count = 2
 
-  availability_zone = "${var.zones[count.index]}"
+  availability_zone = var.zones[count.index]
   cidr_block        = "10.2.${count.index}.0/24"
-  vpc_id            = "${aws_vpc.vpc.id}"
+  vpc_id            = aws_vpc.vpc.id
 
-  tags = "${
-    map(
-     "Name", "${var.cluster-name}",
-     "kubernetes.io/cluster/${var.cluster-name}", "shared",
-    )
-  }"
+  tags = {
+    "Name"                                      = var.cluster-name
+    "kubernetes.io/cluster/${var.cluster-name}" = "shared"
+  }
 }
 
 resource "aws_internet_gateway" "public" {
-  vpc_id = "${aws_vpc.vpc.id}"
+  vpc_id = aws_vpc.vpc.id
 
-  tags {
-    Name = "${var.cluster-name}"
+  tags = {
+    Name = var.cluster-name
   }
 }
 
 resource "aws_route_table" "public" {
   count  = 2
-  vpc_id = "${aws_vpc.vpc.id}"
+  vpc_id = aws_vpc.vpc.id
 
   route {
     cidr_block = "0.0.0.0/0"
-    gateway_id = "${aws_internet_gateway.public.id}"
+    gateway_id = aws_internet_gateway.public.id
   }
-  tags {
+  tags = {
     Name = "k8s-public-${count.index}"
   }
 }
@@ -37,6 +35,7 @@ resource "aws_route_table" "public" {
 resource "aws_route_table_association" "public" {
   count = 2
 
-  subnet_id      = "${aws_subnet.public.*.id[count.index]}"
-  route_table_id = "${aws_route_table.public.*.id[count.index]}"
+  subnet_id      = aws_subnet.public[count.index].id
+  route_table_id = aws_route_table.public[count.index].id
 }
+

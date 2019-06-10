@@ -1,5 +1,5 @@
 resource "aws_eip" "bastion_eip" {
-  instance = "${aws_instance.bastion.id}"
+  instance = aws_instance.bastion.id
   vpc      = true
 }
 
@@ -15,10 +15,10 @@ data "aws_ami" "opszero_eks" {
 }
 
 resource "aws_instance" "bastion" {
-  ami           = "${data.aws_ami.opszero_eks.id}"
+  ami           = data.aws_ami.opszero_eks.id
   instance_type = "t2.micro"
 
-  key_name                    = "${var.ec2_keypair}"
+  key_name                    = var.ec2_keypair
   associate_public_ip_address = true
   subnet_id                   = "subnet-92366ef5"
   vpc_security_group_ids      = ["sg-300d724b", "sg-9a0f70e1"]
