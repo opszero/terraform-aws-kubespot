@@ -8,14 +8,13 @@ with PCI/HIPAA/SOC2 Compliance.
 
 # Features
 
- - [X] Encrypted Root Volume
- - [X] [OSSEC](https://ossec.github.io/): File System Monitoring for Changes.
- - [ ] Build Public Image on All Regions
- - [X] Logging via LogDNA
- - [ ] 2FA Login
+- [x] Encrypted Root Volume
+- [x] [OSSEC](https://ossec.github.io/): File System Monitoring for Changes.
+- [ ] Build Public Image on All Regions
+- [x] Logging via LogDNA
+- [ ] 2FA Login
 
- - Third Party
-  - Vanta
+- Third Party
 
 # Usage
 
@@ -61,7 +60,7 @@ https://github.com/kubernetes/kops/tree/master/channels
 
 # Supported Images
 
- - [AWS Marketplace](https://aws.amazon.com/marketplace/pp/B075CNX5F8?qid=1504900511561&sr=0-1&ref_=srh_res_product_title)
+- [AWS Marketplace](https://aws.amazon.com/marketplace/pp/B075CNX5F8?qid=1504900511561&sr=0-1&ref_=srh_res_product_title)
 
 # Project by opsZero
 
