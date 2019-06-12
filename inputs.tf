@@ -30,3 +30,6 @@ variable "iam_users" {
   default = []
 }
 
+variable "repos" {
+  default = []
+}

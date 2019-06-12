@@ -3,17 +3,6 @@ resource "aws_eip" "bastion_eip" {
   vpc      = true
 }
 
-data "aws_ami" "opszero_eks" {
-  most_recent = true
-
-  filter {
-    name   = "name"
-    values = ["opszero-eks-*"]
-  }
-
-  owners = ["self"]
-}
-
 resource "aws_instance" "bastion" {
   ami           = data.aws_ami.opszero_eks.id
   instance_type = "t2.micro"

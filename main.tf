@@ -223,21 +223,9 @@ node-userdata = <<USERDATA
 #!/bin/bash -xe
 set -o xtrace
 
-
 /etc/eks/bootstrap.sh --apiserver-endpoint '${aws_eks_cluster.cluster.endpoint}' --b64-cluster-ca '${aws_eks_cluster.cluster.certificate_authority[0].data}' '${var.cluster-name}'
 USERDATA
 
-}
-
-data "aws_ami" "opszero_eks" {
-  most_recent = true
-
-  filter {
-    name   = "name"
-    values = ["opszero-eks-*"]
-  }
-
-  owners = ["self"]
 }
 
 resource "aws_launch_configuration" "nodes_blue" {
