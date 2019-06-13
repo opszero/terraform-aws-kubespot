@@ -15,7 +15,7 @@ resource "aws_subnet" "private" {
 resource "aws_nat_gateway" "gw" {
   count = 2
 
-  allocation_id = var.eips[count.index]
+  allocation_id = var.eips[count.index].id
   subnet_id     = aws_subnet.public[count.index].id
 }
 
