@@ -16,13 +16,3 @@ resource "aws_instance" "bastion" {
     Name = "${var.cluster-name}-bastion"
   }
 }
-
-# resource "aws_security_group_rule" "opszero_workstation" {
-#   cidr_blocks       = ["${}"]
-#   description       = "Allow workstation to communicate with the cluster API Server"
-#   from_port         = 443
-#   protocol          = "tcp"
-#   security_group_id = "${aws_security_group.cluster.id}"
-#   to_port           = 443
-#   type              = "ingress"
-# }
