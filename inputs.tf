@@ -14,10 +14,6 @@ variable "db_vpc_id" {
   default = ""
 }
 
-variable "vpc_peer_name" {
-  default = "eks-to-dbs"
-}
-
 variable "ec2_keypair" {
   default = "opszero"
 }
