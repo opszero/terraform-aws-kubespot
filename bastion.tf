@@ -9,8 +9,8 @@ resource "aws_instance" "bastion" {
 
   key_name                    = var.ec2_keypair
   associate_public_ip_address = true
-  subnet_id                   = "subnet-92366ef5"
-  vpc_security_group_ids      = ["sg-300d724b", "sg-9a0f70e1"]
+  subnet_id                   = aws_subnet.public
+  vpc_security_group_ids      = [aws_security_group.node.id]
 
   tags = {
     Name = "${var.cluster-name}-bastion"

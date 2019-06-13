@@ -2,6 +2,10 @@ variable "cluster-name" {
   type = string
 }
 
+variable cidr_block {
+  default = "10.2.0.0/16"
+}
+
 variable "zones" {
   default = ["us-west-2a", "us-west-2b"]
 }
