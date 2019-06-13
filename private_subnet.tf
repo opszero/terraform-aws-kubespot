@@ -3,7 +3,7 @@ data "aws_availability_zones" "available" {}
 resource "aws_subnet" "private" {
   count = 2
 
-  availability_zone = data.aws_availability_zones.available.names[count.index]
+  availability_zone = var.zones ? var.zones[count.index] : data.aws_availability_zones.available.names[count.index]
   cidr_block        = "10.2.${count.index + 2}.0/24"
   vpc_id            = aws_vpc.vpc.id
 
@@ -17,7 +17,7 @@ resource "aws_subnet" "private" {
 resource "aws_nat_gateway" "gw" {
   count = 2
 
-  allocation_id = var.eips[count.index].id
+  allocation_id = var.eips[count.index]
   subnet_id     = aws_subnet.public[count.index].id
 }
 
