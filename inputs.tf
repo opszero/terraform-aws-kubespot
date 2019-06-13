@@ -14,10 +14,6 @@ variable "eips" {
   default = []
 }
 
-variable "db_vpc_id" {
-  default = ""
-}
-
 variable "ec2_keypair" {
   default = "opszero"
 }
