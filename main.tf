@@ -232,12 +232,12 @@ resource "aws_launch_configuration" "nodes_blue" {
   associate_public_ip_address = false
   iam_instance_profile        = aws_iam_instance_profile.node.name
   image_id                    = data.aws_ami.opszero_eks.id
-  instance_type               = "m5.large"
+  instance_type               = "t2.nano"
   name_prefix                 = "${var.cluster-name}-nodes-blue"
   security_groups             = [aws_security_group.node.id]
   user_data_base64            = base64encode(local.node-userdata)
 
-  key_name = "opszero"
+  key_name = var.ec2_keypair
 
   root_block_device {
     volume_size = "100"
@@ -249,10 +249,10 @@ resource "aws_launch_configuration" "nodes_blue" {
 }
 
 resource "aws_autoscaling_group" "nodes_blue" {
-  desired_capacity     = 2
+  desired_capacity     = 1
   launch_configuration = aws_launch_configuration.nodes_blue.id
-  max_size             = 3
-  min_size             = 2
+  max_size             = 1
+  min_size             = 1
   name                 = "${var.cluster-name}-nodes-blue"
 
   vpc_zone_identifier = aws_subnet.private.*.id
@@ -292,10 +292,10 @@ resource "aws_launch_configuration" "nodes_green" {
 }
 
 resource "aws_autoscaling_group" "nodes_green" {
-  desired_capacity     = 2
+  desired_capacity     = 0
   launch_configuration = aws_launch_configuration.nodes_green.id
-  max_size             = 3
-  min_size             = 2
+  max_size             = 0
+  min_size             = 0
   name                 = "${var.cluster-name}-nodes-green"
 
   vpc_zone_identifier = aws_subnet.private.*.id
