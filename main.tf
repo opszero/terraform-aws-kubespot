@@ -332,12 +332,12 @@ data:
         - system:bootstrappers
         - system:nodes
   mapUsers: |
-    %%{for user in var.iam_users ~}
+    %{for user in var.iam_users~}
     - userarn: arn:aws:iam::${data.aws_caller_identity.current.account_id}:user/${user}
       username: ${user}
       groups:
         - system:masters
-    %%{endfor ~}
+    %{endfor~}
 CONFIGMAPAWSAUTH
 
 }
