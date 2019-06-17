@@ -4,3 +4,5 @@ packer_cache/
 # For built boxes
 *.box
 aws-marketplace.json
+/auditkube.log
+/cluster_dir
