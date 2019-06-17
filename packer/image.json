@@ -37,7 +37,7 @@
             "inline": [
                 "yum -y update",
                 "mv performance.conf /etc/sysctl.d/10-opszero-networking-performance.conf",
-                "yum install -y bind-utils gcc make inotify-tools wget tar gzip shadow-utils",
+                "yum install -y bind-utils gcc make inotify-tools wget tar gzip shadow-utils zlib zlib-devel",
                 "mkdir -p /tmp/ossec",
                 "wget -P /tmp/ossec  https://github.com/ossec/ossec-hids/archive/$OSSEC_VERSION.tar.gz",
                 "cd /tmp/ossec && tar xf /tmp/ossec/$OSSEC_VERSION.tar.gz",
