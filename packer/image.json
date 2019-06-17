@@ -57,7 +57,7 @@
             ],
             "inline": [
                 "cp preloaded-vars.conf /tmp/ossec/ossec-hids-$OSSEC_VERSION/etc/",
-                "cd /tmp/ossec/ossec-hids-$OSSEC_VERSION && ./install.sh"
+                "cd /tmp/ossec/ossec-hids-$OSSEC_VERSION && wget https://ftp.pcre.org/pub/pcre/pcre2-10.32.tar.gz && tar xzf pcre2-10.32.tar.gz -C src/external && ./install.sh"
             ]
         },
         {
