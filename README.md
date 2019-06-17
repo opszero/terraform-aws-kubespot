@@ -1,20 +1,21 @@
-# auditkube
+# AuditKube
 
 <img src="http://assets.opszero.com.s3.amazonaws.com/images/auditkube.png" width="200px" />
 
-Secure Images to use with [Kubernetes
-Kops](https://github.com/kubernetes/kops) and Amazon EKS to help create images which help
-with PCI/HIPAA/SOC2 Compliance.
+Compliance Oriented Kubernetes for Amazon EKS. Setup machine images that are
+compliance oriented for PCI/HIPAA/SOC2 and setup clusters using Terraform.
 
 # Features
 
 - [x] Encrypted Root Volume
 - [x] [OSSEC](https://ossec.github.io/): File System Monitoring for Changes.
-- [ ] Build Public Image on All Regions
 - [x] Logging via LogDNA
-- [ ] 2FA Login
-
+- [ ] Build Public Image on All Regions
+- [ ] 2FA Login with Duo
 - Third Party
+  - LogDNA
+  - Foxpass
+  - Duo
 
 # Usage
 
@@ -32,12 +33,6 @@ packer build image.json
 
 To use this image with `kops` you need to pass in the AMI name listed.
 
-```
-kops create cluster --image AMI-NAME
-```
-
-## Options
-
 ### CloudWatch
 
 You can pass the environment variables `CLOUDWATCH_AWS_ACCESS_KEY_ID`
@@ -52,12 +47,6 @@ cloudwatch:ListMetrics
 ec2:DescribeTags
 ```
 
-# Base Image
-
-Base Image is created used the Stable Image here:
-
-https://github.com/kubernetes/kops/tree/master/channels
-
 # Supported Images
 
 - [AWS Marketplace](https://aws.amazon.com/marketplace/pp/B075CNX5F8?qid=1504900511561&sr=0-1&ref_=srh_res_product_title)
@@ -67,8 +56,8 @@ https://github.com/kubernetes/kops/tree/master/channels
 <a href="https://www.opszero.com"><img src="http://assets.opszero.com.s3.amazonaws.com/images/opszero_11_29_2016.png" width="300px"/></a>
 
 This project is brought to you by [opsZero](https://www.opszero.com) we
-provide DevOps and Cloud Infrastructure as a Service for Startups. If you
-need help with your infrastructure reach out.
+provide Kubernetes and AWS Lambda Migration. If you need help with your
+Kubernetes Migration reach out.
 
 # License
 
