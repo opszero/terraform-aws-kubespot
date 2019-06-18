@@ -40,7 +40,7 @@
         {
             "type": "file",
             "source": "./preloaded-vars.conf",
-            "destination": "preloaded-vars.conf"
+            "destination": "/tmp/preloaded-vars.conf"
         },
         {
             "type": "shell",
@@ -52,7 +52,7 @@
                 "mkdir -p /tmp/ossec",
                 "wget -P /tmp/ossec  https://github.com/ossec/ossec-hids/archive/$OSSEC_VERSION.tar.gz",
                 "cd /tmp/ossec && tar xf /tmp/ossec/$OSSEC_VERSION.tar.gz",
-                "cp preloaded-vars.conf /tmp/ossec/ossec-hids-$OSSEC_VERSION/etc/",
+                "cp /tmp/preloaded-vars.conf /tmp/ossec/ossec-hids-$OSSEC_VERSION/etc/",
                 "cd /tmp/ossec/ossec-hids-$OSSEC_VERSION && wget https://ftp.pcre.org/pub/pcre/pcre2-10.32.tar.gz && tar xzf pcre2-10.32.tar.gz -C src/external && ./install.sh"
             ]
         },
