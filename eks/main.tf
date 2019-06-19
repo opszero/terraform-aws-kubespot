@@ -342,7 +342,9 @@ resource "kubernetes_config_map" "aws_auth" {
     - system:bootstrappers
     - system:nodes
 CONFIGMAPAWSAUTH
+  }
 
+  data {
     mapUsers = <<CONFIGMAPAWSUSERS
 %{for user in var.iam_users~}
 - userarn: arn:aws:iam::${data.aws_caller_identity.current.account_id}:user/${user}
