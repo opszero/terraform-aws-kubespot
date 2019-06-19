@@ -317,53 +317,39 @@ resource "aws_autoscaling_group" "nodes_green" {
 data "aws_caller_identity" "current" {
 }
 
-locals {
-  config-map-aws-auth = <<CONFIGMAPAWSAUTH
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: aws-auth
-  namespace: kube-system
-data:
-  mapRoles: |
-    - rolearn: ${aws_iam_role.node.arn}
-      username: system:node:{{EC2PrivateDNSName}}
-      groups:
-        - system:bootstrappers
-        - system:nodes
-  mapUsers: |
-    %{for user in var.iam_users~}
-    - userarn: arn:aws:iam::${data.aws_caller_identity.current.account_id}:user/${user}
-      username: ${user}
-      groups:
-        - system:masters
-    %{endfor~}
-CONFIGMAPAWSAUTH
-
-}
-
-output "config-map-aws-auth" {
-  value = local.config-map-aws-auth
-}
-
 data "aws_eks_cluster_auth" "cluster" {
   name = "${var.environment-name}-eks"
 }
 
 provider "kubernetes" {
-  host = "${aws.aws_eks_cluster.cluster.endpoint}"
+  host                   = "${aws.aws_eks_cluster.cluster.endpoint}"
   cluster_ca_certificate = "${base64decode(aws.aws_eks_cluster.cluster.certificate_authority.0.data)}"
-  token = "${data.aws_eks_cluster_auth.cluster.token}"
-  load_config_file = false
+  token                  = "${data.aws_eks_cluster_auth.cluster.token}"
+  load_config_file       = false
 }
 
 resource "kubernetes_config_map" "config-map-aws-auth" {
   metadata {
-    name = "aws-auth"
+    name      = "aws-auth"
     namespace = "kube-system"
   }
 
   data {
-    config_map_aws_auth.yaml = local.config-map-aws-auth
+    mapRoles = <<CONFIGMAPAWSAUTH
+- rolearn: ${aws_iam_role.node.arn}
+  username: system:node:{{EC2PrivateDNSName}}
+  groups:
+    - system:bootstrappers
+    - system:nodes
+CONFIGMAPAWSAUTH
+
+    mapUsers = <<CONFIGMAPAWSUSERS
+%{for user in var.iam_users~}
+- userarn: arn:aws:iam::${data.aws_caller_identity.current.account_id}:user/${user}
+  username: ${user}
+  groups:
+    - system:masters
+%{endfor~}
+CONFIGMAPAWSUSERS
   }
 }
