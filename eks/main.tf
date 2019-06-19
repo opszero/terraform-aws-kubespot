@@ -318,7 +318,7 @@ data "aws_caller_identity" "current" {
 }
 
 data "aws_eks_cluster_auth" "cluster" {
-  name = "${var.environment-name}-eks"
+  name = var.cluster-name
 }
 
 provider "kubernetes" {
