@@ -350,7 +350,7 @@ data "aws_eks_cluster_auth" "cluster" {
   name = "${var.environment-name}-eks"
 }
 
-kubernetes {
+provider "kubernetes" {
   host = "${aws.aws_eks_cluster.cluster.endpoint}"
   cluster_ca_certificate = "${base64decode(aws.aws_eks_cluster.cluster.certificate_authority.0.data)}"
   token = "${data.aws_eks_cluster_auth.cluster.token}"
