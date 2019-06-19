@@ -41,17 +41,6 @@ resource "aws_iam_role" "node" {
         "Service": "ec2.amazonaws.com"
       },
       "Action": "sts:AssumeRole"
-    },
-    {
-        "Effect": "Allow",
-        "Action": [
-            "autoscaling:DescribeAutoScalingGroups",
-            "autoscaling:DescribeAutoScalingInstances",
-            "autoscaling:DescribeLaunchConfigurations",
-            "autoscaling:SetDesiredCapacity",
-            "autoscaling:TerminateInstanceInAutoScalingGroup"
-        ],
-        "Resource": "*"
     }
   ]
 }
@@ -77,4 +66,30 @@ resource "aws_iam_role_policy_attachment" "node-AmazonEC2ContainerRegistryReadOn
 resource "aws_iam_instance_profile" "node" {
   name = "${var.cluster-name}-node"
   role = aws_iam_role.node.name
+}
+
+resource "aws_iam_role_policy" "autoscaling" {
+  name = "AWSEKSAutoscaler-${var.cluster_name}"
+  role = aws_iam_role.node.id
+
+  policy = <<EOF
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": [
+                "autoscaling:DescribeAutoScalingGroups",
+                "autoscaling:DescribeAutoScalingInstances",
+                "autoscaling:DescribeTags",
+                "autoscaling:DescribeLaunchConfigurations",
+                "autoscaling:SetDesiredCapacity",
+                "autoscaling:TerminateInstanceInAutoScalingGroup",
+                "ec2:DescribeLaunchTemplateVersions"
+            ],
+            "Resource": "*"
+        }
+    ]
+}
+EOF
 }
