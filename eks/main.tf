@@ -317,13 +317,17 @@ resource "aws_autoscaling_group" "nodes_green" {
 data "aws_caller_identity" "current" {
 }
 
+data "aws_eks_cluster" "cluster" {
+  name = var.cluster-name
+}
+
 data "aws_eks_cluster_auth" "cluster" {
   name = var.cluster-name
 }
 
 provider "kubernetes" {
-  host                   = "${aws.aws_eks_cluster.cluster.endpoint}"
-  cluster_ca_certificate = "${base64decode(aws.aws_eks_cluster.cluster.certificate_authority.0.data)}"
+  host                   = "${data.aws_eks_cluster.cluster.endpoint}"
+  cluster_ca_certificate = "${base64decode(data.aws_eks_cluster.cluster.certificate_authority.0.data)}"
   token                  = "${data.aws_eks_cluster_auth.cluster.token}"
   load_config_file       = false
 }
