@@ -6,3 +6,5 @@ packer_cache/
 aws-marketplace.json
 /auditkube.log
 /cluster_dir
+
+.terraform/
