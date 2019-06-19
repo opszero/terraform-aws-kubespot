@@ -69,7 +69,7 @@ resource "aws_iam_instance_profile" "node" {
 }
 
 resource "aws_iam_role_policy" "autoscaling" {
-  name = "AWSEKSAutoscaler-${var.cluster_name}"
+  name = "AWSEKSAutoscaler-${var.cluster-name}"
   role = aws_iam_role.node.id
 
   policy = <<EOF
