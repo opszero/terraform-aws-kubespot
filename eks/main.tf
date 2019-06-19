@@ -346,3 +346,24 @@ output "config-map-aws-auth" {
   value = local.config-map-aws-auth
 }
 
+data "aws_eks_cluster_auth" "cluster" {
+  name = "${var.environment-name}-eks"
+}
+
+kubernetes {
+  host = "${aws.aws_eks_cluster.cluster.endpoint}"
+  cluster_ca_certificate = "${base64decode(aws.aws_eks_cluster.cluster.certificate_authority.0.data)}"
+  token = "${data.aws_eks_cluster_auth.cluster.token}"
+  load_config_file = false
+}
+
+resource "kubernetes_config_map" "config-map-aws-auth" {
+  metadata {
+    name = "aws-auth"
+    namespace = "kube-system"
+  }
+
+  data {
+    config_map_aws_auth.yaml = local.config-map-aws-auth
+  }
+}
