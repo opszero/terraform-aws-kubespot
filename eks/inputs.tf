@@ -29,3 +29,35 @@ variable "iam_users" {
 variable "repos" {
   default = []
 }
+
+variable "nodes_green_instance_type" {
+  default = "t2.micro"
+}
+
+variable "nodes_green_desired_capacity" {
+  default = 1
+}
+
+variable "nodes_green_min_size" {
+  default = 1
+}
+
+variable "nodes_green_max_size" {
+  default = 1
+}
+
+variable "nodes_blue_instance_type" {
+  default = "t2.micro"
+}
+
+variable "nodes_blue_desired_capacity" {
+  default = 1
+}
+
+variable "nodes_blue_min_size" {
+  default = 1
+}
+
+variable "nodes_blue_max_size" {
+  default = 1
+}
