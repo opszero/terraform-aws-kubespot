@@ -232,7 +232,7 @@ resource "aws_launch_configuration" "nodes_blue" {
   associate_public_ip_address = false
   iam_instance_profile        = aws_iam_instance_profile.node.name
   image_id                    = data.aws_ami.opszero_eks.id
-  instance_type               = "t2.nano"
+  instance_type               = "t2.large"
   name_prefix                 = "${var.cluster-name}-nodes-blue"
   security_groups             = [aws_security_group.node.id]
   user_data_base64            = base64encode(local.node-userdata)
