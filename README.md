@@ -31,7 +31,16 @@ To actually build the image run the following:
 packer build image.json
 ```
 
-To use this image with `kops` you need to pass in the AMI name listed.
+> To use this image with `kops` you need to pass in the AMI name listed.
+
+an example .auto.tfvars file is below 
+```
+foxpass_api_key = "<foxpass_api_key>"
+cluster-name = "<name>"
+ec2_keypair = "<keypair>"
+```
+in order to set up the bastion you need to download the private key 
+and have it in the repository. 
 
 ### CloudWatch
 

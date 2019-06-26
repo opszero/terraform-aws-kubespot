@@ -2,7 +2,7 @@
     "variables": {
         "profile": "{{env `AWS_PROFILE`}}",
         "region": "{{env `AWS_REGION`}}",
-        "source_ami": "{{env `AMI`}}",
+        "source_ami": "ami-0ebdd976",
         "ossec-version": "3.1.0",
         "install_foxpass": "{{env `INSTALL_FOXPASS`}}",
         "foxpass_base_dn": "{{env `FOXPASS_BASE_DN`}}",

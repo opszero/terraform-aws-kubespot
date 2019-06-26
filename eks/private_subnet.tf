@@ -14,10 +14,15 @@ resource "aws_subnet" "private" {
   }
 }
 
+resource "aws_eip" "eips" {
+  count = 2
+}
+
+
 resource "aws_nat_gateway" "gw" {
   count = 2
 
-  allocation_id = var.eips[count.index]
+  allocation_id = aws_eip.eips[count.index].id
   subnet_id     = aws_subnet.public[count.index].id
 }
 
