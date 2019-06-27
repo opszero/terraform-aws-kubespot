@@ -44,46 +44,6 @@ resource "aws_security_group" "node" {
   }
 }
 
-// open ports are bod ports, this is here to debug with later //TODO create proper security rules for the vpn
-//resource "aws_security_group" "vpn" {
-//  name        = "${var.cluster-name}-vpn"
-//  description = "Security group for vpn of the cluster"
-//  vpc_id      = aws_vpc.vpc.id
-//
-//  egress {
-//    from_port   = 0
-//    to_port     = 0
-//    protocol    = "-1"
-//    cidr_blocks = ["0.0.0.0/0"]
-//  }
-//  ingress {
-//    from_port = 500
-//    protocol = "udp"
-//    to_port = 500
-//    cidr_blocks = ["0.0.0.0/0"]
-//
-//  }
-//  ingress {
-//    from_port = 22
-//    protocol = "tcp"
-//    to_port = 22
-//    cidr_blocks = ["0.0.0.0/0"]
-//
-//  }
-//  ingress {
-//    from_port = 4500
-//    protocol = "udp"
-//    to_port = 4500
-//    cidr_blocks = ["0.0.0.0/0"]
-//  }
-//
-//  tags = {
-//    "Name"                                      = "${var.cluster-name}-vpn"
-//    "kubernetes.io/cluster/${var.cluster-name}" = "owned"
-//  }
-//}
-
-
 
 resource "aws_security_group_rule" "node-ssh" {
   cidr_blocks       = ["0.0.0.0/0"]
