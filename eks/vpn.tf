@@ -4,7 +4,7 @@ resource "aws_eip" "vpn_eip" {
 }
 
 resource "aws_instance" "vpn" {
-  ami = "ami-049aea444f70407b8"
+  ami = data.aws_ami.foxpass_vpn.id
 
   instance_type = "t2.micro"
 

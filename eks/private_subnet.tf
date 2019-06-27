@@ -15,7 +15,7 @@ resource "aws_subnet" "private" {
 }
 
 resource "aws_eip" "eips" {
-  count = 2
+  count = length(var.eips) == 0 ? 2 : 0
 }
 
 

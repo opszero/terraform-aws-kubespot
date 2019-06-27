@@ -68,10 +68,9 @@ variable "foxpass_api_key" {
   type = "string"
 }
 
-//use this for psk generation https://cloud.google.com/vpn/docs/how-to/generating-pre-shared-key
 variable "vpn_psk" {
   type = "string"
-  default = "(;v&zeTM8#^QLH4Eb]]8Mo(B"
+  description = "use this for psk generation https://cloud.google.com/vpn/docs/how-to/generating-pre-shared-key"
 }
 variable "vpn_group_requirements" {
   type = list(string)
