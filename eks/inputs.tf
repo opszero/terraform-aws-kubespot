@@ -11,6 +11,7 @@ variable "zones" {
 }
 
 variable "eips" {
+  type = list(set(string))
   default = []
 }
 
