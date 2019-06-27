@@ -11,7 +11,7 @@ variable "zones" {
 }
 
 variable "eips" {
-  type = list(set(string))
+  type    = list(set(string))
   default = []
 }
 
@@ -69,11 +69,11 @@ variable "foxpass_api_key" {
 }
 
 variable "vpn_psk" {
-  type = "string"
+  type        = "string"
   description = "use this for psk generation https://cloud.google.com/vpn/docs/how-to/generating-pre-shared-key"
 }
 variable "vpn_group_requirements" {
-  type = list(string)
+  type    = list(string)
   default = []
 }
 

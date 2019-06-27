@@ -1,6 +1,6 @@
 resource "aws_eip" "vpn_eip" {
   instance = aws_instance.vpn.id
-  vpc = true
+  vpc      = true
 }
 
 resource "aws_instance" "vpn" {
@@ -8,11 +8,11 @@ resource "aws_instance" "vpn" {
 
   instance_type = "t2.micro"
 
-  key_name = var.ec2_keypair
+  key_name                    = var.ec2_keypair
   associate_public_ip_address = true
-  subnet_id = aws_subnet.public[0].id
+  subnet_id                   = aws_subnet.public[0].id
   vpc_security_group_ids = [
-    aws_security_group.node.id]
+  aws_security_group.node.id]
   user_data = <<SCRIPT
 #!/bin/bash -xe
 exec > >(tee /var/log/user-data.log|logger -t user-data -s 2>/dev/console) 2>&1
