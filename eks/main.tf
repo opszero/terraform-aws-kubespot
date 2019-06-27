@@ -2,6 +2,8 @@ resource "aws_eks_cluster" "cluster" {
   name     = var.cluster-name
   role_arn = aws_iam_role.cluster.arn
 
+  version = var.cluster_version
+
   vpc_config {
     security_group_ids = [aws_security_group.cluster.id]
 

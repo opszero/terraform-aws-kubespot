@@ -2,6 +2,10 @@ variable "cluster-name" {
   type = string
 }
 
+variable "cluster_version" {
+  default = "1.13"
+}
+
 variable cidr_block {
   default = "10.2.0.0/16"
 }
