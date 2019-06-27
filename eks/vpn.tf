@@ -5,6 +5,7 @@ resource "aws_eip" "vpn_eip" {
 
 resource "aws_instance" "vpn" {
   ami = data.aws_ami.foxpass_vpn.id
+  count = var.foxpass_api_key ? 1 : 0
 
   instance_type = "t2.micro"
 
