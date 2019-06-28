@@ -93,6 +93,8 @@ cat <<EOF > $file
 }
 EOF
 
+sleep 15
+
 /opt/bin/config.py $file
 
 SCRIPT
