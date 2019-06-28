@@ -3,6 +3,48 @@ resource "aws_eip" "vpn_eip" {
   vpc      = true
 }
 
+resource "aws_security_group" "vpn" {
+  name        = "${var.cluster-name}-vpn"
+  description = "Security group for vpn of the cluster"
+  vpc_id      = aws_vpc.vpc.id
+  count       = var.foxpass_api_key != "" ? 1 : 0
+  egress {
+    from_port = 0
+    to_port   = 0
+    protocol  = "-1"
+    cidr_blocks = [
+    "0.0.0.0/0"]
+  }
+  ingress {
+    from_port = 500
+    protocol  = "udp"
+    to_port   = 500
+    cidr_blocks = [
+    "0.0.0.0/0"]
+
+  }
+  ingress {
+    from_port = 22
+    protocol  = "tcp"
+    to_port   = 22
+    cidr_blocks = [
+    "0.0.0.0/0"]
+
+  }
+  ingress {
+    from_port = 4500
+    protocol  = "udp"
+    to_port   = 4500
+    cidr_blocks = [
+    "0.0.0.0/0"]
+  }
+
+  tags = {
+    "Name"                                      = "${var.cluster-name}-vpn"
+    "kubernetes.io/cluster/${var.cluster-name}" = "owned"
+  }
+}
+
 resource "aws_instance" "vpn" {
   ami   = data.aws_ami.foxpass_vpn.id
   count = var.foxpass_api_key != "" ? 1 : 0
@@ -13,7 +55,7 @@ resource "aws_instance" "vpn" {
   associate_public_ip_address = true
   subnet_id                   = aws_subnet.public[0].id
   vpc_security_group_ids = [
-  aws_security_group.node.id]
+  aws_security_group.vpn[0].id]
   user_data = <<SCRIPT
 #!/bin/bash -xe
 exec > >(tee /var/log/user-data.log|logger -t user-data -s 2>/dev/console) 2>&1
