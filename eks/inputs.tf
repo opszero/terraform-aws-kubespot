@@ -68,23 +68,8 @@ variable "foxpass_api_key" {
   type = "string"
 }
 
-variable "vpn_psk" {
+variable "foxpass_vpn_psk" {
   type        = "string"
   description = "use this for psk generation https://cloud.google.com/vpn/docs/how-to/generating-pre-shared-key"
 }
-variable "vpn_group_requirements" {
-  type    = list(string)
-  default = []
-}
 
-// these should be enabled later
-//variable "duo_skey" {
-//  type = "string"
-//}
-//variable "duo_ikey" {
-//  type = "string"
-//}
-//
-//variable "duo_api_host" {
-//  type = "string"
-//}
