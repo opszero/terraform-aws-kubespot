@@ -15,6 +15,7 @@ variable "zones" {
 }
 
 variable "eips" {
+  type    = list(set(string))
   default = []
 }
 
@@ -65,3 +66,14 @@ variable "nodes_blue_min_size" {
 variable "nodes_blue_max_size" {
   default = 1
 }
+
+//the following below are required for setting up the vpn
+variable "foxpass_api_key" {
+  type = "string"
+}
+
+variable "foxpass_vpn_psk" {
+  type        = "string"
+  description = "use this for psk generation https://cloud.google.com/vpn/docs/how-to/generating-pre-shared-key"
+}
+

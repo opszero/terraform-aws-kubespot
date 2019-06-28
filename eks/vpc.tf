@@ -44,6 +44,7 @@ resource "aws_security_group" "node" {
   }
 }
 
+
 resource "aws_security_group_rule" "node-ssh" {
   cidr_blocks       = ["0.0.0.0/0"]
   description       = "Allow workstation to communicate with the cluster API Server"

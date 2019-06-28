@@ -8,3 +8,8 @@ aws-marketplace.json
 /cluster_dir
 
 .terraform/
+.idea/
+**/*.pem
+**/*.auto.*
+**/*.tfstate.*
+**/*.tfstate
