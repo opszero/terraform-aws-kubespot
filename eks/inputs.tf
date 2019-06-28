@@ -76,5 +76,6 @@ variable "foxpass_api_key" {
 variable "foxpass_vpn_psk" {
   type        = "string"
   description = "use this for psk generation https://cloud.google.com/vpn/docs/how-to/generating-pre-shared-key"
+  default = ""
 }
 
