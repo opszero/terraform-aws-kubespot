@@ -70,6 +70,7 @@ variable "nodes_blue_max_size" {
 //the following below are required for setting up the vpn
 variable "foxpass_api_key" {
   type = "string"
+  default = ""
 }
 
 variable "foxpass_vpn_psk" {
