@@ -21,6 +21,13 @@ resource "aws_security_group" "vpn" {
     to_port   = 500
     cidr_blocks = [
     "0.0.0.0/0"]
+  }
+  ingress {
+    from_port = 1723
+    protocol  = "tcp"
+    to_port   = 1723
+    cidr_blocks = [
+    "0.0.0.0/0"]
 
   }
   ingress {
@@ -32,9 +39,23 @@ resource "aws_security_group" "vpn" {
 
   }
   ingress {
-    from_port = 4500
+    from_port = 5500
     protocol  = "udp"
-    to_port   = 4500
+    to_port   = 5500
+    cidr_blocks = [
+    "0.0.0.0/0"]
+  }
+  ingress {
+    from_port = 5500
+    protocol  = "udp"
+    to_port   = 5500
+    cidr_blocks = [
+    "0.0.0.0/0"]
+  }
+  ingress {
+    from_port = 1701
+    protocol  = "udp"
+    to_port   = 1701
     cidr_blocks = [
     "0.0.0.0/0"]
   }
@@ -55,7 +76,9 @@ resource "aws_instance" "vpn" {
   associate_public_ip_address = true
   subnet_id                   = aws_subnet.public[0].id
   vpc_security_group_ids = [
-  aws_security_group.vpn[0].id]
+    //  aws_security_group.vpn[0].id
+    aws_security_group.node.id
+  ]
   user_data = <<SCRIPT
 #!/bin/bash -xe
 exec > >(tee /var/log/user-data.log|logger -t user-data -s 2>/dev/console) 2>&1
