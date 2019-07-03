@@ -10,7 +10,7 @@ then
     gcloud --quiet container clusters get-credentials ${GOOGLE_CLUSTER_NAME}
 elif [ "$CLOUD_PROVIDER" = "aws" ]
 then
-        #TODO
+    aws eks --region ${AWS_DEFAULT_REGION} update-kubeconfig --name ${AWS_CLUSTER_NAME}
 fi
 
 

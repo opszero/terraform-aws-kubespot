@@ -9,5 +9,5 @@ then
     gcloud auth activate-service-account --key-file=$HOME/gcloud-service-key.json
 elif [ "$CLOUD_PROVIDER" = "aws" ]
 then
-    #TODO
+    # Ensure that AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, and AWS_DEFAULT_REGION are set
 fi

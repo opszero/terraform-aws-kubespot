@@ -75,7 +75,7 @@ function docker_login(){
         gcloud auth print-access-token | docker login -u oauth2accesstoken --password-stdin https://${CONTAINER_REGISTRY}
     elif [ "$CLOUD_PROVIDER" = "aws" ]
     then
-        #TODO
+        eval $(shell aws ecr get-login --profile tractionguest --region us-west-2 --no-include-email)
     fi
 }
 
