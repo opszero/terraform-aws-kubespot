@@ -1,0 +1,16 @@
+version: 2 # use CircleCI 2.0
+jobs: # a collection of steps
+  build:
+    machine: true
+    environment:
+      - IMAGE: deploy_machine
+    steps:
+      - checkout
+      - run:
+          name: Authenticate
+          command: |
+            make auth
+      - run:
+          name: Build
+          command: |
+            make build

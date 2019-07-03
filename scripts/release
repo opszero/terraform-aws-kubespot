@@ -1,0 +1,80 @@
+#!/usr/bin/env ruby
+
+require 'bundler/inline'
+
+
+gemfile do
+  source 'https://rubygems.org'
+  gem "octokit"
+  gem "thor"
+end
+
+ENV["GREN_GITHUB_TOKEN"] = ENV["GITHUB_TOKEN"]
+
+class Deployer < Thor
+  attr_reader :client, :repo, :project
+
+  option :target_commitsh, aliases: ["-c"], desc: "Specifies the commitish value that determines where the Git tag is created from. Can be any branch or commit SHA. Unused if the Git tag already exists. Default: the repository's default branch"
+  option :project_dir, aliases: ["-p"]
+  desc "production", "Release to production"
+  def production
+    _init
+    create_release(next_release)
+  end
+
+  option :target_commitsh, aliases: ["-c"], desc: "Specifies the commitish value that determines where the Git tag is created from. Can be any branch or commit SHA. Unused if the Git tag already exists. Default: the repository's default branch"
+  option :project_dir, aliases: ["-p"]
+  desc "beta", "Release to beta"
+  def beta
+    _init
+    create_release(next_beta, prerelease: true)
+  end
+
+  private
+
+  def _init
+    @project = options[:project_dir] || Dir.pwd
+    Dir.chdir(project) do
+      @repo = `git config --get remote.origin.url`.match(/:(.*).git/)[1].downcase
+    end
+    @client = Octokit::Client.new(:access_token => ENV["GITHUB_TOKEN"])
+  end
+
+  def create_release(next_rel, opts = {  })
+    puts "creating #{next_rel}"
+    client.create_release(repo, next_rel, {
+                            name: "Release #{Time.now.iso8601}" }.
+                                            merge(opts).
+                                            merge(options.slice(:target_commitsh)))
+    Dir.chdir(project) do
+      `gren release --override --data-source=commits #{opts[:prerelease] ? '-P' : ''}`
+    end
+  end
+
+  def next_release
+    @next_release ||= latest_release.succ
+  end
+
+  def next_beta
+    latest_beta_release.succ
+  end
+
+  def latest_release
+    begin
+      client.latest_release(repo).tag_name.gsub(/-pre.*/, "")
+    rescue Octokit::NotFound
+      "v0.0.0"
+    end
+  end
+
+  def latest_beta_release
+    release = client.releases(repo).first
+    if release.tag_name =~ /-pre\d+/
+      release.tag_name
+    else
+      "#{next_release}-pre0"
+    end
+  end
+end
+
+Deployer.start(ARGV)
