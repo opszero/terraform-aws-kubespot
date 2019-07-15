@@ -1,7 +1,7 @@
 resource "aws_eip" "vpn_eip" {
   instance = aws_instance.vpn[0].id
   vpc      = true
-  count       = var.foxpass_api_key != "" ? 1 : 0
+  count    = var.foxpass_api_key != "" ? 1 : 0
 }
 
 resource "aws_security_group" "vpn" {
