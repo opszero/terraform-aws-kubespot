@@ -13,3 +13,5 @@ aws-marketplace.json
 **/*.auto.*
 **/*.tfstate.*
 **/*.tfstate
+eks/kubeconfig.yaml
+eks/kubeconfig.yaml

@@ -78,3 +78,7 @@ variable "foxpass_vpn_psk" {
   default = ""
 }
 
+variable "logdna_ingestion_key" {
+  type = "string"
+  default = ""
+}
