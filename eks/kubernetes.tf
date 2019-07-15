@@ -33,13 +33,3 @@ CONFIGMAPAWSAUTH
 CONFIGMAPAWSUSERS
   }
 }
-
-//resource "kubernetes_secret" "cluser" {
-//  metadata {
-//    name = "logdna_ingestion key"
-//    namespace = "kube-system"
-//  }
-//  data = {
-//
-//  }
-//}
