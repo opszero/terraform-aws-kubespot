@@ -21,6 +21,8 @@ RUNTIME_PACKAGES=$(echo \
                        gettext)
 
 
+export DEBIAN_FRONTEND=noninteractive
+
 apt-get update -y
 apt-get install -y $BUILD_PACKAGES
 apt-get install -y $RUNTIME_PACKAGES
@@ -32,10 +34,9 @@ apt-get install -y $RUNTIME_PACKAGES
 # apt-get update -y && apt-get install google-cloud-sdk -y
 
 # Install kubectl
-touch /etc/apt/sources.list.d/kubernetes.list
-echo "deb http://apt.kubernetes.io/ kubernetes-xenial main" | tee -a /etc/apt/sources.list.d/kubernetes.list
-apt-get update
-apt-get install -y kubectl
+curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl
+chmod +x ./kubectl
+mv ./kubectl /usr/local/bin/kubectl
 
 # Install Helm
 HELM_VERSION=v2.10.0

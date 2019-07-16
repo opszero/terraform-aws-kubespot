@@ -30,3 +30,7 @@ export SUBDOMAIN=${SUBDOMAIN:-$HELM_NAME}
 export DOMAIN=${DOMAIN:-"tractionguest.com"}
 export HOST="$SUBDOMAIN.$DOMAIN"
 export URL_HOST="https://$HOST"
+export PROJECT_ID=${PROJECT_ID:-"tractionguest"}
+export CIRCLE_BRANCH=$(echo $CIRCLE_BRANCH | sed 's/[^A-Za-z0-9_]/-/g')
+export CONTAINER_REGISTRY=${CONTAINER_REGISTRY:-"291031131640.dkr.ecr.us-west-2.amazonaws.com"}
+export BASE_IMAGE=${IMAGE}_base

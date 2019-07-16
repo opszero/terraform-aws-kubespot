@@ -2,10 +2,7 @@
 
 set -e
 
-export PROJECT_ID=${PROJECT_ID:-"tractionguest/deploy-machine"}
-export CIRCLE_BRANCH=$(echo $CIRCLE_BRANCH | sed 's/[^A-Za-z0-9_]/-/g')
-export CONTAINER_REGISTRY=${CONTAINER_REGISTRY:-"291031131640.dkr.ecr.us-west-2.amazonaws.com"}
-export BASE_IMAGE=${IMAGE}_base
+source ./scripts/set_env.sh
 
 function image_exists(){
     if [ "$CLOUD_PROVIDER" = "gcp" ]
@@ -14,7 +11,7 @@ function image_exists(){
         return $?
     elif [ "$CLOUD_PROVIDER" = "aws" ]
     then
-        #TODO
+        return $(aws ecr describe-images --repository-name "${PROJECT_ID}/${BASE_IMAGE}" --image-ids="imageTag=$DOCKER_TAG" | grep imageDetails | wc -l)
     else
         return 1
     fi
@@ -75,7 +72,7 @@ function docker_login(){
         gcloud auth print-access-token | docker login -u oauth2accesstoken --password-stdin https://${CONTAINER_REGISTRY}
     elif [ "$CLOUD_PROVIDER" = "aws" ]
     then
-        eval $(shell aws ecr get-login --profile tractionguest --region us-west-2 --no-include-email)
+        eval $(aws ecr get-login --no-include-email)
     fi
 }
 
@@ -85,19 +82,18 @@ function base_count(){
         return $(gcloud container images list-tags --filter="tags=($CIRCLE_BRANCH)" --format="table[no-heading](digest)" "${CONTAINER_REGISTRY}/${PROJECT_ID}/${BASE_IMAGE}" | wc -l)
     elif [ "$CLOUD_PROVIDER" = "aws" ]
     then
-        #TODO
+        return $(aws ecr describe-images --repository-name "${PROJECT_ID}/${BASE_IMAGE}" --image-ids="imageTag=$CIRCLE_BRANCH" | grep imageDetails | wc -l)
     fi
 }
 
 docker_login
 
 # If we've created a base image for this branch, let's use it. Otherwise use the latest base image.
-base_count
-if [ $? -gt 0 ]
+if base_count
 then
-    export DOCKER_TAG=$CIRCLE_BRANCH
-else
     export DOCKER_TAG="latest"
+else
+    export DOCKER_TAG=$CIRCLE_BRANCH
 fi
 
 if should_build_base
