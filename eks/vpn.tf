@@ -1,7 +1,7 @@
 resource "aws_eip" "vpn_eip" {
   instance = aws_instance.vpn[0].id
   vpc      = true
-  count       = var.foxpass_api_key != "" ? 1 : 0
+  count    = var.foxpass_api_key != "" ? 1 : 0
 }
 
 resource "aws_security_group" "vpn" {
@@ -96,6 +96,26 @@ EOF
 sleep 15
 
 /opt/bin/config.py $file
+
+
+if [[ ${var.logdna_ingestion_key} == ""  ]]
+then
+    echo "Not Installing LogDNA."
+else
+    echo "deb https://repo.logdna.com stable main" | sudo tee /etc/apt/sources.list.d/logdna.list
+    wget -O- https://repo.logdna.com/logdna.gpg | sudo apt-key add -
+    apt-get update
+    apt-get install logdna-agent < "/dev/null" # this line needed for copy/paste
+    logdna-agent -k ${var.logdna_ingestion_key} # this is your unique Ingestion Key
+    # /var/log is monitored/added by default (recursively), optionally add more dirs with:
+    # sudo logdna-agent -d /path/to/log/folders
+    # You can configure the agent to tag your hosts with:
+    # sudo logdna-agent -t mytag,myothertag
+    update-rc.d logdna-agent defaults
+    /etc/init.d/logdna-agent start
+fi
+
+
 
 SCRIPT
 
