@@ -6,8 +6,12 @@ variable "cluster_version" {
   default = "1.13"
 }
 
+variable "region" {
+  default = "us-central1"
+}
+
 variable "zones" {
-  default = ["us-west-2a", "us-west-2b"]
+  default = ["us-central1-a", "us-central1-b"]
 }
 
 variable "eips" {
@@ -65,4 +69,3 @@ variable "foxpass_vpn_psk" {
   description = "use this for psk generation https://cloud.google.com/vpn/docs/how-to/generating-pre-shared-key"
   default = ""
 }
-
