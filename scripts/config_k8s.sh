@@ -12,6 +12,3 @@ elif [ "$CLOUD_PROVIDER" = "aws" ]
 then
     aws eks --region ${AWS_DEFAULT_REGION} update-kubeconfig --name ${AWS_CLUSTER_NAME}
 fi
-
-
-# TODO aws kubeconfig
