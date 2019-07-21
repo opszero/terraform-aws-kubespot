@@ -38,10 +38,6 @@ export BASE_IMAGE=${IMAGE}_base
 if [ -n "$AWS_SECRETS" ]
 then
    AWS_SECRETS_FILE=/tmp/.env.aws
-   CURRENT_ENV_FILE=/tmp/.env.current
-   env > $CURRENT_ENV_FILE
-   aws secretsmanager get-secret-value --secret-id "$AWS_SECRETS" | jq -r '.SecretString' > $AWS_SECRETS_FILE
+   ruby scripts/aws_secrets.rb > $AWS_SECRETS_FILE
    source $AWS_SECRETS_FILE
-   # don't overwrite already set variables
-   source $CURRENT_ENV_FILE
 fi
