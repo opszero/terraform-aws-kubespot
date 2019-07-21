@@ -18,6 +18,7 @@ RUNTIME_PACKAGES=$(echo \
                        build-essential \
                        postgresql-client \
                        python3-pip \
+                       jq \
                        netcat \
                        gettext)
 
