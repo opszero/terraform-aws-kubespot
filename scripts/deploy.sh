@@ -9,14 +9,28 @@ source /scripts/set_env.sh
 HELM_HOME=$(helm home)
 mkdir -p $HELM_HOME
 
-if [ ! -f $HELM_HOME/ca.pem ]; then
-    echo "$HELM_CA" | base64 -d --ignore-garbage > $HELM_HOME/ca.pem
-    echo "$HELM_CERT"| base64 -d --ignore-garbage > $HELM_HOME/cert.pem
-    echo "$HELM_KEY"| base64 -d --ignore-garbage > $HELM_HOME/key.pem
-fi
 
 HELM_ARGS=()
+
 CIRCLE_BRANCH=$(echo $CIRCLE_BRANCH | sed 's/[^A-Za-z0-9]/-/g' | tr '[:upper:]' '[:lower:]')
+
+if [ -n "$HELM_TLS" ]
+then
+    if [ ! -f $HELM_HOME/ca.pem ]
+    then
+        echo "$HELM_CA" | base64 -d --ignore-garbage > $HELM_HOME/ca.pem
+    fi
+    if [ ! -f $HELM_HOME/cert.pem ]
+    then
+        echo "$HELM_CERT"| base64 -d --ignore-garbage > $HELM_HOME/cert.pem
+    fi
+    if [ ! -f $HELM_HOME/key.pem ]
+    then
+        echo "$HELM_KEY"| base64 -d --ignore-garbage > $HELM_HOME/key.pem
+    fi
+    HELM_ARGS+=(--tls)
+fi
+
 
 if [ "$CIRCLE_BRANCH" = "master" ] || [ "$CIRCLE_BRANCH" = "" ]
 then
@@ -41,14 +55,13 @@ HELM_ARGS+=(
     --set ingress.tls[0].hosts={$HOST}
     --set ingress.tls[0].secretName=$HELM_NAME-staging-cert
     --set image.tag=${CIRCLE_SHA1}
-    --tls
     --tiller-namespace=$TILLER_NAMESPACE
     --force
     --wait
     --install
 )
 
-if [ ! -z "$HELM_VARS" ]
+if [ -n "$HELM_VARS" ]
 then
     HELM_ARGS+=($(echo "$HELM_VARS" | envsubst))
 fi
