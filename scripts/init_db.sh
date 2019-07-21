@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -ex
+set -e
 
 # Wait until the connection is available or timeout after 10 seconds
 timeout 10 /scripts/db_wait.sh
