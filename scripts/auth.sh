@@ -3,10 +3,10 @@
 set -e
 
 # Check if set_env exists and source it if it does
-if [ -e "./scripts/set_env.sh"]
+if [ -e ./scripts/set_env.sh ]
 then
     source ./scripts/set_env.sh
-elif [ -e "/scripts/set_env.sh" ]
+elif [ -e /scripts/set_env.sh ]
 then
     source /scripts/set_env.sh
 fi
