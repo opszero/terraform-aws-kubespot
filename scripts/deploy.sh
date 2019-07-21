@@ -32,8 +32,7 @@ else
         kubectl create namespace $CIRCLE_BRANCH
     fi
 
-    kubectl get secret gcrsecret --export -o yaml | kubectl apply -n $CIRCLE_BRANCH -f -
-    kubectl patch serviceaccount default -n $CIRCLE_BRANCH -p '{"imagePullSecrets": [{"name": "gcrsecret"}]}'
+    /scripts/apply_registry_secret.sh
 fi
 TILLER_NAMESPACE=${TILLER_NAMESPACE:-"kube-system"}
 
