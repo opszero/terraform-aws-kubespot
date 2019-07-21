@@ -7,6 +7,8 @@ timeout 10 /scripts/db_wait.sh
 
 source /scripts/set_env.sh
 
+echo $rails_env
+
 if rake db:exists DATABASE_USER=deployer
 then
     DATABASE_USER=$DATABASE_OWNER rake db:migrate
