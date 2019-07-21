@@ -38,6 +38,6 @@ export BASE_IMAGE=${IMAGE}_base
 if [ -n "$AWS_SECRETS" ]
 then
    AWS_SECRETS_FILE=/tmp/.env.aws
-   ruby scripts/aws_secrets.rb > $AWS_SECRETS_FILE
+   ruby /scripts/aws_secrets.rb > $AWS_SECRETS_FILE
    source $AWS_SECRETS_FILE
 fi
