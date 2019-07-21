@@ -4,7 +4,6 @@ jobs: # a collection of steps
     machine: true
     environment:
       - IMAGE: deploy_machine
-      - FORCE_BASE_BUILD: true
     steps:
       - checkout
       - run:
