@@ -4,14 +4,15 @@ set -e
 
 source ./scripts/set_env.sh
 
-function image_exists(){
+function no_image_exists(){
     if [ "$CLOUD_PROVIDER" = "gcp" ]
     then
         [ $(gcloud container images list-tags --filter="tags=($DOCKER_TAG)" "${CONTAINER_REGISTRY}/${PROJECT_ID}/${BASE_IMAGE}" | wc -l) -eq 0 ]
         return $?
     elif [ "$CLOUD_PROVIDER" = "aws" ]
     then
-        return $(aws ecr describe-images --repository-name "${PROJECT_ID}/${BASE_IMAGE}" --image-ids="imageTag=$DOCKER_TAG" | grep imageDetails | wc -l)
+        [ $(aws ecr describe-images --repository-name "${PROJECT_ID}/${BASE_IMAGE}" --image-ids="imageTag=$DOCKER_TAG" | grep imageDetails | wc -l) -eq 0 ]
+        return $?
     else
         return 1
     fi
@@ -23,7 +24,7 @@ function should_build_base(){
     if [ -e "Dockerfile.base" ]
     then
         # Check if a base image doesn't exist yet.
-        if image_exists
+        if no_image_exists || [ -n "$FORCE_BASE_BUILD" ]
         then
             return 0
         # Check if there's a custom script to build the base image
@@ -34,7 +35,7 @@ function should_build_base(){
         else
             # Otherwise compare the Dockerfile.base with the latest sha
             local BASE_COMMIT=$(git log -1 --format=format:%H --full-diff Dockerfile.base)
-            if [ "$BASE_COMMIT" = "$CIRCLE_SHA1" ] || [ -n "$FORCE_BASE_BUILD" ]
+            if [ "$BASE_COMMIT" = "$CIRCLE_SHA1" ]
             then
                 return 0
             else
