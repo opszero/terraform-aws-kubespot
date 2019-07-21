@@ -35,9 +35,9 @@ export CIRCLE_BRANCH=$(echo $CIRCLE_BRANCH | sed 's/[^A-Za-z0-9_]/-/g')
 export CONTAINER_REGISTRY=${CONTAINER_REGISTRY:-"291031131640.dkr.ecr.us-west-2.amazonaws.com"}
 export BASE_IMAGE=${IMAGE}_base
 
-if [ -n "$AWS_SECRETS" ]
-then
-   AWS_SECRETS_FILE=${AWS_SECRETS_FILE:-".env.aws"}
-   aws secretsmanager get-secret-value --secret-id "$AWS_SECRETS" | jq -r '.SecretString' > $AWS_SECRETS_FILE
-   source $AWS_SECRETS_FILE
-fi
+# if [ -n "$AWS_SECRETS" ]
+# then
+#    AWS_SECRETS_FILE=${AWS_SECRETS_FILE:-".env.aws"}
+#    aws secretsmanager get-secret-value --secret-id "$AWS_SECRETS" | jq -r '.SecretString' > $AWS_SECRETS_FILE
+#    source $AWS_SECRETS_FILE
+# fi
