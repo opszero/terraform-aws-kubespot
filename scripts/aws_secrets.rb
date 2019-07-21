@@ -4,7 +4,7 @@ def secrets
     s.split("=")
   }.each do |k, v|
     next unless k
-    puts %Q{export #{k}=${#{k}:-#{v.inspect}}}
+    puts %Q{export #{k}=${#{k}:-'#{v}'}}
   end
 end
 
