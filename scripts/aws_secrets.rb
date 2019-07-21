@@ -3,7 +3,8 @@ def secrets
     split("\n").map{|s|
     s.split("=")
   }.each do |k, v|
-    puts %{#{k}=${#{k}:-"#{v}"}}
+    next unless k
+    puts %Q{#{k}=${#{k}:-#{v.inspect}}}
   end
 end
 
