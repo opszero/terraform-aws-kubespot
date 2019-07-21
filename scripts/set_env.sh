@@ -2,7 +2,7 @@
 
 set -e
 
-if [ -n "$K8S_DEPLOY_ENV_SET" ]
+if [ -z "$K8S_DEPLOY_ENV_SET" ]
 then
     if [ -z "$DATABASE" ]
     then
