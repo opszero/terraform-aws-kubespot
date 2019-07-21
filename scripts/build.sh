@@ -34,7 +34,7 @@ function should_build_base(){
         else
             # Otherwise compare the Dockerfile.base with the latest sha
             local BASE_COMMIT=$(git log -1 --format=format:%H --full-diff Dockerfile.base)
-            if [ "$BASE_COMMIT" = "$CIRCLE_SHA1" || "$FORCE_BASE_BUILD" ]
+            if [ "$BASE_COMMIT" = "$CIRCLE_SHA1" ] || [ -n "$FORCE_BASE_BUILD" ]
             then
                 return 0
             else
