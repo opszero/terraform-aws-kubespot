@@ -40,8 +40,8 @@ then
    AWS_SECRETS_FILE=/tmp/.env.aws
    ruby /scripts/aws_secrets.rb > $AWS_SECRETS_FILE
    # clear out any env that should be overridden by the secrets manager
-   export AWS_ACCESS_KEY_ID=
-   export AWS_SECRET_ACCESS_KEY=
+   # export AWS_ACCESS_KEY_ID=
+   # export AWS_SECRET_ACCESS_KEY=
    # allow the apps to reset any extra variables
    if [ -e ./scripts/reset_env_vars.sh ]
    then
