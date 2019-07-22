@@ -5,7 +5,11 @@ class App < Thor
   method_option :env, aliases: "-e", desc: "The environment that you care about"
   def config_yaml(file)
     if options[:env]
-      puts YAML.dump(YAML.load(`cat #{file} | envsubst`.to_yaml)[options[:env]])
+      puts YAML.dump(
+             YAML.load(
+               YAML.load(`cat #{file} | envsubst`.to_yaml)
+             )[options[:env]]
+           )
     else
       puts File.read(file)
     end
