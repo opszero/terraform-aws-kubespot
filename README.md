@@ -1,5 +1,6 @@
-# deploy-machine
-Docker Image used to deploy micro services within the TractionGuest ecosystem
+# DeployTag
+
+Docker Image used to deploy micro services
 
 The machine consists of:
 - build-essential

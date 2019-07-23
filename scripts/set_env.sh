@@ -29,12 +29,12 @@ then
     export CLOUD_PROVIDER=${CLOUD_PROVIDER:-"aws"}
     export HELM_NAME="$HELM_NAME"
     export SUBDOMAIN=${SUBDOMAIN:-$HELM_NAME}
-    export DOMAIN=${DOMAIN:-"tractionguest.com"}
+    export DOMAIN=${DOMAIN:-"opszero.com"}
     export HOST="$SUBDOMAIN.$DOMAIN"
     export URL_HOST="https://$HOST"
-    export PROJECT_ID=${PROJECT_ID:-"tractionguest"}
+    export PROJECT_ID=${PROJECT_ID:-"opszero"}
     export CIRCLE_BRANCH=$(echo $CIRCLE_BRANCH | sed 's/[^A-Za-z0-9_]/-/g')
-    export CONTAINER_REGISTRY=${CONTAINER_REGISTRY:-"291031131640.dkr.ecr.us-west-2.amazonaws.com"}
+    export CONTAINER_REGISTRY=${CONTAINER_REGISTRY:-"1234.dkr.ecr.us-west-2.amazonaws.com"}
     export BASE_IMAGE=${IMAGE}_base
 
     if [ -n "$AWS_SECRETS" ] && [ -e /scripts/aws_secrets.rb ]

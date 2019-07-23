@@ -2,9 +2,9 @@
 
 set -e
 
-PROJECT_ID=${PROJECT_ID:-"tractionguest/deploy-machine"}
+PROJECT_ID=${PROJECT_ID:-"opszero/deploytag"}
 DOCKER_FILE=${DOCKER_FILE:-"Dockerfile"}
-CONTAINER_REGISTRY=${CONTAINER_REGISTRY:-"291031131640.dkr.ecr.us-west-2.amazonaws.com"}
+CONTAINER_REGISTRY=${CONTAINER_REGISTRY:-"1234.dkr.ecr.us-west-2.amazonaws.com"}
 
 set -x
 docker build ${DOCKER_BUILD_ARGS} -t ${IMAGE} -f $DOCKER_FILE .
