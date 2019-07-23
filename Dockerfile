@@ -1,4 +1,8 @@
-FROM ${CONTAINER_REGISTRY}/${PROJECT_ID}/${BASE_IMAGE}:${DOCKER_TAG}
+FROM ubuntu:18.04
+
+COPY scripts/dependencies.sh /scripts/
+RUN /scripts/dependencies.sh
+
 
 COPY scripts /scripts
 COPY rails /rails
