@@ -9,13 +9,14 @@ source /scripts/set_env.sh
 
 echo "Rails Env is ${RAILS_ENV}"
 
-if rake db:exists DATABASE_USER=deployer
+if rake db:exists
 then
     rake db:migrate
 else
     # create a database using the deployer account and set the
     # ownership to the service user
     rake db:create
+    rake db:schema:load
     #DATABASE_USER=deployer rake db:alter_owner
     #DATABASE_USER=deployer rake db:add_extensions
     rake db:migrate
