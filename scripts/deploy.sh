@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -e
+set -ex
 
 /scripts/config_k8s.sh
 
@@ -66,5 +66,4 @@ then
     HELM_ARGS+=($(echo "$HELM_VARS" | envsubst))
 fi
 
-helm dependencies update
 helm upgrade $HELM_NAME $CHART_NAME "${HELM_ARGS[@]}"
