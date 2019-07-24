@@ -10,6 +10,7 @@ BUILD_PACKAGES=$(echo \
                      gnupg2 \
                      lsb-release \
                      software-properties-common \
+                     git-core \
               )
 
 RUNTIME_PACKAGES=$(echo \
