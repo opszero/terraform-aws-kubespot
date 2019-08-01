@@ -6,8 +6,8 @@ resource "aws_subnet" "public" {
   vpc_id            = aws_vpc.vpc.id
 
   tags = {
-    "Name"                                      = var.cluster-name
-    "kubernetes.io/cluster/${var.cluster-name}" = "shared"
+    "Name"                                      = var.cluster_name
+    "kubernetes.io/cluster/${var.cluster_name}" = "shared"
   }
 }
 
@@ -15,7 +15,7 @@ resource "aws_internet_gateway" "public" {
   vpc_id = aws_vpc.vpc.id
 
   tags = {
-    Name = var.cluster-name
+    Name = var.cluster_name
   }
 }
 

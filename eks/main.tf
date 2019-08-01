@@ -1,5 +1,5 @@
 resource "aws_eks_cluster" "cluster" {
-  name     = var.cluster-name
+  name     = var.cluster_name
   role_arn = aws_iam_role.cluster.arn
 
   version = var.cluster_version
@@ -47,7 +47,7 @@ users:
         - "eks"
         - "get-token"
         - "--cluster-name"
-        - "${var.cluster-name}"
+        - "${var.cluster_name}"
       env:
         - name: AWS_PROFILE
           value: "${var.aws_profile}"
@@ -69,7 +69,7 @@ locals {
 #!/bin/bash -xe
 set -o xtrace
 
-/etc/eks/bootstrap.sh --apiserver-endpoint '${aws_eks_cluster.cluster.endpoint}' --b64-cluster-ca '${aws_eks_cluster.cluster.certificate_authority[0].data}' '${var.cluster-name}'
+/etc/eks/bootstrap.sh --apiserver-endpoint '${aws_eks_cluster.cluster.endpoint}' --b64-cluster-ca '${aws_eks_cluster.cluster.certificate_authority[0].data}' '${var.cluster_name}'
 USERDATA
 
 }
@@ -79,7 +79,7 @@ resource "aws_launch_configuration" "nodes_blue" {
   iam_instance_profile        = aws_iam_instance_profile.node.name
   image_id                    = data.aws_ami.opszero_eks.id
   instance_type               = var.nodes_blue_instance_type
-  name_prefix                 = "${var.cluster-name}-nodes-blue"
+  name_prefix                 = "${var.cluster_name}-nodes-blue"
   security_groups             = [aws_security_group.node.id]
   user_data_base64            = base64encode(local.node-userdata)
 
@@ -99,18 +99,18 @@ resource "aws_autoscaling_group" "nodes_blue" {
   launch_configuration = aws_launch_configuration.nodes_blue.id
   max_size             = var.nodes_blue_max_size
   min_size             = var.nodes_blue_min_size
-  name                 = "${var.cluster-name}-nodes-blue"
+  name                 = "${var.cluster_name}-nodes-blue"
 
   vpc_zone_identifier = aws_subnet.private.*.id
 
   tags = [
     {
       key                 = "Name"
-      value               = "${var.cluster-name}-nodes-blue"
+      value               = "${var.cluster_name}-nodes-blue"
       propagate_at_launch = true
     },
     {
-      key                 = "kubernetes.io/cluster/${var.cluster-name}"
+      key                 = "kubernetes.io/cluster/${var.cluster_name}"
       value               = "owned"
       propagate_at_launch = true
     },
@@ -122,7 +122,7 @@ resource "aws_launch_configuration" "nodes_green" {
   iam_instance_profile        = aws_iam_instance_profile.node.name
   image_id                    = data.aws_ami.opszero_eks.id
   instance_type               = var.nodes_green_instance_type
-  name_prefix                 = "${var.cluster-name}-nodes-green"
+  name_prefix                 = "${var.cluster_name}-nodes-green"
   security_groups             = [aws_security_group.node.id]
   user_data_base64            = base64encode(local.node-userdata)
 
@@ -142,18 +142,18 @@ resource "aws_autoscaling_group" "nodes_green" {
   launch_configuration = aws_launch_configuration.nodes_green.id
   max_size             = var.nodes_green_max_size
   min_size             = var.nodes_green_min_size
-  name                 = "${var.cluster-name}-nodes-green"
+  name                 = "${var.cluster_name}-nodes-green"
 
   vpc_zone_identifier = aws_subnet.private.*.id
 
   tags = [
     {
       key                 = "Name"
-      value               = "${var.cluster-name}-nodes-green"
+      value               = "${var.cluster_name}-nodes-green"
       propagate_at_launch = true
     },
     {
-      key                 = "kubernetes.io/cluster/${var.cluster-name}"
+      key                 = "kubernetes.io/cluster/${var.cluster_name}"
       value               = "owned"
       propagate_at_launch = true
     },

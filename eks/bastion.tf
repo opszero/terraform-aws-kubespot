@@ -13,7 +13,7 @@ resource "aws_instance" "bastion" {
   vpc_security_group_ids      = [aws_security_group.node.id]
 
   tags = {
-    Name = "${var.cluster-name}-bastion"
+    Name = "${var.cluster_name}-bastion"
   }
   user_data = <<SCRIPT
 

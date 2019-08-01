@@ -1,5 +1,5 @@
 resource "aws_iam_role" "cluster" {
-  name = "${var.cluster-name}-cluster"
+  name = "${var.cluster_name}-cluster"
 
   assume_role_policy = <<POLICY
 {
@@ -29,7 +29,7 @@ resource "aws_iam_role_policy_attachment" "cluster-AmazonEKSServicePolicy" {
 }
 
 resource "aws_iam_role" "node" {
-  name = "${var.cluster-name}-node"
+  name = "${var.cluster_name}-node"
 
   assume_role_policy = <<POLICY
 {
@@ -64,12 +64,12 @@ resource "aws_iam_role_policy_attachment" "node-AmazonEC2ContainerRegistryReadOn
 }
 
 resource "aws_iam_instance_profile" "node" {
-  name = "${var.cluster-name}-node"
+  name = "${var.cluster_name}-node"
   role = aws_iam_role.node.name
 }
 
 resource "aws_iam_role_policy" "autoscaling" {
-  name = "AWSEKSAutoscaler-${var.cluster-name}"
+  name = "AWSEKSAutoscaler-${var.cluster_name}"
   role = aws_iam_role.node.id
 
   policy = <<EOF
