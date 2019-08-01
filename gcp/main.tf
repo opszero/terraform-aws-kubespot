@@ -37,6 +37,11 @@ resource "google_container_node_pool" "nodes_green" {
       max_node_count = var.nodes_green_max_size
     }
 
+    management {
+      auto_repair  = true
+      auto_upgrade = true
+    }
+
     oauth_scopes = [
       "https://www.googleapis.com/auth/logging.write",
       "https://www.googleapis.com/auth/monitoring",
