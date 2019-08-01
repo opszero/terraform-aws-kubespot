@@ -25,21 +25,21 @@ resource "google_container_node_pool" "nodes_green" {
   cluster        = google_container_cluster.cluster.name
   node_count     = 1
 
+  autoscaling {
+    min_node_count = var.nodes_green_min_size
+    max_node_count = var.nodes_green_max_size
+  }
+
+  management {
+    auto_repair  = true
+    auto_upgrade = true
+  }
+
   node_config {
     machine_type = var.nodes_green_instance_type
 
     metadata = {
       disable-legacy-endpoints = "true"
-    }
-
-    autoscaling {
-      min_node_count = var.nodes_green_min_size
-      max_node_count = var.nodes_green_max_size
-    }
-
-    management {
-      auto_repair  = true
-      auto_upgrade = true
     }
 
     oauth_scopes = [
