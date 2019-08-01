@@ -1,7 +1,7 @@
-# resource "azurerm_resource_group" "test" {
-#   name     = "acctestRG1"
-#   location = "East US"
-# }
+resource "azurerm_resource_group" "cluster_group" {
+  name     = var.cluster_name
+  location = var.region
+}
 
 # resource "azurerm_kubernetes_cluster" "test" {
 #   name                = "acctestaks1"
