@@ -13,7 +13,15 @@ fi
 
 if [ "$CLOUD_PROVIDER" = "gcp" ]
 then
-    echo $GCLOUD_SERVICE_KEY > $HOME/gcloud-service-key.json
+    if [ -n "$GCLOUD_SERVICE_KEY"]
+    then
+        echo $GCLOUD_SERVICE_KEY > $HOME/gcloud-service-key.json
+    elif [ -n "$GCLOUD_SERVICE_KEY_BASE64" ]
+    then
+        echo $GCLOUD_SERVICE_KEY_BASE64 > $HOME/gcloud-service-key.json
+    else
+        echo "No Google Service Account Key given"
+    fi
     gcloud auth activate-service-account --key-file=$HOME/gcloud-service-key.json
 elif [ "$CLOUD_PROVIDER" = "aws" ]
 then
