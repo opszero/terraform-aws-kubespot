@@ -18,7 +18,7 @@ then
         echo $GCLOUD_SERVICE_KEY > $HOME/gcloud-service-key.json
     elif [ -n "$GCLOUD_SERVICE_KEY_BASE64" ]
     then
-        echo $GCLOUD_SERVICE_KEY_BASE64 > $HOME/gcloud-service-key.json
+        echo $GCLOUD_SERVICE_KEY_BASE64 | base64 -d > $HOME/gcloud-service-key.json
     else
         echo "No Google Service Account Key given"
     fi
