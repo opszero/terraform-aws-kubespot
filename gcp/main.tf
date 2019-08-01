@@ -26,7 +26,7 @@ resource "google_container_node_pool" "nodes_green" {
   node_count     = 1
 
   node_config {
-    machine_type = ""
+    machine_type = var.nodes_green_instance_type
 
     metadata = {
       disable-legacy-endpoints = "true"
