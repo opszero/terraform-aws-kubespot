@@ -1,6 +1,5 @@
 resource "google_compute_subnetwork" "subnet" {
   name    = var.cluster_name
-  region  = var.region
   network = google_compute_network.network.self_link
 
   # TODO: Convert to variable
