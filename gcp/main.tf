@@ -32,6 +32,11 @@ resource "google_container_node_pool" "nodes_green" {
       disable-legacy-endpoints = "true"
     }
 
+    autoscaling {
+      min_node_count = var.nodes_green_min_size
+      max_node_count = var.nodes_green_max_size
+    }
+
     oauth_scopes = [
       "https://www.googleapis.com/auth/logging.write",
       "https://www.googleapis.com/auth/monitoring",
