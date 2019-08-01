@@ -19,10 +19,10 @@ resource "google_container_cluster" "cluster" {
 }
 
 resource "google_container_node_pool" "nodes_green" {
-  name           = "nodes_green"
-  node_locations = var.zones
-  cluster        = google_container_cluster.cluster.name
-  node_count     = 1
+  name       = "nodes_green"
+  location   = var.zones
+  cluster    = google_container_cluster.cluster.name
+  node_count = 1
 
   autoscaling {
     min_node_count = var.nodes_green_min_size
