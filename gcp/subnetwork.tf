@@ -2,8 +2,7 @@ resource "google_compute_subnetwork" "subnet" {
   name   = var.cluster_name
   region = var.region
 
-  # network    = google_compute_network.network.self_link
-  subnetwork = google_compute_subnetwork.subnet.self_link
+  network = google_compute_network.network.self_link
 
   # TODO: Convert to variable
   ip_cidr_range = "10.2.0.0/16"
