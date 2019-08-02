@@ -35,7 +35,7 @@ resource "google_compute_global_address" "private_ip_address" {
 
 // Set so we can talk to Services like Cloud SQL.
 resource "google_service_networking_connection" "private_vpc_connection" {
-  network                 = data.google_compute_network.cluster_network.self_link
+  network                 = google_compute_network.network.self_link
   service                 = "servicenetworking.googleapis.com"
   reserved_peering_ranges = [google_compute_global_address.private_ip_address.name]
 }
