@@ -19,7 +19,7 @@ resource "google_container_cluster" "cluster" {
 }
 
 resource "google_container_node_pool" "nodes_green" {
-  name       = "nodes_green"
+  name       = "nodes-green"
   location   = var.region
   cluster    = google_container_cluster.cluster.name
   node_count = 1
