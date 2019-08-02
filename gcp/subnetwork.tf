@@ -14,6 +14,8 @@ resource "google_compute_subnetwork" "subnet" {
   #     flow_sampling        = 0.5
   #     metadata             = "INCLUDE_ALL_METADATA"
   #  }
+
+  depends_on = ["google_compute_network.network"]
 }
 
 resource "google_compute_network" "network" {
