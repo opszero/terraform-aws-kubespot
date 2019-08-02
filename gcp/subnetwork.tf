@@ -25,7 +25,7 @@ resource "google_compute_network" "network" {
 }
 
 resource "google_compute_global_address" "private_ip_address" {
-  name          = "private-ip-address"
+  name          = var.cluster_name
   purpose       = "VPC_PEERING"
   address_type  = "INTERNAL"
   prefix_length = 16
