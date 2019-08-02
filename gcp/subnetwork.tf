@@ -35,7 +35,8 @@ resource "google_compute_global_address" "private_ip_address" {
 
 // Set so we can talk to Services like Cloud SQL.
 
-// Bug: If the private_ip_address changes then this will not work correctlt
+// Bug: If the private_ip_address changes then this will not work correctly.
+// Workaround change reserved_peering_ranges = [] `terraform apply` and then change it back and `terraform apply`
 resource "google_service_networking_connection" "private_vpc_connection" {
   network                 = google_compute_network.network.self_link
   service                 = "servicenetworking.googleapis.com"
