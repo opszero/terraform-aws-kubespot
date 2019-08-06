@@ -6,5 +6,9 @@ RUN /scripts/dependencies.sh
 COPY scripts /scripts
 COPY rails /rails
 
-ADD . .
-RUN go install
+WORKDIR /app
+COPY go.mod go.sum ./
+RUN go mod download
+
+COPY . .
+RUN go build -o /bin/deploytag
