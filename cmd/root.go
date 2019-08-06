@@ -21,12 +21,11 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/opszero/deploytag/scripts"
 	"github.com/spf13/viper"
 )
 
 var (
-	config = &deploytag.Config{}
+	config = &Config{}
 )
 
 // rootCmd represents the base command when called without any subcommands
