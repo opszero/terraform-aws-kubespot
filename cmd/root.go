@@ -21,11 +21,13 @@ import (
 
 	"github.com/spf13/cobra"
 
-	homedir "github.com/mitchellh/go-homedir"
+	"github.com/opszero/deploytag/scripts"
 	"github.com/spf13/viper"
 )
 
-var cfgFile string
+var (
+	config = &deploytag.Config{}
+)
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
@@ -58,7 +60,12 @@ func init() {
 	// Cobra supports persistent flags, which, if defined here,
 	// will be global for your application.
 
-	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.deploytag.yaml)")
+	rootCmd.PersistentFlags().StringVar(&config.Cloud, "cloud", "", "aws, gcp, or azure")
+	rootCmd.PersistentFlags().StringVar(&config.AWSAccessKeyID, "aws-access-key-id", "", "AWS Access Key")
+	rootCmd.PersistentFlags().StringVar(&config.AWSSecretAccessKey, "aws-secret-access-key", "", "AWS Secret Access Key")
+	rootCmd.PersistentFlags().StringVar(&config.AWSDefaultRegion, "aws-default-region", "us-west-2", "AWS Secret Access Key")
+	rootCmd.PersistentFlags().StringVar(&config.GCPServiceKeyFile, "gcp-service-key-file", "", "GCP Auth File. ~/gcp.json")
+	rootCmd.PersistentFlags().StringVar(&config.GCPServiceKeyBase64, "gcp-service-key-base64", "", "Base64 encoded version of gcp-service-key-base64")
 
 	// Cobra also supports local flags, which will only run
 	// when this action is called directly.
@@ -67,22 +74,6 @@ func init() {
 
 // initConfig reads in config file and ENV variables if set.
 func initConfig() {
-	if cfgFile != "" {
-		// Use config file from the flag.
-		viper.SetConfigFile(cfgFile)
-	} else {
-		// Find home directory.
-		home, err := homedir.Dir()
-		if err != nil {
-			fmt.Println(err)
-			os.Exit(1)
-		}
-
-		// Search config in home directory with name ".deploytag" (without extension).
-		viper.AddConfigPath(home)
-		viper.SetConfigName(".deploytag")
-	}
-
 	viper.AutomaticEnv() // read in environment variables that match
 
 	// If a config file is found, read it in.

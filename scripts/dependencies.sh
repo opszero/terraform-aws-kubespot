@@ -51,10 +51,10 @@ helm plugin install https://github.com/chartmuseum/helm-push
 
 # Install Docker
 
-curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add -
+curl -fsSL https://download.docker.com/linux/debian/gpg | apt-key add -
 apt-key fingerprint 0EBFCD88
-add-apt-repository \
-    "deb [arch=amd64] https://download.docker.com/linux/ubuntu \
+sudo add-apt-repository \
+   "deb [arch=amd64] https://download.docker.com/linux/debian \
    $(lsb_release -cs) \
    stable"
 
