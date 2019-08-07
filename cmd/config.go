@@ -61,7 +61,7 @@ func (c *Config) SetEnv() {
 		//     if [ -n "$AWS_SECRETS" ] && [ -e /scripts/aws_secrets.rb ]
 		//     then
 		//         AWS_SECRETS_FILE=/tmp/.env.aws
-		//         ruby /scripts/aws_secrets.rb > $AWS_SECRETS_FILE
+		//         ruby /scripts/aws_secrets.rb > $AWS_SECRETS_FILE # SecretsFromAwsSecretManager
 		//         # clear out any env that should be overridden by the secrets manager
 		//         # export AWS_ACCESS_KEY_ID=
 		//         # export AWS_SECRET_ACCESS_KEY=
@@ -517,4 +517,17 @@ func (c *Config) SecretEnvSubst() {
 	//   end
 	// end
 
+}
+
+func (c *Config) SecretEnvFromAwsSecretManager() {
+	// 	def secrets
+	// 	`aws secretsmanager get-secret-value --secret-id #{ENV["AWS_SECRETS"]} | jq -r '.SecretString'`.
+	// 	  scan(/^(\w+)=(.+)/).each do |k, v|
+	// 	  puts %Q{export #{k}=${#{k}:-#{v}}}
+	// 	end
+	//   end
+
+	//   if ENV["AWS_SECRETS"]
+	// 	secrets
+	//   end
 }

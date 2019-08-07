@@ -10,9 +10,9 @@ func main() {
 	// database test
 	// database wait
 	// k8s configure
-	// k8s secret --aws-secret-manager [key] [key] [key]
+	// secret --aws-secret-manager [key] [key] [key]
 	//    - https://godoc.org/github.com/joho/godotenv#Read
-	// k8s configmap --aws-secret-manager [key] [key] [key]
+	// configmap --aws-secret-manager [key] [key] [key]
 	//    - https://godoc.org/github.com/joho/godotenv#Read
 	// framework rails
 	// framework rails bundle

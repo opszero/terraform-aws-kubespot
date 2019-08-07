@@ -37,5 +37,8 @@ WORKDIR /app
 COPY go.mod go.sum ./
 RUN go mod download
 
+
 COPY . .
 RUN go build -o /bin/deploytag
+
+# TODO Remove the src dependencies
