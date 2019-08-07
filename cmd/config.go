@@ -138,7 +138,7 @@ func (c *Config) DockerShouldBuildBase() {
 	// 		# Check if there's a custom script to build the base image
 	// 		elif [ -e "./scripts/should_build_base.sh" ]
 	// 		then
-	// 			./scripts/should_build_base.sh
+	// 			./scripts/should_build_base2.sh
 	// 			return $?
 	// 		else
 	// 			# Otherwise compare the Dockerfile.base with the latest sha
@@ -154,6 +154,21 @@ func (c *Config) DockerShouldBuildBase() {
 	// 		return 1
 	// 	fi
 	// }
+}
+
+func (c *Config) DockerShouldBuildBase2() {
+	// 	#!/bin/bash
+
+	// set -e
+
+	// DEPENDENCIES_SHA1=$(git log -1 --format=format:%H --full-diff ./scripts/dependencies.sh)
+
+	// if [ $DEPENDENCIES_SHA1 = $CIRCLE_SHA1 ]
+	// then
+	//     exit 0
+	// else
+	//     exit 1
+	// fi
 }
 
 func (c *Config) DockerBuildImage() {
@@ -200,21 +215,6 @@ func (c *Config) DockerBaseCount() {
 	// 		return $(aws ecr describe-images --repository-name "${PROJECT_ID}/${BASE_IMAGE}" --image-ids="imageTag=$CIRCLE_BRANCH" | grep imageDetails | wc -l)
 	// 	fi
 	// }
-}
-
-func (c *Config) DockerShouldBuildBase() {
-	// 	#!/bin/bash
-
-	// set -e
-
-	// DEPENDENCIES_SHA1=$(git log -1 --format=format:%H --full-diff ./scripts/dependencies.sh)
-
-	// if [ $DEPENDENCIES_SHA1 = $CIRCLE_SHA1 ]
-	// then
-	//     exit 0
-	// else
-	//     exit 1
-	// fi
 }
 
 /*
