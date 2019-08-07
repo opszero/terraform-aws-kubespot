@@ -202,6 +202,48 @@ func (c *Config) DockerBaseCount() {
 	// }
 }
 
+func (c *Config) DockerShouldBuildBase() {
+	// 	#!/bin/bash
+
+	// set -e
+
+	// DEPENDENCIES_SHA1=$(git log -1 --format=format:%H --full-diff ./scripts/dependencies.sh)
+
+	// if [ $DEPENDENCIES_SHA1 = $CIRCLE_SHA1 ]
+	// then
+	//     exit 0
+	// else
+	//     exit 1
+	// fi
+}
+
+/*
+Obsolete?
+
+#!/bin/bash
+
+set -e
+
+PROJECT_ID=${PROJECT_ID:-"opszero/deploytag"}
+DOCKER_FILE=${DOCKER_FILE:-"Dockerfile"}
+CONTAINER_REGISTRY=${CONTAINER_REGISTRY:-"1234.dkr.ecr.us-west-2.amazonaws.com"}
+
+set -x
+docker build ${DOCKER_BUILD_ARGS} -t ${IMAGE} -f $DOCKER_FILE .
+
+docker tag ${IMAGE} $CONTAINER_REGISTRY/${PROJECT_ID}/${IMAGE}:${CIRCLE_SHA1}
+docker push $CONTAINER_REGISTRY/${PROJECT_ID}/${IMAGE}:${CIRCLE_SHA1}
+
+CIRCLE_BRANCH=$(echo $CIRCLE_BRANCH | sed 's/[^A-Za-z0-9_]/-/g')
+docker tag ${IMAGE} $CONTAINER_REGISTRY/${PROJECT_ID}/${IMAGE}:${CIRCLE_BRANCH}
+docker push $CONTAINER_REGISTRY/${PROJECT_ID}/${IMAGE}:${CIRCLE_BRANCH}
+
+if [ "$CIRCLE_BRANCH" = "master" ]
+then
+    docker tag ${IMAGE} $CONTAINER_REGISTRY/${PROJECT_ID}/${IMAGE}:latest
+    docker push $CONTAINER_REGISTRY/${PROJECT_ID}/${IMAGE}:latest
+fi
+*/
 func (c *Config) DockerBuild() {
 
 	// docker_login
@@ -244,6 +286,34 @@ func (c *Config) FrameworkRailsBundle() {
 
 }
 
+func (c *Config) FrameworkRailsDbInit() {
+	// #!/bin/bash
+
+	// set -ex
+
+	// # Wait until the connection is available or timeout after 10 seconds
+	// timeout 10 /scripts/db_wait.sh
+
+	// source /scripts/set_env.sh
+
+	// echo "Rails Env is ${RAILS_ENV}"
+
+	// if rake db:exists
+	// then
+	// 	rake db:migrate
+	// else
+	// 	# create a database using the deployer account and set the
+	// 	# ownership to the service user
+	// 	rake db:create
+	// 	rake db:schema:load
+	// 	#DATABASE_USER=deployer rake db:alter_owner
+	// 	#DATABASE_USER=deployer rake db:add_extensions
+	// 	rake db:migrate
+	// 	rake db:seed
+	// fi
+
+}
+
 func (c *Config) KubernetesApplyDockerRegistrySecrets() {
 	// #!/bin/bash
 
@@ -278,7 +348,7 @@ func (c *Config) KuberneteConfig() {
 	// fi
 }
 
-func (c *Config) Deploy() {
+func (c *Config) KubernetesDeploy() {
 	// #!/bin/bash
 
 	// set -ex
@@ -346,5 +416,84 @@ func (c *Config) Deploy() {
 	// fi
 
 	// helm upgrade $HELM_NAME $CHART_NAME "${HELM_ARGS[@]}"
+
+}
+
+func (c *Config) DatabaseExists() {
+	// 	package main
+
+	// import (
+	//   "database/sql"
+	//   "fmt"
+
+	//   _ "github.com/lib/pq"
+	// )
+
+	// const (
+	//   host     = "localhost"
+	//   port     = 5432
+	//   user     = "postgres"
+	//   password = "your-password"
+	//   dbname   = "calhounio_demo"
+	// )
+
+	// func main() {
+	//   psqlInfo := fmt.Sprintf("host=%s port=%d user=%s "+
+	//     "password=%s dbname=%s sslmode=disable",
+	//     host, port, user, password, dbname)
+	//   db, err := sql.Open("postgres", psqlInfo)
+	//   if err != nil {
+	//     panic(err)
+	//   }
+	//   defer db.Close()
+
+	//   err = db.Ping()
+	//   if err != nil {
+	//     panic(err)
+	//   }
+
+	//   fmt.Println("Successfully connected!")
+	// }
+}
+
+func (c *Config) DatabaseWait() {
+	// #!/bin/bash
+
+	// set -e
+
+	// while ! nc -z localhost $DATABASE_PORT; do
+	//   sleep 0.1 # wait for 1/10 of the second before check again
+	// done
+}
+func (c *Config) DatabaseConnect() {
+	// 	#!/bin/bash
+
+	// ERROR_STATUS=0
+	// set -e
+
+	// function log_execute() {
+	//     set -x
+	//     "$@"
+	//     { set +x; } 2>/dev/null
+	// }
+
+	// # authenticate with gcp
+	// /scripts/auth.sh
+	// # configure kubernetes
+	// /scripts/config_k8s.sh
+
+	// kubectl port-forward "$DATABASE_DEPLOYMENT" $DATABASE_PORT:$DATABASE_FORWARD_PORT -n default &
+
+	// # Wait until the connection is available or timeout after 10 seconds
+	// timeout 10 /scripts/db_wait.sh
+
+	// PORT_FORWARD_PID=$!
+
+	// sleep 2
+	// log_execute "$@" || ERROR_STATUS=$?
+
+	// kill $PORT_FORWARD_PID
+
+	// exit $ERROR_STATUS
 
 }
