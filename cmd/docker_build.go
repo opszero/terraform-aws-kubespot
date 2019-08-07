@@ -47,5 +47,7 @@ func init() {
 
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
-	// dockerBuildCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	dockerBuildCmd.Flags().StringVar(&config.Docker.Build.ContainerRegistry, "container-registry", "", "Ex. 1234.dkr.ecr.us-west-2.amazonaws.com ")
+	dockerBuildCmd.Flags().StringVar(&config.Docker.Build.ProjectId, "project-id", "", "Ex. opszero")
+	dockerBuildCmd.Flags().StringVar(&config.Docker.Build.Image, "image", "", "Ex. deploytag")
 }

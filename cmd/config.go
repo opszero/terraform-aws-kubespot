@@ -23,6 +23,16 @@ type Config struct {
 	AWSDefaultRegion    string
 	GCPServiceKeyFile   string
 	GCPServiceKeyBase64 string
+
+	AwsSecretId string
+
+	Docker struct {
+		Build struct {
+			ContainerRegistry string
+			ProjectId         string
+			Image             string
+		}
+	}
 }
 
 func (c *Config) SetEnv() {
@@ -127,6 +137,8 @@ func (c *Config) DockerNoImageExists() {
 }
 
 func (c *Config) DockerShouldBuildBase() {
+	// TODO: Should check serveral different files to see if they changed.
+
 	// function should_build_base(){
 	// 	# If a Dockerfile.base exists
 	// 	if [ -e "Dockerfile.base" ]
@@ -135,11 +147,6 @@ func (c *Config) DockerShouldBuildBase() {
 	// 		if no_image_exists || [ -n "$FORCE_BASE_BUILD" ]
 	// 		then
 	// 			return 0
-	// 		# Check if there's a custom script to build the base image
-	// 		elif [ -e "./scripts/should_build_base.sh" ]
-	// 		then
-	// 			./scripts/should_build_base2.sh
-	// 			return $?
 	// 		else
 	// 			# Otherwise compare the Dockerfile.base with the latest sha
 	// 			local BASE_COMMIT=$(git log -1 --format=format:%H --full-diff Dockerfile.base)
@@ -154,21 +161,6 @@ func (c *Config) DockerShouldBuildBase() {
 	// 		return 1
 	// 	fi
 	// }
-}
-
-func (c *Config) DockerShouldBuildBase2() {
-	// 	#!/bin/bash
-
-	// set -e
-
-	// DEPENDENCIES_SHA1=$(git log -1 --format=format:%H --full-diff ./scripts/dependencies.sh)
-
-	// if [ $DEPENDENCIES_SHA1 = $CIRCLE_SHA1 ]
-	// then
-	//     exit 0
-	// else
-	//     exit 1
-	// fi
 }
 
 func (c *Config) DockerBuildImage() {
@@ -193,28 +185,21 @@ func (c *Config) DockerBuildImage() {
 }
 
 func (c *Config) DockerLogin() {
-	// function docker_login(){
-	// 	if [ "$CLOUD_PROVIDER" = "gcp" ]
-	// 	then
-	// 		# Auth with GCLOUD
-	// 		gcloud auth print-access-token | docker login -u oauth2accesstoken --password-stdin https://${CONTAINER_REGISTRY}
-	// 	elif [ "$CLOUD_PROVIDER" = "aws" ]
-	// 	then
-	// 		eval $(aws ecr get-login --no-include-email)
-	// 	fi
-	// }
+	switch strings.ToLower(c.Cloud) {
+	case GcpCloud:
+		c.runCmd("bash", "-c", fmt.Sprintf("'gcloud auth print-access-token | docker login -u oauth2accesstoken --password-stdin https://%s'", c.Docker.Build.ContainerRegistry))
+	case AwsCloud:
+		c.runCmd("eval", "$(aws ecr get-login --no-include-email)")
+	}
 }
 
 func (c *Config) DockerBaseCount() {
-	// function base_count(){
-	// 	if [ "$CLOUD_PROVIDER" = "gcp" ]
-	// 	then
-	// 		return $(gcloud container images list-tags --filter="tags=($CIRCLE_BRANCH)" --format="table[no-heading](digest)" "${CONTAINER_REGISTRY}/${PROJECT_ID}/${BASE_IMAGE}" | wc -l)
-	// 	elif [ "$CLOUD_PROVIDER" = "aws" ]
-	// 	then
-	// 		return $(aws ecr describe-images --repository-name "${PROJECT_ID}/${BASE_IMAGE}" --image-ids="imageTag=$CIRCLE_BRANCH" | grep imageDetails | wc -l)
-	// 	fi
-	// }
+	switch strings.ToLower(c.Cloud) {
+	case GcpCloud:
+		// c.runCmd("gclould", "container", "images" list-tags --filter="tags=($CIRCLE_BRANCH)" --format="table[no-heading](digest)" "${CONTAINER_REGISTRY}/${PROJECT_ID}/${BASE_IMAGE}" | wc -l)
+	case AwsCloud:
+		// 		return $(aws ecr describe-images --repository-name "${PROJECT_ID}/${BASE_IMAGE}" --image-ids="imageTag=$CIRCLE_BRANCH" | grep imageDetails | wc -l)
+	}
 }
 
 /*
@@ -245,8 +230,7 @@ then
 fi
 */
 func (c *Config) DockerBuild() {
-
-	// docker_login
+	c.DockerLogin()
 
 	// # If we've created a base image for this branch, let's use it. Otherwise use the latest base image.
 	// if base_count
