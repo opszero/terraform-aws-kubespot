@@ -225,10 +225,6 @@ func (c *Config) DockerBuild() {
 }
 
 func (c *Config) FrameworkRailsBundle() {
-	// 	#!/bin/bash
-
-	// set -e
-
 	// gem install bundler -v "$(cat Gemfile.lock | grep -A 1 "BUNDLED WITH" | grep -v BUNDLED | awk '{print $1}')"
 
 	// bundle config github.com $GITHUB_TOKEN:x-oauth-basic
@@ -263,4 +259,92 @@ func (c *Config) KubernetesApplyDockerRegistrySecrets() {
 	// 	# kubectl patch serviceaccount default -n $CIRCLE_BRANCH -p '{"imagePullSecrets": [{"name": "ecrsecret"}]}'
 	// 	echo "EKS has native support to pull from ECR"
 	// fi
+}
+
+func (c *Config) KuberneteConfig() {
+	// #!/bin/bash
+
+	// set -e
+
+	// source /scripts/set_env.sh
+	// if [ "$CLOUD_PROVIDER" = "gcp" ]
+	// then
+	// 	gcloud --quiet config set project ${GOOGLE_PROJECT_ID}
+	// 	gcloud --quiet config set compute/zone ${GOOGLE_COMPUTE_ZONE}
+	// 	gcloud --quiet container clusters get-credentials ${GOOGLE_CLUSTER_NAME}
+	// elif [ "$CLOUD_PROVIDER" = "aws" ]
+	// then
+	// 	aws eks --region ${AWS_DEFAULT_REGION} update-kubeconfig --name ${AWS_CLUSTER_NAME}
+	// fi
+}
+
+func (c *Config) Deploy() {
+	// #!/bin/bash
+
+	// set -ex
+
+	// /scripts/config_k8s.sh
+
+	// source /scripts/set_env.sh
+
+	// HELM_HOME=$(helm home)
+	// mkdir -p $HELM_HOME
+
+	// HELM_ARGS=()
+
+	// CIRCLE_BRANCH=$(echo $CIRCLE_BRANCH | sed 's/[^A-Za-z0-9]/-/g' | tr '[:upper:]' '[:lower:]')
+
+	// if [ -n "$HELM_TLS" ]
+	// then
+	// 	if [ ! -f $HELM_HOME/ca.pem ]
+	// 	then
+	// 		echo "$HELM_CA" | base64 -d --ignore-garbage > $HELM_HOME/ca.pem
+	// 	fi
+	// 	if [ ! -f $HELM_HOME/cert.pem ]
+	// 	then
+	// 		echo "$HELM_CERT"| base64 -d --ignore-garbage > $HELM_HOME/cert.pem
+	// 	fi
+	// 	if [ ! -f $HELM_HOME/key.pem ]
+	// 	then
+	// 		echo "$HELM_KEY"| base64 -d --ignore-garbage > $HELM_HOME/key.pem
+	// 	fi
+	// 	HELM_ARGS+=(--tls)
+	// fi
+
+	// if [ "$CIRCLE_BRANCH" = "master" ] || [ "$CIRCLE_BRANCH" = "" ]
+	// then
+	// 	# use defaults for now
+	// 	echo "deploying..."
+	// else
+	// 	HELM_ARGS+=(
+	// 		--namespace $CIRCLE_BRANCH
+	// 	)
+
+	// 	if ! kubectl get namespaces | grep -q "$CIRCLE_BRANCH"
+	// 	then
+	// 		kubectl create namespace $CIRCLE_BRANCH
+	// 	fi
+
+	// 	/scripts/apply_registry_secret.sh
+	// fi
+	// TILLER_NAMESPACE=${TILLER_NAMESPACE:-"kube-system"}
+
+	// HELM_ARGS+=(
+	// 	--set ingress.hosts={$HOST}
+	// 	--set ingress.tls[0].hosts={$HOST}
+	// 	--set ingress.tls[0].secretName=$HELM_NAME-staging-cert
+	// 	--set image.tag=${CIRCLE_SHA1}
+	// 	--tiller-namespace=$TILLER_NAMESPACE
+	// 	--force
+	// 	--wait
+	// 	--install
+	// )
+
+	// if [ -n "$HELM_VARS" ]
+	// then
+	// 	HELM_ARGS+=($(echo "$HELM_VARS" | envsubst))
+	// fi
+
+	// helm upgrade $HELM_NAME $CHART_NAME "${HELM_ARGS[@]}"
+
 }

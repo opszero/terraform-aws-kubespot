@@ -16,12 +16,14 @@ limitations under the License.
 package cmd
 
 import (
+	"fmt"
+
 	"github.com/spf13/cobra"
 )
 
-// deployCmd represents the deploy command
-var deployCmd = &cobra.Command{
-	Use:   "deploy",
+// databaseConnectCmd represents the databaseConnect command
+var databaseConnectCmd = &cobra.Command{
+	Use:   "connect",
 	Short: "A brief description of your command",
 	Long: `A longer description that spans multiple lines and likely contains examples
 and usage of using your command. For example:
@@ -30,22 +32,20 @@ Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		config.CloudAuth()
-		// config.KubernetesApplyDockerRegistrySecrets()
-		config.Deploy()
+		fmt.Println("databaseConnect called")
 	},
 }
 
 func init() {
-	rootCmd.AddCommand(deployCmd)
+	databaseCmd.AddCommand(databaseConnectCmd)
 
 	// Here you will define your flags and configuration settings.
 
 	// Cobra supports Persistent Flags which will work for this command
 	// and all subcommands, e.g.:
-	// deployCmd.PersistentFlags().String("foo", "", "A help for foo")
+	// databaseConnectCmd.PersistentFlags().String("foo", "", "A help for foo")
 
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
-	// deployCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	// databaseConnectCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }
