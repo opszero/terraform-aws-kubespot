@@ -267,22 +267,17 @@ func (c *Config) DockerBuild() {
 }
 
 func (c *Config) FrameworkRailsBundle() {
+	c.runCmd("gem", "install", "bundler")
 	// gem install bundler -v "$(cat Gemfile.lock | grep -A 1 "BUNDLED WITH" | grep -v BUNDLED | awk '{print $1}')"
 
-	// bundle config github.com $GITHUB_TOKEN:x-oauth-basic
+	c.runCmd("bundle", "config", "github.com", fmt.Sprintf("%s:x-oauth-basic", os.Getenv("GITHUB_TOKEN")))
 
-	// if bundle check
-	// then
-	//     echo ""
-	// else
-	//     if [ "$RAILS_ENV" = "development" ] || [ "$RAILS_ENV" = "test" ] || [ "$RAILS_ENV" = "" ]
-	//     then
-	//         bundle install
-	//     else
-	//         bundle config --global frozen 1
-	//         bundle install --without development test
-	//     fi
-	// fi
+	if os.Getenv("RAILS_ENV") == "development" || os.Getenv("RAILS_ENV") == "test" || os.Getenv("RAILS_ENV") == "" {
+		c.runCmd("bundle", "install")
+	} else {
+		c.runCmd("bundle", "config", "--global", "frozen", "1")
+		c.runCmd("bundle", "install", "--without", "development", "test")
+	}
 
 }
 
