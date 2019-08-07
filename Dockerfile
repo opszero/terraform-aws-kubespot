@@ -1,4 +1,4 @@
-FROM golang
+FROM golang:latest
 
 COPY scripts/dependencies.sh /scripts/
 RUN /scripts/dependencies.sh
