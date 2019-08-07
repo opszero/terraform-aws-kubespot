@@ -60,9 +60,9 @@ func init() {
 	// will be global for your application.
 
 	rootCmd.PersistentFlags().StringVar(&config.Cloud, "cloud", "", "aws, gcp, or azure")
-	rootCmd.PersistentFlags().StringVar(&config.AWSAccessKeyID, "aws-access-key-id", "", "AWS Access Key")
-	rootCmd.PersistentFlags().StringVar(&config.AWSSecretAccessKey, "aws-secret-access-key", "", "AWS Secret Access Key")
-	rootCmd.PersistentFlags().StringVar(&config.AWSDefaultRegion, "aws-default-region", "us-west-2", "AWS Secret Access Key")
+	rootCmd.PersistentFlags().StringVar(&config.AWSAccessKeyID, "aws-access-key-id", os.Getenv("AWS_ACCESS_KEY_ID"), "AWS Access Key")
+	rootCmd.PersistentFlags().StringVar(&config.AWSSecretAccessKey, "aws-secret-access-key", os.Getenv("AWS_SECRET_ACCESS_KEY"), "AWS Secret Access Key")
+	rootCmd.PersistentFlags().StringVar(&config.AWSDefaultRegion, "aws-default-region", os.Getenv("AWS_DEFAULT_REGION"), "AWS Secret Access Key")
 	rootCmd.PersistentFlags().StringVar(&config.GCPServiceKeyFile, "gcp-service-key-file", "", "GCP Auth File. ~/gcp.json")
 	rootCmd.PersistentFlags().StringVar(&config.GCPServiceKeyBase64, "gcp-service-key-base64", "", "Base64 encoded version of gcp-service-key-base64")
 
