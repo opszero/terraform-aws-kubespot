@@ -19,9 +19,9 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// dockerBuildCmd represents the dockerBuild command
-var dockerBuildCmd = &cobra.Command{
-	Use:   "build",
+// frameworkRailsBundleCmd represents the frameworkRailsBundle command
+var frameworkRailsBundleCmd = &cobra.Command{
+	Use:   "bundle",
 	Short: "A brief description of your command",
 	Long: `A longer description that spans multiple lines and likely contains examples
 and usage of using your command. For example:
@@ -30,22 +30,20 @@ Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		config.CloudAuth()
-		config.SetEnv()
-		config.DockerBuild()
+		config.FrameworkRailsBundle()
 	},
 }
 
 func init() {
-	dockerCmd.AddCommand(dockerBuildCmd)
+	frameworkRailsCmd.AddCommand(frameworkRailsBundleCmd)
 
 	// Here you will define your flags and configuration settings.
 
 	// Cobra supports Persistent Flags which will work for this command
 	// and all subcommands, e.g.:
-	// dockerBuildCmd.PersistentFlags().String("foo", "", "A help for foo")
+	// frameworkRailsBundleCmd.PersistentFlags().String("foo", "", "A help for foo")
 
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
-	// dockerBuildCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	// frameworkRailsBundleCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }
