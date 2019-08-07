@@ -19,10 +19,10 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// authCmd represents the auth command
-var authCmd = &cobra.Command{
-	Use:   "cloud auth",
-	Short: "Authenticate with the Cloud",
+// dockerBuildCmd represents the dockerBuild command
+var dockerBuildCmd = &cobra.Command{
+	Use:   "build",
+	Short: "A brief description of your command",
 	Long: `A longer description that spans multiple lines and likely contains examples
 and usage of using your command. For example:
 
@@ -30,20 +30,22 @@ Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		config.CloudAuth()
+		config.Auth()
+		config.SetEnv()
+		config.DockerBuild()
 	},
 }
 
 func init() {
-	rootCmd.AddCommand(authCmd)
+	dockerCmd.AddCommand(dockerBuildCmd)
 
 	// Here you will define your flags and configuration settings.
 
 	// Cobra supports Persistent Flags which will work for this command
 	// and all subcommands, e.g.:
-	// authCmd.PersistentFlags().String("foo", "", "A help for foo")
+	// dockerBuildCmd.PersistentFlags().String("foo", "", "A help for foo")
 
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
-	// authCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	// dockerBuildCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }
