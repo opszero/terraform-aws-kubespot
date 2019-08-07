@@ -35,7 +35,40 @@ type Config struct {
 	}
 }
 
-func (c *Config) SetEnv() {
+func (c *Config) Init() {
+	if c.AwsSecretId != "" {
+		//         AWS_SECRETS_FILE=/tmp/.env.aws
+		//         ruby /scripts/aws_secrets.rb > $AWS_SECRETS_FILE # SecretsFromAwsSecretManager
+		//         # clear out any env that should be overridden by the secrets manager
+		//         # export AWS_ACCESS_KEY_ID=
+		//         # export AWS_SECRET_ACCESS_KEY=
+		//         # allow the apps to reset any extra variables
+		//         source $AWS_SECRETS_FILE
+	}
+
+	switch strings.ToLower(c.Cloud) {
+	case AwsCloud:
+		if c.AWSAccessKeyID == "" || c.AWSSecretAccessKey == "" || c.AWSDefaultRegion == "" {
+			log.Fatalf("Ensure that AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, and AWS_DEFAULT_REGION are set")
+		}
+	case GcpCloud:
+		//     if [ -n "$GCLOUD_SERVICE_KEY"]
+		//     then
+		//         echo $GCLOUD_SERVICE_KEY > $HOME/gcloud-service-key.json
+		//     elif [ -n "$GCLOUD_SERVICE_KEY_BASE64" ]
+		//     then
+		//         echo $GCLOUD_SERVICE_KEY_BASE64 | base64 -d > $HOME/gcloud-service-key.json
+		//     else
+		//         echo "No Google Service Account Key given"
+		//     fi
+		c.runCmd("gcloud", "auth", "activate-service-account", fmt.Sprintf("--key-file=%s", c.GCPServiceKeyFile))
+	case AzureCloud:
+
+	default:
+		log.Fatalf("Invalid Cloud")
+	}
+
+	//         fi
 
 	if os.Getenv("K8S_DEPLOY_ENV_SET") == "" {
 		if os.Getenv("DATABASE") == "" {
@@ -68,47 +101,10 @@ func (c *Config) SetEnv() {
 		//     export CONTAINER_REGISTRY=${CONTAINER_REGISTRY:-"1234.dkr.ecr.us-west-2.amazonaws.com"}
 		//     export BASE_IMAGE=${IMAGE}_base
 
-		//     if [ -n "$AWS_SECRETS" ] && [ -e /scripts/aws_secrets.rb ]
-		//     then
-		//         AWS_SECRETS_FILE=/tmp/.env.aws
-		//         ruby /scripts/aws_secrets.rb > $AWS_SECRETS_FILE # SecretsFromAwsSecretManager
-		//         # clear out any env that should be overridden by the secrets manager
-		//         # export AWS_ACCESS_KEY_ID=
-		//         # export AWS_SECRET_ACCESS_KEY=
-		//         # allow the apps to reset any extra variables
-		//         if [ -e ./scripts/reset_env_vars.sh ]
-		//         then
-		//             source ./scripts/reset_env_vars.sh
-		//         fi
-		//         source $AWS_SECRETS_FILE
-		//     fi
 		//     export K8S_DEPLOY_ENV_SET=true
 
 	}
-}
 
-func (c *Config) CloudAuth() {
-	switch strings.ToLower(c.Cloud) {
-	case AwsCloud:
-		if c.AWSAccessKeyID == "" || c.AWSSecretAccessKey == "" || c.AWSDefaultRegion == "" {
-			log.Fatalf("Ensure that AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, and AWS_DEFAULT_REGION are set")
-		}
-	case GcpCloud:
-		//     if [ -n "$GCLOUD_SERVICE_KEY"]
-		//     then
-		//         echo $GCLOUD_SERVICE_KEY > $HOME/gcloud-service-key.json
-		//     elif [ -n "$GCLOUD_SERVICE_KEY_BASE64" ]
-		//     then
-		//         echo $GCLOUD_SERVICE_KEY_BASE64 | base64 -d > $HOME/gcloud-service-key.json
-		//     else
-		//         echo "No Google Service Account Key given"
-		//     fi
-		c.runCmd("gcloud", "auth", "activate-service-account", fmt.Sprintf("--key-file=%s", c.GCPServiceKeyFile))
-	case AzureCloud:
-
-	default:
-		log.Fatalf("Invalid Cloud")
-	}
 }
 
 func (c *Config) runCmd(cmdArgs ...string) {
