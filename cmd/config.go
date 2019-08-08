@@ -25,7 +25,9 @@ const (
 )
 
 type Config struct {
-	Cloud              string
+	Cloud            string
+	CloudAwsSecretId string
+
 	AWSAccessKeyID     string
 	AWSSecretAccessKey string
 	AWSDefaultRegion   string
@@ -33,8 +35,6 @@ type Config struct {
 	GCPServiceKeyFile   string
 	GCPServiceKeyBase64 string
 	// GOOGLE_PROJECT_ID=alien-clover-238521 GOOGLE_COMPUTE_ZONE=us-central1 GOOGLE_CLUSTER_NAME=qa-us-central1
-
-	AwsSecretId string
 
 	// Text of
 	// export ENV=env
@@ -87,8 +87,7 @@ func (c *Config) runCmdOutput(cmdArgs ...string) string {
 func (c *Config) getAwsSecretForCloud() {
 	svc := secretsmanager.New(session.New())
 	input := &secretsmanager.GetSecretValueInput{
-		SecretId:     aws.String(c.AwsSecretId),
-		VersionStage: aws.String("AWSCURRENT"), // VersionStage defaults to AWSCURRENT if unspecified
+		SecretId: aws.String(c.CloudAwsSecretId),
 	}
 
 	// In this sample we only handle the specific exceptions for the 'GetSecretValue' API.
@@ -145,7 +144,7 @@ func (c *Config) getAwsSecretForCloud() {
 }
 
 func (c *Config) Init() {
-	if c.AwsSecretId != "" {
+	if c.CloudAwsSecretId != "" {
 		c.getAwsSecretForCloud()
 	}
 
@@ -315,34 +314,6 @@ func (c *Config) DockerBuild() {
 	c.DockerBuildImage(c.Docker.Build.Image, "Dockerfile.sub")
 }
 
-func (c *Config) FrameworkRailsDbInit() {
-	// #!/bin/bash
-
-	// set -ex
-
-	// # Wait until the connection is available or timeout after 10 seconds
-	// timeout 10 /scripts/db_wait.sh
-
-	// source /scripts/set_env.sh
-
-	// echo "Rails Env is ${RAILS_ENV}"
-
-	// if rake db:exists
-	// then
-	// 	rake db:migrate
-	// else
-	// 	# create a database using the deployer account and set the
-	// 	# ownership to the service user
-	// 	rake db:create
-	// 	rake db:schema:load
-	// 	#DATABASE_USER=deployer rake db:alter_owner
-	// 	#DATABASE_USER=deployer rake db:add_extensions
-	// 	rake db:migrate
-	// 	rake db:seed
-	// fi
-
-}
-
 func (c *Config) KubernetesApplyDockerRegistrySecrets() {
 	// #!/bin/bash
 
@@ -373,6 +344,24 @@ func (c *Config) KuberneteConfig() {
 
 func (c *Config) Deploy() {
 	c.KuberneteConfig()
+
+	// 	require "yaml"
+	// class App < Thor
+	//   package_name "App"
+	//   desc "config_yaml FILE", "generate a yaml config for a given environment"
+	//   method_option :env, aliases: "-e", desc: "The environment that you care about"
+	//   def config_yaml(file)
+	//     if options[:env]
+	//       puts YAML.dump(
+	//              YAML.load(
+	//                YAML.load(`cat #{file} | envsubst`.to_yaml)
+	//              )[options[:env]]
+	//            )
+	//     else
+	//       puts File.read(file)
+	//     end
+	//   end
+	// end
 
 	os.Setenv("HELM_HOME", c.runCmdOutput("helm home"))
 	os.MkdirAll(os.Getenv("HELM_HOME"), os.ModePerm)
@@ -412,28 +401,33 @@ func (c *Config) Deploy() {
 		// fi
 	}
 	// TILLER_NAMESPACE=${TILLER_NAMESPACE:-"kube-system"}
+	os.Setenv("TILLER_NAMESPACE", "kube-system")
 
-	// HELM_ARGS+=(
-	// 	--set ingress.hosts={$HOST}
-	// 	--set ingress.tls[0].hosts={$HOST}
-	// 	--set ingress.tls[0].secretName=$HELM_NAME-staging-cert
-	// 	--set image.tag=${CIRCLE_SHA1}
-	// 	--tiller-namespace=$TILLER_NAMESPACE
-	// 	--force
-	// 	--wait
-	// 	--install
-	// )
+	helmArgs = append(helmArgs,
+		"--set",
+		os.ExpandEnv("ingress.hosts={$HOST}"),
+		"--set",
+		os.ExpandEnv("ingress.tls[0].hosts={$HOST}"),
+		"--set",
+		os.ExpandEnv("ingress.tls[0].secretName=$HELM_NAME-staging-cert"),
+		"--set",
+		os.ExpandEnv("image.tag=${CIRCLE_SHA1}"),
+		os.ExpandEnv("--tiller-namespace=$TILLER_NAMESPACE"),
+		"--force",
+		"--wait",
+		"--install")
 
 	// if [ -n "$HELM_VARS" ]
 	// then
 	// 	HELM_ARGS+=($(echo "$HELM_VARS" | envsubst))
 	// fi
 
-	// helm upgrade $HELM_NAME $CHART_NAME "${HELM_ARGS[@]}"
+	var env = ""
+	c.runCmd(append([]string{"helm", "upgrade", os.Getenv("HELM_NAME"), os.Getenv("CHART_NAME"), "-f", env}, helmArgs...)...)
 
 }
 
-func (c *Config) DatabaseExists() {
+func (c *Config) RunScript() {
 	// 	package main
 
 	// import (
@@ -479,6 +473,7 @@ func (c *Config) DatabaseWait() {
 	//   sleep 0.1 # wait for 1/10 of the second before check again
 	// done
 }
+
 func (c *Config) DatabaseConnect() {
 	// 	#!/bin/bash
 
@@ -509,26 +504,5 @@ func (c *Config) DatabaseConnect() {
 	// kill $PORT_FORWARD_PID
 
 	// exit $ERROR_STATUS
-
-}
-
-func (c *Config) SecretEnvSubst() {
-	// 	require "yaml"
-	// class App < Thor
-	//   package_name "App"
-	//   desc "config_yaml FILE", "generate a yaml config for a given environment"
-	//   method_option :env, aliases: "-e", desc: "The environment that you care about"
-	//   def config_yaml(file)
-	//     if options[:env]
-	//       puts YAML.dump(
-	//              YAML.load(
-	//                YAML.load(`cat #{file} | envsubst`.to_yaml)
-	//              )[options[:env]]
-	//            )
-	//     else
-	//       puts File.read(file)
-	//     end
-	//   end
-	// end
 
 }
