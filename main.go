@@ -1,8 +1,14 @@
 package main
 
-import "github.com/opszero/deploytag/cmd"
+import (
+	"log"
+
+	"github.com/opszero/deploytag/cmd"
+)
 
 func main() {
+	log.SetFlags(log.LstdFlags | log.Lshortfile)
+
 	cmd.Execute()
 
 	// Base Flags: --cloud [aws|gcp|azure] --aws-access-key-id --aws-secret-access-key --gcp-auth-file
