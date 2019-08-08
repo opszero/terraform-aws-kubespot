@@ -102,6 +102,7 @@ func (c *Config) getAwsSecretForCloud() {
 	}
 
 	for k := range c.EnvConfig {
+		log.Println("Setting up var", k)
 		os.Setenv(k, c.EnvConfig[k])
 	}
 
@@ -223,27 +224,6 @@ func (c *Config) DockerShouldBuildBase() {
 	// }
 }
 
-func (c *Config) DockerBuildImage() {
-	// function build_image(){
-	// 	local IMAGE=$1
-	// 	local DOCKER_FILE=$2
-
-	// 	docker build ${DOCKER_BUILD_ARGS} -t ${IMAGE} -f $DOCKER_FILE .
-
-	// 	docker tag ${IMAGE} ${CONTAINER_REGISTRY}/${PROJECT_ID}/${IMAGE}:${CIRCLE_SHA1}
-	// 	docker push ${CONTAINER_REGISTRY}/${PROJECT_ID}/${IMAGE}:${CIRCLE_SHA1}
-
-	// 	docker tag ${IMAGE} ${CONTAINER_REGISTRY}/${PROJECT_ID}/${IMAGE}:${CIRCLE_BRANCH}
-	// 	docker push ${CONTAINER_REGISTRY}/${PROJECT_ID}/${IMAGE}:${CIRCLE_BRANCH}
-
-	// 	if [ "$CIRCLE_BRANCH" = "master" ]
-	// 	then
-	// 		docker tag ${IMAGE} ${CONTAINER_REGISTRY}/${PROJECT_ID}/${IMAGE}:latest
-	// 		docker push ${CONTAINER_REGISTRY}/${PROJECT_ID}/${IMAGE}:latest
-	// 	fi
-	// }
-}
-
 func (c *Config) DockerLogin() {
 	switch strings.ToLower(c.Cloud) {
 	case GcpCloud:
@@ -259,6 +239,27 @@ func (c *Config) DockerBaseCount() {
 		// c.runCmd("gclould", "container", "images" list-tags --filter="tags=($CIRCLE_BRANCH)" --format="table[no-heading](digest)" "${CONTAINER_REGISTRY}/${PROJECT_ID}/${BASE_IMAGE}" | wc -l)
 	case AwsCloud:
 		// 		return $(aws ecr describe-images --repository-name "${PROJECT_ID}/${BASE_IMAGE}" --image-ids="imageTag=$CIRCLE_BRANCH" | grep imageDetails | wc -l)
+	}
+}
+
+func (c *Config) dockerCircleImageWithSuffix(suffix string) string {
+	return fmt.Sprintf("%s/%s/%s:%s", c.Docker.Build.ContainerRegistry, c.Docker.Build.ProjectId, c.Docker.Build.Image, suffix)
+}
+
+func (c *Config) DockerBuildImage(image, dockerfile string) {
+	c.runCmd("docker", "build", os.Getenv("DOCKER_BUILD_ARGS"), "-t", image, "-f", dockerfile, ".")
+	shaImage := c.dockerCircleImageWithSuffix(os.Getenv("CIRCLE_SHA1"))
+	branchImage := c.dockerCircleImageWithSuffix(os.Getenv("CIRCLE_BRANCH"))
+	latestImage := c.dockerCircleImageWithSuffix("latest")
+	c.runCmd("docker", "tag", image, shaImage)
+	c.runCmd("docker", "push", shaImage)
+
+	c.runCmd("docker", "tag", image, branchImage)
+	c.runCmd("docker", "push", branchImage)
+
+	if os.Getenv("CIRCLE_BRANCH") == "master" {
+		c.runCmd("docker", "tag", image, latestImage)
+		c.runCmd("docker", "push", latestImage)
 	}
 }
 
@@ -307,7 +308,7 @@ func (c *Config) DockerBuild() {
 
 	// cat Dockerfile | envsubst > Dockerfile.sub
 
-	// build_image $IMAGE Dockerfile.sub
+	c.DockerBuildImage(c.Docker.Build.Image, "Dockerfile.sub")
 }
 
 func (c *Config) FrameworkRailsBundle() {
