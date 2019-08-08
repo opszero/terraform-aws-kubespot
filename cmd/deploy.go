@@ -32,7 +32,7 @@ to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		config.Init()
 		// config.KubernetesApplyDockerRegistrySecrets()
-		config.KubernetesDeploy()
+		config.Deploy()
 	},
 }
 

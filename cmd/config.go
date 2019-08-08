@@ -203,6 +203,7 @@ func (c *Config) Init() {
 
 	}
 
+	os.Setenv("CIRCLE_BRANCH", c.circleBranch())
 }
 
 func (c *Config) DockerShouldBuildBase() bool {
@@ -279,13 +280,16 @@ func (c *Config) DockerBuildImage(image, dockerfile string) {
 	}
 }
 
+func (c *Config) circleBranch() string {
+	return strings.ToLower(c.runCmdOutput("bash", "-c", os.ExpandEnv("echo $CIRCLE_BRANCH | sed 's/[^A-Za-z0-9_]/-/g'")))
+}
+
 func (c *Config) DockerBuild() {
 	os.Setenv("CONTAINER_REGISTRY", c.Docker.Build.ContainerRegistry)
 	os.Setenv("PROJECT_ID", c.Docker.Build.ProjectId)
 
 	baseImage := fmt.Sprintf("%s_base", c.Docker.Build.Image)
 	os.Setenv("BASE_IMAGE", baseImage)
-	os.Setenv("CIRCLE_BRANCH", c.runCmdOutput("bash", "-c", os.ExpandEnv("echo $CIRCLE_BRANCH | sed 's/[^A-Za-z0-9_]/-/g'")))
 
 	if os.Getenv("CIRCLE_BRANCH") == "master" {
 		os.Setenv("DOCKER_TAG", "latest")
@@ -357,71 +361,56 @@ func (c *Config) KubernetesApplyDockerRegistrySecrets() {
 }
 
 func (c *Config) KuberneteConfig() {
-	// #!/bin/bash
-
-	// set -e
-
-	// source /scripts/set_env.sh
-	// if [ "$CLOUD_PROVIDER" = "gcp" ]
-	// then
-	// 	gcloud --quiet config set project ${GOOGLE_PROJECT_ID}
-	// 	gcloud --quiet config set compute/zone ${GOOGLE_COMPUTE_ZONE}
+	switch strings.ToLower(c.Cloud) {
+	case GcpCloud:
+		// 	gcloud --quiet config set project ${GOOGLE_PROJECT_ID}
+		// 	gcloud --quiet config set compute/zone ${GOOGLE_COMPUTE_ZONE}
 	// 	gcloud --quiet container clusters get-credentials ${GOOGLE_CLUSTER_NAME}
-	// elif [ "$CLOUD_PROVIDER" = "aws" ]
-	// then
-	// 	aws eks --region ${AWS_DEFAULT_REGION} update-kubeconfig --name ${AWS_CLUSTER_NAME}
-	// fi
+	case AwsCloud:
+		c.runCmd("aws", "eks", "--region", os.ExpandEnv("${AWS_DEFAULT_REGION}"), "update-kubeconfig", "--name", os.ExpandEnv("${AWS_CLUSTER_NAME}"))
+	}
 }
 
-func (c *Config) KubernetesDeploy() {
-	// #!/bin/bash
+func (c *Config) Deploy() {
+	c.KuberneteConfig()
 
-	// set -ex
+	os.Setenv("HELM_HOME", c.runCmdOutput("helm home"))
+	os.MkdirAll(os.Getenv("HELM_HOME"), os.ModePerm)
 
-	// /scripts/config_k8s.sh
+	var helmArgs []string
 
-	// source /scripts/set_env.sh
+	if os.Getenv("HELM_TLS") != "" {
+		// 	if [ ! -f $HELM_HOME/ca.pem ]
+		// 	then
+		// 		echo "$HELM_CA" | base64 -d --ignore-garbage > $HELM_HOME/ca.pem
+		// 	fi
 
-	// HELM_HOME=$(helm home)
-	// mkdir -p $HELM_HOME
+		// 	if [ ! -f $HELM_HOME/cert.pem ]
+		// 	then
+		// 		echo "$HELM_CERT"| base64 -d --ignore-garbage > $HELM_HOME/cert.pem
+		// 	fi
 
-	// HELM_ARGS=()
+		// 	if [ ! -f $HELM_HOME/key.pem ]
+		// 	then
+		// 		echo "$HELM_KEY"| base64 -d --ignore-garbage > $HELM_HOME/key.pem
+		// 	fi
+		// 	HELM_ARGS+=(--tls)
 
-	// CIRCLE_BRANCH=$(echo $CIRCLE_BRANCH | sed 's/[^A-Za-z0-9]/-/g' | tr '[:upper:]' '[:lower:]')
+	}
 
-	// if [ -n "$HELM_TLS" ]
-	// then
-	// 	if [ ! -f $HELM_HOME/ca.pem ]
-	// 	then
-	// 		echo "$HELM_CA" | base64 -d --ignore-garbage > $HELM_HOME/ca.pem
-	// 	fi
-	// 	if [ ! -f $HELM_HOME/cert.pem ]
-	// 	then
-	// 		echo "$HELM_CERT"| base64 -d --ignore-garbage > $HELM_HOME/cert.pem
-	// 	fi
-	// 	if [ ! -f $HELM_HOME/key.pem ]
-	// 	then
-	// 		echo "$HELM_KEY"| base64 -d --ignore-garbage > $HELM_HOME/key.pem
-	// 	fi
-	// 	HELM_ARGS+=(--tls)
-	// fi
+	if os.Getenv("CIRCLE_BRANCH") == "master" || os.Getenv("CIRCLE_BRANCH") == "" {
+		log.Println("Deploying")
+	} else {
+		helmArgs = append(helmArgs, "--namespace", os.Getenv("CIRCLE_BRANCH"))
 
-	// if [ "$CIRCLE_BRANCH" = "master" ] || [ "$CIRCLE_BRANCH" = "" ]
-	// then
-	// 	# use defaults for now
-	// 	echo "deploying..."
-	// else
-	// 	HELM_ARGS+=(
-	// 		--namespace $CIRCLE_BRANCH
-	// 	)
+		// 	if ! kubectl get namespaces | grep -q "$CIRCLE_BRANCH"
+		// 	then
+		// 		kubectl create namespace $CIRCLE_BRANCH
+		// 	fi
 
-	// 	if ! kubectl get namespaces | grep -q "$CIRCLE_BRANCH"
-	// 	then
-	// 		kubectl create namespace $CIRCLE_BRANCH
-	// 	fi
-
-	// 	/scripts/apply_registry_secret.sh
-	// fi
+		// 	/scripts/apply_registry_secret.sh
+		// fi
+	}
 	// TILLER_NAMESPACE=${TILLER_NAMESPACE:-"kube-system"}
 
 	// HELM_ARGS+=(
