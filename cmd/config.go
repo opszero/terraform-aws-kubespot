@@ -242,12 +242,12 @@ func (c *Config) DockerLogin() {
 	}
 }
 
-func (c *Config) DockerBaseCount() {
+func (c *Config) DockerBaseCount() bool {
 	switch strings.ToLower(c.Cloud) {
 	case GcpCloud:
-		// c.runCmd("gclould", "container", "images" list-tags --filter="tags=($CIRCLE_BRANCH)" --format="table[no-heading](digest)" "${CONTAINER_REGISTRY}/${PROJECT_ID}/${BASE_IMAGE}" | wc -l)
+		c.runCmd("bash", "-c", "gcloud container images list-tags --filter=\"tags=($CIRCLE_BRANCH)\" --format=\"table[no-heading](digest)\" \"${CONTAINER_REGISTRY}/${PROJECT_ID}/${BASE_IMAGE}\" | wc -l")
 	case AwsCloud:
-		// 		return $(aws ecr describe-images --repository-name "${PROJECT_ID}/${BASE_IMAGE}" --image-ids="imageTag=$CIRCLE_BRANCH" | grep imageDetails | wc -l)
+		c.runCmd("bash", "-c", "aws ecr describe-images --repository-name \"${PROJECT_ID}/${BASE_IMAGE}\" --image-ids=\"imageTag=$CIRCLE_BRANCH\" | grep imageDetails | wc -l")
 	}
 }
 
@@ -265,8 +265,6 @@ func (c *Config) DockerBuildImage(image, dockerfile string) {
 
 	log.Println("Docker Build Image")
 
-	os.Setenv("CONTAINER_REGISTRY", c.Docker.Build.ContainerRegistry)
-	os.Setenv("PROJECT_ID", c.Docker.Build.ProjectId)
 	// os.Getenv("DOCKER_BUILD_ARGS"),
 	c.runCmd("docker", "build", "-t", image, "-f", dockerfile, ".")
 
@@ -292,6 +290,9 @@ func (c *Config) DockerBuild() {
 		os.Setenv("DOCKER_TAG", os.Getenv("CIRCLE_BRANCH"))
 	}
 
+	os.Setenv("CONTAINER_REGISTRY", c.Docker.Build.ContainerRegistry)
+	os.Setenv("PROJECT_ID", c.Docker.Build.ProjectId)
+
 	if true { // should_build_base
 		baseImage := fmt.Sprintf("%s_base", c.Docker.Build.Image)
 		os.Setenv("BASE_IMAGE", baseImage)
@@ -309,21 +310,6 @@ func (c *Config) DockerBuild() {
 
 	log.Println(string(subset))
 	c.DockerBuildImage(c.Docker.Build.Image, "Dockerfile.sub")
-}
-
-func (c *Config) FrameworkRailsBundle() {
-	c.runCmd("gem", "install", "bundler")
-	// gem install bundler -v "$(cat Gemfile.lock | grep -A 1 "BUNDLED WITH" | grep -v BUNDLED | awk '{print $1}')"
-
-	c.runCmd("bundle", "config", "github.com", fmt.Sprintf("%s:x-oauth-basic", os.Getenv("GITHUB_TOKEN")))
-
-	if os.Getenv("RAILS_ENV") == "development" || os.Getenv("RAILS_ENV") == "test" || os.Getenv("RAILS_ENV") == "" {
-		c.runCmd("bundle", "install")
-	} else {
-		c.runCmd("bundle", "config", "--global", "frozen", "1")
-		c.runCmd("bundle", "install", "--without", "development", "test")
-	}
-
 }
 
 func (c *Config) FrameworkRailsDbInit() {
