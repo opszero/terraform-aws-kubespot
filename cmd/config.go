@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"fmt"
+	"io/ioutil"
 	"log"
 	"os"
 	"os/exec"
@@ -12,7 +13,7 @@ import (
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/secretsmanager"
 
-	"github.com/creack/pty"
+	"github.com/a8m/envsubst"
 	"github.com/joho/godotenv"
 )
 
@@ -45,6 +46,24 @@ type Config struct {
 			ProjectId         string
 			Image             string
 		}
+	}
+}
+
+func (c *Config) runCmd(cmdArgs ...string) {
+	log.Println("Running", cmdArgs)
+
+	var args []string
+	if len(cmdArgs) > 1 {
+		args = cmdArgs[1:len(cmdArgs)]
+	}
+	log.Println("Args", args)
+	cmd := exec.Command(cmdArgs[0], args...)
+
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	err := cmd.Run()
+	if err != nil {
+		log.Fatalf("runCmd failed with %s\n", err)
 	}
 }
 
@@ -161,23 +180,12 @@ func (c *Config) Init() {
 		//     export DOMAIN=${DOMAIN:-"opszero.com"}
 		//     export HOST="$SUBDOMAIN.$DOMAIN"
 		//     export URL_HOST="https://$HOST"
-		//     export PROJECT_ID=${PROJECT_ID:-"opszero"}
 		//     export CIRCLE_BRANCH=$(echo $CIRCLE_BRANCH | sed 's/[^A-Za-z0-9_]/-/g')
-		//     export CONTAINER_REGISTRY=${CONTAINER_REGISTRY:-"1234.dkr.ecr.us-west-2.amazonaws.com"}
-		//     export BASE_IMAGE=${IMAGE}_base
 
 		//     export K8S_DEPLOY_ENV_SET=true
 
 	}
 
-}
-
-func (c *Config) runCmd(cmdArgs ...string) {
-	cmd := exec.Command(cmdArgs[0], cmdArgs[1:len(cmdArgs)-1]...)
-	_, err := pty.Start(cmd)
-	if err != nil {
-		panic(err)
-	}
 }
 
 func (c *Config) DockerNoImageExists() {
@@ -225,11 +233,12 @@ func (c *Config) DockerShouldBuildBase() {
 }
 
 func (c *Config) DockerLogin() {
+	log.Println("Docker Login")
 	switch strings.ToLower(c.Cloud) {
 	case GcpCloud:
 		c.runCmd("bash", "-c", fmt.Sprintf("'gcloud auth print-access-token | docker login -u oauth2accesstoken --password-stdin https://%s'", c.Docker.Build.ContainerRegistry))
 	case AwsCloud:
-		c.runCmd("bash", "-c", "'eval $(aws ecr get-login --no-include-email)'")
+		c.runCmd("aws", "ecr", "get-login", "--no-include-email")
 	}
 }
 
@@ -247,10 +256,20 @@ func (c *Config) dockerCircleImageWithSuffix(suffix string) string {
 }
 
 func (c *Config) DockerBuildImage(image, dockerfile string) {
-	c.runCmd("docker", "build", os.Getenv("DOCKER_BUILD_ARGS"), "-t", image, "-f", dockerfile, ".")
-	shaImage := c.dockerCircleImageWithSuffix(os.Getenv("CIRCLE_SHA1"))
-	branchImage := c.dockerCircleImageWithSuffix(os.Getenv("CIRCLE_BRANCH"))
-	latestImage := c.dockerCircleImageWithSuffix("latest")
+	var (
+		shaImage = c.dockerCircleImageWithSuffix(os.Getenv("CIRCLE_SHA1"))
+		// CIRCLE_BRANCH=$(echo $CIRCLE_BRANCH | sed 's/[^A-Za-z0-9_]/-/g')
+		branchImage = c.dockerCircleImageWithSuffix(os.Getenv("CIRCLE_BRANCH"))
+		latestImage = c.dockerCircleImageWithSuffix("latest")
+	)
+
+	log.Println("Docker Build Image")
+
+	os.Setenv("CONTAINER_REGISTRY", c.Docker.Build.ContainerRegistry)
+	os.Setenv("PROJECT_ID", c.Docker.Build.ProjectId)
+	// os.Getenv("DOCKER_BUILD_ARGS"),
+	c.runCmd("docker", "build", "-t", image, "-f", dockerfile, ".")
+
 	c.runCmd("docker", "tag", image, shaImage)
 	c.runCmd("docker", "push", shaImage)
 
@@ -263,51 +282,32 @@ func (c *Config) DockerBuildImage(image, dockerfile string) {
 	}
 }
 
-/*
-Obsolete?
-
-#!/bin/bash
-
-set -e
-
-PROJECT_ID=${PROJECT_ID:-"opszero/deploytag"}
-DOCKER_FILE=${DOCKER_FILE:-"Dockerfile"}
-CONTAINER_REGISTRY=${CONTAINER_REGISTRY:-"1234.dkr.ecr.us-west-2.amazonaws.com"}
-
-set -x
-docker build ${DOCKER_BUILD_ARGS} -t ${IMAGE} -f $DOCKER_FILE .
-
-docker tag ${IMAGE} $CONTAINER_REGISTRY/${PROJECT_ID}/${IMAGE}:${CIRCLE_SHA1}
-docker push $CONTAINER_REGISTRY/${PROJECT_ID}/${IMAGE}:${CIRCLE_SHA1}
-
-CIRCLE_BRANCH=$(echo $CIRCLE_BRANCH | sed 's/[^A-Za-z0-9_]/-/g')
-docker tag ${IMAGE} $CONTAINER_REGISTRY/${PROJECT_ID}/${IMAGE}:${CIRCLE_BRANCH}
-docker push $CONTAINER_REGISTRY/${PROJECT_ID}/${IMAGE}:${CIRCLE_BRANCH}
-
-if [ "$CIRCLE_BRANCH" = "master" ]
-then
-    docker tag ${IMAGE} $CONTAINER_REGISTRY/${PROJECT_ID}/${IMAGE}:latest
-    docker push $CONTAINER_REGISTRY/${PROJECT_ID}/${IMAGE}:latest
-fi
-*/
 func (c *Config) DockerBuild() {
 	c.DockerLogin()
 
 	// # If we've created a base image for this branch, let's use it. Otherwise use the latest base image.
-	// if base_count
-	// then
-	//     export DOCKER_TAG="latest"
-	// else
-	//     export DOCKER_TAG=$CIRCLE_BRANCH
-	// fi
+	if false { //; base_count
+		os.Setenv("DOCKER_TAG", "latest")
+	} else {
+		os.Setenv("DOCKER_TAG", os.Getenv("CIRCLE_BRANCH"))
+	}
 
-	// if should_build_base
-	// then
-	//     build_image $BASE_IMAGE Dockerfile.base
-	// fi
+	if true { // should_build_base
+		baseImage := fmt.Sprintf("%s_base", c.Docker.Build.Image)
+		os.Setenv("BASE_IMAGE", baseImage)
+		c.DockerBuildImage(baseImage, "./Dockerfile.base")
+	}
 
-	// cat Dockerfile | envsubst > Dockerfile.sub
+	subset, err := envsubst.ReadFile("Dockerfile")
+	if err != nil {
+		log.Println(err)
+	}
+	err = ioutil.WriteFile("Dockerfile.sub", subset, 0644)
+	if err != nil {
+		log.Println(err)
+	}
 
+	log.Println(string(subset))
 	c.DockerBuildImage(c.Docker.Build.Image, "Dockerfile.sub")
 }
 
