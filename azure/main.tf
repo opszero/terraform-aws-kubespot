@@ -3,7 +3,7 @@ resource "azurerm_resource_group" "cluster" {
   location = var.region
 }
 
-resource "azurerm_kubernetes_cluster" "test" {
+resource "azurerm_kubernetes_cluster" "cluster" {
   name                = var.cluster_name
   location            = "${azurerm_resource_group.cluster.location}"
   resource_group_name = "${azurerm_resource_group.cluster.name}"
