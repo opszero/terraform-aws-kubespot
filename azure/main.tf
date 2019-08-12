@@ -10,7 +10,7 @@ resource "azurerm_kubernetes_cluster" "test" {
   dns_prefix          = "acctestagent1"
 
   agent_pool_profile {
-    name            = "nodes-green"
+    name            = "nodesgreen"
     count           = 1
     vm_size         = "Standard_D1_v2"
     os_type         = "Linux"
@@ -18,7 +18,7 @@ resource "azurerm_kubernetes_cluster" "test" {
   }
 
   agent_pool_profile {
-    name            = "nodes-blue"
+    name            = "nodesblue"
     count           = 1
     vm_size         = "Standard_D2_v2"
     os_type         = "Linux"
