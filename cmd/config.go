@@ -54,6 +54,12 @@ type Config struct {
 			HelmConfig    string
 			ChartName     string
 		}
+
+		RunScript struct {
+			PodAppLabel string
+			Container   string
+			Cmds        []string
+		}
 	}
 }
 
@@ -135,10 +141,9 @@ func ExpandAwsSecret(secretId, str string) string {
 	result, err := svc.GetSecretValue(input)
 	if err != nil {
 		log.Println(err.Error())
-		return ""
+		return str
 	}
 
-	log.Println("Secret Result", result)
 	// Decrypts secret using the associated KMS CMK.
 	// Depending on whether the secret is a string or binary, one of these fields will be populated.
 	if result.SecretString == nil {
@@ -153,10 +158,10 @@ func ExpandAwsSecret(secretId, str string) string {
 
 	mapper := func(placeholderName string) string {
 		if s, ok := envConfig[placeholderName]; ok {
-			return s
+			return fmt.Sprintf("'%s'", s)
 		}
 
-		return ""
+		return "''"
 	}
 
 	return os.Expand(str, mapper)
@@ -228,9 +233,12 @@ func (c *Config) Init() {
 func (c *Config) DockerShouldBuildBase() bool {
 	// 	# If a Dockerfile.base exists
 	if _, err := os.Stat("Dockerfile.base"); err == nil {
-		if c.DockerHasBaseImage() || os.Getenv("FORCE_BASE_BUILD") == "" {
-			return false
-		} else {
+		switch {
+		case c.DockerHasBaseImage() == false:
+			return true
+		case os.Getenv("FORCE_BASE_BUILD") != "":
+			return true
+		default:
 			// Otherwise compare the Dockerfile.base with the latest sha
 			baseCommit := c.runCmdOutput("git", "log", "-1", "--format=format:%H", "--full-diff", "Dockerfile.base")
 			return baseCommit == os.Getenv("CIRCLE_SHA1")
@@ -289,7 +297,10 @@ func (c *Config) DockerBuildImage(image, dockerfile string) {
 		buildCmd = append(buildCmd, os.Getenv("DOCKER_BUILD_ARGS"))
 	}
 	buildCmd = append(buildCmd, "-t", image, "-f", dockerfile, ".")
-	c.runCmd(buildCmd...)
+	err := c.runCmd(buildCmd...)
+	if err != nil {
+		log.Fatal("Couldn't build image")
+	}
 
 	c.runCmd("docker", "tag", image, shaImage)
 	c.runCmd("docker", "push", shaImage)
@@ -452,5 +463,9 @@ func (c *Config) Deploy() {
 }
 
 func (c *Config) RunScript() {
+	pod := c.runCmdOutput("bash", "-c", fmt.Sprintf("kubectl get pod -n %s --selector=app=%s -o jsonpath='{.items[0].metadata.name}'", c.circleBranch(), c.Docker.RunScript.PodAppLabel))
 
+	for _, i := range c.Docker.RunScript.Cmds {
+		c.runCmd("kubectl", "exec", "-i", pod, "-n", c.circleBranch(), "--", i)
+	}
 }

@@ -16,8 +16,6 @@ limitations under the License.
 package cmd
 
 import (
-	"fmt"
-
 	"github.com/spf13/cobra"
 )
 
@@ -32,10 +30,15 @@ Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("runScript called")
+		config.Init()
+		config.RunScript()
 	},
 }
 
 func init() {
 	rootCmd.AddCommand(runScriptCmd)
+
+	runScriptCmd.Flags().StringVar(&config.Docker.RunScript.PodAppLabel, "pod-app-label", "", "Ex. 1234.dkr.ecr.us-west-2.amazonaws.com ")
+	runScriptCmd.Flags().StringVar(&config.Docker.RunScript.Container, "container", "", "Ex. 1234.dkr.ecr.us-west-2.amazonaws.com ")
+	runScriptCmd.Flags().StringArrayVar(&config.Docker.RunScript.Cmds, "cmds", []string{}, "Ex. 1234.dkr.ecr.us-west-2.amazonaws.com ")
 }
