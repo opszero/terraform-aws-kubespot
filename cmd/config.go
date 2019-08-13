@@ -10,12 +10,12 @@ import (
 	"strings"
 
 	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/aws/awserr"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/secretsmanager"
 
 	"github.com/a8m/envsubst"
 	"github.com/joho/godotenv"
+	"gopkg.in/yaml.v2"
 )
 
 const (
@@ -47,10 +47,17 @@ type Config struct {
 			ProjectId         string
 			Image             string
 		}
+
+		Deploy struct {
+			AwsSecretsIds []string
+			Env           string
+			HelmConfig    string
+			ChartName     string
+		}
 	}
 }
 
-func (c *Config) runCmd(cmdArgs ...string) {
+func (c *Config) runCmd(cmdArgs ...string) error {
 	log.Println("Running", cmdArgs)
 
 	var args []string
@@ -64,8 +71,11 @@ func (c *Config) runCmd(cmdArgs ...string) {
 	cmd.Stderr = os.Stderr
 	err := cmd.Run()
 	if err != nil {
-		log.Fatalf("runCmd failed with %s\n", err)
+		//log.Fatalf("runCmd failed with %s\n", err)
+		return err
 	}
+
+	return nil
 }
 
 func (c *Config) runCmdOutput(cmdArgs ...string) string {
@@ -84,47 +94,19 @@ func (c *Config) runCmdOutput(cmdArgs ...string) string {
 	return fmt.Sprintf("%s", stdoutStderr)
 }
 
-func (c *Config) getAwsSecretForCloud() {
+func (c *Config) getAwsSecretForCloud(secretId string) {
 	svc := secretsmanager.New(session.New())
 	input := &secretsmanager.GetSecretValueInput{
-		SecretId: aws.String(c.CloudAwsSecretId),
+		SecretId: aws.String(secretId),
 	}
-
-	// In this sample we only handle the specific exceptions for the 'GetSecretValue' API.
-	// See https://docs.aws.amazon.com/secretsmanager/latest/apireference/API_GetSecretValue.html
 
 	result, err := svc.GetSecretValue(input)
 	if err != nil {
-		if aerr, ok := err.(awserr.Error); ok {
-			switch aerr.Code() {
-			case secretsmanager.ErrCodeDecryptionFailure:
-				// Secrets Manager can't decrypt the protected secret text using the provided KMS key.
-				fmt.Println(secretsmanager.ErrCodeDecryptionFailure, aerr.Error())
-
-			case secretsmanager.ErrCodeInternalServiceError:
-				// An error occurred on the server side.
-				fmt.Println(secretsmanager.ErrCodeInternalServiceError, aerr.Error())
-
-			case secretsmanager.ErrCodeInvalidParameterException:
-				// You provided an invalid value for a parameter.
-				fmt.Println(secretsmanager.ErrCodeInvalidParameterException, aerr.Error())
-
-			case secretsmanager.ErrCodeInvalidRequestException:
-				// You provided a parameter value that is not valid for the current state of the resource.
-				fmt.Println(secretsmanager.ErrCodeInvalidRequestException, aerr.Error())
-
-			case secretsmanager.ErrCodeResourceNotFoundException:
-				// We can't find the resource that you asked for.
-				fmt.Println(secretsmanager.ErrCodeResourceNotFoundException, aerr.Error())
-			}
-		} else {
-			// Print the error, cast err to awserr.Error to get the Code and
-			// Message from an error.
-			fmt.Println(err.Error())
-		}
+		log.Println(err.Error())
 		return
 	}
 
+	log.Println("Secret Result", result)
 	// Decrypts secret using the associated KMS CMK.
 	// Depending on whether the secret is a string or binary, one of these fields will be populated.
 	if result.SecretString == nil {
@@ -136,18 +118,57 @@ func (c *Config) getAwsSecretForCloud() {
 		log.Println(err)
 	}
 
+	log.Println("Config", c.EnvConfig)
+
 	for k := range c.EnvConfig {
 		log.Println("Setting up var", k)
 		os.Setenv(k, c.EnvConfig[k])
 	}
+}
 
+func ExpandAwsSecret(secretId, str string) string {
+	svc := secretsmanager.New(session.New())
+	input := &secretsmanager.GetSecretValueInput{
+		SecretId: aws.String(secretId),
+	}
+
+	result, err := svc.GetSecretValue(input)
+	if err != nil {
+		log.Println(err.Error())
+		return ""
+	}
+
+	log.Println("Secret Result", result)
+	// Decrypts secret using the associated KMS CMK.
+	// Depending on whether the secret is a string or binary, one of these fields will be populated.
+	if result.SecretString == nil {
+		return str
+	}
+
+	var envConfig map[string]string
+	envConfig, err = godotenv.Parse(strings.NewReader(*result.SecretString))
+	if err != nil {
+		log.Println(err)
+	}
+
+	mapper := func(placeholderName string) string {
+		if s, ok := envConfig[placeholderName]; ok {
+			return s
+		}
+
+		return ""
+	}
+
+	return os.Expand(str, mapper)
 }
 
 func (c *Config) Init() {
 	if c.CloudAwsSecretId != "" {
-		c.getAwsSecretForCloud()
+		log.Println("Loading Secrets")
+		c.getAwsSecretForCloud(c.CloudAwsSecretId)
 	}
 
+	log.Println(os.Getenv("PATH"))
 	switch strings.ToLower(c.Cloud) {
 	case AwsCloud:
 		if c.AWSAccessKeyID == "" || c.AWSSecretAccessKey == "" || c.AWSDefaultRegion == "" {
@@ -191,7 +212,6 @@ func (c *Config) Init() {
 		}
 
 		//     export CLOUD_PROVIDER=${CLOUD_PROVIDER:-"aws"}
-		//     export HELM_NAME="$HELM_NAME"
 		//     export SUBDOMAIN=${SUBDOMAIN:-$HELM_NAME}
 		//     export DOMAIN=${DOMAIN:-"opszero.com"}
 		//     export HOST="$SUBDOMAIN.$DOMAIN"
@@ -264,8 +284,12 @@ func (c *Config) DockerBuildImage(image, dockerfile string) {
 
 	log.Println("Docker Build Image")
 
-	// os.Getenv("DOCKER_BUILD_ARGS"),
-	c.runCmd("docker", "build", "-t", image, "-f", dockerfile, ".")
+	buildCmd := []string{"docker", "build"}
+	if os.Getenv("DOCKER_BUILD_ARGS") != "" {
+		buildCmd = append(buildCmd, os.Getenv("DOCKER_BUILD_ARGS"))
+	}
+	buildCmd = append(buildCmd, "-t", image, "-f", dockerfile, ".")
+	c.runCmd(buildCmd...)
 
 	c.runCmd("docker", "tag", image, shaImage)
 	c.runCmd("docker", "push", shaImage)
@@ -280,7 +304,7 @@ func (c *Config) DockerBuildImage(image, dockerfile string) {
 }
 
 func (c *Config) circleBranch() string {
-	return strings.ToLower(c.runCmdOutput("bash", "-c", os.ExpandEnv("echo $CIRCLE_BRANCH | sed 's/[^A-Za-z0-9_]/-/g'")))
+	return strings.TrimSpace(strings.ToLower(c.runCmdOutput("bash", "-c", os.ExpandEnv("echo $CIRCLE_BRANCH | sed 's/[^A-Za-z0-9_]/-/g'"))))
 }
 
 func (c *Config) DockerBuild() {
@@ -315,10 +339,6 @@ func (c *Config) DockerBuild() {
 }
 
 func (c *Config) KubernetesApplyDockerRegistrySecrets() {
-	// #!/bin/bash
-
-	// set -e
-
 	// if [ "$CLOUD_PROVIDER" = "gcp" ]
 	// then
 	// 	kubectl get secret gcrsecret --export -o yaml | kubectl apply -n $CIRCLE_BRANCH -f -
@@ -345,25 +365,35 @@ func (c *Config) KuberneteConfig() {
 func (c *Config) Deploy() {
 	c.KuberneteConfig()
 
-	// 	require "yaml"
-	// class App < Thor
-	//   package_name "App"
-	//   desc "config_yaml FILE", "generate a yaml config for a given environment"
-	//   method_option :env, aliases: "-e", desc: "The environment that you care about"
-	//   def config_yaml(file)
-	//     if options[:env]
-	//       puts YAML.dump(
-	//              YAML.load(
-	//                YAML.load(`cat #{file} | envsubst`.to_yaml)
-	//              )[options[:env]]
-	//            )
-	//     else
-	//       puts File.read(file)
-	//     end
-	//   end
-	// end
+	os.Setenv("CHART_NAME", c.Docker.Deploy.ChartName)
 
-	os.Setenv("HELM_HOME", c.runCmdOutput("helm home"))
+	b, err := ioutil.ReadFile(c.Docker.Deploy.HelmConfig)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	t := make(map[string]interface{})
+	err = yaml.Unmarshal([]byte(b), t)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	b, err = yaml.Marshal(t[c.Docker.Deploy.Env])
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	envFile := c.Docker.Deploy.Env + ".yml"
+
+	envConfig := string(b)
+	for _, i := range c.Docker.Deploy.AwsSecretsIds {
+		envConfig = ExpandAwsSecret(i, envConfig)
+	}
+	ioutil.WriteFile(envFile, []byte(envConfig), 0644)
+
+	log.Println(envConfig)
+
+	os.Setenv("HELM_HOME", c.runCmdOutput("helm", "home"))
 	os.MkdirAll(os.Getenv("HELM_HOME"), os.ModePerm)
 
 	var helmArgs []string
@@ -391,17 +421,13 @@ func (c *Config) Deploy() {
 		log.Println("Deploying")
 	} else {
 		helmArgs = append(helmArgs, "--namespace", os.Getenv("CIRCLE_BRANCH"))
-
-		// 	if ! kubectl get namespaces | grep -q "$CIRCLE_BRANCH"
-		// 	then
-		// 		kubectl create namespace $CIRCLE_BRANCH
-		// 	fi
-
-		// 	/scripts/apply_registry_secret.sh
-		// fi
+		c.runCmd("kubectl", "create", "namespace", os.Getenv("CIRCLE_BRANCH"))
+		c.KubernetesApplyDockerRegistrySecrets()
 	}
-	// TILLER_NAMESPACE=${TILLER_NAMESPACE:-"kube-system"}
-	os.Setenv("TILLER_NAMESPACE", "kube-system")
+
+	if os.Getenv("TILLER_NAMESPACE") == "" {
+		os.Setenv("TILLER_NAMESPACE", "kube-system")
+	}
 
 	helmArgs = append(helmArgs,
 		"--set",
@@ -422,44 +448,9 @@ func (c *Config) Deploy() {
 	// 	HELM_ARGS+=($(echo "$HELM_VARS" | envsubst))
 	// fi
 
-	var env = ""
-	c.runCmd(append([]string{"helm", "upgrade", os.Getenv("HELM_NAME"), os.Getenv("CHART_NAME"), "-f", env}, helmArgs...)...)
-
+	c.runCmd(append([]string{"helm", "upgrade", c.circleBranch(), os.Getenv("CHART_NAME"), "-f", envFile}, helmArgs...)...)
 }
 
 func (c *Config) RunScript() {
-	// 	package main
 
-	// import (
-	//   "database/sql"
-	//   "fmt"
-
-	//   _ "github.com/lib/pq"
-	// )
-
-	// const (
-	//   host     = "localhost"
-	//   port     = 5432
-	//   user     = "postgres"
-	//   password = "your-password"
-	//   dbname   = "calhounio_demo"
-	// )
-
-	// func main() {
-	//   psqlInfo := fmt.Sprintf("host=%s port=%d user=%s "+
-	//     "password=%s dbname=%s sslmode=disable",
-	//     host, port, user, password, dbname)
-	//   db, err := sql.Open("postgres", psqlInfo)
-	//   if err != nil {
-	//     panic(err)
-	//   }
-	//   defer db.Close()
-
-	//   err = db.Ping()
-	//   if err != nil {
-	//     panic(err)
-	//   }
-
-	//   fmt.Println("Successfully connected!")
-	// }
 }

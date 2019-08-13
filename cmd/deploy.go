@@ -31,11 +31,15 @@ This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		config.Init()
-		// config.KubernetesApplyDockerRegistrySecrets()
 		config.Deploy()
 	},
 }
 
 func init() {
 	rootCmd.AddCommand(deployCmd)
+
+	deployCmd.Flags().StringArrayVar(&config.Docker.Deploy.AwsSecretsIds, "aws-secret-ids", []string{}, "Ex. 1234.dkr.ecr.us-west-2.amazonaws.com")
+	deployCmd.Flags().StringVar(&config.Docker.Deploy.Env, "env", "", "Ex. 1234.dkr.ecr.us-west-2.amazonaws.com ")
+	deployCmd.Flags().StringVar(&config.Docker.Deploy.ChartName, "chart-name", "", "Ex. 1234.dkr.ecr.us-west-2.amazonaws.com ")
+	deployCmd.Flags().StringVar(&config.Docker.Deploy.HelmConfig, "helm-config", "", "Ex. 1234.dkr.ecr.us-west-2.amazonaws.com ")
 }
