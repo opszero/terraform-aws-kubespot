@@ -6,7 +6,6 @@ import (
 	"log"
 	"os"
 	"os/exec"
-	"strconv"
 	"strings"
 
 	"github.com/aws/aws-sdk-go/aws"
@@ -230,24 +229,6 @@ func (c *Config) Init() {
 	os.Setenv("CIRCLE_BRANCH", c.circleBranch())
 }
 
-func (c *Config) DockerShouldBuildBase() bool {
-	// 	# If a Dockerfile.base exists
-	if _, err := os.Stat("Dockerfile.base"); err == nil {
-		switch {
-		case c.DockerHasBaseImage() == false:
-			return true
-		case os.Getenv("FORCE_BASE_BUILD") != "":
-			return true
-		default:
-			// Otherwise compare the Dockerfile.base with the latest sha
-			baseCommit := c.runCmdOutput("git", "log", "-1", "--format=format:%H", "--full-diff", "Dockerfile.base")
-			return baseCommit == os.Getenv("CIRCLE_SHA1")
-		}
-	}
-
-	return true
-}
-
 func (c *Config) DockerLogin() {
 	log.Println("Docker Login")
 	switch strings.ToLower(c.Cloud) {
@@ -257,26 +238,6 @@ func (c *Config) DockerLogin() {
 		loginCmd := c.runCmdOutput("aws", "ecr", "get-login", "--no-include-email")
 		c.runCmd("bash", "-c", loginCmd)
 	}
-}
-
-func (c *Config) DockerHasBaseImage() bool {
-	var countStr string
-
-	switch strings.ToLower(c.Cloud) {
-	case GcpCloud:
-		countStr = c.runCmdOutput("bash", "-c", os.ExpandEnv("gcloud container images list-tags --filter=\"tags=($CIRCLE_BRANCH)\" --format=\"table[no-heading](digest)\" \"${CONTAINER_REGISTRY}/${PROJECT_ID}/${BASE_IMAGE}\" | wc -l"))
-	case AwsCloud:
-		countStr = c.runCmdOutput("bash", "-c", os.ExpandEnv("aws ecr describe-images --repository-name \"${PROJECT_ID}/${BASE_IMAGE}\" --image-ids=\"imageTag=${CIRCLE_BRANCH}\" | grep imageDetails | wc -l"))
-	}
-
-	log.Println("Base Image Count", countStr)
-
-	i, err := strconv.Atoi(strings.TrimSpace(countStr))
-	if err != nil {
-		log.Println(err)
-		return false
-	}
-	return i > 0
 }
 
 func (c *Config) dockerCircleImageWithSuffix(image, suffix string) string {
@@ -322,9 +283,6 @@ func (c *Config) DockerBuild() {
 	os.Setenv("CONTAINER_REGISTRY", c.Docker.Build.ContainerRegistry)
 	os.Setenv("PROJECT_ID", c.Docker.Build.ProjectId)
 
-	baseImage := fmt.Sprintf("%s_base", c.Docker.Build.Image)
-	os.Setenv("BASE_IMAGE", baseImage)
-
 	if os.Getenv("CIRCLE_BRANCH") == "master" {
 		os.Setenv("DOCKER_TAG", "latest")
 	} else {
@@ -332,10 +290,6 @@ func (c *Config) DockerBuild() {
 	}
 
 	c.DockerLogin()
-	// If we've created a base image for this branch, let's use it. Otherwise use the latest base image.
-	if c.DockerShouldBuildBase() {
-		c.DockerBuildImage(baseImage, "./Dockerfile.base")
-	}
 
 	subset, err := envsubst.ReadFile("Dockerfile")
 	if err != nil {
