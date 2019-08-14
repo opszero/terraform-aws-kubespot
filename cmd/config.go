@@ -42,6 +42,9 @@ type Config struct {
 
 	Docker struct {
 		Build struct {
+			DotEnvFile    string
+			AwsSecretsIds []string
+
 			ContainerRegistry string
 			ProjectId         string
 			Image             string
@@ -166,6 +169,37 @@ func ExpandAwsSecret(secretId, str string) string {
 	return os.Expand(str, mapper)
 }
 
+func (c *Config) writeAwsSecrets(fileName string, secretIds []string) {
+	var fileContent string
+
+	for _, secretId := range secretIds {
+		svc := secretsmanager.New(session.New())
+		input := &secretsmanager.GetSecretValueInput{
+			SecretId: aws.String(secretId),
+		}
+
+		result, err := svc.GetSecretValue(input)
+		if err != nil {
+			log.Println(err.Error())
+			return
+		}
+
+		// Decrypts secret using the associated KMS CMK.
+		// Depending on whether the secret is a string or binary, one of these fields will be populated.
+		fileContent += secretId
+		fileContent += "\n"
+		fileContent += *result.SecretString
+		fileContent += "\n\n"
+	}
+
+	log.Println("Writing .env", fileContent)
+
+	err := ioutil.WriteFile(fileName, []byte(fileContent), 0644)
+	if err != nil {
+		log.Println(err)
+	}
+}
+
 func (c *Config) Init() {
 	if c.CloudAwsSecretId != "" {
 		log.Println("Loading Secrets")
@@ -252,6 +286,11 @@ func (c *Config) DockerBuildImage(image, dockerfile string) {
 	)
 
 	log.Println("Docker Build Image")
+
+	if c.Docker.Build.DotEnvFile != "" {
+		log.Println("Writing .env file")
+		c.writeAwsSecrets(c.Docker.Build.DotEnvFile, c.Docker.Build.AwsSecretsIds)
+	}
 
 	buildCmd := []string{"docker", "build"}
 	if os.Getenv("DOCKER_BUILD_ARGS") != "" {
