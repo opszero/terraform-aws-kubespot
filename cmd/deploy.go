@@ -42,4 +42,8 @@ func init() {
 	deployCmd.Flags().StringVar(&config.Docker.Deploy.Env, "env", "", "Ex. 1234.dkr.ecr.us-west-2.amazonaws.com ")
 	deployCmd.Flags().StringVar(&config.Docker.Deploy.ChartName, "chart-name", "", "Ex. 1234.dkr.ecr.us-west-2.amazonaws.com ")
 	deployCmd.Flags().StringVar(&config.Docker.Deploy.HelmConfig, "helm-config", "", "Ex. 1234.dkr.ecr.us-west-2.amazonaws.com ")
+
+	deployCmd.Flags().StringVar(&config.Docker.Build.ContainerRegistry, "container-registry", "", "Ex. 1234.dkr.ecr.us-west-2.amazonaws.com ")
+	deployCmd.Flags().StringVar(&config.Docker.Build.ProjectId, "project-id", "", "Ex. opszero")
+	deployCmd.Flags().StringVar(&config.Docker.Build.Image, "image", "", "Ex. deploytag")
 }

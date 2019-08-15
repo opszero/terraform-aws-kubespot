@@ -259,8 +259,18 @@ func (c *Config) Init() {
 
 	os.Setenv("CIRCLE_BRANCH", c.circleBranch())
 
-	c.KuberneteConfig()
+	os.Setenv("CONTAINER_REGISTRY", c.Docker.Build.ContainerRegistry)
+	os.Setenv("PROJECT_ID", c.Docker.Build.ProjectId)
+
+	if os.Getenv("CIRCLE_BRANCH") == "master" {
+		os.Setenv("DOCKER_TAG", "latest")
+	} else {
+		os.Setenv("DOCKER_TAG", os.Getenv("CIRCLE_BRANCH"))
+	}
+
 	c.DockerLogin()
+
+	c.KuberneteConfig()
 }
 
 func (c *Config) DockerLogin() {
@@ -274,8 +284,24 @@ func (c *Config) DockerLogin() {
 	}
 }
 
+func (c *Config) KuberneteConfig() {
+	switch strings.ToLower(c.Cloud) {
+	case GcpCloud:
+		c.runCmd("gcloud", "--quiet", "config", "set", "project", os.Getenv("GOOGLE_PROJECT_ID"))
+		c.runCmd("gcloud", "--quiet", "config", "set", "compute/zone", os.Getenv("GOOGLE_COMPUTE_ZONE"))
+		c.runCmd("gcloud", "auth", "configure-docker", "--quiet")
+		c.runCmd("gcloud", "--quiet", "container", "clusters", "get-credentials", os.ExpandEnv("${GOOGLE_CLUSTER_NAME}"))
+	case AwsCloud:
+		c.runCmd("aws", "eks", "--region", os.ExpandEnv("${AWS_DEFAULT_REGION}"), "update-kubeconfig", "--name", os.ExpandEnv("${AWS_CLUSTER_NAME}"))
+	}
+}
+
 func (c *Config) dockerCircleImageWithSuffix(image, suffix string) string {
 	return strings.TrimSpace(fmt.Sprintf("%s/%s/%s:%s", c.Docker.Build.ContainerRegistry, c.Docker.Build.ProjectId, image, suffix))
+}
+
+func (c *Config) dockerCircleImage(image string) string {
+	return strings.TrimSpace(fmt.Sprintf("%s/%s/%s", c.Docker.Build.ContainerRegistry, c.Docker.Build.ProjectId, image))
 }
 
 func (c *Config) DockerBuildImage(image, dockerfile string) {
@@ -319,17 +345,6 @@ func (c *Config) circleBranch() string {
 }
 
 func (c *Config) DockerBuild() {
-	os.Setenv("CONTAINER_REGISTRY", c.Docker.Build.ContainerRegistry)
-	os.Setenv("PROJECT_ID", c.Docker.Build.ProjectId)
-
-	if os.Getenv("CIRCLE_BRANCH") == "master" {
-		os.Setenv("DOCKER_TAG", "latest")
-	} else {
-		os.Setenv("DOCKER_TAG", os.Getenv("CIRCLE_BRANCH"))
-	}
-
-	c.DockerLogin()
-
 	subset, err := envsubst.ReadFile("Dockerfile")
 	if err != nil {
 		log.Println(err)
@@ -342,34 +357,7 @@ func (c *Config) DockerBuild() {
 	c.DockerBuildImage(c.Docker.Build.Image, "Dockerfile.sub")
 }
 
-func (c *Config) KubernetesApplyDockerRegistrySecrets() {
-	// if [ "$CLOUD_PROVIDER" = "gcp" ]
-	// then
-	// 	kubectl get secret gcrsecret --export -o yaml | kubectl apply -n $CIRCLE_BRANCH -f -
-	// 	kubectl patch serviceaccount default -n $CIRCLE_BRANCH -p '{"imagePullSecrets": [{"name": "gcrsecret"}]}'
-	// elif [ "$CLOUD_PROVIDER" = "aws" ]
-	// then
-	// 	# kubectl get secret ecrsecret --export -o yaml | kubectl apply -n $CIRCLE_BRANCH -f -
-	// 	# kubectl patch serviceaccount default -n $CIRCLE_BRANCH -p '{"imagePullSecrets": [{"name": "ecrsecret"}]}'
-	// 	echo "EKS has native support to pull from ECR"
-	// fi
-}
-
-func (c *Config) KuberneteConfig() {
-	switch strings.ToLower(c.Cloud) {
-	case GcpCloud:
-		c.runCmd("gcloud", "--quiet", "config", "set", "project", os.Getenv("GOOGLE_PROJECT_ID"))
-		c.runCmd("gcloud", "--quiet", "config", "set", "compute/zone", os.Getenv("GOOGLE_COMPUTE_ZONE"))
-		c.runCmd("gcloud", "auth", "configure-docker", "--quiet")
-		c.runCmd("gcloud", "--quiet", "container", "clusters", "get-credentials", os.ExpandEnv("${GOOGLE_CLUSTER_NAME}"))
-	case AwsCloud:
-		c.runCmd("aws", "eks", "--region", os.ExpandEnv("${AWS_DEFAULT_REGION}"), "update-kubeconfig", "--name", os.ExpandEnv("${AWS_CLUSTER_NAME}"))
-	}
-}
-
 func (c *Config) Deploy() {
-	c.KuberneteConfig()
-
 	os.Setenv("CHART_NAME", c.Docker.Deploy.ChartName)
 
 	b, err := ioutil.ReadFile(c.Docker.Deploy.HelmConfig)
@@ -427,7 +415,6 @@ func (c *Config) Deploy() {
 	} else {
 		helmArgs = append(helmArgs, "--namespace", os.Getenv("CIRCLE_BRANCH"))
 		c.runCmd("kubectl", "create", "namespace", os.Getenv("CIRCLE_BRANCH"))
-		c.KubernetesApplyDockerRegistrySecrets()
 	}
 
 	if os.Getenv("TILLER_NAMESPACE") == "" {
@@ -443,9 +430,11 @@ func (c *Config) Deploy() {
 		os.ExpandEnv("ingress.tls[0].secretName=$HELM_NAME-staging-cert"),
 		"--set",
 		os.ExpandEnv("image.tag=${CIRCLE_SHA1}"),
+		"--set",
+		fmt.Sprintf("image.repository=%s", c.dockerCircleImage(c.Docker.Build.Image)),
 		os.ExpandEnv("--tiller-namespace=$TILLER_NAMESPACE"),
 		"--force",
-		"--wait",
+		// "--wait", TODO: Undo.
 		"--install")
 
 	// if [ -n "$HELM_VARS" ]
