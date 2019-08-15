@@ -186,7 +186,7 @@ func (c *Config) writeAwsSecrets(fileName string, secretIds []string) {
 
 		// Decrypts secret using the associated KMS CMK.
 		// Depending on whether the secret is a string or binary, one of these fields will be populated.
-		fileContent += secretId
+		fileContent += fmt.Sprintf("# %s", secretId)
 		fileContent += "\n"
 		fileContent += *result.SecretString
 		fileContent += "\n\n"
@@ -213,54 +213,54 @@ func (c *Config) Init() {
 			log.Fatalf("Ensure that AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, and AWS_DEFAULT_REGION are set")
 		}
 	case GcpCloud:
-		//     if [ -n "$GCLOUD_SERVICE_KEY"]
-		//     then
-		//         echo $GCLOUD_SERVICE_KEY > $HOME/gcloud-service-key.json
-		//     elif [ -n "$GCLOUD_SERVICE_KEY_BASE64" ]
-		//     then
-		//         echo $GCLOUD_SERVICE_KEY_BASE64 | base64 -d > $HOME/gcloud-service-key.json
-		//     else
-		//         echo "No Google Service Account Key given"
-		//     fi
-		c.runCmd("gcloud", "auth", "activate-service-account", fmt.Sprintf("--key-file=%s", c.GCPServiceKeyFile))
+		if os.Getenv("GCLOUD_SERVICE_KEY_BASE64") != "" {
+			c.runCmd("bash", "-c", "echo $GCLOUD_SERVICE_KEY_BASE64 | base64 -d > /tmp/gcloud-service-key.json")
+		} else {
+			log.Fatal("No Google Service Account Key given")
+		}
+
+		c.runCmd("gcloud", "auth", "activate-service-account", "--key-file=/tmp/gcloud-service-key.json")
 	case AzureCloud:
 
 	default:
 		log.Fatalf("Invalid Cloud")
 	}
 
-	if os.Getenv("K8S_DEPLOY_ENV_SET") == "" {
-		if os.Getenv("DATABASE") == "" {
-			//         if [ "$CIRCLE_BRANCH" = "master" ] || [ "$CIRCLE_BRANCH" = "" ]
-			//         then
-			//             DATABASE="$CIRCLE_PROJECT_REPONAME-staging"
-			//         else
-			//             DATABASE="$CIRCLE_PROJECT_REPONAME-$CIRCLE_BRANCH"
-			//         fi
-			//         DATABASE=$(echo "$DATABASE" | sed 's/[^A-Za-z0-9]/-/g')
-		}
+	// if os.Getenv("K8S_DEPLOY_ENV_SET") == "" {
+	// 	if os.Getenv("DATABASE") == "" {
+	// 		//         if [ "$CIRCLE_BRANCH" = "master" ] || [ "$CIRCLE_BRANCH" = "" ]
+	// 		//         then
+	// 		//             DATABASE="$CIRCLE_PROJECT_REPONAME-staging"
+	// 		//         else
+	// 		//             DATABASE="$CIRCLE_PROJECT_REPONAME-$CIRCLE_BRANCH"
+	// 		//         fi
+	// 		//         DATABASE=$(echo "$DATABASE" | sed 's/[^A-Za-z0-9]/-/g')
+	// 	}
 
-		if os.Getenv("CIRCLE_BRANCH") == "master" || os.Getenv("CIRCLE_BRANCH") == "" {
-			// set staging related data
-			log.Println("configuring staging env")
-		} else {
-			// set feature deployment data
-			log.Println("configuring feature deployment env")
-			//         HELM_NAME=$(echo $CIRCLE_BRANCH-$CHART_NAME | sed 's/[^A-Za-z0-9]/-/g' | tr '[:upper:]' '[:lower:]')
-		}
+	// 	if os.Getenv("CIRCLE_BRANCH") == "master" || os.Getenv("CIRCLE_BRANCH") == "" {
+	// 		// set staging related data
+	// 		log.Println("configuring staging env")
+	// 	} else {
+	// 		// set feature deployment data
+	// 		log.Println("configuring feature deployment env")
+	// 		//         HELM_NAME=$(echo $CIRCLE_BRANCH-$CHART_NAME | sed 's/[^A-Za-z0-9]/-/g' | tr '[:upper:]' '[:lower:]')
+	// 	}
 
-		//     export CLOUD_PROVIDER=${CLOUD_PROVIDER:-"aws"}
-		//     export SUBDOMAIN=${SUBDOMAIN:-$HELM_NAME}
-		//     export DOMAIN=${DOMAIN:-"opszero.com"}
-		//     export HOST="$SUBDOMAIN.$DOMAIN"
-		//     export URL_HOST="https://$HOST"
-		//     export CIRCLE_BRANCH=$(echo $CIRCLE_BRANCH | sed 's/[^A-Za-z0-9_]/-/g')
+	// 	//     export CLOUD_PROVIDER=${CLOUD_PROVIDER:-"aws"}
+	// 	//     export SUBDOMAIN=${SUBDOMAIN:-$HELM_NAME}
+	// 	//     export DOMAIN=${DOMAIN:-"opszero.com"}
+	// 	//     export HOST="$SUBDOMAIN.$DOMAIN"
+	// 	//     export URL_HOST="https://$HOST"
+	// 	//     export CIRCLE_BRANCH=$(echo $CIRCLE_BRANCH | sed 's/[^A-Za-z0-9_]/-/g')
 
-		//     export K8S_DEPLOY_ENV_SET=true
+	// 	//     export K8S_DEPLOY_ENV_SET=true
 
-	}
+	// }
 
 	os.Setenv("CIRCLE_BRANCH", c.circleBranch())
+
+	c.KuberneteConfig()
+	c.DockerLogin()
 }
 
 func (c *Config) DockerLogin() {
@@ -358,9 +358,10 @@ func (c *Config) KubernetesApplyDockerRegistrySecrets() {
 func (c *Config) KuberneteConfig() {
 	switch strings.ToLower(c.Cloud) {
 	case GcpCloud:
-		// 	gcloud --quiet config set project ${GOOGLE_PROJECT_ID}
-		// 	gcloud --quiet config set compute/zone ${GOOGLE_COMPUTE_ZONE}
-	// 	gcloud --quiet container clusters get-credentials ${GOOGLE_CLUSTER_NAME}
+		c.runCmd("gcloud", "--quiet", "config", "set", "project", os.Getenv("GOOGLE_PROJECT_ID"))
+		c.runCmd("gcloud", "--quiet", "config", "set", "compute/zone", os.Getenv("GOOGLE_COMPUTE_ZONE"))
+		c.runCmd("gcloud", "auth", "configure-docker", "--quiet")
+		c.runCmd("gcloud", "--quiet", "container", "clusters", "get-credentials", os.ExpandEnv("${GOOGLE_CLUSTER_NAME}"))
 	case AwsCloud:
 		c.runCmd("aws", "eks", "--region", os.ExpandEnv("${AWS_DEFAULT_REGION}"), "update-kubeconfig", "--name", os.ExpandEnv("${AWS_CLUSTER_NAME}"))
 	}
