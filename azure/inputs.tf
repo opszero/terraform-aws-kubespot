@@ -2,6 +2,14 @@ variable "cluster_name" {
   type = string
 }
 
+variable "client_id" {
+  type = string
+}
+
+variable "client_secret" {
+  type = string
+}
+
 
 # variable "cluster_version" {
 #   default = "1.13"

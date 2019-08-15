@@ -26,8 +26,8 @@ resource "azurerm_kubernetes_cluster" "cluster" {
   }
 
   service_principal {
-    client_id     = provider.azurerm.client_id
-    client_secret = provider.azurerm.client_secret
+    client_id     = var.client_id
+    client_secret = var.client_secret
   }
 
   tags = {
