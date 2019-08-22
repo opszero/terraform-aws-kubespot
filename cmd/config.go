@@ -385,29 +385,8 @@ func (c *Config) Deploy() {
 	}
 	ioutil.WriteFile(envFile, []byte(envConfig), 0644)
 
-	log.Println(envConfig)
-
 	os.Setenv("HELM_HOME", c.runCmdOutput("helm", "home"))
 	os.MkdirAll(os.Getenv("HELM_HOME"), os.ModePerm)
-
-	if os.Getenv("HELM_TLS") != "" {
-		// 	if [ ! -f $HELM_HOME/ca.pem ]
-		// 	then
-		// 		echo "$HELM_CA" | base64 -d --ignore-garbage > $HELM_HOME/ca.pem
-		// 	fi
-
-		// 	if [ ! -f $HELM_HOME/cert.pem ]
-		// 	then
-		// 		echo "$HELM_CERT"| base64 -d --ignore-garbage > $HELM_HOME/cert.pem
-		// 	fi
-
-		// 	if [ ! -f $HELM_HOME/key.pem ]
-		// 	then
-		// 		echo "$HELM_KEY"| base64 -d --ignore-garbage > $HELM_HOME/key.pem
-		// 	fi
-		// 	HELM_ARGS+=(--tls)
-
-	}
 
 	var helmArgs []string
 
@@ -423,12 +402,6 @@ func (c *Config) Deploy() {
 	}
 
 	helmArgs = append(helmArgs,
-		// "--set",
-		// os.ExpandEnv("ingress.hosts={$HOST}"),
-		// "--set",
-		// os.ExpandEnv("ingress.tls[0].hosts={$HOST}"),
-		// "--set",
-		// os.ExpandEnv("ingress.tls[0].secretName=$HELM_NAME-staging-cert"),
 		"--set", os.ExpandEnv("image.tag=${CIRCLE_SHA1}"),
 		"--set", fmt.Sprintf("deploytag.tag=%s", os.Getenv("DOCKER_TAG")),
 		"--set", fmt.Sprintf("deploytag.cloud=%s", c.Cloud),
@@ -444,11 +417,6 @@ func (c *Config) Deploy() {
 		"--recreate-pods",
 		// "--wait", TODO: Undo.
 		"--install")
-
-	// if [ -n "$HELM_VARS" ]
-	// then
-	// 	HELM_ARGS+=($(echo "$HELM_VARS" | envsubst))
-	// fi
 
 	c.runCmd(append([]string{"helm", "upgrade", c.circleBranch(), os.Getenv("CHART_NAME"), "-f", envFile}, helmArgs...)...)
 }
