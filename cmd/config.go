@@ -425,6 +425,6 @@ func (c *Config) RunScript() {
 	pod := c.runCmdOutput("bash", "-c", fmt.Sprintf("kubectl get pod -n %s --selector=app=%s -o jsonpath='{.items[0].metadata.name}'", c.circleBranch(), c.Docker.RunScript.PodAppLabel))
 
 	for _, i := range c.Docker.RunScript.Cmds {
-		c.runCmd("kubectl", "exec", "-i", pod, "-n", c.circleBranch(), "--", i)
+		c.runCmd("kubectl", "exec", "-i", pod, "-n", c.circleBranch(), "-c", c.Docker.RunScript.Container, "--", i)
 	}
 }
