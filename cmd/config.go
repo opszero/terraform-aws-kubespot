@@ -55,6 +55,7 @@ type Config struct {
 			Env           string
 			HelmConfig    string
 			ChartName     string
+			HelmSet       []string
 		}
 
 		RunScript struct {
@@ -389,8 +390,6 @@ func (c *Config) Deploy() {
 	os.Setenv("HELM_HOME", c.runCmdOutput("helm", "home"))
 	os.MkdirAll(os.Getenv("HELM_HOME"), os.ModePerm)
 
-	var helmArgs []string
-
 	if os.Getenv("HELM_TLS") != "" {
 		// 	if [ ! -f $HELM_HOME/ca.pem ]
 		// 	then
@@ -410,6 +409,8 @@ func (c *Config) Deploy() {
 
 	}
 
+	var helmArgs []string
+
 	if os.Getenv("CIRCLE_BRANCH") == "master" || os.Getenv("CIRCLE_BRANCH") == "" {
 		log.Println("Deploying")
 	} else {
@@ -422,18 +423,24 @@ func (c *Config) Deploy() {
 	}
 
 	helmArgs = append(helmArgs,
-		"--set",
-		os.ExpandEnv("ingress.hosts={$HOST}"),
-		"--set",
-		os.ExpandEnv("ingress.tls[0].hosts={$HOST}"),
-		"--set",
-		os.ExpandEnv("ingress.tls[0].secretName=$HELM_NAME-staging-cert"),
-		"--set",
-		os.ExpandEnv("image.tag=${CIRCLE_SHA1}"),
-		"--set",
-		fmt.Sprintf("image.repository=%s", c.dockerCircleImage(c.Docker.Build.Image)),
+		// "--set",
+		// os.ExpandEnv("ingress.hosts={$HOST}"),
+		// "--set",
+		// os.ExpandEnv("ingress.tls[0].hosts={$HOST}"),
+		// "--set",
+		// os.ExpandEnv("ingress.tls[0].secretName=$HELM_NAME-staging-cert"),
+		"--set", os.ExpandEnv("image.tag=${CIRCLE_SHA1}"),
+		"--set", fmt.Sprintf("deploytag.tag=%s", os.Getenv("DOCKER_TAG")),
+	)
+
+	for _, i := range c.Docker.Deploy.HelmSet {
+		helmArgs = append(helmArgs, "--set", i)
+	}
+
+	helmArgs = append(helmArgs,
 		os.ExpandEnv("--tiller-namespace=$TILLER_NAMESPACE"),
 		"--force",
+		"--recreate-pods",
 		// "--wait", TODO: Undo.
 		"--install")
 
@@ -444,6 +451,38 @@ func (c *Config) Deploy() {
 
 	c.runCmd(append([]string{"helm", "upgrade", c.circleBranch(), os.Getenv("CHART_NAME"), "-f", envFile}, helmArgs...)...)
 }
+
+// func (c *Config) DeployDns() {
+// 	if os.Getenv("CF_API_KEY") != "" && os.Getenv("CF_API_EMAIL") != "" && os.Getenv("CF_API_DOMAIN") {
+// 		log.Println("Setting DNS on Cloudflare")
+// 	} else {
+// 		return
+// 	}
+
+// 	api, err := cloudflare.New(os.Getenv("CF_API_KEY"), os.Getenv("CF_API_EMAIL"))
+// 	if err != nil {
+// 		log.Fatal(err)
+// 	}
+
+// 	zoneID, err := api.ZoneIDByName(os.Getenv("CF_API_DOMAIN"))
+// 	if err != nil {
+// 		log.Fatal(err)
+// 	}
+
+// 	// if aws CNAME
+// 	// if gcp A
+// 	recs, err := api.DNSRecords(zoneID, cloudflare.DNSRecord{
+// 		Name: fmt.Sprintf("%s-%s.%s", os.Getenv("DOCKER_TAG"), strings.ToLower(c.Cloud), os.Getenv("CF_API_DOMAIN")),
+// 		Type: "CNAME"
+// 	})
+// 	if err != nil {
+// 		log.Fatal(err)
+// 	}
+
+// 	recs.
+// 	// If it doesn't exist create it
+// 	// Else Update it
+// }
 
 func (c *Config) RunScript() {
 	pod := c.runCmdOutput("bash", "-c", fmt.Sprintf("kubectl get pod -n %s --selector=app=%s -o jsonpath='{.items[0].metadata.name}'", c.circleBranch(), c.Docker.RunScript.PodAppLabel))
