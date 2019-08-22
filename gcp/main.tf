@@ -2,6 +2,9 @@ resource "google_container_cluster" "cluster" {
   name     = var.cluster_name
   location = var.region
 
+  network    = google_compute_network.network.self_link
+  subnetwork = google_compute_subnetwork.subnet.self_link
+
   # We can't create a cluster with no node pool defined, but we want to only use
   # separately managed node pools. So we create the smallest possible default
   # node pool and immediately delete it.
@@ -19,7 +22,7 @@ resource "google_container_cluster" "cluster" {
 }
 
 resource "google_container_node_pool" "nodes_green" {
-  name       = "nodes_green"
+  name       = "nodes-green"
   location   = var.region
   cluster    = google_container_cluster.cluster.name
   node_count = 1
@@ -42,8 +45,11 @@ resource "google_container_node_pool" "nodes_green" {
     }
 
     oauth_scopes = [
+      "https://www.googleapis.com/auth/compute",
+      "https://www.googleapis.com/auth/devstorage.read_only",
       "https://www.googleapis.com/auth/logging.write",
       "https://www.googleapis.com/auth/monitoring",
+      "https://www.googleapis.com/auth/cloud-platform",
     ]
   }
 }
