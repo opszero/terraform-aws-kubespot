@@ -42,3 +42,8 @@ resource "kubernetes_cluster_role_binding" "tiller" {
     namespace = "kube-system"
   }
 }
+
+resource "helm_release" "ingress" {
+  name  = "ingress"
+  chart = "stable/nginx-ingress"
+}
