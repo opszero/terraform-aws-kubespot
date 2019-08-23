@@ -36,16 +36,14 @@ resource "kubernetes_cluster_role_binding" "tiller" {
     api_group = ""
     namespace = "${kubernetes_service_account.tiller.metadata.0.namespace}"
   }
-  subject {
-    kind      = "ServiceAccount"
-    name      = "tiller"
-    namespace = "kube-system"
-  }
+  # subject {
+  #   kind      = "ServiceAccount"
+  #   name      = "tiller"
+  #   namespace = "kube-system"
+  # }
 }
 
 resource "helm_release" "ingress" {
   name  = "ingress"
   chart = "stable/nginx-ingress"
-
-  depends_on = [kubernetes_service_account.tiller]
 }
