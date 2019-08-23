@@ -1,3 +1,5 @@
+data "google_client_config" "current" {}
+
 resource "google_container_cluster" "cluster" {
   name     = var.cluster_name
   location = var.region

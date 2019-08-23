@@ -1,10 +1,13 @@
+
 provider "helm" {
   kubernetes {
-    host                   = "${google_container_cluster.cluster.endpoint}"
-    token                  = "${data.google_client_config.current.access_token}"
-    client_certificate     = "${base64decode(google_container_cluster.cluster.master_auth.0.client_certificate)}"
-    client_key             = "${base64decode(google_container_cluster.cluster.master_auth.0.client_key)}"
-    cluster_ca_certificate = "${base64decode(google_container_cluster.cluster.master_auth.0.cluster_ca_certificate)}"
+    host                   = "${azurerm_kubernetes_cluster.cluster.kube_config.0.host}"
+    username               = "${azurerm_kubernetes_cluster.cluster.kube_config.0.username}"
+    password               = "${azurerm_kubernetes_cluster.cluster.kube_config.0.password}"
+    client_certificate     = "${base64decode(azurerm_kubernetes_cluster.cluster.kube_config.0.client_certificate)}"
+    client_key             = "${base64decode(azurerm_kubernetes_cluster.cluster.kube_config.0.client_key)}"
+    cluster_ca_certificate = "${base64decode(azurerm_kubernetes_cluster.cluster.kube_config.0.cluster_ca_certificate)}"
+    load_config_file       = false
   }
 
   install_tiller  = true
@@ -36,11 +39,11 @@ resource "kubernetes_cluster_role_binding" "tiller" {
     api_group = ""
     namespace = "${kubernetes_service_account.tiller.metadata.0.namespace}"
   }
-  # subject {
-  #   kind      = "ServiceAccount"
-  #   name      = "tiller"
-  #   namespace = "kube-system"
-  # }
+  subject {
+    kind      = "ServiceAccount"
+    name      = "tiller"
+    namespace = "kube-system"
+  }
 }
 
 resource "helm_release" "ingress" {
