@@ -7,17 +7,17 @@ provider "helm" {
     cluster_ca_certificate = "${base64decode(google_container_cluster.cluster.master_auth.0.cluster_ca_certificate)}"
   }
 
-  install_tiller  = true
-  service_account = "${kubernetes_service_account.tiller.metadata.0.name}"
+  install_tiller = true
+  # service_account = "${kubernetes_service_account.tiller.metadata.0.name}"
 }
 
-resource "kubernetes_service_account" "tiller" {
-  automount_service_account_token = true
-  metadata {
-    name      = "tiller"
-    namespace = "kube-system"
-  }
-}
+# resource "kubernetes_service_account" "tiller" {
+#   automount_service_account_token = true
+#   metadata {
+#     name      = "tiller"
+#     namespace = "kube-system"
+#   }
+# }
 
 # resource "kubernetes_cluster_role_binding" "tiller" {
 #   metadata {
