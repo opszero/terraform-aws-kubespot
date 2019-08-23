@@ -9,14 +9,6 @@ resource "azurerm_kubernetes_cluster" "cluster" {
   resource_group_name = "${azurerm_resource_group.cluster.name}"
   dns_prefix          = "auditkube"
 
-  linux_profile {
-    admin_username = "opszero"
-
-    # ssh_key {
-    #   key_data = "${file(var.public_ssh_key_path)}"
-    # }
-  }
-
   agent_pool_profile {
     name            = "nodesgreen"
     count           = 1
