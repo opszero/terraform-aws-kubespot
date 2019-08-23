@@ -30,6 +30,10 @@ RUN apt-get install docker-ce -y
 RUN apt-get install -y curl && curl -sSL https://sdk.cloud.google.com | bash
 ENV PATH="$PATH:/root/google-cloud-sdk/bin"
 
+# Install Azure
+RUN curl -sL https://aka.ms/InstallAzureCLIDeb | bash
+
+
 # Install awscli
 RUN pip3 install --upgrade awscli
 

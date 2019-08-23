@@ -135,28 +135,36 @@ func (c *Config) getAwsSecretForCloud(secretId string) {
 	}
 }
 
-func ExpandAwsSecret(secretId, str string) string {
-	svc := secretsmanager.New(session.New())
-	input := &secretsmanager.GetSecretValueInput{
-		SecretId: aws.String(secretId),
-	}
+func ExpandAwsSecrets(secretIds []string, str string) string {
+	envConfig := make(map[string]string)
 
-	result, err := svc.GetSecretValue(input)
-	if err != nil {
-		log.Println(err.Error())
-		return str
-	}
+	for _, secretId := range secretIds {
+		svc := secretsmanager.New(session.New())
+		input := &secretsmanager.GetSecretValueInput{
+			SecretId: aws.String(secretId),
+		}
 
-	// Decrypts secret using the associated KMS CMK.
-	// Depending on whether the secret is a string or binary, one of these fields will be populated.
-	if result.SecretString == nil {
-		return str
-	}
+		result, err := svc.GetSecretValue(input)
+		if err != nil {
+			log.Println(err.Error())
+			return str
+		}
 
-	var envConfig map[string]string
-	envConfig, err = godotenv.Parse(strings.NewReader(*result.SecretString))
-	if err != nil {
-		log.Println(err)
+		// Decrypts secret using the associated KMS CMK.
+		// Depending on whether the secret is a string or binary, one of these fields will be populated.
+		if result.SecretString == nil {
+			return str
+		}
+
+		var e map[string]string
+		e, err = godotenv.Parse(strings.NewReader(*result.SecretString))
+		if err != nil {
+			log.Println(err)
+		}
+
+		for key, value := range e {
+			envConfig[key] = value
+		}
 	}
 
 	mapper := func(placeholderName string) string {
@@ -380,10 +388,10 @@ func (c *Config) Deploy() {
 	envFile := c.Docker.Deploy.Env + ".yml"
 
 	envConfig := string(b)
-	for _, i := range c.Docker.Deploy.AwsSecretsIds {
-		envConfig = ExpandAwsSecret(i, envConfig)
-	}
+	envConfig = ExpandAwsSecrets(c.Docker.Deploy.AwsSecretsIds, envConfig)
 	ioutil.WriteFile(envFile, []byte(envConfig), 0644)
+
+	log.Println(string(envConfig))
 
 	os.Setenv("HELM_HOME", c.runCmdOutput("helm", "home"))
 	os.MkdirAll(os.Getenv("HELM_HOME"), os.ModePerm)
