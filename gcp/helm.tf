@@ -42,3 +42,8 @@ provider "helm" {
 #     namespace = "kube-system"
 #   }
 # }
+
+resource "helm_release" "ingress" {
+  name  = "ingress"
+  chart = "stable/nginx-ingress"
+}
