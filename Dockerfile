@@ -31,8 +31,12 @@ RUN apt-get install -y curl && curl -sSL https://sdk.cloud.google.com | bash
 ENV PATH="$PATH:/root/google-cloud-sdk/bin"
 
 # Install Azure
-RUN curl -sL https://aka.ms/InstallAzureCLIDeb | bash
-
+RUN curl -sL https://packages.microsoft.com/keys/microsoft.asc | \
+    gpg --dearmor | \
+    tee /etc/apt/trusted.gpg.d/microsoft.asc.gpg > /dev/null
+RUN echo "deb [arch=amd64] https://packages.microsoft.com/repos/azure-cli/ bionic main" | \
+    tee /etc/apt/sources.list.d/azure-cli.list
+RUN apt-get update -y && sudo apt-get install -y azure-cli
 
 # Install awscli
 RUN pip3 install --upgrade awscli

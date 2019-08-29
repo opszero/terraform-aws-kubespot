@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"encoding/base64"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -135,6 +136,33 @@ func (c *Config) getAwsSecretForCloud(secretId string) {
 	}
 }
 
+func AwsSecretsAsDotEnv(secretIds []string) (fileContent string) {
+	for _, secretId := range secretIds {
+		svc := secretsmanager.New(session.New())
+		input := &secretsmanager.GetSecretValueInput{
+			SecretId: aws.String(secretId),
+		}
+
+		result, err := svc.GetSecretValue(input)
+		if err != nil {
+			log.Println(err.Error())
+			continue
+		}
+
+		// Decrypts secret using the associated KMS CMK.
+		// Depending on whether the secret is a string or binary, one of these fields will be populated.
+		if result.SecretString == nil {
+			continue
+		}
+
+		fileContent += fmt.Sprintf("# %s", secretId)
+		fileContent += "\n"
+		fileContent += *result.SecretString
+		fileContent += "\n\n"
+	}
+
+	return
+}
 func ExpandAwsSecrets(secretIds []string, str string) string {
 	envConfig := make(map[string]string)
 
@@ -147,13 +175,13 @@ func ExpandAwsSecrets(secretIds []string, str string) string {
 		result, err := svc.GetSecretValue(input)
 		if err != nil {
 			log.Println(err.Error())
-			return str
+			continue
 		}
 
 		// Decrypts secret using the associated KMS CMK.
 		// Depending on whether the secret is a string or binary, one of these fields will be populated.
 		if result.SecretString == nil {
-			return str
+			continue
 		}
 
 		var e map[string]string
@@ -271,10 +299,10 @@ func (c *Config) Init() {
 	os.Setenv("CONTAINER_REGISTRY", c.Docker.Build.ContainerRegistry)
 	os.Setenv("PROJECT_ID", c.Docker.Build.ProjectId)
 
-	if os.Getenv("CIRCLE_BRANCH") == "master" {
+	if c.circleBranch() == "master" {
 		os.Setenv("DOCKER_TAG", "latest")
 	} else {
-		os.Setenv("DOCKER_TAG", os.Getenv("CIRCLE_BRANCH"))
+		os.Setenv("DOCKER_TAG", c.circleBranch())
 	}
 
 	c.DockerLogin()
@@ -316,7 +344,7 @@ func (c *Config) dockerCircleImage(image string) string {
 func (c *Config) DockerBuildImage(image, dockerfile string) {
 	var (
 		shaImage    = c.dockerCircleImageWithSuffix(image, os.Getenv("CIRCLE_SHA1"))
-		branchImage = c.dockerCircleImageWithSuffix(image, os.Getenv("CIRCLE_BRANCH"))
+		branchImage = c.dockerCircleImageWithSuffix(image, c.circleBranch())
 		latestImage = c.dockerCircleImageWithSuffix(image, "latest")
 	)
 
@@ -343,7 +371,7 @@ func (c *Config) DockerBuildImage(image, dockerfile string) {
 	c.runCmd("docker", "tag", image, branchImage)
 	c.runCmd("docker", "push", branchImage)
 
-	if os.Getenv("CIRCLE_BRANCH") == "master" {
+	if c.circleBranch() == "master" {
 		c.runCmd("docker", "tag", image, latestImage)
 		c.runCmd("docker", "push", latestImage)
 	}
@@ -387,8 +415,17 @@ func (c *Config) Deploy() {
 
 	envFile := c.Docker.Deploy.Env + ".yml"
 
-	envConfig := string(b)
-	envConfig = ExpandAwsSecrets(c.Docker.Deploy.AwsSecretsIds, envConfig)
+	envMap := make(map[string]string)
+	envMap["DEPLOYTAG_DOTENV"] = base64.StdEncoding.EncodeToString([]byte(AwsSecretsAsDotEnv(c.Docker.Deploy.AwsSecretsIds)))
+
+	envConfig := os.Expand(string(b), func(placeholderName string) string {
+		if s, ok := envMap[placeholderName]; ok {
+			return fmt.Sprintf("%s", s)
+		}
+
+		return "''"
+	})
+
 	ioutil.WriteFile(envFile, []byte(envConfig), 0644)
 
 	log.Println(string(envConfig))
@@ -398,11 +435,11 @@ func (c *Config) Deploy() {
 
 	var helmArgs []string
 
-	if os.Getenv("CIRCLE_BRANCH") == "master" || os.Getenv("CIRCLE_BRANCH") == "" {
+	if c.circleBranch() == "master" || c.circleBranch() == "" {
 		log.Println("Deploying")
 	} else {
-		helmArgs = append(helmArgs, "--namespace", os.Getenv("CIRCLE_BRANCH"))
-		c.runCmd("kubectl", "create", "namespace", os.Getenv("CIRCLE_BRANCH"))
+		helmArgs = append(helmArgs, "--namespace", c.circleBranch())
+		c.runCmd("kubectl", "create", "namespace", c.circleBranch())
 	}
 
 	if os.Getenv("TILLER_NAMESPACE") == "" {
