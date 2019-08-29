@@ -263,26 +263,6 @@ func (c *Config) Init() {
 		log.Fatalf("Invalid Cloud")
 	}
 
-	// if os.Getenv("K8S_DEPLOY_ENV_SET") == "" {
-	// 	if os.Getenv("DATABASE") == "" {
-	// 		//         if [ "$CIRCLE_BRANCH" = "master" ] || [ "$CIRCLE_BRANCH" = "" ]
-	// 		//         then
-	// 		//             DATABASE="$CIRCLE_PROJECT_REPONAME-staging"
-	// 		//         else
-	// 		//             DATABASE="$CIRCLE_PROJECT_REPONAME-$CIRCLE_BRANCH"
-	// 		//         fi
-	// 		//         DATABASE=$(echo "$DATABASE" | sed 's/[^A-Za-z0-9]/-/g')
-	// 	}
-
-	// 	if os.Getenv("CIRCLE_BRANCH") == "master" || os.Getenv("CIRCLE_BRANCH") == "" {
-	// 		// set staging related data
-	// 		log.Println("configuring staging env")
-	// 	} else {
-	// 		// set feature deployment data
-	// 		log.Println("configuring feature deployment env")
-	// 		//         HELM_NAME=$(echo $CIRCLE_BRANCH-$CHART_NAME | sed 's/[^A-Za-z0-9]/-/g' | tr '[:upper:]' '[:lower:]')
-	// 	}
-
 	// 	//     export CLOUD_PROVIDER=${CLOUD_PROVIDER:-"aws"}
 	// 	//     export SUBDOMAIN=${SUBDOMAIN:-$HELM_NAME}
 	// 	//     export DOMAIN=${DOMAIN:-"opszero.com"}
@@ -294,20 +274,23 @@ func (c *Config) Init() {
 
 	// }
 
-	os.Setenv("CIRCLE_BRANCH", c.circleBranch())
-
 	os.Setenv("CONTAINER_REGISTRY", c.Docker.Build.ContainerRegistry)
 	os.Setenv("PROJECT_ID", c.Docker.Build.ProjectId)
 
+	os.Setenv("CIRCLE_BRANCH", c.circleBranch())
 	if c.circleBranch() == "master" {
+		log.Println("configuring production env")
 		os.Setenv("DOCKER_TAG", "latest")
 	} else {
+
+		log.Println("configuring staging env")
 		os.Setenv("DOCKER_TAG", c.circleBranch())
 	}
 
 	c.DockerLogin()
-
 	c.KuberneteConfig()
+
+	log.Println("Circle Branch", c.circleBranch())
 }
 
 func (c *Config) DockerLogin() {
@@ -377,8 +360,12 @@ func (c *Config) DockerBuildImage(image, dockerfile string) {
 	}
 }
 
+func (c *Config) helmChartName() string {
+	return strings.TrimSpace(strings.ToLower(c.runCmdOutput("bash", "-c", fmt.Sprintf("echo %s | sed 's/[^A-Za-z0-9]/-/g'", c.Docker.Deploy.ChartName))))
+}
+
 func (c *Config) circleBranch() string {
-	return strings.TrimSpace(strings.ToLower(c.runCmdOutput("bash", "-c", os.ExpandEnv("echo $CIRCLE_BRANCH | sed 's/[^A-Za-z0-9_]/-/g'"))))
+	return strings.TrimSpace(strings.ToLower(c.runCmdOutput("bash", "-c", os.ExpandEnv("echo $CIRCLE_BRANCH | sed 's/[^A-Za-z0-9]/-/g'"))))
 }
 
 func (c *Config) DockerBuild() {
@@ -395,8 +382,6 @@ func (c *Config) DockerBuild() {
 }
 
 func (c *Config) Deploy() {
-	os.Setenv("CHART_NAME", c.Docker.Deploy.ChartName)
-
 	b, err := ioutil.ReadFile(c.Docker.Deploy.HelmConfig)
 	if err != nil {
 		log.Fatal(err)
@@ -463,7 +448,7 @@ func (c *Config) Deploy() {
 		// "--wait", TODO: Undo.
 		"--install")
 
-	c.runCmd(append([]string{"helm", "upgrade", c.circleBranch(), os.Getenv("CHART_NAME"), "-f", envFile}, helmArgs...)...)
+	c.runCmd(append([]string{"helm", "upgrade", c.circleBranch(), c.helmChartName(), "-f", envFile}, helmArgs...)...)
 }
 
 func (c *Config) RunScript() {
