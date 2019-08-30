@@ -6,7 +6,7 @@ resource "aws_subnet" "public" {
   vpc_id            = aws_vpc.vpc.id
 
   tags = {
-    "Name"                                      = var.environment_name
+    "Name"                                          = var.environment_name
     "kubernetes.io/cluster/${var.environment_name}" = "shared"
   }
 }

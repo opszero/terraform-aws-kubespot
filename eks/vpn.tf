@@ -54,7 +54,7 @@ resource "aws_security_group" "vpn" {
   }
 
   tags = {
-    "Name"                                      = "${var.environment_name}-vpn"
+    "Name"                                          = "${var.environment_name}-vpn"
     "kubernetes.io/cluster/${var.environment_name}" = "owned"
   }
 }

@@ -4,7 +4,7 @@ resource "aws_vpc" "vpc" {
   enable_dns_hostnames = true
 
   tags = {
-    "Name"                                      = var.environment_name
+    "Name"                                          = var.environment_name
     "kubernetes.io/cluster/${var.environment_name}" = "shared"
   }
 }
@@ -39,7 +39,7 @@ resource "aws_security_group" "node" {
   }
 
   tags = {
-    "Name"                                      = "${var.environment_name}-node"
+    "Name"                                          = "${var.environment_name}-node"
     "kubernetes.io/cluster/${var.environment_name}" = "owned"
   }
 }
