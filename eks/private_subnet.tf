@@ -8,8 +8,8 @@ resource "aws_subnet" "private" {
   vpc_id            = aws_vpc.vpc.id
 
   tags = {
-    "Name"                                      = "${var.cluster_name}-private"
-    "kubernetes.io/cluster/${var.cluster_name}" = "shared"
+    "Name"                                      = "${var.environment_name}-private"
+    "kubernetes.io/cluster/${var.environment_name}" = "shared"
     "kubernetes.io/role/internal-elb"           = "1"
   }
 }
