@@ -92,7 +92,7 @@ variable "redis_node_type" {
 }
 
 variable "redis_num_nodes" {
-  default = 0
+  default = 1
 }
 
 variable "sql_enabled" {
