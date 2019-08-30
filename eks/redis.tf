@@ -19,7 +19,7 @@ resource "aws_elasticache_subnet_group" "default" {
 # }
 
 resource "aws_elasticache_cluster" "default" {
-  count      = redis_enabled ? 1 : 0
+  count      = var.redis_enabled ? 1 : 0
   cluster_id = var.environment_name
 
   engine    = "redis"

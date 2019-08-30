@@ -4,7 +4,7 @@ resource "aws_db_subnet_group" "default" {
 }
 
 resource "aws_rds_cluster" "default" {
-  count = sql_enabled ? 0 : 1
+  count = var.sql_enabled ? 0 : 1
 
   cluster_identifier = var.environment_name
 
