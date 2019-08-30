@@ -43,7 +43,9 @@ resource "aws_rds_cluster_instance" "cluster_instances" {
 
   engine             = var.sql_engine
   identifier         = "${var.environment_name}-${count.index}"
-  cluster_identifier = aws_rds_cluster.default.id
+
+  cluster_identifier = aws_rds_cluster.default.0.id
+
   instance_class     = var.sql_instance_class
 
   db_subnet_group_name = aws_db_subnet_group.default.name
