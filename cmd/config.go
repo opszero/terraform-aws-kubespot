@@ -207,7 +207,11 @@ func ExpandAwsSecrets(secretIds []string, str string) string {
 }
 
 func (c *Config) writeAwsSecrets(fileName string, secretIds []string) {
-	var fileContent string
+	var (
+		fileContent string
+	)
+
+	fileContent += fmt.Sprintf("\n\nDEPLOYTAG_BRANCH=%s\n\n", c.circleBranch())
 
 	for _, secretId := range secretIds {
 		svc := secretsmanager.New(session.New())
@@ -221,8 +225,6 @@ func (c *Config) writeAwsSecrets(fileName string, secretIds []string) {
 			return
 		}
 
-		// Decrypts secret using the associated KMS CMK.
-		// Depending on whether the secret is a string or binary, one of these fields will be populated.
 		fileContent += fmt.Sprintf("# %s", secretId)
 		fileContent += "\n"
 		fileContent += *result.SecretString
@@ -263,21 +265,11 @@ func (c *Config) Init() {
 		log.Fatalf("Invalid Cloud")
 	}
 
-	// 	//     export CLOUD_PROVIDER=${CLOUD_PROVIDER:-"aws"}
-	// 	//     export SUBDOMAIN=${SUBDOMAIN:-$HELM_NAME}
-	// 	//     export DOMAIN=${DOMAIN:-"opszero.com"}
-	// 	//     export HOST="$SUBDOMAIN.$DOMAIN"
-	// 	//     export URL_HOST="https://$HOST"
-	// 	//     export CIRCLE_BRANCH=$(echo $CIRCLE_BRANCH | sed 's/[^A-Za-z0-9_]/-/g')
-
-	// 	//     export K8S_DEPLOY_ENV_SET=true
-
-	// }
-
 	os.Setenv("CONTAINER_REGISTRY", c.Docker.Build.ContainerRegistry)
 	os.Setenv("PROJECT_ID", c.Docker.Build.ProjectId)
 
 	os.Setenv("CIRCLE_BRANCH", c.circleBranch())
+	os.Setenv("DEPLOYTAG_BRANCH", c.circleBranch())
 	if c.circleBranch() == "master" {
 		log.Println("configuring production env")
 		os.Setenv("DOCKER_TAG", "latest")
@@ -358,10 +350,6 @@ func (c *Config) DockerBuildImage(image, dockerfile string) {
 		c.runCmd("docker", "tag", image, latestImage)
 		c.runCmd("docker", "push", latestImage)
 	}
-}
-
-func (c *Config) helmChartName() string {
-	return strings.TrimSpace(strings.ToLower(c.runCmdOutput("bash", "-c", fmt.Sprintf("echo %s | sed 's/[^A-Za-z0-9]/-/g'", c.Docker.Deploy.ChartName))))
 }
 
 func (c *Config) circleBranch() string {
@@ -448,7 +436,7 @@ func (c *Config) Deploy() {
 		// "--wait", TODO: Undo.
 		"--install")
 
-	c.runCmd(append([]string{"helm", "upgrade", c.circleBranch(), c.helmChartName(), "-f", envFile}, helmArgs...)...)
+	c.runCmd(append([]string{"helm", "upgrade", c.circleBranch(), c.Docker.Deploy.ChartName, "-f", envFile}, helmArgs...)...)
 }
 
 func (c *Config) RunScript() {
