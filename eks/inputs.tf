@@ -128,7 +128,7 @@ variable "sql_master_password" {
 }
 
 variable "sql_serverless_min" {
-  default = 1
+  default = 2
 }
 
 variable "sql_serverless_max" {
