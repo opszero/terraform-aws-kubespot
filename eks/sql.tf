@@ -30,8 +30,8 @@ resource "aws_rds_cluster" "default" {
     for_each = var.sql_engine_mode == "serverless" ? [1] : []
     content {
       auto_pause               = true
-      max_capacity             = var.sql_serverless_min
-      min_capacity             = var.sql_serverless_max
+      min_capacity             = var.sql_serverless_min
+      max_capacity             = var.sql_serverless_max
       seconds_until_auto_pause = 300
       timeout_action           = "ForceApplyCapacityChange"
     }
