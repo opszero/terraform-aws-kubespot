@@ -27,7 +27,7 @@ resource "aws_rds_cluster" "default" {
   enabled_cloudwatch_logs_exports = ["audit", "error", "general"]
 
   dynamic "scaling_configuration" {
-    for_each = var.sql_engine_mode == "serverless" ? 1 : 0
+    for_each = var.sql_engine_mode == "serverless" ? [1] : []
     content {
       auto_pause               = true
       max_capacity             = var.sql_serverless_min
