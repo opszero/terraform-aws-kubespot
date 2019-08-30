@@ -17,7 +17,7 @@ resource "aws_rds_cluster" "default" {
 
 
   db_subnet_group_name   = aws_db_subnet_group.default.name
-  vpc_security_group_ids = [aws_security_group.node]
+  vpc_security_group_ids = [aws_security_group.node.id]
 
   storage_encrypted = true
 
