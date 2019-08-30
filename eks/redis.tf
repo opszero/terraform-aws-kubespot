@@ -1,6 +1,6 @@
 resource "aws_elasticache_subnet_group" "default" {
   name       = "databases"
-  subnet_ids = flatten(aws_subnet.private.*.id, aws_subnet.public.*.id)
+  subnet_ids = concat(aws_subnet.private.*.id, aws_subnet.public.*.id)
 }
 
 # resource "aws_elasticache_parameter_group" "default" {
