@@ -132,5 +132,5 @@ variable "sql_serverless_min" {
 }
 
 variable "sql_serverless_max" {
-  default = 1
+  default = 2
 }
