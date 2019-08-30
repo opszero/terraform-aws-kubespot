@@ -32,5 +32,5 @@ resource "aws_elasticache_cluster" "default" {
   port = 6379
 
   subnet_group_name  = aws_elasticache_subnet_group.default.name
-  security_group_ids = [aws_security_group.node]
+  security_group_ids = [aws_security_group.node.id]
 }
