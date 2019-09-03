@@ -67,7 +67,7 @@ func init() {
 	rootCmd.PersistentFlags().StringVar(&config.GCPServiceKeyBase64, "gcp-service-key-base64", "", "Base64 encoded version of gcp-service-key-base64")
 
 	rootCmd.PersistentFlags().StringVar(&config.CloudAwsSecretId, "cloud-aws-secret-id", "", "Use AWS Secrets Manager for Config. If set it pull the environment variables from aws secrets manager.")
-	buildCmd.Flags().StringArrayVar(&config.AppAwsSecretIds, "app-aws-secret-ids", []string{}, "Ex. 1234.dkr.ecr.us-west-2.amazonaws.com")
+	rootCmd.PersistentFlags().StringArrayVar(&config.AppAwsSecretIds, "app-aws-secret-ids", []string{}, "Ex. 1234.dkr.ecr.us-west-2.amazonaws.com")
 
 	// Cobra also supports local flags, which will only run
 	// when this action is called directly.
