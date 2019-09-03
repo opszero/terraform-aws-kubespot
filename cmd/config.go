@@ -27,6 +27,7 @@ const (
 type Config struct {
 	Cloud            string
 	CloudAwsSecretId string
+	CloudEnvConfig   map[string]string
 
 	AWSAccessKeyID     string
 	AWSSecretAccessKey string
@@ -36,15 +37,15 @@ type Config struct {
 	GCPServiceKeyBase64 string
 	// GOOGLE_PROJECT_ID=alien-clover-238521 GOOGLE_COMPUTE_ZONE=us-central1 GOOGLE_CLUSTER_NAME=qa-us-central1
 
+	AppAwsSecretIds []string
 	// Text of
 	// export ENV=env
 	// ...
-	EnvConfig map[string]string
+	AppEnvConfig string
 
 	Docker struct {
 		Build struct {
-			DotEnvFile    string
-			AwsSecretsIds []string
+			DotEnvFile string
 
 			ContainerRegistry string
 			ProjectId         string
@@ -52,11 +53,10 @@ type Config struct {
 		}
 
 		Deploy struct {
-			AwsSecretsIds []string
-			Env           string
-			HelmConfig    string
-			ChartName     string
-			HelmSet       []string
+			Env        string
+			HelmConfig string
+			ChartName  string
+			HelmSet    []string
 		}
 
 		RunScript struct {
@@ -104,10 +104,10 @@ func (c *Config) runCmdOutput(cmdArgs ...string) string {
 	return fmt.Sprintf("%s", stdoutStderr)
 }
 
-func (c *Config) getAwsSecretForCloud(secretId string) {
+func (c *Config) loadCloudAwsSecret() {
 	svc := secretsmanager.New(session.New())
 	input := &secretsmanager.GetSecretValueInput{
-		SecretId: aws.String(secretId),
+		SecretId: aws.String(c.CloudAwsSecretId),
 	}
 
 	result, err := svc.GetSecretValue(input)
@@ -123,21 +123,23 @@ func (c *Config) getAwsSecretForCloud(secretId string) {
 		return
 	}
 
-	c.EnvConfig, err = godotenv.Parse(strings.NewReader(*result.SecretString))
+	c.CloudEnvConfig, err = godotenv.Parse(strings.NewReader(*result.SecretString))
 	if err != nil {
 		log.Println(err)
 	}
 
-	log.Println("Config", c.EnvConfig)
+	log.Println("Config", c.CloudEnvConfig)
 
-	for k := range c.EnvConfig {
+	for k := range c.CloudEnvConfig {
 		log.Println("Setting up var", k)
-		os.Setenv(k, c.EnvConfig[k])
+		os.Setenv(k, c.CloudEnvConfig[k])
 	}
 }
 
-func AwsSecretsAsDotEnv(secretIds []string) (fileContent string) {
-	for _, secretId := range secretIds {
+func (c *Config) appAwsSecretsAsDotEnv() (fileContent string) {
+	fileContent += fmt.Sprintf("\n\nDEPLOYTAG_BRANCH=%s\n\n", c.circleBranch())
+
+	for _, secretId := range c.AppAwsSecretIds {
 		svc := secretsmanager.New(session.New())
 		input := &secretsmanager.GetSecretValueInput{
 			SecretId: aws.String(secretId),
@@ -163,6 +165,7 @@ func AwsSecretsAsDotEnv(secretIds []string) (fileContent string) {
 
 	return
 }
+
 func ExpandAwsSecrets(secretIds []string, str string) string {
 	envConfig := make(map[string]string)
 
@@ -206,14 +209,12 @@ func ExpandAwsSecrets(secretIds []string, str string) string {
 	return os.Expand(str, mapper)
 }
 
-func (c *Config) writeAwsSecrets(fileName string, secretIds []string) {
+func (c *Config) writeAppAwsSecrets(fileName string) {
 	var (
 		fileContent string
 	)
 
-	fileContent += fmt.Sprintf("\n\nDEPLOYTAG_BRANCH=%s\n\n", c.circleBranch())
-
-	for _, secretId := range secretIds {
+	for _, secretId := range c.AppAwsSecretIds {
 		svc := secretsmanager.New(session.New())
 		input := &secretsmanager.GetSecretValueInput{
 			SecretId: aws.String(secretId),
@@ -242,8 +243,11 @@ func (c *Config) writeAwsSecrets(fileName string, secretIds []string) {
 func (c *Config) Init() {
 	if c.CloudAwsSecretId != "" {
 		log.Println("Loading Secrets")
-		c.getAwsSecretForCloud(c.CloudAwsSecretId)
+		c.loadCloudAwsSecret()
 	}
+
+	c.AppEnvConfig = c.appAwsSecretsAsDotEnv()
+	log.Println(c.AppEnvConfig)
 
 	log.Println(os.Getenv("PATH"))
 	switch strings.ToLower(c.Cloud) {
@@ -327,7 +331,7 @@ func (c *Config) DockerBuildImage(image, dockerfile string) {
 
 	if c.Docker.Build.DotEnvFile != "" {
 		log.Println("Writing .env file")
-		c.writeAwsSecrets(c.Docker.Build.DotEnvFile, c.Docker.Build.AwsSecretsIds)
+		c.writeAppAwsSecrets(c.Docker.Build.DotEnvFile)
 	}
 
 	buildCmd := []string{"docker", "build"}
@@ -389,7 +393,7 @@ func (c *Config) Deploy() {
 	envFile := c.Docker.Deploy.Env + ".yml"
 
 	envMap := make(map[string]string)
-	envMap["DEPLOYTAG_DOTENV"] = base64.StdEncoding.EncodeToString([]byte(AwsSecretsAsDotEnv(c.Docker.Deploy.AwsSecretsIds)))
+	envMap["DEPLOYTAG_DOTENV"] = base64.StdEncoding.EncodeToString([]byte(c.AppEnvConfig))
 
 	envConfig := os.Expand(string(b), func(placeholderName string) string {
 		if s, ok := envMap[placeholderName]; ok {

@@ -38,7 +38,6 @@ to quickly create a Cobra application.`,
 func init() {
 	rootCmd.AddCommand(deployCmd)
 
-	deployCmd.Flags().StringArrayVar(&config.Docker.Deploy.AwsSecretsIds, "aws-secret-ids", []string{}, "Ex. 1234.dkr.ecr.us-west-2.amazonaws.com")
 	deployCmd.Flags().StringVar(&config.Docker.Deploy.Env, "env", "", "Ex. 1234.dkr.ecr.us-west-2.amazonaws.com ")
 	deployCmd.Flags().StringVar(&config.Docker.Deploy.ChartName, "chart-name", "", "Ex. 1234.dkr.ecr.us-west-2.amazonaws.com ")
 	deployCmd.Flags().StringVar(&config.Docker.Deploy.HelmConfig, "helm-config", "", "Ex. 1234.dkr.ecr.us-west-2.amazonaws.com ")
