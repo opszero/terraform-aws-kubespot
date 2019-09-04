@@ -38,10 +38,7 @@ type Config struct {
 	// GOOGLE_PROJECT_ID=alien-clover-238521 GOOGLE_COMPUTE_ZONE=us-central1 GOOGLE_CLUSTER_NAME=qa-us-central1
 
 	AppAwsSecretIds []string
-	// Text of
-	// export ENV=env
-	// ...
-	AppEnvConfig string
+	AppEnvConfig    string
 
 	Docker struct {
 		Build struct {
@@ -104,7 +101,13 @@ func (c *Config) runCmdOutput(cmdArgs ...string) string {
 	return fmt.Sprintf("%s", stdoutStderr)
 }
 
-func (c *Config) loadCloudAwsSecret() {
+func (c *Config) loadCloudAwsSecrets() {
+	if c.CloudAwsSecretId == "" {
+		return
+	}
+
+	log.Println("Loading Cloud Secrets")
+
 	svc := secretsmanager.New(session.New())
 	input := &secretsmanager.GetSecretValueInput{
 		SecretId: aws.String(c.CloudAwsSecretId),
@@ -116,9 +119,6 @@ func (c *Config) loadCloudAwsSecret() {
 		return
 	}
 
-	log.Println("Secret Result", result)
-	// Decrypts secret using the associated KMS CMK.
-	// Depending on whether the secret is a string or binary, one of these fields will be populated.
 	if result.SecretString == nil {
 		return
 	}
@@ -128,7 +128,7 @@ func (c *Config) loadCloudAwsSecret() {
 		log.Println(err)
 	}
 
-	log.Println("Config", c.CloudEnvConfig)
+	log.Println("Cloud Config", c.CloudEnvConfig)
 
 	for k := range c.CloudEnvConfig {
 		log.Println("Setting up var", k)
@@ -136,8 +136,8 @@ func (c *Config) loadCloudAwsSecret() {
 	}
 }
 
-func (c *Config) appAwsSecretsAsDotEnv() (fileContent string) {
-	fileContent += fmt.Sprintf("\n\nDEPLOYTAG_BRANCH=%s\n\n", c.circleBranch())
+func (c *Config) loadAppAwsSecrets() {
+	fileContent := fmt.Sprintf("DEPLOYTAG_BRANCH=%s\n\n", c.circleBranch())
 
 	for _, secretId := range c.AppAwsSecretIds {
 		svc := secretsmanager.New(session.New())
@@ -162,94 +162,27 @@ func (c *Config) appAwsSecretsAsDotEnv() (fileContent string) {
 		fileContent += *result.SecretString
 		fileContent += "\n\n"
 	}
+
+	c.AppEnvConfig = fileContent
+
+	log.Println(c.AppEnvConfig)
 
 	return
 }
 
-func ExpandAwsSecrets(secretIds []string, str string) string {
-	envConfig := make(map[string]string)
-
-	for _, secretId := range secretIds {
-		svc := secretsmanager.New(session.New())
-		input := &secretsmanager.GetSecretValueInput{
-			SecretId: aws.String(secretId),
-		}
-
-		result, err := svc.GetSecretValue(input)
-		if err != nil {
-			log.Println(err.Error())
-			continue
-		}
-
-		// Decrypts secret using the associated KMS CMK.
-		// Depending on whether the secret is a string or binary, one of these fields will be populated.
-		if result.SecretString == nil {
-			continue
-		}
-
-		var e map[string]string
-		e, err = godotenv.Parse(strings.NewReader(*result.SecretString))
-		if err != nil {
-			log.Println(err)
-		}
-
-		for key, value := range e {
-			envConfig[key] = value
-		}
-	}
-
-	mapper := func(placeholderName string) string {
-		if s, ok := envConfig[placeholderName]; ok {
-			return fmt.Sprintf("'%s'", s)
-		}
-
-		return "''"
-	}
-
-	return os.Expand(str, mapper)
-}
-
 func (c *Config) writeAppAwsSecrets(fileName string) {
-	var (
-		fileContent string
-	)
+	log.Println("Writing .env", c.AppEnvConfig)
 
-	for _, secretId := range c.AppAwsSecretIds {
-		svc := secretsmanager.New(session.New())
-		input := &secretsmanager.GetSecretValueInput{
-			SecretId: aws.String(secretId),
-		}
-
-		result, err := svc.GetSecretValue(input)
-		if err != nil {
-			log.Println(err.Error())
-			return
-		}
-
-		fileContent += fmt.Sprintf("# %s", secretId)
-		fileContent += "\n"
-		fileContent += *result.SecretString
-		fileContent += "\n\n"
-	}
-
-	log.Println("Writing .env", fileContent)
-
-	err := ioutil.WriteFile(fileName, []byte(fileContent), 0644)
+	err := ioutil.WriteFile(fileName, []byte(c.AppEnvConfig), 0644)
 	if err != nil {
 		log.Println(err)
 	}
 }
 
 func (c *Config) Init() {
-	if c.CloudAwsSecretId != "" {
-		log.Println("Loading Secrets")
-		c.loadCloudAwsSecret()
-	}
+	c.loadAppAwsSecrets()
+	c.loadCloudAwsSecrets()
 
-	c.AppEnvConfig = c.appAwsSecretsAsDotEnv()
-	log.Println(c.AppEnvConfig)
-
-	log.Println(os.Getenv("PATH"))
 	switch strings.ToLower(c.Cloud) {
 	case AwsCloud:
 		if c.AWSAccessKeyID == "" || c.AWSSecretAccessKey == "" || c.AWSDefaultRegion == "" {
@@ -295,8 +228,7 @@ func (c *Config) DockerLogin() {
 	case GcpCloud:
 		c.runCmd("bash", "-c", fmt.Sprintf("gcloud auth print-access-token | docker login -u oauth2accesstoken --password-stdin https://%s", c.Docker.Build.ContainerRegistry))
 	case AwsCloud:
-		loginCmd := c.runCmdOutput("aws", "ecr", "get-login", "--no-include-email")
-		c.runCmd("bash", "-c", loginCmd)
+		c.runCmd("bash", "-c", c.runCmdOutput("aws", "ecr", "get-login", "--no-include-email"))
 	}
 }
 
@@ -405,7 +337,7 @@ func (c *Config) Deploy() {
 
 	ioutil.WriteFile(envFile, []byte(envConfig), 0644)
 
-	log.Println(string(envConfig))
+	log.Println("EnvConfig", string(envConfig))
 
 	os.Setenv("HELM_HOME", c.runCmdOutput("helm", "home"))
 	os.MkdirAll(os.Getenv("HELM_HOME"), os.ModePerm)
