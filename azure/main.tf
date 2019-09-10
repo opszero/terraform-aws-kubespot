@@ -1,10 +1,10 @@
 resource "azurerm_resource_group" "cluster" {
-  name     = var.cluster_name
+  name     = var.environment_name
   location = var.region
 }
 
 resource "azurerm_kubernetes_cluster" "cluster" {
-  name                = var.cluster_name
+  name                = var.environment_name
   location            = "${azurerm_resource_group.cluster.location}"
   resource_group_name = "${azurerm_resource_group.cluster.name}"
   dns_prefix          = "auditkube"
@@ -39,7 +39,7 @@ resource "azurerm_kubernetes_cluster" "cluster" {
   }
 
   tags = {
-    Environment = var.cluster_name
+    Environment = var.environment_name
   }
 }
 

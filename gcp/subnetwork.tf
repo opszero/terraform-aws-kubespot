@@ -1,5 +1,5 @@
 resource "google_compute_subnetwork" "subnet" {
-  name   = var.cluster_name
+  name   = var.environment_name
   region = var.region
 
   network = google_compute_network.network.self_link
@@ -20,12 +20,12 @@ resource "google_compute_subnetwork" "subnet" {
 }
 
 resource "google_compute_network" "network" {
-  name                    = var.cluster_name
+  name                    = var.environment_name
   auto_create_subnetworks = false
 }
 
 resource "google_compute_global_address" "private_ip_address" {
-  name          = var.cluster_name
+  name          = var.environment_name
   purpose       = "VPC_PEERING"
   address_type  = "INTERNAL"
   prefix_length = 16

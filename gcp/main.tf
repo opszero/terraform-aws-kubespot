@@ -1,7 +1,7 @@
 data "google_client_config" "current" {}
 
 resource "google_container_cluster" "cluster" {
-  name     = var.cluster_name
+  name     = var.environment_name
   location = var.region
 
   network    = google_compute_network.network.self_link

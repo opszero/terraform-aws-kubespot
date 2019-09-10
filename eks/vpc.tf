@@ -4,13 +4,13 @@ resource "aws_vpc" "vpc" {
   enable_dns_hostnames = true
 
   tags = {
-    "Name"                                      = var.cluster_name
-    "kubernetes.io/cluster/${var.cluster_name}" = "shared"
+    "Name"                                          = var.environment_name
+    "kubernetes.io/cluster/${var.environment_name}" = "shared"
   }
 }
 
 resource "aws_security_group" "cluster" {
-  name        = "${var.cluster_name}-cluster"
+  name        = "${var.environment_name}-cluster"
   description = "Cluster communication with worker nodes"
   vpc_id      = aws_vpc.vpc.id
 
@@ -22,12 +22,12 @@ resource "aws_security_group" "cluster" {
   }
 
   tags = {
-    Name = var.cluster_name
+    Name = var.environment_name
   }
 }
 
 resource "aws_security_group" "node" {
-  name        = "${var.cluster_name}-node"
+  name        = "${var.environment_name}-node"
   description = "Security group for all nodes in the cluster"
   vpc_id      = aws_vpc.vpc.id
 
@@ -39,8 +39,8 @@ resource "aws_security_group" "node" {
   }
 
   tags = {
-    "Name"                                      = "${var.cluster_name}-node"
-    "kubernetes.io/cluster/${var.cluster_name}" = "owned"
+    "Name"                                          = "${var.environment_name}-node"
+    "kubernetes.io/cluster/${var.environment_name}" = "owned"
   }
 }
 

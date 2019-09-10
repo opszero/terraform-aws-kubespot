@@ -1,4 +1,4 @@
-variable "cluster_name" {
+variable "environment_name" {
   type = string
 }
 

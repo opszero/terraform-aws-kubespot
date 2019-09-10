@@ -1,5 +1,5 @@
 resource "azurerm_route_table" "cluster" {
-  name                = "${var.cluster_name}"
+  name                = "${var.environment_name}"
   location            = "${azurerm_resource_group.cluster.location}"
   resource_group_name = "${azurerm_resource_group.cluster.name}"
 
@@ -12,7 +12,7 @@ resource "azurerm_route_table" "cluster" {
 }
 
 resource "azurerm_virtual_network" "cluster" {
-  name                = "${var.cluster_name}"
+  name                = "${var.environment_name}"
   location            = "${azurerm_resource_group.cluster.location}"
   resource_group_name = "${azurerm_resource_group.cluster.name}"
   address_space       = ["10.1.0.0/16"]

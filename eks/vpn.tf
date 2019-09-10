@@ -5,7 +5,7 @@ resource "aws_eip" "vpn_eip" {
 }
 
 resource "aws_security_group" "vpn" {
-  name        = "${var.cluster_name}-vpn"
+  name        = "${var.environment_name}-vpn"
   description = "Security group for vpn of the cluster"
   vpc_id      = aws_vpc.vpc.id
   count       = var.foxpass_api_key != "" ? 1 : 0
@@ -54,8 +54,8 @@ resource "aws_security_group" "vpn" {
   }
 
   tags = {
-    "Name"                                      = "${var.cluster_name}-vpn"
-    "kubernetes.io/cluster/${var.cluster_name}" = "owned"
+    "Name"                                          = "${var.environment_name}-vpn"
+    "kubernetes.io/cluster/${var.environment_name}" = "owned"
   }
 }
 
@@ -120,7 +120,7 @@ fi
 SCRIPT
 
   tags = {
-    Name = "${var.cluster_name}-vpn"
+    Name = "${var.environment_name}-vpn"
   }
 }
 
