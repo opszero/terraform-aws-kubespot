@@ -72,14 +72,13 @@ variable "redis_enabled" {
   default = false
 }
 
-variable "redis_node_type" {
-  default = "cache.t2.micro"
+variable "redis_memory_in_gb" {
+  default = 0.5
 }
 
-variable "redis_num_nodes" {
-  default = 1
+variable "redis_ha_enabled" {
+  default = false
 }
-
 variable "sql_enabled" {
   default = false
 }
