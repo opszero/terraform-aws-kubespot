@@ -67,3 +67,39 @@ variable "foxpass_vpn_psk" {
   description = "use this for psk generation https://cloud.google.com/vpn/docs/how-to/generating-pre-shared-key"
   default     = ""
 }
+
+variable "redis_enabled" {
+  default = false
+}
+
+variable "redis_node_type" {
+  default = "cache.t2.micro"
+}
+
+variable "redis_num_nodes" {
+  default = 1
+}
+
+variable "sql_enabled" {
+  default = false
+}
+
+variable "sql_engine" {
+  default = "POSTGRES_9_6"
+}
+
+variable "sql_node_count" {
+  default = 0
+}
+
+variable "sql_instance_class" {
+  default = "db-f1-micro"
+}
+
+variable "sql_master_username" {
+  default = ""
+}
+
+variable "sql_master_password" {
+  default = ""
+}
