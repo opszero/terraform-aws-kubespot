@@ -7,10 +7,8 @@ provider "helm" {
     cluster_ca_certificate = "${base64decode(google_container_cluster.cluster.master_auth.0.cluster_ca_certificate)}"
   }
 
-  install_tiller  = true
   service_account = "${kubernetes_service_account.tiller.metadata.0.name}"
   namespace       = "${kubernetes_service_account.tiller.metadata.0.namespace}"
-
 }
 
 resource "kubernetes_service_account" "tiller" {
@@ -38,11 +36,6 @@ resource "kubernetes_cluster_role_binding" "tiller" {
     api_group = ""
     namespace = "${kubernetes_service_account.tiller.metadata.0.namespace}"
   }
-  # subject {
-  #   kind      = "ServiceAccount"
-  #   name      = "tiller"
-  #   namespace = "kube-system"
-  # }
 }
 
 resource "helm_release" "ingress" {
