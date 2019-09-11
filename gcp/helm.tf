@@ -9,6 +9,8 @@ provider "helm" {
 
   install_tiller  = true
   service_account = "${kubernetes_service_account.tiller.metadata.0.name}"
+  namespace       = "${kubernetes_service_account.tiller.metadata.0.namespace}"
+
 }
 
 resource "kubernetes_service_account" "tiller" {
