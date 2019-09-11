@@ -42,6 +42,11 @@ resource "helm_release" "ingress" {
   name  = "ingress"
   chart = "stable/nginx-ingress"
 
+  set {
+    name = "rbac.create"
+    value = "true"
+  }
+
   depends_on = [
     kubernetes_service_account.tiller, 
     kubernetes_cluster_role_binding.tiller
