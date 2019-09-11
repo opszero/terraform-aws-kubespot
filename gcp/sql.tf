@@ -19,5 +19,5 @@ resource "google_sql_database_instance" "default" {
 resource "google_sql_user" "user" {
   name     = var.sql_master_username
   password = var.sql_master_password
-  instance = "${google_sql_database_instance.default.name}"
+  instance = "${google_sql_database_instance.default.0.name}"
 }
