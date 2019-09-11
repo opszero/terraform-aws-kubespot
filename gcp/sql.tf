@@ -20,4 +20,6 @@ resource "google_sql_user" "user" {
   name     = var.sql_master_username
   password = var.sql_master_password
   instance = "${google_sql_database_instance.default.0.name}"
+
+  depends_on = ["google_sql_database_instance.0.default"]
 }
