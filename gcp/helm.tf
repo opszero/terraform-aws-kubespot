@@ -42,5 +42,8 @@ resource "helm_release" "ingress" {
   name  = "ingress"
   chart = "stable/nginx-ingress"
 
-  depends_on = [kubernetes_service_account.tiller, kubernetes_cluster_role_binding.tiller]
+  depends_on = [
+    kubernetes_service_account.tiller, 
+    kubernetes_cluster_role_binding.tiller
+  ]
 }
