@@ -17,9 +17,9 @@ resource "google_sql_database_instance" "default" {
 }
 
 resource "google_sql_user" "user" {
+  count = var.sql_enabled ? 1 : 0
+
   name     = var.sql_master_username
   password = var.sql_master_password
   instance = "${google_sql_database_instance.default.0.name}"
-
-  depends_on = [google_sql_database_instance.default]
 }
