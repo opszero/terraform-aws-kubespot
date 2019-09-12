@@ -1,6 +1,5 @@
 provider "helm" {
   install_tiller  = false
-  service_account = "${kubernetes_service_account.tiller.metadata.0.name}"
   kubernetes {
     host                   = "${azurerm_kubernetes_cluster.cluster.kube_config.0.host}"
     username               = "${azurerm_kubernetes_cluster.cluster.kube_config.0.username}"
