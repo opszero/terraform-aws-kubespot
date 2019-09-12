@@ -45,13 +45,7 @@ resource "kubernetes_cluster_role_binding" "tiller" {
 
   subject {
     kind      = "ServiceAccount"
-    name      = "${kubernetes_service_account.tiller.metadata.0.name}"
-    api_group = ""
-    namespace = "${kubernetes_service_account.tiller.metadata.0.namespace}"
-  }
-  subject {
-    kind      = "ServiceAccount"
-    name      = "terraform-tiller"
+    name      = "tiller"
     namespace = "kube-system"
   }
 }
