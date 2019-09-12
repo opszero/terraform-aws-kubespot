@@ -1,5 +1,5 @@
 provider "helm" {
-  install_tiller  = false
+  install_tiller  = true
   service_account = "${kubernetes_service_account.tiller.metadata.0.name}"
   namespace       = "kube-system"
 
