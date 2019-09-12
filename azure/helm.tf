@@ -1,7 +1,7 @@
 provider "helm" {
-  install_tiller  = true
+  install_tiller  = false
   service_account = "${kubernetes_service_account.tiller.metadata.0.name}"
-  namespace = "kube-system"
+  namespace = "${kubernetes_service_account.tiller.metadata.0.namespace}"
 
   kubernetes {
     host                   = "${azurerm_kubernetes_cluster.cluster.kube_config.0.host}"
