@@ -93,8 +93,20 @@ variable "sql_enabled" {
   default = false
 }
 
-variable "sql_engine" {
-  default = "POSTGRES_9_6"
+variable "sql_version" {
+  default = "11"
+}
+
+variable "sql_sku_name" {
+  default = "GP_Gen5_2"
+}
+
+variable "sql_storage_in_mb" {
+  default = 20000
+}
+
+variable "sql_capacity" {
+  default = 2
 }
 
 variable "sql_instance_class" {

@@ -1,31 +1,24 @@
-# resource "azurerm_postgresql_server" "test" {
-#   name                = "postgresql-server-1"
-#   location            = "${azurerm_resource_group.test.location}"
-#   resource_group_name = "${azurerm_resource_group.test.name}"
+resource "azurerm_postgresql_server" "default" {
+  name                = var.environment_name
+  location            = azurerm_resource_group.cluster.location
+  resource_group_name = azurerm_resource_group.cluster.name
 
-#   sku {
-#     name     = "B_Gen5_2"
-#     capacity = 2
-#     tier     = "Basic"
-#     family   = "Gen4"
-#   }
+  sku {
+    name     = var.sql_sku_name
+    capacity = var.sql_capacity
+    tier     = "GeneralPurpose"
+    family   = "Gen5"
+  }
 
-#   storage_profile {
-#     storage_mb            = 5120
-#     backup_retention_days = 7
-#     geo_redundant_backup  = "Disabled"
-#   }
+  storage_profile {
+    storage_mb            = var.sql_storage_in_mb
+    backup_retention_days = 35
+    geo_redundant_backup  = "Enabled"
+  }
 
-#   administrator_login          = "psqladminun"
-#   administrator_login_password = "H@Sh1CoR3!"
-#   version                      = "11"
-#   ssl_enforcement              = "Enabled"
-# }
+  administrator_login          = var.sql_master_username
+  administrator_login_password = var.sql_master_password
 
-# resource "azurerm_postgresql_database" "test" {
-#   name                = "exampledb"
-#   resource_group_name = "${azurerm_resource_group.test.name}"
-#   server_name         = "${azurerm_postgresql_server.test.name}"
-#   charset             = "UTF8"
-#   collation           = "English_United States.1252"
-# }
+  version                      = var.sql_version
+  ssl_enforcement              = "Disabled"
+}
