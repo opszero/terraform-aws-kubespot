@@ -1,6 +1,6 @@
 // TODO: Make these generic
 resource "azurerm_redis_cache" "default" {
-  count = redis_enabled ? 1 : 0
+  count = var.redis_enabled ? 1 : 0
 
   name                = var.environment_name
   location            = azurerm_resource_group.cluster.location
