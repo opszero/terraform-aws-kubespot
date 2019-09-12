@@ -79,16 +79,13 @@ variable "redis_memory_in_gb" {
 variable "redis_ha_enabled" {
   default = false
 }
+
 variable "sql_enabled" {
   default = false
 }
 
 variable "sql_engine" {
   default = "POSTGRES_9_6"
-}
-
-variable "sql_node_count" {
-  default = 0
 }
 
 variable "sql_instance_class" {
