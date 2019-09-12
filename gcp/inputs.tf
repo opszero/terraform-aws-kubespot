@@ -24,35 +24,19 @@ variable "eips" {
   default = []
 }
 
-variable "nodes_green_instance_type" {
+variable "nodes_instance_type" {
   default = "n1-standard-1"
 }
 
-variable "nodes_green_desired_capacity" {
+variable "nodes_desired_capacity" {
   default = 1
 }
 
-variable "nodes_green_min_size" {
+variable "nodes_min_size" {
   default = 1
 }
 
-variable "nodes_green_max_size" {
-  default = 1
-}
-
-variable "nodes_blue_instance_type" {
-  default = "t2.micro"
-}
-
-variable "nodes_blue_desired_capacity" {
-  default = 1
-}
-
-variable "nodes_blue_min_size" {
-  default = 1
-}
-
-variable "nodes_blue_max_size" {
+variable "nodes_max_size" {
   default = 1
 }
 
