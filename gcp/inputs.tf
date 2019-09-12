@@ -73,7 +73,7 @@ variable "redis_enabled" {
 }
 
 variable "redis_memory_in_gb" {
-  default = 0.5
+  default = 1
 }
 
 variable "redis_ha_enabled" {
