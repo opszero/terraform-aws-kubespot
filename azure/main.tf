@@ -46,8 +46,3 @@ resource "azurerm_kubernetes_cluster" "cluster" {
     Environment = var.environment_name
   }
 }
-
-resource "local_file" "kubeconfig" {
-  content  = "${azurerm_kubernetes_cluster.cluster.kube_config_raw}"
-  filename = "./kubeconfig"
-}
