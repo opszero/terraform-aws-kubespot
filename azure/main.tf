@@ -49,5 +49,5 @@ resource "azurerm_kubernetes_cluster" "cluster" {
 
 resource "local_file" "kubeconfig" {
   content  = "${azurerm_kubernetes_cluster.cluster.kube_config_raw}"
-  filename = "${path.cwd}/kubeconfig"
+  filename = "${path.module}/kubeconfig"
 }
