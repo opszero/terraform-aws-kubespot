@@ -102,7 +102,7 @@ variable "sql_sku_name" {
 }
 
 variable "sql_storage_in_mb" {
-  default = 20000
+  default = 20480
 }
 
 variable "sql_capacity" {
