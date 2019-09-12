@@ -76,3 +76,35 @@ variable "region" {
 #   description = "use this for psk generation https://cloud.google.com/vpn/docs/how-to/generating-pre-shared-key"
 #   default     = ""
 # }
+
+variable "redis_enabled" {
+  default = false
+}
+
+variable "redis_memory_in_gb" {
+  default = 1
+}
+
+variable "redis_ha_enabled" {
+  default = false
+}
+
+variable "sql_enabled" {
+  default = false
+}
+
+variable "sql_engine" {
+  default = "POSTGRES_9_6"
+}
+
+variable "sql_instance_class" {
+  default = "db-f1-micro"
+}
+
+variable "sql_master_username" {
+  default = ""
+}
+
+variable "sql_master_password" {
+  default = ""
+}
