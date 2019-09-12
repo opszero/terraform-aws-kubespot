@@ -1,8 +1,3 @@
-# resource "azurerm_resource_group" "test" {
-#   name     = "api-rg-pro"
-#   location = "West Europe"
-# }
-
 # resource "azurerm_postgresql_server" "test" {
 #   name                = "postgresql-server-1"
 #   location            = "${azurerm_resource_group.test.location}"
