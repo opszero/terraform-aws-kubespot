@@ -38,8 +38,8 @@ to quickly create a Cobra application.`,
 func init() {
 	rootCmd.AddCommand(buildCmd)
 
-	buildCmd.Flags().StringVar(&config.Docker.Build.DotEnvFile, "dotenv-file", "", "Ex. 1234.dkr.ecr.us-west-2.amazonaws.com")
-	buildCmd.Flags().StringVar(&config.Docker.Build.ContainerRegistry, "container-registry", "", "Ex. 1234.dkr.ecr.us-west-2.amazonaws.com ")
-	buildCmd.Flags().StringVar(&config.Docker.Build.ProjectId, "project-id", "", "Ex. opszero")
-	buildCmd.Flags().StringVar(&config.Docker.Build.Image, "image", "", "Ex. deploytag")
+	buildCmd.Flags().StringVar(&config.Build.DotEnvFile, "dotenv-file", "", "Ex. 1234.dkr.ecr.us-west-2.amazonaws.com")
+	buildCmd.Flags().StringVar(&config.Build.ContainerRegistry, "container-registry", "", "Ex. 1234.dkr.ecr.us-west-2.amazonaws.com ")
+	buildCmd.Flags().StringVar(&config.Build.ProjectId, "project-id", "", "Ex. opszero")
+	buildCmd.Flags().StringVar(&config.Build.Image, "image", "", "Ex. deploytag")
 }

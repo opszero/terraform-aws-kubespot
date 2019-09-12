@@ -31,14 +31,14 @@ This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		config.Init()
-		config.RunScript()
+		config.HelmRunScript()
 	},
 }
 
 func init() {
 	rootCmd.AddCommand(runScriptCmd)
 
-	runScriptCmd.Flags().StringVar(&config.Docker.RunScript.PodAppLabel, "pod-app-label", "", "Ex. 1234.dkr.ecr.us-west-2.amazonaws.com ")
-	runScriptCmd.Flags().StringVar(&config.Docker.RunScript.Container, "container", "", "Ex. 1234.dkr.ecr.us-west-2.amazonaws.com ")
-	runScriptCmd.Flags().StringArrayVar(&config.Docker.RunScript.Cmds, "cmds", []string{}, "Ex. 1234.dkr.ecr.us-west-2.amazonaws.com ")
+	runScriptCmd.Flags().StringVar(&config.RunScript.PodAppLabel, "pod-app-label", "", "Ex. 1234.dkr.ecr.us-west-2.amazonaws.com ")
+	runScriptCmd.Flags().StringVar(&config.RunScript.Container, "container", "", "Ex. 1234.dkr.ecr.us-west-2.amazonaws.com ")
+	runScriptCmd.Flags().StringArrayVar(&config.RunScript.Cmds, "cmds", []string{}, "Ex. 1234.dkr.ecr.us-west-2.amazonaws.com ")
 }

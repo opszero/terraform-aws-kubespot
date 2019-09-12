@@ -40,7 +40,6 @@ type Config struct {
 	AppAwsSecretIds []string
 	AppEnvConfig    string
 
-	Docker struct {
 		Build struct {
 			DotEnvFile string
 
@@ -61,7 +60,6 @@ type Config struct {
 			Container   string
 			Cmds        []string
 		}
-	}
 }
 
 func (c *Config) runCmd(cmdArgs ...string) error {
@@ -202,8 +200,8 @@ func (c *Config) Init() {
 		log.Fatalf("Invalid Cloud")
 	}
 
-	os.Setenv("CONTAINER_REGISTRY", c.Docker.Build.ContainerRegistry)
-	os.Setenv("PROJECT_ID", c.Docker.Build.ProjectId)
+	os.Setenv("CONTAINER_REGISTRY", c.Build.ContainerRegistry)
+	os.Setenv("PROJECT_ID", c.Build.ProjectId)
 
 	os.Setenv("CIRCLE_BRANCH", c.circleBranch())
 	os.Setenv("DEPLOYTAG_BRANCH", c.circleBranch())
@@ -226,7 +224,7 @@ func (c *Config) DockerLogin() {
 	log.Println("Docker Login")
 	switch strings.ToLower(c.Cloud) {
 	case GcpCloud:
-		c.runCmd("bash", "-c", fmt.Sprintf("gcloud auth print-access-token | docker login -u oauth2accesstoken --password-stdin https://%s", c.Docker.Build.ContainerRegistry))
+		c.runCmd("bash", "-c", fmt.Sprintf("gcloud auth print-access-token | docker login -u oauth2accesstoken --password-stdin https://%s", c.Build.ContainerRegistry))
 	case AwsCloud:
 		c.runCmd("bash", "-c", c.runCmdOutput("aws", "ecr", "get-login", "--no-include-email"))
 	}
@@ -245,11 +243,11 @@ func (c *Config) KuberneteConfig() {
 }
 
 func (c *Config) dockerCircleImageWithSuffix(image, suffix string) string {
-	return strings.TrimSpace(fmt.Sprintf("%s/%s/%s:%s", c.Docker.Build.ContainerRegistry, c.Docker.Build.ProjectId, image, suffix))
+	return strings.TrimSpace(fmt.Sprintf("%s/%s/%s:%s", c.Build.ContainerRegistry, c.Build.ProjectId, image, suffix))
 }
 
 func (c *Config) dockerCircleImage(image string) string {
-	return strings.TrimSpace(fmt.Sprintf("%s/%s/%s", c.Docker.Build.ContainerRegistry, c.Docker.Build.ProjectId, image))
+	return strings.TrimSpace(fmt.Sprintf("%s/%s/%s", c.Build.ContainerRegistry, c.Build.ProjectId, image))
 }
 
 func (c *Config) DockerBuildImage(image, dockerfile string) {
@@ -261,9 +259,9 @@ func (c *Config) DockerBuildImage(image, dockerfile string) {
 
 	log.Println("Docker Build Image")
 
-	if c.Docker.Build.DotEnvFile != "" {
+	if c.Build.DotEnvFile != "" {
 		log.Println("Writing .env file")
-		c.writeAppAwsSecrets(c.Docker.Build.DotEnvFile)
+		c.writeAppAwsSecrets(c.Build.DotEnvFile)
 	}
 
 	buildCmd := []string{"docker", "build"}
@@ -302,11 +300,11 @@ func (c *Config) DockerBuild() {
 		log.Println(err)
 	}
 
-	c.DockerBuildImage(c.Docker.Build.Image, "Dockerfile.sub")
+	c.DockerBuildImage(c.Build.Image, "Dockerfile.sub")
 }
 
-func (c *Config) Deploy() {
-	b, err := ioutil.ReadFile(c.Docker.Deploy.HelmConfig)
+func (c *Config) HelmDeploy() {
+	b, err := ioutil.ReadFile(c.Deploy.HelmConfig)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -317,12 +315,12 @@ func (c *Config) Deploy() {
 		log.Fatal(err)
 	}
 
-	b, err = yaml.Marshal(t[c.Docker.Deploy.Env])
+	b, err = yaml.Marshal(t[c.Deploy.Env])
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	envFile := c.Docker.Deploy.Env + ".yml"
+	envFile := c.Deploy.Env + ".yml"
 
 	envMap := make(map[string]string)
 	envMap["DEPLOYTAG_DOTENV"] = base64.StdEncoding.EncodeToString([]byte(c.AppEnvConfig))
@@ -361,7 +359,7 @@ func (c *Config) Deploy() {
 		"--set", fmt.Sprintf("deploytag.cloud=%s", c.Cloud),
 	)
 
-	for _, i := range c.Docker.Deploy.HelmSet {
+	for _, i := range c.Deploy.HelmSet {
 		helmArgs = append(helmArgs, "--set", i)
 	}
 
@@ -372,13 +370,13 @@ func (c *Config) Deploy() {
 		// "--wait", TODO: Undo.
 		"--install")
 
-	c.runCmd(append([]string{"helm", "upgrade", c.circleBranch(), c.Docker.Deploy.ChartName, "-f", envFile}, helmArgs...)...)
+	c.runCmd(append([]string{"helm", "upgrade", c.circleBranch(), c.Deploy.ChartName, "-f", envFile}, helmArgs...)...)
 }
 
-func (c *Config) RunScript() {
-	pod := c.runCmdOutput("bash", "-c", fmt.Sprintf("kubectl get pod -n %s --selector=app=%s -o jsonpath='{.items[0].metadata.name}'", c.circleBranch(), c.Docker.RunScript.PodAppLabel))
+func (c *Config) HelmRunScript() {
+	pod := c.runCmdOutput("bash", "-c", fmt.Sprintf("kubectl get pod -n %s --selector=app=%s -o jsonpath='{.items[0].metadata.name}'", c.circleBranch(), c.RunScript.PodAppLabel))
 
-	for _, i := range c.Docker.RunScript.Cmds {
-		c.runCmd("kubectl", "exec", "-i", pod, "-n", c.circleBranch(), "-c", c.Docker.RunScript.Container, "--", i)
+	for _, i := range c.RunScript.Cmds {
+		c.runCmd("kubectl", "exec", "-i", pod, "-n", c.circleBranch(), "-c", c.RunScript.Container, "--", i)
 	}
 }
