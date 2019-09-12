@@ -1,3 +1,4 @@
+// TODO: Make these generic
 resource "azurerm_redis_cache" "default" {
   name                = var.environment_name
   location            = azurerm_resource_group.cluster.location
@@ -5,7 +6,7 @@ resource "azurerm_redis_cache" "default" {
   capacity            = 1
   family              = "P"
   sku_name            = "Premium"
-  enable_non_ssl_port = false
+  enable_non_ssl_port = true
   shard_count         = 3
 
   redis_configuration {
