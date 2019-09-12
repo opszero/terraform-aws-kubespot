@@ -1,9 +1,8 @@
 provider "helm" {
-    version = "~> 0.10.0"
   install_tiller  = true
 //  service_account = "${kubernetes_service_account.tiller.metadata.0.name}"
-  namespace = "kube-system"
-  tiller_image = "gcr.io/kubernetes-helm/tiller:v2.14.1"
+  //namespace = "kube-system"
+  //tiller_image = "gcr.io/kubernetes-helm/tiller:v2.14.1"
 
 
   kubernetes {
@@ -16,38 +15,38 @@ provider "helm" {
   }
 }
 
-resource "kubernetes_service_account" "tiller" {
-  automount_service_account_token = true
+# resource "kubernetes_service_account" "tiller" {
+#   automount_service_account_token = true
 
-  metadata {
-    name      = "terraform-tiller"
-    namespace = "kube-system"
-  }
-}
+#   metadata {
+#     name      = "terraform-tiller"
+#     namespace = "kube-system"
+#   }
+# }
 
-resource "kubernetes_cluster_role_binding" "tiller" {
-  metadata {
-    name = "terraform-tiller"
-  }
+# resource "kubernetes_cluster_role_binding" "tiller" {
+#   metadata {
+#     name = "terraform-tiller"
+#   }
 
-  role_ref {
-    api_group = "rbac.authorization.k8s.io"
-    kind      = "ClusterRole"
-    name      = "cluster-admin"
-  }
+#   role_ref {
+#     api_group = "rbac.authorization.k8s.io"
+#     kind      = "ClusterRole"
+#     name      = "cluster-admin"
+#   }
 
-  subject {
-    kind      = "ServiceAccount"
-    name      = "${kubernetes_service_account.tiller.metadata.0.name}"
-    api_group = ""
-    namespace = "${kubernetes_service_account.tiller.metadata.0.namespace}"
-  }
-  subject {
-    kind      = "ServiceAccount"
-    name      = "terraform-tiller"
-    namespace = "kube-system"
-  }
-}
+#   subject {
+#     kind      = "ServiceAccount"
+#     name      = "${kubernetes_service_account.tiller.metadata.0.name}"
+#     api_group = ""
+#     namespace = "${kubernetes_service_account.tiller.metadata.0.namespace}"
+#   }
+#   subject {
+#     kind      = "ServiceAccount"
+#     name      = "terraform-tiller"
+#     namespace = "kube-system"
+#   }
+# }
 
 # resource "helm_release" "ingress" {
 #   name  = "ingress"
