@@ -19,6 +19,6 @@ resource "azurerm_postgresql_server" "default" {
   administrator_login          = var.sql_master_username
   administrator_login_password = var.sql_master_password
 
-  version                      = var.sql_version
-  ssl_enforcement              = "Disabled"
+  version         = var.sql_version
+  ssl_enforcement = "Disabled"
 }
