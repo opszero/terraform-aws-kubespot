@@ -85,8 +85,12 @@ variable "redis_memory_in_gb" {
   default = 1
 }
 
-variable "redis_ha_enabled" {
-  default = false
+variable "redis_capacity" {
+  default = 1
+}
+
+variable "redis_shard_count" {
+  default = 0
 }
 
 variable "sql_enabled" {
