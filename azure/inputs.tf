@@ -93,6 +93,14 @@ variable "redis_shard_count" {
   default = 0
 }
 
+variable "redis_family" {
+  default = "C"
+}
+
+variable "redis_sku_name" {
+  default = "Standard"
+}
+
 variable "sql_enabled" {
   default = false
 }
@@ -113,9 +121,7 @@ variable "sql_capacity" {
   default = 2
 }
 
-variable "sql_instance_class" {
-  default = "db-f1-micro"
-}
+
 
 variable "sql_master_username" {
   default = ""
