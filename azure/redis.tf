@@ -10,6 +10,8 @@ resource "azurerm_redis_cache" "default" {
   enable_non_ssl_port = true
   shard_count         = var.redis_shard_count
 
+  subnet_id = azurerm_subnet.cluster.id
+
   redis_configuration {
     maxmemory_reserved = 2
     maxmemory_delta    = 2
