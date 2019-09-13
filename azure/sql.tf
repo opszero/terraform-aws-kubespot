@@ -22,3 +22,11 @@ resource "azurerm_postgresql_server" "default" {
   version         = var.sql_version
   ssl_enforcement = "Disabled"
 }
+
+resource "azurerm_postgresql_virtual_network_rule" "default" {
+  name                                 = var.environment_name
+  resource_group_name                  = "${azurerm_resource_group.cluster.name}"
+  server_name                          = "${azurerm_postgresql_server.default.name}"
+  subnet_id                            = "${azurerm_subnet.cluster.id}"
+  ignore_missing_vnet_service_endpoint = true
+}
