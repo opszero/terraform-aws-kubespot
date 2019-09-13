@@ -34,7 +34,7 @@ resource "azurerm_postgresql_virtual_network_rule" "default" {
 resource "azurerm_postgresql_database" "qa" {
   name                = "qa"
   resource_group_name = "${azurerm_resource_group.cluster.name}"
-  server_name         = "${azurerm_postgresql_server.cluster.name}"
+  server_name         = "${azurerm_postgresql_server.default.name}"
   charset             = "UTF8"
   collation           = "English_United States.1252"
 }
