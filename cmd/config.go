@@ -228,10 +228,10 @@ func (c *Config) DockerLogin() {
 	case AwsCloud:
 		c.runCmd("bash", "-c", c.runCmdOutput("aws", "ecr", "get-login", "--no-include-email"))
 	case AzureCloud:
-		name := c.runCmdOutput("bash", "-c", os.ExpandEnv("echo $AZURE_CLUSTER_NAME | sed 's/[^A-Za-z0-9]//g'"))
+		name := strings.TrimSpace(c.runCmdOutput("bash", "-c", os.ExpandEnv("echo $AZURE_CLUSTER_NAME | sed 's/[^A-Za-z0-9]//g'")))
 		log.Println("Azure Cluster", name)
 		c.runCmd("az", "acr", "login", "--name", name)
-		c.Build.ContainerRegistry = c.runCmdOutput("az", "acr", "list", "--resource-group", os.Getenv("AZURE_RESOURCE_GROUP"), "--query", "'[].{acrLoginServer:loginServer}'", "--output", "table")
+		c.Build.ContainerRegistry = strings.TrimSpace(c.runCmdOutput("bash", "-c", os.ExpandEnv("az acr list --resource-group $AZURE_RESOURCE_GROUP --query '[].{acrLoginServer:loginServer}' --output json | jq -r '.[].acrLoginServer'")))
 		log.Println("Azure ContainerRegistry", c.Build.ContainerRegistry)
 	}
 }
