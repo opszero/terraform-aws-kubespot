@@ -40,26 +40,26 @@ type Config struct {
 	AppAwsSecretIds []string
 	AppEnvConfig    string
 
-		Build struct {
-			DotEnvFile string
+	Build struct {
+		DotEnvFile string
 
-			ContainerRegistry string
-			ProjectId         string
-			Image             string
-		}
+		ContainerRegistry string
+		ProjectId         string
+		Image             string
+	}
 
-		Deploy struct {
-			Env        string
-			HelmConfig string
-			ChartName  string
-			HelmSet    []string
-		}
+	Deploy struct {
+		Env        string
+		HelmConfig string
+		ChartName  string
+		HelmSet    []string
+	}
 
-		RunScript struct {
-			PodAppLabel string
-			Container   string
-			Cmds        []string
-		}
+	RunScript struct {
+		PodAppLabel string
+		Container   string
+		Cmds        []string
+	}
 }
 
 func (c *Config) runCmd(cmdArgs ...string) error {
@@ -195,7 +195,7 @@ func (c *Config) Init() {
 
 		c.runCmd("gcloud", "auth", "activate-service-account", "--key-file=/tmp/gcloud-service-key.json")
 	case AzureCloud:
-
+		c.runCmd("az", "login", "--service-principal", "--tenant", os.Getenv("AZURE_SERVICE_PRINCIPAL_TENANT"), "--username", os.Getenv("AZURE_SERVICE_PRINCIPAL"), "--password", os.Getenv("AZURE_SERVICE_PRINCIPAL_PASSWORD"))
 	default:
 		log.Fatalf("Invalid Cloud")
 	}
@@ -227,6 +227,12 @@ func (c *Config) DockerLogin() {
 		c.runCmd("bash", "-c", fmt.Sprintf("gcloud auth print-access-token | docker login -u oauth2accesstoken --password-stdin https://%s", c.Build.ContainerRegistry))
 	case AwsCloud:
 		c.runCmd("bash", "-c", c.runCmdOutput("aws", "ecr", "get-login", "--no-include-email"))
+	case AzureCloud:
+		name := c.runCmdOutput("bash", "-c", os.ExpandEnv("echo $AZURE_CLUSTER_NAME | sed 's/[^A-Za-z0-9]//g'"))
+		log.Println("Azure Cluster", name)
+		c.runCmd("az", "acr", "login", "--name", name)
+		c.Build.ContainerRegistry = c.runCmdOutput("az", "acr", "list", "--resource-group", os.Getenv("AZURE_RESOURCE_GROUP"), "--query", "'[].{acrLoginServer:loginServer}'", "--output", "table")
+		log.Println("Azure ContainerRegistry", c.Build.ContainerRegistry)
 	}
 }
 
@@ -236,9 +242,11 @@ func (c *Config) KuberneteConfig() {
 		c.runCmd("gcloud", "--quiet", "config", "set", "project", os.Getenv("GOOGLE_PROJECT_ID"))
 		c.runCmd("gcloud", "--quiet", "config", "set", "compute/zone", os.Getenv("GOOGLE_COMPUTE_ZONE"))
 		c.runCmd("gcloud", "auth", "configure-docker", "--quiet")
-		c.runCmd("gcloud", "--quiet", "container", "clusters", "get-credentials", os.ExpandEnv("${GOOGLE_CLUSTER_NAME}"))
+		c.runCmd("gcloud", "--quiet", "container", "clusters", "get-credentials", os.Getenv("GOOGLE_CLUSTER_NAME"))
 	case AwsCloud:
-		c.runCmd("aws", "eks", "--region", os.ExpandEnv("${AWS_DEFAULT_REGION}"), "update-kubeconfig", "--name", os.ExpandEnv("${AWS_CLUSTER_NAME}"))
+		c.runCmd("aws", "eks", "--region", os.Getenv("AWS_DEFAULT_REGION"), "update-kubeconfig", "--name", os.Getenv("AWS_CLUSTER_NAME"))
+	case AzureCloud:
+		c.runCmd("az", "aks", "get-credentials", "--resource-group", os.Getenv("AZURE_RESOURCE_GROUP"), "--name", os.Getenv("AZURE_CLUSTER_NAME"), "--file", "./kubeconfig", "--overwrite-existing")
 	}
 }
 
