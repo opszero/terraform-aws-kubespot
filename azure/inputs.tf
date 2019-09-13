@@ -121,8 +121,6 @@ variable "sql_capacity" {
   default = 2
 }
 
-
-
 variable "sql_master_username" {
   default = ""
 }
