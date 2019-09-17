@@ -1,5 +1,5 @@
 resource "aws_elasticache_subnet_group" "default" {
-  name       = "databases"
+  name       = var.environment_name
   subnet_ids = concat(aws_subnet.private.*.id, aws_subnet.public.*.id)
 }
 
