@@ -27,15 +27,15 @@ resource "google_container_cluster" "cluster" {
   }
 }
 
-resource "google_container_node_pool" "nodes_green" {
-  name       = "nodes-green"
+resource "google_container_node_pool" "nodes" {
+  name       = "nodes"
   location   = var.region
   cluster    = google_container_cluster.cluster.name
   node_count = 1
 
   autoscaling {
-    min_node_count = var.nodes_green_min_size
-    max_node_count = var.nodes_green_max_size
+    min_node_count = var.nodes_min_size
+    max_node_count = var.nodes_max_size
   }
 
   management {
@@ -44,7 +44,7 @@ resource "google_container_node_pool" "nodes_green" {
   }
 
   node_config {
-    machine_type = var.nodes_green_instance_type
+    machine_type = var.nodes_instance_type
 
     metadata = {
       disable-legacy-endpoints = "true"
