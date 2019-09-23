@@ -1,4 +1,4 @@
-# AuditKube
+# AuditKube Serverless
 
 Serverless Environment Setup for Compliance on AWS
 
