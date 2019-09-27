@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/base64"
 	"fmt"
+	"github.com/cloudflare/cloudflare-go"
 	"io/ioutil"
 	"log"
 	"os"
@@ -16,6 +17,15 @@ import (
 	"github.com/a8m/envsubst"
 	"github.com/joho/godotenv"
 	"gopkg.in/yaml.v2"
+)
+
+const (
+	CloudFlareEmail  = "CLOUDFLARE_EMAIL"
+	CloudFlareAPIKey = "CLOUDFLARE_APIKEY"
+)
+
+const (
+	LoadBalancerCommand = "kubectl get svc ingress-nginx-ingress-controller -o jsonpath='{.status.loadBalancer.ingress[0].hostname}'"
 )
 
 const (
@@ -39,6 +49,11 @@ type Config struct {
 
 	AppAwsSecretIds []string
 	AppEnvConfig    string
+
+	CloudFlareEmail    string
+	CloudFlareKey      string
+	ExternalHostNames  []string
+	CloudFlareZoneName string
 
 	Build struct {
 		DotEnvFile string
@@ -88,7 +103,7 @@ func (c *Config) runCmdOutput(cmdArgs ...string) string {
 
 	var args []string
 	if len(cmdArgs) > 1 {
-		args = cmdArgs[1:len(cmdArgs)]
+		args = cmdArgs[1:]
 	}
 	log.Println("Args", args)
 	cmd := exec.Command(cmdArgs[0], args...)
@@ -379,6 +394,80 @@ func (c *Config) HelmDeploy() {
 		"--install")
 
 	c.runCmd(append([]string{"helm", "upgrade", c.circleBranch(), c.Deploy.ChartName, "-f", envFile}, helmArgs...)...)
+
+	// TODO should exec from output or use something like this https://github.com/kubernetes/client-go/blob/master/examples/out-of-cluster-client-configuration/main.go#L74
+	loadBalancerURL := c.runCmdOutput(LoadBalancerCommand)
+
+	if err := c.CloudflareDnsDeploy(loadBalancerURL); err != nil {
+		log.Println(err.Error())
+	}
+}
+
+func contains(s []string, e string) bool {
+	for _, a := range s {
+		if a == e {
+			return true
+		}
+	}
+	return false
+}
+
+// Documentation for record types are found here https://api.cloudflare.com/#dns-records-for-a-zone-create-dns-record
+// this will error out if the api is configured incorrectly, cannot fetch DNS records of zone or the zones themselves, or if
+// it cannot create a DNS record (note: not update a record)
+func (c *Config) CloudflareDnsDeploy(loadbalancer string) error {
+	cloudflareEmail := os.Getenv(CloudFlareEmail)
+	cloudflareAPIKey := os.Getenv(CloudFlareAPIKey)
+
+	if cloudflareEmail == "" {
+		cloudflareEmail = c.CloudFlareEmail
+	}
+	if cloudflareAPIKey == "" {
+		cloudflareAPIKey = c.CloudFlareKey
+	}
+
+	api, err := cloudflare.New(cloudflareAPIKey, cloudflareEmail)
+	if err != nil {
+		log.Println("cloudflare could not instantiate, failed with error ", err.Error())
+		return err
+	}
+	zoneID, err := api.ZoneIDByName(c.CloudFlareZoneName)
+	if err != nil {
+		log.Println("could not fetch cloudflare zones")
+		return err
+	}
+	dnsResponses, err := api.DNSRecords(zoneID, cloudflare.DNSRecord{})
+	if err != nil {
+		log.Println("could not fetch dns records for zone: ", zoneID)
+		return err
+	}
+	for _, externalName := range c.ExternalHostNames {
+		newDNSRecord := cloudflare.DNSRecord{
+			Name:    externalName,
+			Type:    "CNAME",
+			Content: loadbalancer,
+		}
+		for _, dnsRecord := range dnsResponses {
+			if contains(c.ExternalHostNames, dnsRecord.Name) {
+				err := api.UpdateDNSRecord(zoneID, dnsRecord.ID, newDNSRecord)
+				if err != nil {
+					log.Println("unable to update dns: ", dnsRecord.Name)
+				}
+			} else {
+				createDNSResponse, err := api.CreateDNSRecord(zoneID, newDNSRecord)
+				if err != nil {
+					log.Println("cloudflare could not create the records, failed with error", err.Error())
+					return err
+				}
+				if createDNSResponse.Success {
+					log.Println("cloudflare successfully created DNS Record")
+				} else {
+					log.Println("cloudflare failed creating dns with internal error, failed with ", createDNSResponse.Errors)
+				}
+			}
+		}
+	}
+	return nil
 }
 
 func (c *Config) HelmRunScript() {
