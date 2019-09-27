@@ -396,12 +396,8 @@ func (c *Config) HelmDeploy() {
 	c.runCmd(append([]string{"helm", "upgrade", c.circleBranch(), c.Deploy.ChartName, "-f", envFile}, helmArgs...)...)
 
 	// TODO should exec from output or use something like this https://github.com/kubernetes/client-go/blob/master/examples/out-of-cluster-client-configuration/main.go#L74
-	out, err := exec.Command(LoadBalancerCommand).Output()
+	loadBalancerURL := c.runCmdOutput(LoadBalancerCommand)
 
-	if err != nil {
-		log.Fatal(LoadBalancerCommand, "failed piping loadbalancer output with error", err.Error())
-	}
-	loadBalancerURL := string(out)
 	if err := c.CloudflareDnsDeploy(loadBalancerURL); err != nil {
 		log.Println(err.Error())
 	}
