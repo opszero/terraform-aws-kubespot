@@ -17,6 +17,7 @@
             "instance_type": "c5.large",
             "region": "{{user `region`}}",
             "source_ami": "{{user `source_ami`}}",
+            "source_owner": "amazon",
             "ssh_username": "ec2-user",
             "type": "amazon-ebs",
             "encrypt_boot": true
