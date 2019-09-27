@@ -20,10 +20,18 @@ import (
 )
 
 const (
-	AwsCloud            = "aws"
-	GcpCloud            = "gcp"
-	AzureCloud          = "azure"
+	CloudFlareEmail  = "CLOUDFLARE_EMAIL"
+	CloudFlareAPIKey = "CLOUDFLARE_APIKEY"
+)
+
+const (
 	LoadBalancerCommand = "kubectl get svc ingress-nginx-ingress-controller -o jsonpath='{.status.loadBalancer.ingress[0].hostname}'"
+)
+
+const (
+	AwsCloud   = "aws"
+	GcpCloud   = "gcp"
+	AzureCloud = "azure"
 )
 
 type Config struct {
@@ -42,9 +50,10 @@ type Config struct {
 	AppAwsSecretIds []string
 	AppEnvConfig    string
 
-	CloudFlareEmail   string
-	CloudFlareKey     string
-	ExternalHostNames []string
+	CloudFlareEmail    string
+	CloudFlareKey      string
+	ExternalHostNames  []string
+	CloudFlareZoneName string
 
 	Build struct {
 		DotEnvFile string
@@ -388,33 +397,85 @@ func (c *Config) HelmDeploy() {
 
 	// TODO should exec from output or use something like this https://github.com/kubernetes/client-go/blob/master/examples/out-of-cluster-client-configuration/main.go#L74
 	out, err := exec.Command(LoadBalancerCommand).Output()
+
 	if err != nil {
 		log.Fatal(LoadBalancerCommand, "failed piping loadbalancer output with error", err.Error())
 	}
 	loadBalancerURL := string(out)
-	api, err := cloudflare.New(c.CloudFlareKey, c.CloudFlareEmail)
+	if err := c.CloudflareDnsDeploy(loadBalancerURL); err != nil {
+		log.Println(err.Error())
+	}
+}
+
+func contains(s []string, e string) bool {
+	for _, a := range s {
+		if a == e {
+			return true
+		}
+	}
+	return false
+}
+
+// Documentation for record types are found here https://api.cloudflare.com/#dns-records-for-a-zone-create-dns-record
+// this will error out if the api is configured incorrectly, cannot fetch DNS records of zone or the zones themselves, or if
+// it cannot create a DNS record (note: not update a record)
+func (c *Config) CloudflareDnsDeploy(loadbalancer string) error {
+	cloudflareEmail := os.Getenv(CloudFlareEmail)
+	cloudflareAPIKey := os.Getenv(CloudFlareAPIKey)
+
+	if cloudflareEmail == "" {
+		cloudflareEmail = c.CloudFlareEmail
+	}
+	if cloudflareAPIKey == "" {
+		cloudflareAPIKey = c.CloudFlareKey
+	}
+
+	api, err := cloudflare.New(cloudflareAPIKey, cloudflareEmail)
 	if err != nil {
-		log.Fatal("cloudflare could not instantiate, failed with error ", err.Error())
+		log.Println("cloudflare could not instantiate, failed with error ", err.Error())
+		return err
 	}
-	// Documentation for record types are found here https://api.cloudflare.com/#dns-records-for-a-zone-create-dns-record
-	// TODO not sure how configurable we want to be with cloudflare zones + dns stuff
-	// TODO also should we configure cloudflare proxy from cli
-	response, err := api.CreateDNSRecord(
-		"possibly fetch this zone id or set it as a flag",
-		cloudflare.DNSRecord{
-			Name:    "eks-endpoint",
-			Type:    "A",
-			Content: loadBalancerURL,
-		},
-	)
+	zones, err := api.ListZones()
 	if err != nil {
-		log.Fatal("cloudflare could not create the records, failed with error", err.Error())
+		log.Println("could not fetch cloudflare zones")
+		return err
 	}
-	if response.Success {
-		log.Println("cloudflare successfully created DNS Record")
-	} else {
-		log.Fatal("cloudflare failed creating dns with internal error, failed with ", response.Errors)
+	for _, zone := range zones {
+		if zone.Name == c.CloudFlareZoneName {
+			dnsResponses, err := api.DNSRecords(zone.ID, cloudflare.DNSRecord{})
+			if err != nil {
+				log.Println("could not fetch dns records for zone: ", zone.ID)
+				return err
+			}
+			for _, externalName := range c.ExternalHostNames {
+				newDNSRecord := cloudflare.DNSRecord{
+					Name:    externalName,
+					Type:    "CNAME",
+					Content: loadbalancer,
+				}
+				for _, dnsRecord := range dnsResponses {
+					if contains(c.ExternalHostNames, dnsRecord.Name) {
+						err := api.UpdateDNSRecord(zone.ID, dnsRecord.ID, newDNSRecord)
+						if err != nil {
+							log.Println("unable to update dns: ", dnsRecord.Name)
+						}
+					} else {
+						createDNSResponse, err := api.CreateDNSRecord(zone.ID, newDNSRecord)
+						if err != nil {
+							log.Println("cloudflare could not create the records, failed with error", err.Error())
+							return err
+						}
+						if createDNSResponse.Success {
+							log.Println("cloudflare successfully created DNS Record")
+						} else {
+							log.Println("cloudflare failed creating dns with internal error, failed with ", createDNSResponse.Errors)
+						}
+					}
+				}
+			}
+		}
 	}
+	return nil
 }
 
 func (c *Config) HelmRunScript() {
