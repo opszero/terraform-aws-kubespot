@@ -84,6 +84,9 @@ to quickly create a Cobra application.`,
 	deployCmd.Flags().StringVar(&config.Build.ContainerRegistry, "container-registry", "", "Ex. 1234.dkr.ecr.us-west-2.amazonaws.com ")
 	deployCmd.Flags().StringVar(&config.Build.ProjectId, "project-id", "", "Ex. opszero")
 	deployCmd.Flags().StringVar(&config.Build.Image, "image", "", "Ex. deploytag")
+	deployCmd.Flags().StringVar(&config.CloudFlareKey, "cloudflare-key", "", "api key for cloudflare")
+	deployCmd.Flags().StringVar(&config.CloudFlareEmail, "cloudflare-email", "", "email for cloudflare")
+	deployCmd.Flags().StringArrayVar(&config.ExternalHostNames, "set-dns", []string{}, "list of external hostnames to resolve against the cluster's load balancer")
 
 	var buildCmd = &cobra.Command{
 		Use:   "build",

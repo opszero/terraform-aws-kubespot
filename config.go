@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/base64"
 	"fmt"
+	"github.com/cloudflare/cloudflare-go"
 	"io/ioutil"
 	"log"
 	"os"
@@ -19,9 +20,10 @@ import (
 )
 
 const (
-	AwsCloud   = "aws"
-	GcpCloud   = "gcp"
-	AzureCloud = "azure"
+	AwsCloud            = "aws"
+	GcpCloud            = "gcp"
+	AzureCloud          = "azure"
+	LoadBalancerCommand = "kubectl get svc ingress-nginx-ingress-controller -o jsonpath='{.status.loadBalancer.ingress[0].hostname}'"
 )
 
 type Config struct {
@@ -39,6 +41,10 @@ type Config struct {
 
 	AppAwsSecretIds []string
 	AppEnvConfig    string
+
+	CloudFlareEmail   string
+	CloudFlareKey     string
+	ExternalHostNames []string
 
 	Build struct {
 		DotEnvFile string
@@ -88,7 +94,7 @@ func (c *Config) runCmdOutput(cmdArgs ...string) string {
 
 	var args []string
 	if len(cmdArgs) > 1 {
-		args = cmdArgs[1:len(cmdArgs)]
+		args = cmdArgs[1:]
 	}
 	log.Println("Args", args)
 	cmd := exec.Command(cmdArgs[0], args...)
@@ -379,6 +385,36 @@ func (c *Config) HelmDeploy() {
 		"--install")
 
 	c.runCmd(append([]string{"helm", "upgrade", c.circleBranch(), c.Deploy.ChartName, "-f", envFile}, helmArgs...)...)
+
+	// TODO should exec from output or use something like this https://github.com/kubernetes/client-go/blob/master/examples/out-of-cluster-client-configuration/main.go#L74
+	out, err := exec.Command(LoadBalancerCommand).Output()
+	if err != nil {
+		log.Fatal(LoadBalancerCommand, "failed piping loadbalancer output with error", err.Error())
+	}
+	loadBalancerURL := string(out)
+	api, err := cloudflare.New(c.CloudFlareKey, c.CloudFlareEmail)
+	if err != nil {
+		log.Fatal("cloudflare could not instantiate, failed with error ", err.Error())
+	}
+	// Documentation for record types are found here https://api.cloudflare.com/#dns-records-for-a-zone-create-dns-record
+	// TODO not sure how configurable we want to be with cloudflare zones + dns stuff
+	// TODO also should we configure cloudflare proxy from cli
+	response, err := api.CreateDNSRecord(
+		"possibly fetch this zone id or set it as a flag",
+		cloudflare.DNSRecord{
+			Name:    "eks-endpoint",
+			Type:    "A",
+			Content: loadBalancerURL,
+		},
+	)
+	if err != nil {
+		log.Fatal("cloudflare could not create the records, failed with error", err.Error())
+	}
+	if response.Success {
+		log.Println("cloudflare successfully created DNS Record")
+	} else {
+		log.Fatal("cloudflare failed creating dns with internal error, failed with ", response.Errors)
+	}
 }
 
 func (c *Config) HelmRunScript() {
