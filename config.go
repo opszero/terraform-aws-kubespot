@@ -431,42 +431,38 @@ func (c *Config) CloudflareDnsDeploy(loadbalancer string) error {
 		log.Println("cloudflare could not instantiate, failed with error ", err.Error())
 		return err
 	}
-	zones, err := api.ListZones()
+	zoneID, err := api.ZoneIDByName(c.CloudFlareZoneName)
 	if err != nil {
 		log.Println("could not fetch cloudflare zones")
 		return err
 	}
-	for _, zone := range zones {
-		if zone.Name == c.CloudFlareZoneName {
-			dnsResponses, err := api.DNSRecords(zone.ID, cloudflare.DNSRecord{})
-			if err != nil {
-				log.Println("could not fetch dns records for zone: ", zone.ID)
-				return err
-			}
-			for _, externalName := range c.ExternalHostNames {
-				newDNSRecord := cloudflare.DNSRecord{
-					Name:    externalName,
-					Type:    "CNAME",
-					Content: loadbalancer,
+	dnsResponses, err := api.DNSRecords(zoneID, cloudflare.DNSRecord{})
+	if err != nil {
+		log.Println("could not fetch dns records for zone: ", zoneID)
+		return err
+	}
+	for _, externalName := range c.ExternalHostNames {
+		newDNSRecord := cloudflare.DNSRecord{
+			Name:    externalName,
+			Type:    "CNAME",
+			Content: loadbalancer,
+		}
+		for _, dnsRecord := range dnsResponses {
+			if contains(c.ExternalHostNames, dnsRecord.Name) {
+				err := api.UpdateDNSRecord(zoneID, dnsRecord.ID, newDNSRecord)
+				if err != nil {
+					log.Println("unable to update dns: ", dnsRecord.Name)
 				}
-				for _, dnsRecord := range dnsResponses {
-					if contains(c.ExternalHostNames, dnsRecord.Name) {
-						err := api.UpdateDNSRecord(zone.ID, dnsRecord.ID, newDNSRecord)
-						if err != nil {
-							log.Println("unable to update dns: ", dnsRecord.Name)
-						}
-					} else {
-						createDNSResponse, err := api.CreateDNSRecord(zone.ID, newDNSRecord)
-						if err != nil {
-							log.Println("cloudflare could not create the records, failed with error", err.Error())
-							return err
-						}
-						if createDNSResponse.Success {
-							log.Println("cloudflare successfully created DNS Record")
-						} else {
-							log.Println("cloudflare failed creating dns with internal error, failed with ", createDNSResponse.Errors)
-						}
-					}
+			} else {
+				createDNSResponse, err := api.CreateDNSRecord(zoneID, newDNSRecord)
+				if err != nil {
+					log.Println("cloudflare could not create the records, failed with error", err.Error())
+					return err
+				}
+				if createDNSResponse.Success {
+					log.Println("cloudflare successfully created DNS Record")
+				} else {
+					log.Println("cloudflare failed creating dns with internal error, failed with ", createDNSResponse.Errors)
 				}
 			}
 		}
