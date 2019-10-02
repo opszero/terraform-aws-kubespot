@@ -3,12 +3,13 @@ package main
 import (
 	"encoding/base64"
 	"fmt"
-	"github.com/cloudflare/cloudflare-go"
 	"io/ioutil"
 	"log"
 	"os"
 	"os/exec"
 	"strings"
+
+	"github.com/cloudflare/cloudflare-go"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
@@ -416,12 +417,15 @@ func contains(s []string, e string) bool {
 // this will error out if the api is configured incorrectly, cannot fetch DNS records of zone or the zones themselves, or if
 // it cannot create a DNS record (note: not update a record)
 func (c *Config) CloudflareDnsDeploy(loadbalancer string) error {
-	cloudflareEmail := os.Getenv(CloudFlareEmail)
-	cloudflareAPIKey := os.Getenv(CloudFlareAPIKey)
+	var (
+		cloudflareEmail  = os.Getenv(CloudFlareEmail)
+		cloudflareAPIKey = os.Getenv(CloudFlareAPIKey)
+	)
 
 	if cloudflareEmail == "" {
 		cloudflareEmail = c.CloudFlareEmail
 	}
+
 	if cloudflareAPIKey == "" {
 		cloudflareAPIKey = c.CloudFlareKey
 	}
@@ -441,10 +445,15 @@ func (c *Config) CloudflareDnsDeploy(loadbalancer string) error {
 		log.Println("could not fetch dns records for zone: ", zoneID)
 		return err
 	}
+
+	recordType := "A"
+	if c.Cloud == AwsCloud {
+		recordType = "CNAME"
+	}
 	for _, externalName := range c.ExternalHostNames {
 		newDNSRecord := cloudflare.DNSRecord{
 			Name:    externalName,
-			Type:    "CNAME",
+			Type:    recordType,
 			Content: loadbalancer,
 		}
 		for _, dnsRecord := range dnsResponses {

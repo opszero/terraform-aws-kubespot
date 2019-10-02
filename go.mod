@@ -5,7 +5,7 @@ go 1.12
 require (
 	github.com/a8m/envsubst v1.1.0
 	github.com/aws/aws-sdk-go v1.22.1
-	github.com/cloudflare/cloudflare-go v0.10.1 // indirect
+	github.com/cloudflare/cloudflare-go v0.10.1
 	github.com/cpuguy83/go-md2man/v2 v2.0.0 // indirect
 	github.com/joho/godotenv v1.3.0
 	github.com/kr/pretty v0.1.0 // indirect
