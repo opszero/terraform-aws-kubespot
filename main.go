@@ -8,7 +8,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-
 var (
 	config = &Config{}
 )
@@ -40,7 +39,7 @@ to quickly create a Cobra application.`,
 
 	rootCmd.Flags().StringVar(&config.CloudFlareKey, "cloudflare-key", os.Getenv(CloudFlareAPIKey), "api key for cloudflare")
 	rootCmd.Flags().StringVar(&config.CloudFlareEmail, "cloudflare-email", os.Getenv(CloudFlareEmail), "email for cloudflare")
-	rootCmd.Flags().StringVar(&config.CloudFlareZoneName, "cloudflare-domain", "", "email for cloudflare")
+	rootCmd.Flags().StringVar(&config.CloudFlareZoneName, "cloudflare-domain", os.Getenv(CloudFlareDomain), "domain for cloudflare")
 
 	var runScriptCmd = &cobra.Command{
 		Use:   "run-script",

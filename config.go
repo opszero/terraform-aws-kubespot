@@ -23,6 +23,7 @@ import (
 const (
 	CloudFlareEmail  = "CLOUDFLARE_EMAIL"
 	CloudFlareAPIKey = "CLOUDFLARE_APIKEY"
+	CloudFlareDomain = "CLOUDFLARE_DOMAIN"
 )
 
 const (
