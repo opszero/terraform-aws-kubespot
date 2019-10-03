@@ -10,4 +10,6 @@ kubectl create clusterrolebinding tiller --clusterrole cluster-admin --serviceac
 helm init --service-account tiller --wait --upgrade
 helm repo update
 
-helm install stable/nginx-ingress --name ingress-nginx
+# https://github.com/helm/charts/tree/master/stable/nginx-ingress
+# https://github.com/kubernetes/ingress-nginx/blob/master/docs/user-guide/nginx-configuration/configmap.md
+helm upgrade --install ingress stable/nginx-ingress --set controller.config.enable-underscores-in-headers='"true"',controller.config.use-forwarded-headers='"true"'
