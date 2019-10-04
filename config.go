@@ -29,7 +29,7 @@ const (
 )
 
 const (
-	LoadBalancerCommand = "kubectl get svc ingress-nginx-ingress-controller -o jsonpath='{.status.loadBalancer.ingress[0].hostname}'"
+	LoadBalancerCommand = `"kubectl get svc ingress-nginx-ingress-controller -o jsonpath='{.status.loadBalancer.ingress[0].hostname}'"`
 )
 
 const (
