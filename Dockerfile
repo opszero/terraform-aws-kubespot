@@ -45,6 +45,7 @@ WORKDIR /app
 COPY go.mod go.sum ./
 RUN go mod download
 
+RUN cp /usr/local/bin/kubectl /bin/kubectl
 COPY . .
 RUN go build -o /bin/deploytag
 

@@ -29,10 +29,6 @@ const (
 )
 
 const (
-	LoadBalancerCommand = `"kubectl get svc ingress-nginx-ingress-controller -o jsonpath='{.status.loadBalancer.ingress[0].hostname}'"`
-)
-
-const (
 	AwsCloud   = "aws"
 	GcpCloud   = "gcp"
 	AzureCloud = "azure"
@@ -88,7 +84,6 @@ func (c *Config) runCmd(cmdArgs ...string) error {
 	if len(cmdArgs) > 1 {
 		args = cmdArgs[1:len(cmdArgs)]
 	}
-	log.Println("Args", args)
 	cmd := exec.Command(cmdArgs[0], args...)
 
 	cmd.Stdout = os.Stdout
@@ -109,7 +104,6 @@ func (c *Config) runCmdOutput(cmdArgs ...string) string {
 	if len(cmdArgs) > 1 {
 		args = cmdArgs[1:]
 	}
-	log.Println("Args", args)
 	cmd := exec.Command(cmdArgs[0], args...)
 	stdoutStderr, err := cmd.CombinedOutput()
 	if err != nil {
@@ -388,40 +382,31 @@ func contains(s []string, e string) bool {
 // this will error out if the api is configured incorrectly, cannot fetch DNS records of zone or the zones themselves, or if
 // it cannot create a DNS record (note: not update a record)
 func (c *Config) DnsDeploy() error {
-	// TODO should exec from output or use something like this https://github.com/kubernetes/client-go/blob/master/examples/out-of-cluster-client-configuration/main.go#L74
-	loadbalancer := c.runCmdOutput("bash", "-c", LoadBalancerCommand)
-
 	var (
-		cloudflareEmail  = os.Getenv(CloudflareEmail)
-		cloudflareAPIKey = os.Getenv(CloudflareAPIKey)
+		// TODO should exec from output or use something like this https://github.com/kubernetes/client-go/blob/master/examples/out-of-cluster-client-configuration/main.go#L74
+		loadbalancer = c.runCmdOutput("kubectl", "get", "svc", "ingress-nginx-ingress-controller", "-o", `jsonpath='{.status.loadBalancer.ingress[0].hostname}'"`)
 	)
 
-	if cloudflareEmail == "" {
-		cloudflareEmail = c.Cloudflare.Email
-	}
+	log.Println("LoadBalancer", loadbalancer)
 
-	if cloudflareAPIKey == "" {
-		cloudflareAPIKey = c.Cloudflare.Key
-	}
-
-	api, err := cloudflare.New(cloudflareAPIKey, cloudflareEmail)
+	api, err := cloudflare.New(c.Cloudflare.Key, c.Cloudflare.Email)
 	if err != nil {
-		log.Println("cloudflare could not instantiate, failed with error ", err.Error())
+		log.Println(err)
 		return err
 	}
 
 	zoneID := c.Cloudflare.ZoneID
-	if c.Cloudflare.ZoneID == "" {
+	if c.Cloudflare.ZoneID != "" {
 		zoneID, err = api.ZoneIDByName(c.Cloudflare.ZoneName)
 		if err != nil {
-			log.Println("could not fetch cloudflare zones")
+			log.Println(err)
 			return err
 		}
 	}
 
 	dnsResponses, err := api.DNSRecords(zoneID, cloudflare.DNSRecord{})
 	if err != nil {
-		log.Println("could not fetch dns records for zone: ", zoneID)
+		log.Println(err)
 		return err
 	}
 
@@ -456,12 +441,14 @@ func (c *Config) DnsDeploy() error {
 			if contains(c.Cloudflare.ExternalHostNames, dnsRecord.Name) {
 				err := api.UpdateDNSRecord(zoneID, dnsRecord.ID, newDNSRecord)
 				if err != nil {
-					log.Println("unable to update dns: ", dnsRecord.Name)
+					log.Println(err)
+					return err
+
 				}
 			} else {
 				createDNSResponse, err := api.CreateDNSRecord(zoneID, newDNSRecord)
 				if err != nil {
-					log.Println("cloudflare could not create the records, failed with error", err.Error())
+					log.Println(err)
 					return err
 				}
 				if createDNSResponse.Success {
