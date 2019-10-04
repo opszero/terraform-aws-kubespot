@@ -49,16 +49,15 @@ type Config struct {
 
 	GCPServiceKeyFile   string
 	GCPServiceKeyBase64 string
-	// GOOGLE_PROJECT_ID=alien-clover-238521 GOOGLE_COMPUTE_ZONE=us-central1 GOOGLE_CLUSTER_NAME=qa-us-central1
 
 	AppAwsSecretIds []string
 	AppEnvConfig    string
 
 	CloudFlareEmail    string
 	CloudFlareKey      string
-	ExternalHostNames  []string
 	CloudFlareZoneName string
 	CloudFlareZoneID   string
+	ExternalHostNames  []string
 
 	Build struct {
 		DotEnvFile string
@@ -239,6 +238,8 @@ func (c *Config) Init() {
 	c.CloudFlareEmail = os.Getenv(CloudFlareEmail)
 	c.CloudFlareZoneName = os.Getenv(CloudFlareDomain)
 	c.CloudFlareZoneID = os.Getenv(CloudFlareZoneID)
+
+	log.Println(c.CloudFlareKey, c.CloudFlareEmail, c.CloudFlareZoneName, c.CloudFlareZoneID)
 
 	log.Println("Circle Branch", c.circleBranch())
 }
