@@ -22,10 +22,10 @@ import (
 )
 
 const (
-	CloudFlareEmail  = "CLOUDFLARE_EMAIL"
-	CloudFlareAPIKey = "CLOUDFLARE_APIKEY"
-	CloudFlareDomain = "CLOUDFLARE_DOMAIN"
-	CloudFlareZoneID = "CLOUDFLARE_ZONE_ID"
+	CloudflareEmail  = "CLOUDFLARE_EMAIL"
+	CloudflareAPIKey = "CLOUDFLARE_APIKEY"
+	CloudflareDomain = "CLOUDFLARE_DOMAIN"
+	CloudflareZoneID = "CLOUDFLARE_ZONE_ID"
 )
 
 const (
@@ -53,11 +53,13 @@ type Config struct {
 	AppAwsSecretIds []string
 	AppEnvConfig    string
 
-	CloudFlareEmail    string
-	CloudFlareKey      string
-	CloudFlareZoneName string
-	CloudFlareZoneID   string
-	ExternalHostNames  []string
+	Cloudflare struct {
+		Email             string
+		Key               string
+		ZoneName          string
+		ZoneID            string
+		ExternalHostNames []string
+	}
 
 	Build struct {
 		DotEnvFile string
@@ -234,12 +236,12 @@ func (c *Config) Init() {
 	c.DockerLogin()
 	c.KuberneteConfig()
 
-	c.CloudFlareKey = os.Getenv(CloudFlareAPIKey)
-	c.CloudFlareEmail = os.Getenv(CloudFlareEmail)
-	c.CloudFlareZoneName = os.Getenv(CloudFlareDomain)
-	c.CloudFlareZoneID = os.Getenv(CloudFlareZoneID)
+	c.Cloudflare.Key = os.Getenv(CloudflareAPIKey)
+	c.Cloudflare.Email = os.Getenv(CloudflareEmail)
+	c.Cloudflare.ZoneName = os.Getenv(CloudflareDomain)
+	c.Cloudflare.ZoneID = os.Getenv(CloudflareZoneID)
 
-	log.Println(c.CloudFlareKey, c.CloudFlareEmail, c.CloudFlareZoneName, c.CloudFlareZoneID)
+	log.Println(c.Cloudflare.Key, c.Cloudflare.Email, c.Cloudflare.ZoneName, c.Cloudflare.ZoneID)
 
 	log.Println("Circle Branch", c.circleBranch())
 }
@@ -371,13 +373,6 @@ func (c *Config) HelmDeploy() {
 		"--install")
 
 	c.runCmd(append([]string{"helm", "upgrade", c.circleBranch(), c.Deploy.ChartName}, helmArgs...)...)
-
-	// TODO should exec from output or use something like this https://github.com/kubernetes/client-go/blob/master/examples/out-of-cluster-client-configuration/main.go#L74
-	loadBalancerURL := c.runCmdOutput("bash", "-c", LoadBalancerCommand)
-
-	if err := c.CloudflareDnsDeploy(loadBalancerURL); err != nil {
-		log.Println(err.Error())
-	}
 }
 
 func contains(s []string, e string) bool {
@@ -392,18 +387,21 @@ func contains(s []string, e string) bool {
 // Documentation for record types are found here https://api.cloudflare.com/#dns-records-for-a-zone-create-dns-record
 // this will error out if the api is configured incorrectly, cannot fetch DNS records of zone or the zones themselves, or if
 // it cannot create a DNS record (note: not update a record)
-func (c *Config) CloudflareDnsDeploy(loadbalancer string) error {
+func (c *Config) DnsDeploy() error {
+	// TODO should exec from output or use something like this https://github.com/kubernetes/client-go/blob/master/examples/out-of-cluster-client-configuration/main.go#L74
+	loadbalancer := c.runCmdOutput("bash", "-c", LoadBalancerCommand)
+
 	var (
-		cloudflareEmail  = os.Getenv(CloudFlareEmail)
-		cloudflareAPIKey = os.Getenv(CloudFlareAPIKey)
+		cloudflareEmail  = os.Getenv(CloudflareEmail)
+		cloudflareAPIKey = os.Getenv(CloudflareAPIKey)
 	)
 
 	if cloudflareEmail == "" {
-		cloudflareEmail = c.CloudFlareEmail
+		cloudflareEmail = c.Cloudflare.Email
 	}
 
 	if cloudflareAPIKey == "" {
-		cloudflareAPIKey = c.CloudFlareKey
+		cloudflareAPIKey = c.Cloudflare.Key
 	}
 
 	api, err := cloudflare.New(cloudflareAPIKey, cloudflareEmail)
@@ -412,9 +410,9 @@ func (c *Config) CloudflareDnsDeploy(loadbalancer string) error {
 		return err
 	}
 
-	zoneID := c.CloudFlareZoneID
-	if c.CloudFlareZoneID == "" {
-		zoneID, err = api.ZoneIDByName(c.CloudFlareZoneName)
+	zoneID := c.Cloudflare.ZoneID
+	if c.Cloudflare.ZoneID == "" {
+		zoneID, err = api.ZoneIDByName(c.Cloudflare.ZoneName)
 		if err != nil {
 			log.Println("could not fetch cloudflare zones")
 			return err
@@ -432,7 +430,7 @@ func (c *Config) CloudflareDnsDeploy(loadbalancer string) error {
 		recordType = "CNAME"
 	}
 
-	for _, externalName := range c.ExternalHostNames {
+	for _, externalName := range c.Cloudflare.ExternalHostNames {
 		data := struct {
 			Branch string
 		}{
@@ -455,7 +453,7 @@ func (c *Config) CloudflareDnsDeploy(loadbalancer string) error {
 			Content: loadbalancer,
 		}
 		for _, dnsRecord := range dnsResponses {
-			if contains(c.ExternalHostNames, dnsRecord.Name) {
+			if contains(c.Cloudflare.ExternalHostNames, dnsRecord.Name) {
 				err := api.UpdateDNSRecord(zoneID, dnsRecord.ID, newDNSRecord)
 				if err != nil {
 					log.Println("unable to update dns: ", dnsRecord.Name)

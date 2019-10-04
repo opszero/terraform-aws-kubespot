@@ -31,16 +31,9 @@ to quickly create a Cobra application.`,
 	rootCmd.PersistentFlags().StringVar(&config.AWSAccessKeyID, "aws-access-key-id", os.Getenv("AWS_ACCESS_KEY_ID"), "AWS Access Key")
 	rootCmd.PersistentFlags().StringVar(&config.AWSSecretAccessKey, "aws-secret-access-key", os.Getenv("AWS_SECRET_ACCESS_KEY"), "AWS Secret Access Key")
 	rootCmd.PersistentFlags().StringVar(&config.AWSDefaultRegion, "aws-default-region", os.Getenv("AWS_DEFAULT_REGION"), "AWS Secret Access Key")
-	rootCmd.PersistentFlags().StringVar(&config.GCPServiceKeyFile, "gcp-service-key-file", "", "GCP Auth File. ~/gcp.json")
-	rootCmd.PersistentFlags().StringVar(&config.GCPServiceKeyBase64, "gcp-service-key-base64", "", "Base64 encoded version of gcp-service-key-base64")
 
 	rootCmd.PersistentFlags().StringVar(&config.CloudAwsSecretId, "cloud-aws-secret-id", "", "Use AWS Secrets Manager for Config. If set it pull the environment variables from aws secrets manager.")
 	rootCmd.PersistentFlags().StringArrayVar(&config.AppAwsSecretIds, "app-aws-secret-ids", []string{}, "Ex. 1234.dkr.ecr.us-west-2.amazonaws.com")
-
-	rootCmd.PersistentFlags().StringVar(&config.CloudFlareKey, "cloudflare-key", os.Getenv(CloudFlareAPIKey), "api key for cloudflare")
-	rootCmd.PersistentFlags().StringVar(&config.CloudFlareEmail, "cloudflare-email", os.Getenv(CloudFlareEmail), "email for cloudflare")
-	rootCmd.PersistentFlags().StringVar(&config.CloudFlareZoneName, "cloudflare-domain", os.Getenv(CloudFlareDomain), "domain for cloudflare")
-	rootCmd.PersistentFlags().StringVar(&config.CloudFlareZoneID, "cloudflare-zone-id", os.Getenv(CloudFlareZoneID), "domain for cloudflare")
 
 	var runScriptCmd = &cobra.Command{
 		Use:   "run-script",
@@ -87,7 +80,6 @@ to quickly create a Cobra application.`,
 	deployCmd.Flags().StringVar(&config.Build.ContainerRegistry, "container-registry", "", "Ex. 1234.dkr.ecr.us-west-2.amazonaws.com ")
 	deployCmd.Flags().StringVar(&config.Build.ProjectId, "project-id", "", "Ex. opszero")
 	deployCmd.Flags().StringVar(&config.Build.Image, "image", "", "Ex. deploytag")
-	deployCmd.Flags().StringArrayVar(&config.ExternalHostNames, "set-dns", []string{}, "list of external hostnames to resolve against the cluster's load balancer")
 
 	var buildCmd = &cobra.Command{
 		Use:   "build",
@@ -110,6 +102,29 @@ to quickly create a Cobra application.`,
 	buildCmd.Flags().StringVar(&config.Build.ContainerRegistry, "container-registry", "", "Ex. 1234.dkr.ecr.us-west-2.amazonaws.com ")
 	buildCmd.Flags().StringVar(&config.Build.ProjectId, "project-id", "", "Ex. opszero")
 	buildCmd.Flags().StringVar(&config.Build.Image, "image", "", "Ex. deploytag")
+
+	var dnsCmd = &cobra.Command{
+		Use:   "dns",
+		Short: "A brief description of your command",
+		Long: `A longer description that spans multiple lines and likely contains examples
+and usage of using your command. For example:
+
+Cobra is a CLI library for Go that empowers applications.
+This application is a tool to generate the needed files
+to quickly create a Cobra application.`,
+		Run: func(cmd *cobra.Command, args []string) {
+			config.Init()
+			config.DnsDeploy()
+		},
+	}
+
+	rootCmd.AddCommand(dnsCmd)
+
+	dnsCmd.Flags().StringVar(&config.Cloudflare.Key, "cloudflare-key", os.Getenv(CloudflareAPIKey), "api key for cloudflare")
+	dnsCmd.Flags().StringVar(&config.Cloudflare.Email, "cloudflare-email", os.Getenv(CloudflareEmail), "email for cloudflare")
+	dnsCmd.Flags().StringVar(&config.Cloudflare.ZoneName, "cloudflare-domain", os.Getenv(CloudflareDomain), "domain for cloudflare")
+	dnsCmd.Flags().StringVar(&config.Cloudflare.ZoneID, "cloudflare-zone-id", os.Getenv(CloudflareZoneID), "domain for cloudflare")
+	dnsCmd.Flags().StringArrayVar(&config.Cloudflare.ExternalHostNames, "record", []string{}, "list of external hostnames to resolve against the cluster's load balancer")
 
 	log.SetFlags(log.LstdFlags | log.Lshortfile)
 
