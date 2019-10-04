@@ -11,7 +11,7 @@ RUN curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s
     mv ./kubectl /usr/local/bin/kubectl
 
 # Install Helm
-ENV HELM_VERSION=v2.10.0
+ENV HELM_VERSION=v2.14.3
 RUN curl https://raw.githubusercontent.com/kubernetes/helm/master/scripts/get > get_helm.sh
 RUN chmod 700 get_helm.sh
 RUN ./get_helm.sh --version $HELM_VERSION

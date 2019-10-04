@@ -37,9 +37,10 @@ to quickly create a Cobra application.`,
 	rootCmd.PersistentFlags().StringVar(&config.CloudAwsSecretId, "cloud-aws-secret-id", "", "Use AWS Secrets Manager for Config. If set it pull the environment variables from aws secrets manager.")
 	rootCmd.PersistentFlags().StringArrayVar(&config.AppAwsSecretIds, "app-aws-secret-ids", []string{}, "Ex. 1234.dkr.ecr.us-west-2.amazonaws.com")
 
-	rootCmd.Flags().StringVar(&config.CloudFlareKey, "cloudflare-key", os.Getenv(CloudFlareAPIKey), "api key for cloudflare")
-	rootCmd.Flags().StringVar(&config.CloudFlareEmail, "cloudflare-email", os.Getenv(CloudFlareEmail), "email for cloudflare")
-	rootCmd.Flags().StringVar(&config.CloudFlareZoneName, "cloudflare-domain", os.Getenv(CloudFlareDomain), "domain for cloudflare")
+	rootCmd.PersistentFlags().StringVar(&config.CloudFlareKey, "cloudflare-key", os.Getenv(CloudFlareAPIKey), "api key for cloudflare")
+	rootCmd.PersistentFlags().StringVar(&config.CloudFlareEmail, "cloudflare-email", os.Getenv(CloudFlareEmail), "email for cloudflare")
+	rootCmd.PersistentFlags().StringVar(&config.CloudFlareZoneName, "cloudflare-domain", os.Getenv(CloudFlareDomain), "domain for cloudflare")
+	rootCmd.PersistentFlags().StringVar(&config.CloudFlareZoneID, "cloudflare-zone-id", os.Getenv(CloudFlareZoneID), "domain for cloudflare")
 
 	var runScriptCmd = &cobra.Command{
 		Use:   "run-script",
@@ -80,9 +81,7 @@ to quickly create a Cobra application.`,
 
 	rootCmd.AddCommand(deployCmd)
 
-	deployCmd.Flags().StringVar(&config.Deploy.Env, "env", "", "Ex. 1234.dkr.ecr.us-west-2.amazonaws.com ")
 	deployCmd.Flags().StringVar(&config.Deploy.ChartName, "chart-name", "", "Ex. 1234.dkr.ecr.us-west-2.amazonaws.com ")
-	deployCmd.Flags().StringVar(&config.Deploy.HelmConfig, "helm-config", "", "Ex. 1234.dkr.ecr.us-west-2.amazonaws.com ")
 	deployCmd.Flags().StringArrayVar(&config.Deploy.HelmSet, "helm-set", []string{}, "Ex. 1234.dkr.ecr.us-west-2.amazonaws.com ")
 
 	deployCmd.Flags().StringVar(&config.Build.ContainerRegistry, "container-registry", "", "Ex. 1234.dkr.ecr.us-west-2.amazonaws.com ")

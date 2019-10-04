@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"encoding/base64"
 	"fmt"
 	"io/ioutil"
@@ -8,6 +9,7 @@ import (
 	"os"
 	"os/exec"
 	"strings"
+	"text/template"
 
 	"github.com/cloudflare/cloudflare-go"
 
@@ -17,13 +19,13 @@ import (
 
 	"github.com/a8m/envsubst"
 	"github.com/joho/godotenv"
-	"gopkg.in/yaml.v2"
 )
 
 const (
 	CloudFlareEmail  = "CLOUDFLARE_EMAIL"
 	CloudFlareAPIKey = "CLOUDFLARE_APIKEY"
 	CloudFlareDomain = "CLOUDFLARE_DOMAIN"
+	CloudFlareZoneID = "CLOUDFLARE_ZONE_ID"
 )
 
 const (
@@ -56,6 +58,7 @@ type Config struct {
 	CloudFlareKey      string
 	ExternalHostNames  []string
 	CloudFlareZoneName string
+	CloudFlareZoneID   string
 
 	Build struct {
 		DotEnvFile string
@@ -66,10 +69,8 @@ type Config struct {
 	}
 
 	Deploy struct {
-		Env        string
-		HelmConfig string
-		ChartName  string
-		HelmSet    []string
+		ChartName string
+		HelmSet   []string
 	}
 
 	RunScript struct {
@@ -234,6 +235,11 @@ func (c *Config) Init() {
 	c.DockerLogin()
 	c.KuberneteConfig()
 
+	c.CloudFlareKey = os.Getenv(CloudFlareAPIKey)
+	c.CloudFlareEmail = os.Getenv(CloudFlareEmail)
+	c.CloudFlareZoneName = os.Getenv(CloudFlareDomain)
+	c.CloudFlareZoneID = os.Getenv(CloudFlareZoneID)
+
 	log.Println("Circle Branch", c.circleBranch())
 }
 
@@ -329,39 +335,6 @@ func (c *Config) DockerBuild() {
 }
 
 func (c *Config) HelmDeploy() {
-	b, err := ioutil.ReadFile(c.Deploy.HelmConfig)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	t := make(map[string]interface{})
-	err = yaml.Unmarshal([]byte(b), t)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	b, err = yaml.Marshal(t[c.Deploy.Env])
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	envFile := c.Deploy.Env + ".yml"
-
-	envMap := make(map[string]string)
-	envMap["DEPLOYTAG_DOTENV"] = base64.StdEncoding.EncodeToString([]byte(c.AppEnvConfig))
-
-	envConfig := os.Expand(string(b), func(placeholderName string) string {
-		if s, ok := envMap[placeholderName]; ok {
-			return fmt.Sprintf("%s", s)
-		}
-
-		return "''"
-	})
-
-	ioutil.WriteFile(envFile, []byte(envConfig), 0644)
-
-	log.Println("EnvConfig", string(envConfig))
-
 	os.Setenv("HELM_HOME", c.runCmdOutput("helm", "home"))
 	os.MkdirAll(os.Getenv("HELM_HOME"), os.ModePerm)
 
@@ -382,6 +355,7 @@ func (c *Config) HelmDeploy() {
 		"--set", os.ExpandEnv("image.tag=${CIRCLE_SHA1}"),
 		"--set", fmt.Sprintf("deploytag.tag=%s", os.Getenv("DOCKER_TAG")),
 		"--set", fmt.Sprintf("deploytag.cloud=%s", c.Cloud),
+		"--set", fmt.Sprintf("secrets.files.dotenv.dotenv=%s", base64.StdEncoding.EncodeToString([]byte(c.AppEnvConfig))),
 	)
 
 	for _, i := range c.Deploy.HelmSet {
@@ -395,10 +369,10 @@ func (c *Config) HelmDeploy() {
 		// "--wait", TODO: Undo.
 		"--install")
 
-	c.runCmd(append([]string{"helm", "upgrade", c.circleBranch(), c.Deploy.ChartName, "-f", envFile}, helmArgs...)...)
+	c.runCmd(append([]string{"helm", "upgrade", c.circleBranch(), c.Deploy.ChartName}, helmArgs...)...)
 
 	// TODO should exec from output or use something like this https://github.com/kubernetes/client-go/blob/master/examples/out-of-cluster-client-configuration/main.go#L74
-	loadBalancerURL := c.runCmdOutput(LoadBalancerCommand)
+	loadBalancerURL := c.runCmdOutput("bash", "-c", LoadBalancerCommand)
 
 	if err := c.CloudflareDnsDeploy(loadBalancerURL); err != nil {
 		log.Println(err.Error())
@@ -436,11 +410,16 @@ func (c *Config) CloudflareDnsDeploy(loadbalancer string) error {
 		log.Println("cloudflare could not instantiate, failed with error ", err.Error())
 		return err
 	}
-	zoneID, err := api.ZoneIDByName(c.CloudFlareZoneName)
-	if err != nil {
-		log.Println("could not fetch cloudflare zones")
-		return err
+
+	zoneID := c.CloudFlareZoneID
+	if c.CloudFlareZoneID == "" {
+		zoneID, err = api.ZoneIDByName(c.CloudFlareZoneName)
+		if err != nil {
+			log.Println("could not fetch cloudflare zones")
+			return err
+		}
 	}
+
 	dnsResponses, err := api.DNSRecords(zoneID, cloudflare.DNSRecord{})
 	if err != nil {
 		log.Println("could not fetch dns records for zone: ", zoneID)
@@ -451,9 +430,26 @@ func (c *Config) CloudflareDnsDeploy(loadbalancer string) error {
 	if c.Cloud == AwsCloud {
 		recordType = "CNAME"
 	}
+
 	for _, externalName := range c.ExternalHostNames {
+		data := struct {
+			Branch string
+		}{
+			Branch: c.circleBranch(),
+		}
+
+		t, err := template.New("dns-string").Parse(externalName)
+		if err != nil {
+			log.Println(err)
+		}
+
+		var tpl bytes.Buffer
+		if err := t.Execute(&tpl, data); err != nil {
+			return err
+		}
+
 		newDNSRecord := cloudflare.DNSRecord{
-			Name:    externalName,
+			Name:    tpl.String(),
 			Type:    recordType,
 			Content: loadbalancer,
 		}
