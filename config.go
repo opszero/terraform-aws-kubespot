@@ -197,20 +197,20 @@ func (c *Config) Init() {
 	switch strings.ToLower(c.Cloud) {
 	case AwsCloud:
 		if c.AWSAccessKeyID == "" || c.AWSSecretAccessKey == "" || c.AWSDefaultRegion == "" {
-			log.Fatalf("Ensure that AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, and AWS_DEFAULT_REGION are set")
+			log.Println("Ensure that AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, and AWS_DEFAULT_REGION are set")
 		}
 	case GcpCloud:
 		if os.Getenv("GCLOUD_SERVICE_KEY_BASE64") != "" {
 			c.runCmd("bash", "-c", "echo $GCLOUD_SERVICE_KEY_BASE64 | base64 -d > /tmp/gcloud-service-key.json")
 		} else {
-			log.Fatal("No Google Service Account Key given")
+			log.Println("No Google Service Account Key given")
 		}
 
 		c.runCmd("gcloud", "auth", "activate-service-account", "--key-file=/tmp/gcloud-service-key.json")
 	case AzureCloud:
 		c.runCmd("az", "login", "--service-principal", "--tenant", os.Getenv("AZURE_SERVICE_PRINCIPAL_TENANT"), "--username", os.Getenv("AZURE_SERVICE_PRINCIPAL"), "--password", os.Getenv("AZURE_SERVICE_PRINCIPAL_PASSWORD"))
 	default:
-		log.Fatalf("Invalid Cloud")
+		log.Println("Invalid Cloud")
 	}
 
 	os.Setenv("CONTAINER_REGISTRY", c.Build.ContainerRegistry)
@@ -396,6 +396,7 @@ func (c *Config) DnsDeploy() error {
 	}
 
 	zoneID := c.Cloudflare.ZoneID
+	log.Println(zoneID)
 	if c.Cloudflare.ZoneID != "" {
 		zoneID, err = api.ZoneIDByName(c.Cloudflare.ZoneName)
 		if err != nil {
