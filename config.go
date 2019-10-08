@@ -41,7 +41,7 @@ type Config struct {
 
 	AWSAccessKeyID     string
 	AWSSecretAccessKey string
-	AWSDefaultRegion   string
+	AWSRegion          string
 
 	GCPServiceKeyFile   string
 	GCPServiceKeyBase64 string
@@ -195,8 +195,8 @@ func (c *Config) Init() {
 
 	switch strings.ToLower(c.Cloud) {
 	case AwsCloud:
-		if c.AWSAccessKeyID == "" || c.AWSSecretAccessKey == "" || c.AWSDefaultRegion == "" {
-			log.Println("Ensure that AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, and AWS_DEFAULT_REGION are set")
+		if c.AWSAccessKeyID == "" || c.AWSSecretAccessKey == "" || c.AWSRegion == "" {
+			log.Println("Ensure that AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, and AWS_REGION are set")
 		}
 	case GcpCloud:
 		if os.Getenv("GCLOUD_SERVICE_KEY_BASE64") != "" {
@@ -367,13 +367,13 @@ func (c *Config) HelmDeploy() {
 	c.runCmd(append([]string{"helm", "upgrade", c.circleBranch(), c.Deploy.ChartName}, helmArgs...)...)
 }
 
-func contains(s []string, e string) bool {
-	for _, a := range s {
-		if a == e {
-			return true
+func dnsGet(records []cloudflare.DNSRecord, dnsName string) (string, bool) {
+	for _, a := range records {
+		if a.Name == dnsName {
+			return a.ID, true
 		}
 	}
-	return false
+	return "", false
 }
 
 // Documentation for record types are found here https://api.cloudflare.com/#dns-records-for-a-zone-create-dns-record
@@ -382,7 +382,7 @@ func contains(s []string, e string) bool {
 func (c *Config) DnsDeploy() error {
 	var (
 		// TODO should exec from output or use something like this https://github.com/kubernetes/client-go/blob/master/examples/out-of-cluster-client-configuration/main.go#L74
-		loadbalancer = c.runCmdOutput("kubectl", "get", "svc", "ingress-nginx-ingress-controller", "-o", `jsonpath='{.status.loadBalancer.ingress[0].hostname}'"`)
+		loadbalancer = c.runCmdOutput("kubectl", "get", "svc", "ingress-nginx-ingress-controller", "-o", `jsonpath='{.status.loadBalancer.ingress[0].hostname}'`)
 	)
 
 	log.Println("LoadBalancer", loadbalancer)
@@ -391,6 +391,8 @@ func (c *Config) DnsDeploy() error {
 	lb := []rune(loadbalancer)
 	loadbalancer = string(lb[1 : len(lb)-1])
 
+	log.Println("LoadBalancer", loadbalancer)
+
 	api, err := cloudflare.NewWithAPIToken(c.Cloudflare.Key)
 	if err != nil {
 		log.Println(err)
@@ -398,7 +400,6 @@ func (c *Config) DnsDeploy() error {
 	}
 
 	zoneID := c.Cloudflare.ZoneID
-	log.Println(zoneID)
 	if c.Cloudflare.ZoneName != "" {
 		zoneID, err = api.ZoneIDByName(c.Cloudflare.ZoneName)
 		if err != nil {
@@ -441,27 +442,30 @@ func (c *Config) DnsDeploy() error {
 			Content: loadbalancer,
 			Proxied: true,
 		}
-		for _, dnsRecord := range dnsResponses {
-			log.Println("DNS", newDNSRecord)
 
-			if contains(c.Cloudflare.ExternalHostNames, dnsRecord.Name) {
-				err := api.UpdateDNSRecord(zoneID, dnsRecord.ID, newDNSRecord)
-				if err != nil {
-					log.Println(err)
-					return err
+		log.Println("DNS", newDNSRecord)
+		log.Println("externalname", externalName)
 
-				}
+		dnsId, ok := dnsGet(dnsResponses, newDNSRecord.Name)
+		if ok {
+			log.Println("Exists", dnsId)
+			err := api.UpdateDNSRecord(zoneID, dnsId, newDNSRecord)
+			if err != nil {
+				log.Println(err)
+				return err
+
+			}
+		} else {
+			log.Println("New DNS")
+			createDNSResponse, err := api.CreateDNSRecord(zoneID, newDNSRecord)
+			if err != nil {
+				log.Println(err)
+				return err
+			}
+			if createDNSResponse.Success {
+				log.Println("cloudflare successfully created DNS Record")
 			} else {
-				createDNSResponse, err := api.CreateDNSRecord(zoneID, newDNSRecord)
-				if err != nil {
-					log.Println(err)
-					return err
-				}
-				if createDNSResponse.Success {
-					log.Println("cloudflare successfully created DNS Record")
-				} else {
-					log.Println("cloudflare failed creating dns with internal error, failed with ", createDNSResponse.Errors)
-				}
+				log.Println("cloudflare failed creating dns with internal error, failed with ", createDNSResponse.Errors)
 			}
 		}
 	}

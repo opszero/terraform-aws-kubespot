@@ -30,7 +30,7 @@ to quickly create a Cobra application.`,
 	rootCmd.PersistentFlags().StringVar(&config.Cloud, "cloud", "", "aws, gcp, or azure")
 	rootCmd.PersistentFlags().StringVar(&config.AWSAccessKeyID, "aws-access-key-id", os.Getenv("AWS_ACCESS_KEY_ID"), "AWS Access Key")
 	rootCmd.PersistentFlags().StringVar(&config.AWSSecretAccessKey, "aws-secret-access-key", os.Getenv("AWS_SECRET_ACCESS_KEY"), "AWS Secret Access Key")
-	rootCmd.PersistentFlags().StringVar(&config.AWSDefaultRegion, "aws-default-region", os.Getenv("AWS_DEFAULT_REGION"), "AWS Secret Access Key")
+	rootCmd.PersistentFlags().StringVar(&config.AWSRegion, "aws-region", os.Getenv("AWS_REGION"), "AWS Secret Access Key")
 
 	rootCmd.PersistentFlags().StringVar(&config.CloudAwsSecretId, "cloud-aws-secret-id", "", "Use AWS Secrets Manager for Config. If set it pull the environment variables from aws secrets manager.")
 	rootCmd.PersistentFlags().StringArrayVar(&config.AppAwsSecretIds, "app-aws-secret-ids", []string{}, "Ex. 1234.dkr.ecr.us-west-2.amazonaws.com")
