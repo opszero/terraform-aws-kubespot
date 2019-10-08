@@ -121,7 +121,6 @@ to quickly create a Cobra application.`,
 	rootCmd.AddCommand(dnsCmd)
 
 	dnsCmd.Flags().StringVar(&config.Cloudflare.Key, "cloudflare-key", os.Getenv(CloudflareAPIKey), "api key for cloudflare")
-	dnsCmd.Flags().StringVar(&config.Cloudflare.Email, "cloudflare-email", os.Getenv(CloudflareEmail), "email for cloudflare")
 	dnsCmd.Flags().StringVar(&config.Cloudflare.ZoneName, "cloudflare-domain", os.Getenv(CloudflareDomain), "domain for cloudflare")
 	dnsCmd.Flags().StringVar(&config.Cloudflare.ZoneID, "cloudflare-zone-id", os.Getenv(CloudflareZoneID), "domain for cloudflare")
 	dnsCmd.Flags().StringArrayVar(&config.Cloudflare.ExternalHostNames, "record", []string{}, "list of external hostnames to resolve against the cluster's load balancer")

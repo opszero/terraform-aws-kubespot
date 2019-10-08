@@ -50,7 +50,6 @@ type Config struct {
 	AppEnvConfig    string
 
 	Cloudflare struct {
-		Email             string
 		Key               string
 		ZoneName          string
 		ZoneID            string
@@ -231,11 +230,10 @@ func (c *Config) Init() {
 	c.KuberneteConfig()
 
 	c.Cloudflare.Key = os.Getenv(CloudflareAPIKey)
-	c.Cloudflare.Email = os.Getenv(CloudflareEmail)
 	c.Cloudflare.ZoneName = os.Getenv(CloudflareDomain)
 	c.Cloudflare.ZoneID = os.Getenv(CloudflareZoneID)
 
-	log.Println(c.Cloudflare.Key, c.Cloudflare.Email, c.Cloudflare.ZoneName, c.Cloudflare.ZoneID)
+	log.Println(c.Cloudflare)
 
 	log.Println("Circle Branch", c.circleBranch())
 }
@@ -389,7 +387,11 @@ func (c *Config) DnsDeploy() error {
 
 	log.Println("LoadBalancer", loadbalancer)
 
-	api, err := cloudflare.New(c.Cloudflare.Key, c.Cloudflare.Email)
+	// XXX: Temporary fix for issue getting strings
+	lb := []rune(loadbalancer)
+	loadbalancer = string(lb[1 : len(lb)-1])
+
+	api, err := cloudflare.NewWithAPIToken(c.Cloudflare.Key)
 	if err != nil {
 		log.Println(err)
 		return err
@@ -397,7 +399,7 @@ func (c *Config) DnsDeploy() error {
 
 	zoneID := c.Cloudflare.ZoneID
 	log.Println(zoneID)
-	if c.Cloudflare.ZoneID != "" {
+	if c.Cloudflare.ZoneName != "" {
 		zoneID, err = api.ZoneIDByName(c.Cloudflare.ZoneName)
 		if err != nil {
 			log.Println(err)
@@ -437,8 +439,11 @@ func (c *Config) DnsDeploy() error {
 			Name:    tpl.String(),
 			Type:    recordType,
 			Content: loadbalancer,
+			Proxied: true,
 		}
 		for _, dnsRecord := range dnsResponses {
+			log.Println("DNS", newDNSRecord)
+
 			if contains(c.Cloudflare.ExternalHostNames, dnsRecord.Name) {
 				err := api.UpdateDNSRecord(zoneID, dnsRecord.ID, newDNSRecord)
 				if err != nil {
