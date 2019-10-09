@@ -37,9 +37,9 @@ variable "region" {
 #   default = "n1-standard-1"
 # }
 
-# variable "nodes_green_desired_capacity" {
-#   default = 1
-# }
+variable "nodes_desired_capacity" {
+  default = 1
+}
 
 # variable "nodes_green_min_size" {
 #   default = 1
