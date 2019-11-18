@@ -1,7 +1,5 @@
-.PHONY=auth
-auth:
-	./scripts/auth.sh
-
 .PHONY=build
-build:
-	./scripts/build.sh
+push:
+	docker build -t opszero/deploytag:go-rewrite .
+	docker push opszero/deploytag:go-rewrite
+
