@@ -21,10 +21,6 @@ resource "google_container_cluster" "cluster" {
       issue_client_certificate = false
     }
   }
-
-  ip_allocation_policy {
-    use_ip_aliases = true
-  }
 }
 
 resource "google_container_node_pool" "nodes" {
