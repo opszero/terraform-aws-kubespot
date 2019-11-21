@@ -13,7 +13,7 @@ resource "google_compute_subnetwork" "subnet" {
     metadata             = "INCLUDE_ALL_METADATA"
   }
 
-  depends_on = ["google_compute_network.network"]
+  depends_on = [google_compute_network.network]
 }
 
 resource "google_compute_network" "network" {
@@ -30,7 +30,12 @@ resource "google_compute_global_address" "private_ip_address" {
 }
 
 
+
+resource "null_resource" "sql_vpc_lock" {
+  depends_on = [google_service_networking_connection.private_vpc_connection]
+}
 // Set so we can talk to Services like Cloud SQL.
+
 
 // Bug: If the private_ip_address changes then this will not work correctly.
 // Workaround change reserved_peering_ranges = [] `terraform apply` and then change it back and `terraform apply`

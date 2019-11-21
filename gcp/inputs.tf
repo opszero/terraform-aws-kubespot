@@ -11,13 +11,17 @@ variable "cluster_username" {
 variable "cluster_password" {
 }
 
+variable "project_id" {
+  type = string
+}
+
 variable "region" {
   default = "us-central1"
 }
-
-variable "zones" {
-  default = ["us-central1-a", "us-central1-b"]
-}
+//
+//variable "zones" {
+//  default = ["us-central1-a", "us-central1-b"]
+//}
 
 # TODO
 variable "eips" {
