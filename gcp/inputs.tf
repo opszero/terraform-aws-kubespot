@@ -73,7 +73,7 @@ variable "sql_enabled" {
 }
 
 variable "sql_engine" {
-  default = "POSTGRES_9_6"
+  default = "POSTGRES_11"
 }
 
 variable "sql_instance_class" {
