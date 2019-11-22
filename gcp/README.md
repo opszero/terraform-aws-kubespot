@@ -16,3 +16,15 @@
     *  compute.googleapis.com (compute services)
 
 * for convenience, an enable services script is provided in enable_services.sh
+
+### Credentials
+Run the following command.  
+> gcloud container clusters get-credentials <ClusterName> --zone <Zone of Cluster >
+    
+you should see the output of the following command
+> kubectl config current-context
+
+to be something similar to 
+> gke_<cluster_name>_<region>
+
+... now kubectl works with the new cluster! 
