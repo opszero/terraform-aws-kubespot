@@ -181,8 +181,6 @@ func (c *Config) Init() {
 	os.Setenv("CONTAINER_REGISTRY", c.Build.ContainerRegistry)
 	os.Setenv("PROJECT_ID", c.Build.ProjectId)
 
-	os.Setenv("DEPLOYTAG_BRANCH", c.Git.DockerBranch())
-
 	if c.Git.DockerBranch() == "master" {
 		log.Println("configuring production env")
 		os.Setenv("DOCKER_TAG", "latest")
