@@ -3,10 +3,10 @@ resource "random_id" "server" {
 }
 
 resource "google_sql_database_instance" "default" {
-  count = var.sql_enabled ? 1 : 0
+  count            = var.sql_enabled ? 1 : 0
   name             = "${var.environment_name}-${random_id.server.hex}"
   database_version = var.sql_engine
-  depends_on = [null_resource.sql_vpc_lock]
+  depends_on       = [null_resource.sql_vpc_lock]
   settings {
     tier = var.sql_instance_class
     ip_configuration {

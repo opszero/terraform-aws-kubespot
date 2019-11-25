@@ -8,6 +8,7 @@ variable "cluster_version" {
 
 variable "cluster_username" {
 }
+
 variable "cluster_password" {
 }
 
@@ -17,15 +18,6 @@ variable "project_id" {
 
 variable "region" {
   default = "us-central1"
-}
-//
-//variable "zones" {
-//  default = ["us-central1-a", "us-central1-b"]
-//}
-
-# TODO
-variable "eips" {
-  default = []
 }
 
 variable "nodes_instance_type" {
@@ -46,12 +38,12 @@ variable "nodes_max_size" {
 
 //the following below are required for setting up the vpn
 variable "foxpass_api_key" {
-  type    = "string"
+  type    = string
   default = ""
 }
 
 variable "foxpass_vpn_psk" {
-  type        = "string"
+  type        = string
   description = "use this for psk generation https://cloud.google.com/vpn/docs/how-to/generating-pre-shared-key"
   default     = ""
 }
