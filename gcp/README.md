@@ -1,21 +1,37 @@
 ### Credentials
 
 * The service account provided muse have the Owner role, since it is creating a bunch of resource
-    
+   
+    > gcloud projects add-iam-policy-binding <PROJECT_ID> \
+        --member serviceAccount:<SERVICE_ACCOUNT_NAME> \
+        --role roles/Owner 
+                                                                                                                                                              
 * For security considerations, only enable the Owner role to the service account when scaffolding new resources
     
 * And when editing current resources, enable the Editor role
-    
+            
+    > gcloud projects remove-iam-policy-binding <PROJECT_ID> \
+    --member serviceAccount:<SERVICE_ACCOUNT_NAME> \
+    --role roles/Owner 
+        
+    > gcloud projects add-iam-policy-binding <PROJECT_ID> \
+    --member serviceAccount:<SERVICE_ACCOUNT_NAME> \
+    --role roles/Editor 
+                                      
+                           
 ### Services
 
-* the following services should be enabled in the project
+The following services should be enabled in the project
+ 
     *  servicenetworking.googleapis.com (Service Networking)
-    *  container.googleapis.com (kubernetes engine)
-    *  cloudresourcemanager.googleapis.com (resource manager)
-    *  sqladmin.googleapis.com (cloud sql)
-    *  compute.googleapis.com (compute services)
+    *  container.googleapis.com (Kubernetes Engine)
+    *  cloudresourcemanager.googleapis.com (Resource Manager)
+    *  sqladmin.googleapis.com (Cloud Sql)
+    *  compute.googleapis.com (Compute Services)
 
-* for convenience, an enable services script is provided in enable_services.sh
+For convenience, an enable services [script](./enable_service.sh) is provided.
+    
+> enable_services.sh <project-id>
 
 ### Credentials
 Run the following command.  
