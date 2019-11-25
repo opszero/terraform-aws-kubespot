@@ -50,3 +50,5 @@ COPY . .
 RUN go build -o /bin/deploytag
 
 # TODO Remove the src dependencies
+
+ENTRYPOINT /bin/deploytag
