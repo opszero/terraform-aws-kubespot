@@ -7,7 +7,6 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
-	"os/exec"
 	"strings"
 	"text/template"
 
@@ -49,6 +48,12 @@ type Config struct {
 	AppAwsSecretIds []string
 	AppEnvConfig    string
 
+	Git Git
+
+	Docker struct {
+		Tag string
+	}
+
 	Cloudflare struct {
 		Key               string
 		ZoneName          string
@@ -74,41 +79,6 @@ type Config struct {
 		Container   string
 		Cmds        []string
 	}
-}
-
-func (c *Config) runCmd(cmdArgs ...string) error {
-	log.Println("Running", cmdArgs)
-
-	var args []string
-	if len(cmdArgs) > 1 {
-		args = cmdArgs[1:len(cmdArgs)]
-	}
-	cmd := exec.Command(cmdArgs[0], args...)
-
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
-	err := cmd.Run()
-	if err != nil {
-		//log.Fatalf("runCmd failed with %s\n", err)
-		return err
-	}
-
-	return nil
-}
-
-func (c *Config) runCmdOutput(cmdArgs ...string) string {
-	log.Println("Running", cmdArgs)
-
-	var args []string
-	if len(cmdArgs) > 1 {
-		args = cmdArgs[1:]
-	}
-	cmd := exec.Command(cmdArgs[0], args...)
-	stdoutStderr, err := cmd.CombinedOutput()
-	if err != nil {
-		log.Fatal(err)
-	}
-	return fmt.Sprintf("%s", stdoutStderr)
 }
 
 func (c *Config) loadCloudAwsSecrets() {
@@ -147,7 +117,7 @@ func (c *Config) loadCloudAwsSecrets() {
 }
 
 func (c *Config) loadAppAwsSecrets() {
-	fileContent := fmt.Sprintf("DEPLOYTAG_BRANCH=%s\n\n", c.circleBranch())
+	fileContent := fmt.Sprintf("DEPLOYTAG_BRANCH=%s\n\n", c.Git.DockerBranch())
 
 	for _, secretId := range c.AppAwsSecretIds {
 		svc := secretsmanager.New(session.New())
@@ -200,14 +170,14 @@ func (c *Config) Init() {
 		}
 	case GcpCloud:
 		if os.Getenv("GCLOUD_SERVICE_KEY_BASE64") != "" {
-			c.runCmd("bash", "-c", "echo $GCLOUD_SERVICE_KEY_BASE64 | base64 -d > /tmp/gcloud-service-key.json")
+			runCmd("bash", "-c", "echo $GCLOUD_SERVICE_KEY_BASE64 | base64 -d > /tmp/gcloud-service-key.json")
 		} else {
 			log.Println("No Google Service Account Key given")
 		}
 
-		c.runCmd("gcloud", "auth", "activate-service-account", "--key-file=/tmp/gcloud-service-key.json")
+		runCmd("gcloud", "auth", "activate-service-account", "--key-file=/tmp/gcloud-service-key.json")
 	case AzureCloud:
-		c.runCmd("az", "login", "--service-principal", "--tenant", os.Getenv("AZURE_SERVICE_PRINCIPAL_TENANT"), "--username", os.Getenv("AZURE_SERVICE_PRINCIPAL"), "--password", os.Getenv("AZURE_SERVICE_PRINCIPAL_PASSWORD"))
+		runCmd("az", "login", "--service-principal", "--tenant", os.Getenv("AZURE_SERVICE_PRINCIPAL_TENANT"), "--username", os.Getenv("AZURE_SERVICE_PRINCIPAL"), "--password", os.Getenv("AZURE_SERVICE_PRINCIPAL_PASSWORD"))
 	default:
 		log.Println("Invalid Cloud")
 	}
@@ -215,15 +185,12 @@ func (c *Config) Init() {
 	os.Setenv("CONTAINER_REGISTRY", c.Build.ContainerRegistry)
 	os.Setenv("PROJECT_ID", c.Build.ProjectId)
 
-	os.Setenv("CIRCLE_BRANCH", c.circleBranch())
-	os.Setenv("DEPLOYTAG_BRANCH", c.circleBranch())
-	if c.circleBranch() == "master" {
+	if c.Git.DockerBranch() == "master" {
 		log.Println("configuring production env")
-		os.Setenv("DOCKER_TAG", "latest")
+		c.Docker.Tag = "latest"
 	} else {
-
 		log.Println("configuring staging env")
-		os.Setenv("DOCKER_TAG", c.circleBranch())
+		c.Docker.Tag = c.Git.DockerBranch()
 	}
 
 	c.DockerLogin()
@@ -235,21 +202,21 @@ func (c *Config) Init() {
 
 	log.Println(c.Cloudflare)
 
-	log.Println("Circle Branch", c.circleBranch())
+	log.Println("Circle Branch", c.Git.DockerBranch())
 }
 
 func (c *Config) DockerLogin() {
 	log.Println("Docker Login")
 	switch strings.ToLower(c.Cloud) {
 	case GcpCloud:
-		c.runCmd("bash", "-c", fmt.Sprintf("gcloud auth print-access-token | docker login -u oauth2accesstoken --password-stdin https://%s", c.Build.ContainerRegistry))
+		runCmd("bash", "-c", fmt.Sprintf("gcloud auth print-access-token | docker login -u oauth2accesstoken --password-stdin https://%s", c.Build.ContainerRegistry))
 	case AwsCloud:
-		c.runCmd("bash", "-c", c.runCmdOutput("aws", "ecr", "get-login", "--no-include-email"))
+		runCmd("bash", "-c", runCmdOutput("aws", "ecr", "get-login", "--no-include-email"))
 	case AzureCloud:
-		name := strings.TrimSpace(c.runCmdOutput("bash", "-c", os.ExpandEnv("echo $AZURE_CLUSTER_NAME | sed 's/[^A-Za-z0-9]//g'")))
+		name := strings.TrimSpace(runCmdOutput("bash", "-c", os.ExpandEnv("echo $AZURE_CLUSTER_NAME | sed 's/[^A-Za-z0-9]//g'")))
 		log.Println("Azure Cluster", name)
-		c.runCmd("az", "acr", "login", "--name", name)
-		c.Build.ContainerRegistry = strings.TrimSpace(c.runCmdOutput("bash", "-c", os.ExpandEnv("az acr list --resource-group $AZURE_RESOURCE_GROUP --query '[].{acrLoginServer:loginServer}' --output json | jq -r '.[].acrLoginServer'")))
+		runCmd("az", "acr", "login", "--name", name)
+		c.Build.ContainerRegistry = strings.TrimSpace(runCmdOutput("bash", "-c", os.ExpandEnv("az acr list --resource-group $AZURE_RESOURCE_GROUP --query '[].{acrLoginServer:loginServer}' --output json | jq -r '.[].acrLoginServer'")))
 		log.Println("Azure ContainerRegistry", c.Build.ContainerRegistry)
 	}
 }
@@ -257,14 +224,14 @@ func (c *Config) DockerLogin() {
 func (c *Config) KuberneteConfig() {
 	switch strings.ToLower(c.Cloud) {
 	case GcpCloud:
-		c.runCmd("gcloud", "--quiet", "config", "set", "project", os.Getenv("GOOGLE_PROJECT_ID"))
-		c.runCmd("gcloud", "--quiet", "config", "set", "compute/zone", os.Getenv("GOOGLE_COMPUTE_ZONE"))
-		c.runCmd("gcloud", "auth", "configure-docker", "--quiet")
-		c.runCmd("gcloud", "--quiet", "container", "clusters", "get-credentials", os.Getenv("GOOGLE_CLUSTER_NAME"))
+		runCmd("gcloud", "--quiet", "config", "set", "project", os.Getenv("GOOGLE_PROJECT_ID"))
+		runCmd("gcloud", "--quiet", "config", "set", "compute/zone", os.Getenv("GOOGLE_COMPUTE_ZONE"))
+		runCmd("gcloud", "auth", "configure-docker", "--quiet")
+		runCmd("gcloud", "--quiet", "container", "clusters", "get-credentials", os.Getenv("GOOGLE_CLUSTER_NAME"))
 	case AwsCloud:
-		c.runCmd("aws", "eks", "--region", os.Getenv("AWS_DEFAULT_REGION"), "update-kubeconfig", "--name", os.Getenv("AWS_CLUSTER_NAME"))
+		runCmd("aws", "eks", "--region", os.Getenv("AWS_DEFAULT_REGION"), "update-kubeconfig", "--name", os.Getenv("AWS_CLUSTER_NAME"))
 	case AzureCloud:
-		c.runCmd("az", "aks", "get-credentials", "--resource-group", os.Getenv("AZURE_RESOURCE_GROUP"), "--name", os.Getenv("AZURE_CLUSTER_NAME"), "--overwrite-existing")
+		runCmd("az", "aks", "get-credentials", "--resource-group", os.Getenv("AZURE_RESOURCE_GROUP"), "--name", os.Getenv("AZURE_CLUSTER_NAME"), "--overwrite-existing")
 	}
 }
 
@@ -278,8 +245,8 @@ func (c *Config) dockerCircleImage(image string) string {
 
 func (c *Config) DockerBuildImage(image, dockerfile string) {
 	var (
-		shaImage    = c.dockerCircleImageWithSuffix(image, os.Getenv("CIRCLE_SHA1"))
-		branchImage = c.dockerCircleImageWithSuffix(image, c.circleBranch())
+		shaImage    = c.dockerCircleImageWithSuffix(image, c.Git.DockerSha1())
+		branchImage = c.dockerCircleImageWithSuffix(image, c.Git.DockerBranch())
 		latestImage = c.dockerCircleImageWithSuffix(image, "latest")
 	)
 
@@ -295,25 +262,21 @@ func (c *Config) DockerBuildImage(image, dockerfile string) {
 		buildCmd = append(buildCmd, os.Getenv("DOCKER_BUILD_ARGS"))
 	}
 	buildCmd = append(buildCmd, "-t", image, "-f", dockerfile, ".")
-	err := c.runCmd(buildCmd...)
+	err := runCmd(buildCmd...)
 	if err != nil {
 		log.Fatal("Couldn't build image")
 	}
 
-	c.runCmd("docker", "tag", image, shaImage)
-	c.runCmd("docker", "push", shaImage)
+	runCmd("docker", "tag", image, shaImage)
+	runCmd("docker", "push", shaImage)
 
-	c.runCmd("docker", "tag", image, branchImage)
-	c.runCmd("docker", "push", branchImage)
+	runCmd("docker", "tag", image, branchImage)
+	runCmd("docker", "push", branchImage)
 
-	if c.circleBranch() == "master" {
-		c.runCmd("docker", "tag", image, latestImage)
-		c.runCmd("docker", "push", latestImage)
+	if c.Git.DockerBranch() == "master" {
+		runCmd("docker", "tag", image, latestImage)
+		runCmd("docker", "push", latestImage)
 	}
-}
-
-func (c *Config) circleBranch() string {
-	return strings.TrimSpace(strings.ToLower(c.runCmdOutput("bash", "-c", os.ExpandEnv("echo $CIRCLE_BRANCH | sed 's/[^A-Za-z0-9]/-/g'"))))
 }
 
 func (c *Config) DockerBuild() {
@@ -330,16 +293,16 @@ func (c *Config) DockerBuild() {
 }
 
 func (c *Config) HelmDeploy() {
-	os.Setenv("HELM_HOME", c.runCmdOutput("helm", "home"))
+	os.Setenv("HELM_HOME", runCmdOutput("helm", "home"))
 	os.MkdirAll(os.Getenv("HELM_HOME"), os.ModePerm)
 
 	var helmArgs []string
 
-	if c.circleBranch() == "master" || c.circleBranch() == "" {
+	if c.Git.DockerBranch() == "master" || c.Git.DockerBranch() == "" {
 		log.Println("Deploying")
 	} else {
-		helmArgs = append(helmArgs, "--namespace", c.circleBranch())
-		c.runCmd("kubectl", "create", "namespace", c.circleBranch())
+		helmArgs = append(helmArgs, "--namespace", c.Git.DockerBranch())
+		runCmd("kubectl", "create", "namespace", c.Git.DockerBranch())
 	}
 
 	if os.Getenv("TILLER_NAMESPACE") == "" {
@@ -347,8 +310,8 @@ func (c *Config) HelmDeploy() {
 	}
 
 	helmArgs = append(helmArgs,
-		"--set", os.ExpandEnv("image.tag=${CIRCLE_SHA1}"),
-		"--set", fmt.Sprintf("deploytag.tag=%s", os.Getenv("DOCKER_TAG")),
+		"--set", fmt.Sprintf("image.tag=%s", c.Git.DockerSha1()),
+		"--set", fmt.Sprintf("deploytag.tag=%s", c.Docker.Tag),
 		"--set", fmt.Sprintf("deploytag.cloud=%s", c.Cloud),
 		"--set", fmt.Sprintf("secrets.files.dotenv.dotenv=%s", base64.StdEncoding.EncodeToString([]byte(c.AppEnvConfig))),
 	)
@@ -364,7 +327,7 @@ func (c *Config) HelmDeploy() {
 		// "--wait", TODO: Undo.
 		"--install")
 
-	c.runCmd(append([]string{"helm", "upgrade", c.circleBranch(), c.Deploy.ChartName}, helmArgs...)...)
+	runCmd(append([]string{"helm", "upgrade", c.Git.DockerBranch(), c.Deploy.ChartName}, helmArgs...)...)
 }
 
 func dnsGet(records []cloudflare.DNSRecord, dnsName string) (string, bool) {
@@ -382,7 +345,7 @@ func dnsGet(records []cloudflare.DNSRecord, dnsName string) (string, bool) {
 func (c *Config) DnsDeploy() error {
 	var (
 		// TODO should exec from output or use something like this https://github.com/kubernetes/client-go/blob/master/examples/out-of-cluster-client-configuration/main.go#L74
-		loadbalancer = c.runCmdOutput("kubectl", "get", "svc", "ingress-nginx-ingress-controller", "-o", `jsonpath='{.status.loadBalancer.ingress[0].hostname}'`)
+		loadbalancer = runCmdOutput("kubectl", "get", "svc", "ingress-nginx-ingress-controller", "-o", `jsonpath='{.status.loadBalancer.ingress[0].hostname}'`)
 	)
 
 	log.Println("LoadBalancer", loadbalancer)
@@ -423,7 +386,7 @@ func (c *Config) DnsDeploy() error {
 		data := struct {
 			Branch string
 		}{
-			Branch: c.circleBranch(),
+			Branch: c.Git.DockerBranch(),
 		}
 
 		t, err := template.New("dns-string").Parse(externalName)
@@ -473,9 +436,9 @@ func (c *Config) DnsDeploy() error {
 }
 
 func (c *Config) HelmRunScript() {
-	pod := c.runCmdOutput("bash", "-c", fmt.Sprintf("kubectl get pod -n %s --selector=app=%s -o jsonpath='{.items[0].metadata.name}'", c.circleBranch(), c.RunScript.PodAppLabel))
+	pod := runCmdOutput("bash", "-c", fmt.Sprintf("kubectl get pod -n %s --selector=app=%s -o jsonpath='{.items[0].metadata.name}'", c.Git.DockerBranch(), c.RunScript.PodAppLabel))
 
 	for _, i := range c.RunScript.Cmds {
-		c.runCmd("kubectl", "exec", "-i", pod, "-n", c.circleBranch(), "-c", c.RunScript.Container, "--", i)
+		runCmd("kubectl", "exec", "-i", pod, "-n", c.Git.DockerBranch(), "-c", c.RunScript.Container, "--", i)
 	}
 }
