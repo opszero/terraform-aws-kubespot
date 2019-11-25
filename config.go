@@ -50,6 +50,10 @@ type Config struct {
 
 	Git Git
 
+	Docker struct {
+		Tag string
+	}
+
 	Cloudflare struct {
 		Key               string
 		ZoneName          string
@@ -183,11 +187,10 @@ func (c *Config) Init() {
 
 	if c.Git.DockerBranch() == "master" {
 		log.Println("configuring production env")
-		os.Setenv("DOCKER_TAG", "latest")
+		c.Docker.Tag = "latest"
 	} else {
-
 		log.Println("configuring staging env")
-		os.Setenv("DOCKER_TAG", c.Git.DockerBranch())
+		c.Docker.Tag = c.Git.DockerBranch()
 	}
 
 	c.DockerLogin()
@@ -242,7 +245,7 @@ func (c *Config) dockerCircleImage(image string) string {
 
 func (c *Config) DockerBuildImage(image, dockerfile string) {
 	var (
-		shaImage    = c.dockerCircleImageWithSuffix(image, os.Getenv("CIRCLE_SHA1"))
+		shaImage    = c.dockerCircleImageWithSuffix(image, c.Git.DockerSha1())
 		branchImage = c.dockerCircleImageWithSuffix(image, c.Git.DockerBranch())
 		latestImage = c.dockerCircleImageWithSuffix(image, "latest")
 	)
@@ -307,8 +310,8 @@ func (c *Config) HelmDeploy() {
 	}
 
 	helmArgs = append(helmArgs,
-		"--set", os.ExpandEnv("image.tag=${CIRCLE_SHA1}"),
-		"--set", fmt.Sprintf("deploytag.tag=%s", os.Getenv("DOCKER_TAG")),
+		"--set", fmt.Sprintf("image.tag=%s", c.Git.DockerSha1()),
+		"--set", fmt.Sprintf("deploytag.tag=%s", c.Docker.Tag),
 		"--set", fmt.Sprintf("deploytag.cloud=%s", c.Cloud),
 		"--set", fmt.Sprintf("secrets.files.dotenv.dotenv=%s", base64.StdEncoding.EncodeToString([]byte(c.AppEnvConfig))),
 	)
