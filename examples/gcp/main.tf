@@ -12,6 +12,8 @@ module "gcp" {
   cluster_username = "cluster-name"
   cluster_password = "cluster-password"
   sql_enabled = true
+  sql_master_username = "user"
+  sql_master_password = "pass"
   environment_name = "example"
   region = "us-west1"
   nodes_max_size = 2
