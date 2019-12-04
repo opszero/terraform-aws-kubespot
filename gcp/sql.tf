@@ -14,6 +14,10 @@ resource "google_sql_database_instance" "default" {
       private_network = google_compute_network.network.self_link
     }
   }
+
+  lifecycle {
+    prevent_destroy = true
+  }
 }
 
 resource "google_sql_user" "user" {
