@@ -7,6 +7,8 @@ resource "google_container_cluster" "cluster" {
   network    = google_compute_network.network.self_link
   subnetwork = google_compute_subnetwork.subnet.self_link
 
+  min_master_version = var.cluster_version
+
   # We can't create a cluster with no node pool defined, but we want to only use
   # separately managed node pools. So we create the smallest possible default
   # node pool and immediately delete it.
