@@ -68,18 +68,18 @@ variable "nodes_blue_max_size" {
 
 //the following below are required for setting up the vpn
 variable "foxpass_api_key" {
-  type    = "string"
+  type    = string
   default = ""
 }
 
 variable "foxpass_vpn_psk" {
-  type        = "string"
+  type        = string
   description = "use this for psk generation https://cloud.google.com/vpn/docs/how-to/generating-pre-shared-key"
   default     = ""
 }
 
 variable "logdna_ingestion_key" {
-  type    = "string"
+  type    = string
   default = ""
 }
 
