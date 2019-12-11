@@ -10,7 +10,7 @@ resource "google_sql_database_instance" "default" {
   settings {
     tier = var.sql_instance_class
     ip_configuration {
-      ipv4_enabled    = "true"
+      ipv4_enabled    = "false"
       private_network = google_compute_network.network.self_link
     }
   }
