@@ -6,6 +6,10 @@ variable "cluster_version" {
   default = "1.14"
 }
 
+variable "bastion_enabled" {
+  default = false
+}
+
 variable cidr_block {
   default = "10.2.0.0/16"
 }
