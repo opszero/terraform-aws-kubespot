@@ -1,12 +1,12 @@
 resource "aws_eip" "bastion_eip" {
-  count = var.bastion_enabled ? 1 :0
+  count = var.bastion_enabled ? 1 : 0
 
-  instance = aws_instance.bastion.id
+  instance = aws_instance.bastion.0.id
   vpc      = true
 }
 
 resource "aws_instance" "bastion" {
-  count = var.bastion_enabled ? 1 :0
+  count = var.bastion_enabled ? 1 : 0
 
   ami           = data.aws_ami.opszero_eks.id
   instance_type = "t2.micro"
