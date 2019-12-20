@@ -138,3 +138,7 @@ variable "sql_serverless_min" {
 variable "sql_serverless_max" {
   default = 2
 }
+
+variable "fargate_enabled" {
+  default = false
+}
