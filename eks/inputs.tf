@@ -6,6 +6,10 @@ variable "cluster_version" {
   default = "1.14"
 }
 
+variable "bastion_enabled" {
+  default = false
+}
+
 variable cidr_block {
   default = "10.2.0.0/16"
 }
@@ -133,4 +137,8 @@ variable "sql_serverless_min" {
 
 variable "sql_serverless_max" {
   default = 2
+}
+
+variable "fargate_enabled" {
+  default = false
 }
