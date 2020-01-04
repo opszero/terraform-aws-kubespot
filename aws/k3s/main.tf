@@ -8,7 +8,7 @@ locals {
 #cloud-config
 
 runcmd:
- - apt install curl systemd -y
+ - apt install curl systemd cgroup-bin cgroup-lite libcgroup1 -y
  - curl -sfL https://get.k3s.io | sh -
 final_message: "Opsero k3s successfully created, after $UPTIME seconds"
 
