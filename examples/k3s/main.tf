@@ -9,25 +9,25 @@ data "aws_ami" "ubuntu" {
   filter {
     name = "name"
     values = [
-      "ubuntu/images/hvm-ssd/ubuntu-trusty-14.04-amd64-server-*"]
+      "ubuntu/images/hvm-ssd/ubuntu-bionic-18.04-amd64-server-*"]
   }
 
   filter {
     name = "virtualization-type"
     values = [
-      "hvm"]
+      "hvm"
+    ]
   }
 
 
-  owners = [
-    "099720109477"]
+  owners = ["099720109477"]
   # Canonical
 }
 
 
 
 module "k3s" {
-  source = "../k3s"
+  source = "../../aws/k3s"
   ami = data.aws_ami.ubuntu.id
   instance_type = "t2.micro"
   aws_profile = "personal"
