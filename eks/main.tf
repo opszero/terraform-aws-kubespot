@@ -88,7 +88,7 @@ resource "aws_launch_configuration" "nodes_blue" {
   key_name = var.ec2_keypair
 
   root_block_device {
-    volume_size = "100"
+    volume_size = var.nodes_blue_root_device_size
   }
 
   lifecycle {
@@ -131,7 +131,7 @@ resource "aws_launch_configuration" "nodes_green" {
   key_name = var.ec2_keypair
 
   root_block_device {
-    volume_size = "100"
+    volume_size = var.nodes_green_root_device_size
   }
 
   lifecycle {

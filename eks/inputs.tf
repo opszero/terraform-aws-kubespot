@@ -52,6 +52,10 @@ variable "nodes_green_instance_type" {
   default = "t2.micro"
 }
 
+variable "nodes_green_root_device_size" {
+  default = "20"
+}
+
 variable "nodes_green_desired_capacity" {
   default = 1
 }
@@ -66,6 +70,10 @@ variable "nodes_green_max_size" {
 
 variable "nodes_blue_instance_type" {
   default = "t2.micro"
+}
+
+variable "nodes_blue_root_device_size" {
+  default = "20"
 }
 
 variable "nodes_blue_desired_capacity" {
