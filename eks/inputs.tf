@@ -6,6 +6,16 @@ variable "cluster_version" {
   default = "1.14"
 }
 
+variable "cluster_logging" {
+  default = [
+    "api",
+    "audit",
+    "authenticator",
+    "controllerManager",
+    "scheduler"
+  ]
+}
+
 variable "bastion_enabled" {
   default = false
 }
