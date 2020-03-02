@@ -35,7 +35,7 @@ hub pull-request # Or create a Pull request on the Github repo
 Please make pull requests even if you are not done with your work.
 We want to give you feedback quickly and make sure that your code is on track.
 The PullRequest should reference the Issue that is to be closed.
-Say you are closing https://github.com/abhiyerra/landingcrew-cli/issues/99
+Say you are closing https://github.com/opszero/auditkube/issues/99
 The Pull Request Message should have
 
   Closes #99
