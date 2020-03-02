@@ -97,11 +97,12 @@ resource "aws_launch_configuration" "nodes_blue" {
 }
 
 resource "aws_autoscaling_group" "nodes_blue" {
-  desired_capacity     = var.nodes_blue_desired_capacity
-  launch_configuration = aws_launch_configuration.nodes_blue.id
-  max_size             = var.nodes_blue_max_size
-  min_size             = var.nodes_blue_min_size
-  name                 = "${var.environment_name}-nodes-blue"
+  desired_capacity      = var.nodes_blue_desired_capacity
+  launch_configuration  = aws_launch_configuration.nodes_blue.id
+  max_size              = var.nodes_blue_max_size
+  min_size              = var.nodes_blue_min_size
+  name                  = "${var.environment_name}-nodes-blue"
+  max_instance_lifetime = var.nodes_blue_max_instance_lifetime
 
   vpc_zone_identifier = aws_subnet.private.*.id
 
@@ -140,11 +141,12 @@ resource "aws_launch_configuration" "nodes_green" {
 }
 
 resource "aws_autoscaling_group" "nodes_green" {
-  desired_capacity     = var.nodes_green_desired_capacity
-  launch_configuration = aws_launch_configuration.nodes_green.id
-  max_size             = var.nodes_green_max_size
-  min_size             = var.nodes_green_min_size
-  name                 = "${var.environment_name}-nodes-green"
+  desired_capacity      = var.nodes_green_desired_capacity
+  launch_configuration  = aws_launch_configuration.nodes_green.id
+  max_size              = var.nodes_green_max_size
+  min_size              = var.nodes_green_min_size
+  name                  = "${var.environment_name}-nodes-green"
+  max_instance_lifetime = var.nodes_green_max_instance_lifetime
 
   vpc_zone_identifier = aws_subnet.private.*.id
 

@@ -68,6 +68,10 @@ variable "nodes_green_max_size" {
   default = 1
 }
 
+variable "nodes_green_max_instance_lifetime" {
+  default = 604800 // Default to 7 days
+}
+
 variable "nodes_blue_instance_type" {
   default = "t2.micro"
 }
@@ -86,6 +90,10 @@ variable "nodes_blue_min_size" {
 
 variable "nodes_blue_max_size" {
   default = 1
+}
+
+variable "nodes_blue_max_instance_lifetime" {
+  default = 604800 // Default to 7 days
 }
 
 //the following below are required for setting up the vpn
