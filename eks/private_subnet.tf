@@ -20,14 +20,14 @@ resource "aws_eip" "eips" {
 
 
 resource "aws_nat_gateway" "gw" {
-  count = var.nat_enabled ? 2 : 0
+  count = var.enable_nat ? 2 : 0
 
   allocation_id = length(var.eips) == 0 ? aws_eip.eips[count.index].id : var.eips[count.index].id
   subnet_id     = aws_subnet.public[count.index].id
 }
 
 resource "aws_route_table" "private" {
-  count = var.nat_enabled ? 2 : 0
+  count = var.enable_nat ? 2 : 0
   vpc_id = aws_vpc.vpc.id
 
   route {
