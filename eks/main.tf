@@ -76,7 +76,7 @@ USERDATA
 
 }
 
-resource "aws_launch_configuration" "nodes_blue" {
+resource "aws_launch_configuration" "nodes" {
   associate_public_ip_address = false
   iam_instance_profile        = aws_iam_instance_profile.node.name
   image_id                    = data.aws_ami.opszero_eks.id
@@ -96,7 +96,7 @@ resource "aws_launch_configuration" "nodes_blue" {
   }
 }
 
-resource "aws_autoscaling_group" "nodes_blue" {
+resource "aws_autoscaling_group" "nodes" {
   desired_capacity      = var.nodes_blue_desired_capacity
   launch_configuration  = aws_launch_configuration.nodes_blue.id
   max_size              = var.nodes_blue_max_size
@@ -110,50 +110,6 @@ resource "aws_autoscaling_group" "nodes_blue" {
     {
       key                 = "Name"
       value               = "${var.environment_name}-nodes-blue"
-      propagate_at_launch = true
-    },
-    {
-      key                 = "kubernetes.io/cluster/${var.environment_name}"
-      value               = "owned"
-      propagate_at_launch = true
-    },
-  ]
-}
-
-resource "aws_launch_configuration" "nodes_green" {
-  associate_public_ip_address = false
-  iam_instance_profile        = aws_iam_instance_profile.node.name
-  image_id                    = data.aws_ami.opszero_eks.id
-  instance_type               = var.nodes_green_instance_type
-  name_prefix                 = "${var.environment_name}-nodes-green"
-  security_groups             = [aws_security_group.node.id]
-  user_data_base64            = base64encode(local.node-userdata)
-
-  key_name = var.ec2_keypair
-
-  root_block_device {
-    volume_size = var.nodes_green_root_device_size
-  }
-
-  lifecycle {
-    create_before_destroy = true
-  }
-}
-
-resource "aws_autoscaling_group" "nodes_green" {
-  desired_capacity      = var.nodes_green_desired_capacity
-  launch_configuration  = aws_launch_configuration.nodes_green.id
-  max_size              = var.nodes_green_max_size
-  min_size              = var.nodes_green_min_size
-  name                  = "${var.environment_name}-nodes-green"
-  max_instance_lifetime = var.nodes_green_max_instance_lifetime
-
-  vpc_zone_identifier = aws_subnet.private.*.id
-
-  tags = [
-    {
-      key                 = "Name"
-      value               = "${var.environment_name}-nodes-green"
       propagate_at_launch = true
     },
     {
