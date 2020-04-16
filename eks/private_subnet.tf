@@ -48,11 +48,11 @@ resource "aws_route" "ipv6" {
 
   route_table_id              = aws_route_table.private[count.index].id
   destination_ipv6_cidr_block = "::/0"
-  egress_only_gateway_id      = aws_egress_only_internet_gateway.egress[count.index].id
+  egress_only_gateway_id      = aws_egress_only_internet_gateway.egress.id
 }
 
 resource "aws_egress_only_internet_gateway" "egress" {
-  count  = var.enable_egress_only_internet_gateway ? 2 : 0
+  count  = var.enable_egress_only_internet_gateway ? 1 : 0
   vpc_id = aws_vpc.vpc.id
 
   tags = {
