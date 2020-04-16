@@ -15,12 +15,12 @@ resource "aws_subnet" "private" {
 }
 
 resource "aws_eip" "eips" {
-  count = length(var.eips) == 0 ? 2 : 0
+  count = var.enable_nat && length(var.eips) == 0 ? 2 : 0
 }
 
 
 resource "aws_nat_gateway" "gw" {
-  count = 2
+  count = var.enable_nat ? 2 : 0
 
   allocation_id = length(var.eips) == 0 ? aws_eip.eips[count.index].id : var.eips[count.index].id
   subnet_id     = aws_subnet.public[count.index].id
@@ -30,13 +30,33 @@ resource "aws_route_table" "private" {
   count  = 2
   vpc_id = aws_vpc.vpc.id
 
-  route {
-    cidr_block     = "0.0.0.0/0"
-    nat_gateway_id = aws_nat_gateway.gw[count.index].id
-  }
-
   tags = {
     Name = "k8s-private-${count.index}"
+  }
+}
+
+resource "aws_route" "nat" {
+  count = var.enable_nat ? 2 : 0
+
+  route_table_id         = aws_route_table.private[count.index].id
+  destination_cidr_block = "0.0.0.0/0"
+  nat_gateway_id         = aws_nat_gateway.gw[count.index].id
+}
+
+resource "aws_route" "ipv6" {
+  count = var.enable_egress_only_internet_gateway ? 2 : 0
+
+  route_table_id              = aws_route_table.private[count.index].id
+  destination_ipv6_cidr_block = "::/0"
+  egress_only_gateway_id      = aws_egress_only_internet_gateway.egress[0].id
+}
+
+resource "aws_egress_only_internet_gateway" "egress" {
+  count  = var.enable_egress_only_internet_gateway ? 1 : 0
+  vpc_id = aws_vpc.vpc.id
+
+  tags = {
+    Name = "k8s-egress-${count.index}"
   }
 }
 
