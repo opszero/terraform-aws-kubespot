@@ -15,7 +15,7 @@ resource "aws_subnet" "private" {
 }
 
 resource "aws_eip" "eips" {
-  count = length(var.eips) == 0 ? 2 : 0
+  count = var.enable_nat && length(var.eips) == 0 ? 2 : 0
 }
 
 
