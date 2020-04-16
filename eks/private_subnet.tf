@@ -38,7 +38,7 @@ resource "aws_route_table" "private" {
 resource "aws_route" "nat" {
   count = var.enable_nat ? 2 : 0
 
-  route_table_id         = aws_route_table.private
+  route_table_id         = aws_route_table.private[count.index].id
   destination_cidr_block = "0.0.0.0/0"
   nat_gateway_id         = aws_nat_gateway.gw[count.index].id
 }
@@ -46,7 +46,7 @@ resource "aws_route" "nat" {
 resource "aws_route" "ipv6" {
   count = var.enable_egress_only_internet_gateway ? 2 : 0
 
-  route_table_id              = aws_route_table.private
+  route_table_id              = aws_route_table.private[count.index].id
   destination_ipv6_cidr_block = "::/0"
   egress_only_gateway_id      = aws_egress_only_internet_gateway.egress[count.index].id
 }
