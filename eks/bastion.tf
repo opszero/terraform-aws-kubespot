@@ -17,6 +17,16 @@ wget -q -O - https://updates.atomicorp.com/installers/atomic | bash
 apt-get update -y
 apt-get install -y ossec-hids-server ossec-hids-agent
 
+if [[ ${var.install_foxpass} = "" ]]
+then
+    echo "Not Installing Foxpass"
+else
+    pushd /tmp
+    wget https://raw.githubusercontent.com/foxpass/foxpass-setup/master/linux/amzn/2.0/foxpass_setup.py
+    python foxpass_setup.py --base-dn {{user `foxpass_base_dn`}}  --bind-user {{user `foxpass_bind_user`}} --bind-pw {{user `foxpass_bind_pw`}} --api-key {{user `foxpass_api_key`}}; fi"
+    popd
+end
+
 if [[ ${var.logdna_ingestion_key} == ""  ]]
 then
     echo "Not Installing LogDNA."

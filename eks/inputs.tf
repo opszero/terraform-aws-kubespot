@@ -74,7 +74,7 @@ variable "repos" {
 }
 
 variable "nodes_in_public_subnet" {
-  default = false
+  default     = false
   description = "INSECURE! Only use this if you want to avoid paying for the NAT. Also set enable_nat to false"
 }
 
@@ -136,6 +136,23 @@ variable "foxpass_vpn_psk" {
   type        = string
   description = "use this for psk generation https://cloud.google.com/vpn/docs/how-to/generating-pre-shared-key"
   default     = ""
+}
+
+variable "foxpass_install" {
+  default     = ""
+  description = "Make this a string to be read in the user-data"
+}
+
+variable "foxpass_base_dn" {
+  default = ""
+}
+
+variable "foxpass_bind_user" {
+  default = ""
+}
+
+variable "foxpass_bind_pw" {
+  default = ""
 }
 
 variable "logdna_ingestion_key" {
