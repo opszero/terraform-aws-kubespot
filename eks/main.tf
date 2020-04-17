@@ -1,3 +1,7 @@
+data "aws_caller_identity" "current" {
+}
+
+
 resource "aws_eks_cluster" "cluster" {
   name     = var.environment_name
   role_arn = aws_iam_role.cluster.arn
@@ -62,32 +66,34 @@ output "kubeconfig" {
 }
 
 
-resource "aws_eks_node_group" "workers" {
-  cluster_name    = aws_eks_cluster.cluster.name
-  node_group_name = "${var.environment_name}-workers"
-  node_role_arn   = aws_iam_role.cluster.arn
-  subnet_ids = flatten([
-    aws_subnet.public.*.id,
-    aws_subnet.private.*.id,
-  ])
 
-  disk_size      = var.nodes_disk_size
-  instance_types = var.nodes_instance_types
-  scaling_config {
-    desired_size = var.nodes_desired_capacity
-    max_size     = var.nodes_max_size
-    min_size     = var.nodes_min_size
-  }
+resource "aws_iam_role" "cluster" {
+  name = "${var.environment_name}-cluster"
 
-  # Ensure that IAM Role permissions are created before and deleted after EKS Node Group handling.
-  # Otherwise, EKS will not be able to properly delete EC2 Instances and Elastic Network Interfaces.
-  depends_on = [
-    aws_iam_role_policy_attachment.node-AmazonEKSWorkerNodePolicy,
-    aws_iam_role_policy_attachment.node-AmazonEKS_CNI_Policy,
-    aws_iam_role_policy_attachment.node-AmazonEC2ContainerRegistryReadOnly,
+  assume_role_policy = <<POLICY
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Principal": {
+        "Service": "eks.amazonaws.com"
+      },
+      "Action": "sts:AssumeRole"
+    }
   ]
 }
+POLICY
 
-data "aws_caller_identity" "current" {
+}
+
+resource "aws_iam_role_policy_attachment" "cluster-AmazonEKSClusterPolicy" {
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEKSClusterPolicy"
+  role       = aws_iam_role.cluster.name
+}
+
+resource "aws_iam_role_policy_attachment" "cluster-AmazonEKSServicePolicy" {
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEKSServicePolicy"
+  role       = aws_iam_role.cluster.name
 }
 
