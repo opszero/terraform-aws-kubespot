@@ -1,12 +1,16 @@
-data "aws_ami" "opszero_eks" {
+data "aws_ami" "ubuntu" {
   most_recent = true
+  owners = ["099720109477"]
+
+  filter {
+    name   = "virtualization-type"
+    values = ["hvm"]
+  }
 
   filter {
     name   = "name"
-    values = ["opszero-eks-*"]
+    values = ["ubuntu/images/hvm-ssd/ubuntu-bionic-18.04-amd64-server-*"]
   }
-
-  owners = ["self"]
 }
 
 data "aws_ssm_parameter" "eks_ami" {
@@ -14,7 +18,6 @@ data "aws_ssm_parameter" "eks_ami" {
 }
 
 data "aws_ami" "foxpass_vpn" {
-
   most_recent = true
 
   filter {

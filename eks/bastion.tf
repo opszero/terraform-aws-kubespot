@@ -1,7 +1,7 @@
 resource "aws_instance" "bastion" {
   count = var.bastion_enabled ? 1 : 0
 
-  ami           = data.aws_ami.opszero_eks.id
+  ami           = data.aws_ami.ubuntu.id
   instance_type = "t2.micro"
 
   key_name                    = var.ec2_keypair
@@ -32,4 +32,8 @@ else
 fi
 
 SCRIPT
+
+  root_block_device {
+    encrypted = true
+  }
 }
