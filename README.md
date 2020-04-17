@@ -19,15 +19,13 @@ Clouds and minimizes third party tooling.
   - LogDNA
   - Foxpass
 
-# Project by opsZero
+# License
 
 <a href="https://www.opszero.com"><img src="http://assets.opszero.com.s3.amazonaws.com/images/opszero_11_29_2016.png" width="300px"/></a>
 
-This project is brought to you by [opsZero](https://www.opszero.com) we
-provide Kubernetes and AWS Lambda Migration. If you need help with your
-Kubernetes Migration reach out.
-
-# License
+This project is by [opsZero](https://www.opszero.com). We help organizations
+migrate to Kubernetes so [reach out](https://www.opszero.com/#contact) if you
+need help!
 
 This Source Code Form is subject to the terms of the Mozilla Public
 License, v. 2.0. If a copy of the MPL was not distributed with this
