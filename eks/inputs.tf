@@ -24,6 +24,18 @@ variable cidr_block {
   default = "10.2.0.0/16"
 }
 
+variable "enable_ipv6" {
+  default = false
+}
+
+variable "enable_nat" {
+  default = true
+}
+
+variable "enable_egress_only_internet_gateway" {
+  default = false
+}
+
 variable "zones" {
   default = ["us-west-2a", "us-west-2b"]
 }
