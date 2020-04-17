@@ -28,6 +28,7 @@ variable "cluster_public_access_cidrs" {
   default = ["0.0.0.0/0"]
 }
 
+
 variable "bastion_enabled" {
   default = false
 }
@@ -70,6 +71,10 @@ variable "iam_users" {
 
 variable "repos" {
   default = []
+}
+
+variable "nodes_in_public_subnet" {
+  default = false
 }
 
 variable "nodes_green_instance_type" {
