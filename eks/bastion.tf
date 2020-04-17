@@ -13,6 +13,9 @@ resource "aws_instance" "bastion" {
     Name = "${var.environment_name}-bastion"
   }
   user_data = <<SCRIPT
+wget -q -O - https://updates.atomicorp.com/installers/atomic | bash
+apt-get update -y
+apt-get install -y ossec-hids-server ossec-hids-agent
 
 if [[ ${var.logdna_ingestion_key} == ""  ]]
 then
