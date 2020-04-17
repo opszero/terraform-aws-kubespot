@@ -3,7 +3,6 @@ resource "aws_eks_node_group" "workers" {
   node_group_name = "${var.environment_name}-workers"
   node_role_arn   = aws_iam_role.node.arn
   subnet_ids = flatten([
-    aws_subnet.public.*.id,
     aws_subnet.private.*.id,
   ])
 
