@@ -1,7 +1,7 @@
 resource "aws_eks_node_group" "workers" {
   cluster_name    = aws_eks_cluster.cluster.name
   node_group_name = "${var.environment_name}-workers"
-  node_role_arn   = aws_iam_role.cluster.arn
+  node_role_arn   = aws_iam_role.node.arn
   subnet_ids = flatten([
     aws_subnet.public.*.id,
     aws_subnet.private.*.id,
@@ -21,7 +21,6 @@ resource "aws_eks_node_group" "workers" {
     aws_iam_role_policy_attachment.node-AmazonEKSWorkerNodePolicy,
     aws_iam_role_policy_attachment.node-AmazonEKS_CNI_Policy,
     aws_iam_role_policy_attachment.node-AmazonEC2ContainerRegistryReadOnly,
-    aws_iam_role.node,
   ]
 }
 
