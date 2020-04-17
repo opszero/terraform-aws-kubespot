@@ -3,7 +3,7 @@ variable "environment_name" {
 }
 
 variable "cluster_version" {
-  default = "1.14"
+  default = "1.15"
 }
 
 variable "cluster_logging" {
@@ -56,15 +56,11 @@ variable "iam_users" {
   default = []
 }
 
-variable "repos" {
-  default = []
+variable "nodes_instance_types" {
+  default = ["t2.micro"]
 }
 
-variable "nodes_instance_type" {
-  default = "t2.micro"
-}
-
-variable "nodes_root_device_size" {
+variable "nodes_disk_size" {
   default = "20"
 }
 
@@ -78,10 +74,6 @@ variable "nodes_min_size" {
 
 variable "nodes_max_size" {
   default = 1
-}
-
-variable "nodes_max_instance_lifetime" {
-  default = 604800 // Default to 7 days
 }
 
 //the following below are required for setting up the vpn
