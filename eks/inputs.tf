@@ -75,6 +75,7 @@ variable "repos" {
 
 variable "nodes_in_public_subnet" {
   default = false
+  description = "INSECURE! Only use this if you want to avoid paying for the NAT. Also set enable_nat to false"
 }
 
 variable "nodes_green_instance_type" {
