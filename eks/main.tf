@@ -79,7 +79,7 @@ USERDATA
 resource "aws_launch_configuration" "nodes_blue" {
   associate_public_ip_address = false
   iam_instance_profile        = aws_iam_instance_profile.node.name
-  image_id                    = data.aws_ami.opszero_eks.id
+  image_id                    = data.aws_ssm_parameter.eks_ami
   instance_type               = var.nodes_blue_instance_type
   name_prefix                 = "${var.environment_name}-nodes-blue"
   security_groups             = [aws_security_group.node.id]
@@ -124,13 +124,34 @@ resource "aws_autoscaling_group" "nodes_blue" {
 resource "aws_launch_configuration" "nodes_green" {
   associate_public_ip_address = false
   iam_instance_profile        = aws_iam_instance_profile.node.name
-  image_id                    = data.aws_ami.opszero_eks.id
+  image_id                    = data.aws_ssm_parameter.eks_ami
   instance_type               = var.nodes_green_instance_type
   name_prefix                 = "${var.environment_name}-nodes-green"
   security_groups             = [aws_security_group.node.id]
   user_data_base64            = base64encode(local.node-userdata)
 
   key_name = var.ec2_keypair
+
+  user_data = <<SCRIPT
+touch /etc/sysctl.d/10-opszero-networking-performance.conf
+echo "net.core.netdev_max_backlog=30000" >> /etc/sysctl.d/10-opszero-networking-performance.conf
+echo "net.core.rmem_max=16777216" >> /etc/sysctl.d/10-opszero-networking-performance.conf
+echo "net.core.somaxconn=16096" >> /etc/sysctl.d/10-opszero-networking-performance.conf
+echo "net.core.wmem_max=16777216" >> /etc/sysctl.d/10-opszero-networking-performance.conf
+echo "net.ipv4.ip_local_port_range=1024 65535" >> /etc/sysctl.d/10-opszero-networking-performance.conf
+echo "net.ipv4.tcp_fin_timeout=15" >> /etc/sysctl.d/10-opszero-networking-performance.conf
+echo "net.ipv4.tcp_max_syn_backlog=20480" >> /etc/sysctl.d/10-opszero-networking-performance.conf
+echo "net.ipv4.tcp_max_tw_buckets=400000" >> /etc/sysctl.d/10-opszero-networking-performance.conf
+echo "net.ipv4.tcp_no_metrics_save=1" >> /etc/sysctl.d/10-opszero-networking-performance.conf
+echo "net.ipv4.tcp_rmem=4096 87380 16777216" >> /etc/sysctl.d/10-opszero-networking-performance.conf
+echo "net.ipv4.tcp_syn_retries=2" >> /etc/sysctl.d/10-opszero-networking-performance.conf
+echo "net.ipv4.tcp_synack_retries=2" >> /etc/sysctl.d/10-opszero-networking-performance.conf
+echo "net.ipv4.tcp_syncookies=1" >> /etc/sysctl.d/10-opszero-networking-performance.conf
+echo "net.ipv4.tcp_wmem=4096 65536 16777216" >> /etc/sysctl.d/10-opszero-networking-performance.conf
+echo "proc.file-max=2097152" >> /etc/sysctl.d/10-opszero-networking-performance.conf
+echo "proc.min_free_kbytes=65536" >> /etc/sysctl.d/10-opszero-networking-performance.conf
+echo "vm.min_free_kbytes=65536" >> /etc/sysctl.d/10-opszero-networking-performance.conf
+SCRIPT
 
   root_block_device {
     volume_size = var.nodes_green_root_device_size
@@ -151,6 +172,27 @@ resource "aws_autoscaling_group" "nodes_green" {
   max_instance_lifetime = var.nodes_green_max_instance_lifetime
 
   vpc_zone_identifier = aws_subnet.private.*.id
+
+  user_data = <<SCRIPT
+touch /etc/sysctl.d/10-opszero-networking-performance.conf
+echo "net.core.netdev_max_backlog=30000" >> /etc/sysctl.d/10-opszero-networking-performance.conf
+echo "net.core.rmem_max=16777216" >> /etc/sysctl.d/10-opszero-networking-performance.conf
+echo "net.core.somaxconn=16096" >> /etc/sysctl.d/10-opszero-networking-performance.conf
+echo "net.core.wmem_max=16777216" >> /etc/sysctl.d/10-opszero-networking-performance.conf
+echo "net.ipv4.ip_local_port_range=1024 65535" >> /etc/sysctl.d/10-opszero-networking-performance.conf
+echo "net.ipv4.tcp_fin_timeout=15" >> /etc/sysctl.d/10-opszero-networking-performance.conf
+echo "net.ipv4.tcp_max_syn_backlog=20480" >> /etc/sysctl.d/10-opszero-networking-performance.conf
+echo "net.ipv4.tcp_max_tw_buckets=400000" >> /etc/sysctl.d/10-opszero-networking-performance.conf
+echo "net.ipv4.tcp_no_metrics_save=1" >> /etc/sysctl.d/10-opszero-networking-performance.conf
+echo "net.ipv4.tcp_rmem=4096 87380 16777216" >> /etc/sysctl.d/10-opszero-networking-performance.conf
+echo "net.ipv4.tcp_syn_retries=2" >> /etc/sysctl.d/10-opszero-networking-performance.conf
+echo "net.ipv4.tcp_synack_retries=2" >> /etc/sysctl.d/10-opszero-networking-performance.conf
+echo "net.ipv4.tcp_syncookies=1" >> /etc/sysctl.d/10-opszero-networking-performance.conf
+echo "net.ipv4.tcp_wmem=4096 65536 16777216" >> /etc/sysctl.d/10-opszero-networking-performance.conf
+echo "proc.file-max=2097152" >> /etc/sysctl.d/10-opszero-networking-performance.conf
+echo "proc.min_free_kbytes=65536" >> /etc/sysctl.d/10-opszero-networking-performance.conf
+echo "vm.min_free_kbytes=65536" >> /etc/sysctl.d/10-opszero-networking-performance.conf
+SCRIPT
 
   tags = [
     {
