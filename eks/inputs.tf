@@ -16,6 +16,18 @@ variable "cluster_logging" {
   ]
 }
 
+variable "cluster_private_access" {
+  default = false
+}
+
+variable "cluster_public_access" {
+  default = true
+}
+
+variable "cluster_public_access_cidrs" {
+  default = ["0.0.0.0/0"]
+}
+
 variable "bastion_enabled" {
   default = false
 }

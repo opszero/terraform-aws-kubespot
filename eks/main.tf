@@ -5,6 +5,10 @@ resource "aws_eks_cluster" "cluster" {
   version = var.cluster_version
 
   vpc_config {
+    endpoint_private_access = var.cluster_private_access
+    endpoint_public_access  = var.cluster_public_access
+    public_access_cidrs     = var.cluster_public_access_cidrs
+
     security_group_ids = [aws_security_group.cluster.id]
 
     subnet_ids = flatten([
