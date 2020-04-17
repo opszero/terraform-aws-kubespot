@@ -71,6 +71,24 @@ locals {
 #!/bin/bash -xe
 set -o xtrace
 
+sysctl -w net.core.netdev_max_backlog=30000
+sysctl -w net.core.rmem_max=16777216
+sysctl -w net.core.somaxconn=16096
+sysctl -w net.core.wmem_max=16777216
+sysctl -w net.ipv4.ip_local_port_range=1024 65535
+sysctl -w net.ipv4.tcp_fin_timeout=15
+sysctl -w net.ipv4.tcp_max_syn_backlog=20480
+sysctl -w net.ipv4.tcp_max_tw_buckets=400000
+sysctl -w net.ipv4.tcp_no_metrics_save=1
+sysctl -w net.ipv4.tcp_rmem=4096 87380 16777216
+sysctl -w net.ipv4.tcp_syn_retries=2
+sysctl -w net.ipv4.tcp_synack_retries=2
+sysctl -w net.ipv4.tcp_syncookies=1
+sysctl -w net.ipv4.tcp_wmem=4096 65536 16777216
+sysctl -w proc.file-max=2097152
+sysctl -w proc.min_free_kbytes=65536
+sysctl -w vm.min_free_kbytes=65536
+
 /etc/eks/bootstrap.sh --apiserver-endpoint '${aws_eks_cluster.cluster.endpoint}' --b64-cluster-ca '${aws_eks_cluster.cluster.certificate_authority[0].data}' '${var.environment_name}'
 USERDATA
 
@@ -79,7 +97,7 @@ USERDATA
 resource "aws_launch_configuration" "nodes_blue" {
   associate_public_ip_address = false
   iam_instance_profile        = aws_iam_instance_profile.node.name
-  image_id                    = data.aws_ami.opszero_eks.id
+  image_id                    = data.aws_ssm_parameter.eks_ami.value
   instance_type               = var.nodes_blue_instance_type
   name_prefix                 = "${var.environment_name}-nodes-blue"
   security_groups             = [aws_security_group.node.id]
@@ -89,6 +107,7 @@ resource "aws_launch_configuration" "nodes_blue" {
 
   root_block_device {
     volume_size = var.nodes_blue_root_device_size
+    encrypted = true
   }
 
   lifecycle {
@@ -123,7 +142,7 @@ resource "aws_autoscaling_group" "nodes_blue" {
 resource "aws_launch_configuration" "nodes_green" {
   associate_public_ip_address = false
   iam_instance_profile        = aws_iam_instance_profile.node.name
-  image_id                    = data.aws_ami.opszero_eks.id
+  image_id                    = data.aws_ssm_parameter.eks_ami.value
   instance_type               = var.nodes_green_instance_type
   name_prefix                 = "${var.environment_name}-nodes-green"
   security_groups             = [aws_security_group.node.id]
@@ -133,6 +152,7 @@ resource "aws_launch_configuration" "nodes_green" {
 
   root_block_device {
     volume_size = var.nodes_green_root_device_size
+    encrypted = true
   }
 
   lifecycle {
