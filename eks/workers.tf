@@ -27,21 +27,16 @@ resource "aws_eks_node_group" "workers" {
 resource "aws_iam_role" "node" {
   name = "${var.environment_name}-node"
 
-  assume_role_policy = <<POLICY
-{
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Effect": "Allow",
-      "Principal": {
-        "Service": "ec2.amazonaws.com"
-      },
-      "Action": "sts:AssumeRole"
-    }
-  ]
-}
-POLICY
-
+  assume_role_policy = jsonencode({
+    Statement = [{
+      Action = "sts:AssumeRole"
+      Effect = "Allow"
+      Principal = {
+        Service = "ec2.amazonaws.com"
+      }
+    }]
+    Version = "2012-10-17"
+  })
 }
 
 resource "aws_iam_role_policy_attachment" "node-AmazonEKSWorkerNodePolicy" {
