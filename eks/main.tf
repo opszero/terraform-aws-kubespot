@@ -97,7 +97,7 @@ USERDATA
 resource "aws_launch_configuration" "nodes_blue" {
   associate_public_ip_address = false
   iam_instance_profile        = aws_iam_instance_profile.node.name
-  image_id                    = data.aws_ssm_parameter.eks_ami
+  image_id                    = data.aws_ssm_parameter.eks_ami.value
   instance_type               = var.nodes_blue_instance_type
   name_prefix                 = "${var.environment_name}-nodes-blue"
   security_groups             = [aws_security_group.node.id]
@@ -142,7 +142,7 @@ resource "aws_autoscaling_group" "nodes_blue" {
 resource "aws_launch_configuration" "nodes_green" {
   associate_public_ip_address = false
   iam_instance_profile        = aws_iam_instance_profile.node.name
-  image_id                    = data.aws_ssm_parameter.eks_ami
+  image_id                    = data.aws_ssm_parameter.eks_ami.value
   instance_type               = var.nodes_green_instance_type
   name_prefix                 = "${var.environment_name}-nodes-green"
   security_groups             = [aws_security_group.node.id]
