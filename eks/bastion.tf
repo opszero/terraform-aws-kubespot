@@ -17,7 +17,7 @@ wget -q -O - https://updates.atomicorp.com/installers/atomic | bash
 apt-get update -y
 apt-get install -y ossec-hids-server ossec-hids-agent
 
-if [[ ${var.install_foxpass} = "" ]]
+if [[ ${var.foxpass_install} = "" ]]
 then
     echo "Not Installing Foxpass"
 else
