@@ -61,7 +61,7 @@ variable "repos" {
 }
 
 variable "nodes_green_instance_type" {
-  default = "t2.micro"
+  default = "t3.micro"
 }
 
 variable "nodes_green_root_device_size" {
@@ -85,7 +85,7 @@ variable "nodes_green_max_instance_lifetime" {
 }
 
 variable "nodes_blue_instance_type" {
-  default = "t2.micro"
+  default = "t3.micro"
 }
 
 variable "nodes_blue_root_device_size" {
