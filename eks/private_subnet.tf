@@ -31,7 +31,7 @@ resource "aws_route_table" "private" {
   vpc_id = aws_vpc.vpc.id
 
   tags = {
-    Name = "k8s-private-${count.index}"
+    Name = "${var.environment_name}-private-${count.index}"
   }
 }
 
@@ -56,7 +56,7 @@ resource "aws_egress_only_internet_gateway" "egress" {
   vpc_id = aws_vpc.vpc.id
 
   tags = {
-    Name = "k8s-egress-${count.index}"
+    Name = "${var.environment_name}-egress-${count.index}"
   }
 }
 

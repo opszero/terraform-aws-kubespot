@@ -28,7 +28,7 @@ resource "aws_route_table" "public" {
     gateway_id = aws_internet_gateway.public.id
   }
   tags = {
-    Name = "k8s-public-${count.index}"
+    Name = "${var.environment_name}-public-${count.index}"
   }
 }
 

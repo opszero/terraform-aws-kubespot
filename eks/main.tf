@@ -108,7 +108,7 @@ resource "aws_launch_configuration" "nodes_blue" {
 
   root_block_device {
     volume_size = var.nodes_blue_root_device_size
-    encrypted = true
+    encrypted   = true
   }
 
   lifecycle {
@@ -153,7 +153,7 @@ resource "aws_launch_configuration" "nodes_green" {
 
   root_block_device {
     volume_size = var.nodes_green_root_device_size
-    encrypted = true
+    encrypted   = true
   }
 
   lifecycle {
