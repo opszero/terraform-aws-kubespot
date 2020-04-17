@@ -16,6 +16,19 @@ variable "cluster_logging" {
   ]
 }
 
+variable "cluster_private_access" {
+  default = false
+}
+
+variable "cluster_public_access" {
+  default = true
+}
+
+variable "cluster_public_access_cidrs" {
+  default = ["0.0.0.0/0"]
+}
+
+
 variable "bastion_enabled" {
   default = false
 }
@@ -58,6 +71,11 @@ variable "iam_users" {
 
 variable "repos" {
   default = []
+}
+
+variable "nodes_in_public_subnet" {
+  default     = false
+  description = "INSECURE! Only use this if you want to avoid paying for the NAT. Also set enable_nat to false"
 }
 
 variable "nodes_green_instance_type" {
@@ -118,6 +136,23 @@ variable "foxpass_vpn_psk" {
   type        = string
   description = "use this for psk generation https://cloud.google.com/vpn/docs/how-to/generating-pre-shared-key"
   default     = ""
+}
+
+variable "foxpass_install" {
+  default     = ""
+  description = "Make this a string to be read in the user-data"
+}
+
+variable "foxpass_base_dn" {
+  default = ""
+}
+
+variable "foxpass_bind_user" {
+  default = ""
+}
+
+variable "foxpass_bind_pw" {
+  default = ""
 }
 
 variable "logdna_ingestion_key" {
