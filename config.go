@@ -13,6 +13,7 @@ import (
 	"github.com/cloudflare/cloudflare-go"
 
 	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/aws/credentials"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/secretsmanager"
 
@@ -56,27 +57,29 @@ type Config struct {
 	}
 
 	Deploy struct {
-		ChartName string
-		HelmSet   []string
-	}
-
-	RunScript struct {
-		PodAppLabel string
-		Container   string
-		Cmds        []string
+		ChartName   string
+		HelmSet     []string
+		ClusterName string
 	}
 }
 
 func (c *Config) loadAppAwsSecrets() {
+	sess, err := session.NewSession(&aws.Config{
+		Credentials: credentials.NewStaticCredentials(c.AWSAccessKeyID, c.AWSSecretAccessKey, ""),
+		Region:      aws.String(c.AWSRegion),
+	})
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	svc := secretsmanager.New(sess)
+
 	fileContent := fmt.Sprintf("DEPLOYTAG_BRANCH=%s\n\n", c.Git.DockerBranch())
-
 	for _, secretId := range c.AppAwsSecretIds {
-		svc := secretsmanager.New(session.New())
-		input := &secretsmanager.GetSecretValueInput{
+		result, err := svc.GetSecretValue(&secretsmanager.GetSecretValueInput{
 			SecretId: aws.String(secretId),
-		}
-
-		result, err := svc.GetSecretValue(input)
+		})
 		if err != nil {
 			log.Println(err.Error())
 			continue
@@ -111,11 +114,13 @@ func (c *Config) writeAppAwsSecrets(fileName string) {
 }
 
 func (c *Config) Init() {
-	c.loadAppAwsSecrets()
-
 	if c.AWSAccessKeyID == "" || c.AWSSecretAccessKey == "" || c.AWSRegion == "" {
-		log.Println("Ensure that AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, and AWS_REGION are set")
+		log.Println("Ensure that AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, and AWS_REGION are set!")
+	} else {
+		log.Println("AWS Configured")
 	}
+
+	c.loadAppAwsSecrets()
 
 	os.Setenv("CONTAINER_REGISTRY", c.Build.ContainerRegistry)
 	os.Setenv("PROJECT_ID", c.Build.ProjectId)
@@ -129,13 +134,6 @@ func (c *Config) Init() {
 	}
 
 	c.DockerLogin()
-	c.KuberneteConfig()
-
-	c.Cloudflare.Key = os.Getenv(CloudflareAPIKey)
-	c.Cloudflare.ZoneName = os.Getenv(CloudflareDomain)
-	c.Cloudflare.ZoneID = os.Getenv(CloudflareZoneID)
-
-	log.Println(c.Cloudflare)
 
 	log.Println("Circle Branch", c.Git.DockerBranch())
 }
@@ -146,7 +144,7 @@ func (c *Config) DockerLogin() {
 }
 
 func (c *Config) KuberneteConfig() {
-	runCmd("aws", "eks", "--region", os.Getenv("AWS_DEFAULT_REGION"), "update-kubeconfig", "--name", os.Getenv("AWS_CLUSTER_NAME"))
+	runCmd("aws", "eks", "--region", os.Getenv("AWS_REGION"), "update-kubeconfig", "--name", c.Deploy.ClusterName)
 }
 
 func (c *Config) dockerCircleImageWithSuffix(image, suffix string) string {
@@ -207,6 +205,8 @@ func (c *Config) DockerBuild() {
 }
 
 func (c *Config) HelmDeploy() {
+	c.KuberneteConfig()
+
 	os.Setenv("HELM_HOME", runCmdOutput("helm", "home"))
 	os.MkdirAll(os.Getenv("HELM_HOME"), os.ModePerm)
 
@@ -257,6 +257,12 @@ func dnsGet(records []cloudflare.DNSRecord, dnsName string) (string, bool) {
 // this will error out if the api is configured incorrectly, cannot fetch DNS records of zone or the zones themselves, or if
 // it cannot create a DNS record (note: not update a record)
 func (c *Config) DnsDeploy() error {
+	c.Cloudflare.Key = os.Getenv(CloudflareAPIKey)
+	c.Cloudflare.ZoneName = os.Getenv(CloudflareDomain)
+	c.Cloudflare.ZoneID = os.Getenv(CloudflareZoneID)
+
+	log.Println(c.Cloudflare)
+
 	var (
 		// TODO should exec from output or use something like this https://github.com/kubernetes/client-go/blob/master/examples/out-of-cluster-client-configuration/main.go#L74
 		loadbalancer = runCmdOutput("kubectl", "get", "svc", "ingress-nginx-ingress-controller", "-o", `jsonpath='{.status.loadBalancer.ingress[0].hostname}'`)
@@ -344,12 +350,4 @@ func (c *Config) DnsDeploy() error {
 		}
 	}
 	return nil
-}
-
-func (c *Config) HelmRunScript() {
-	pod := runCmdOutput("bash", "-c", fmt.Sprintf("kubectl get pod -n %s --selector=app=%s -o jsonpath='{.items[0].metadata.name}'", c.Git.DockerBranch(), c.RunScript.PodAppLabel))
-
-	for _, i := range c.RunScript.Cmds {
-		runCmd("kubectl", "exec", "-i", pod, "-n", c.Git.DockerBranch(), "-c", c.RunScript.Container, "--", i)
-	}
 }

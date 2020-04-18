@@ -15,11 +15,8 @@ var (
 func main() {
 	var rootCmd = &cobra.Command{
 		Use:   "deploytag",
-		Short: "CI /CD Helper for Kubernetes and Serverless Apps",
-		Long: ``,
-		// Uncomment the following line if your bare application
-		// has an action associated with it:
-		//	Run: func(cmd *cobra.Command, args []string) { },
+		Short: "CI /CD Helper for Kubernetes Apps",
+		Long:  ``,
 	}
 
 	rootCmd.PersistentFlags().StringVar(&config.AWSAccessKeyID, "aws-access-key-id", os.Getenv("AWS_ACCESS_KEY_ID"), "AWS Access Key")
@@ -31,27 +28,11 @@ func main() {
 	rootCmd.PersistentFlags().StringVar(&config.Git.Branch, "branch", config.Git.GetDefaultBranch(), "The Git Branch to Tag the Docker Image")
 	rootCmd.PersistentFlags().StringVar(&config.Git.Sha, "sha", config.Git.GetDefaultSha1(), "The Git Sha to Tag the Docker Image")
 
-	var runScriptCmd = &cobra.Command{
-		Use:   "run-script",
-		Short: "A brief description of your command",
-		Long: ``,
-		Run: func(cmd *cobra.Command, args []string) {
-			config.Init()
-			config.HelmRunScript()
-		},
-	}
-
-	runScriptCmd.Flags().StringVar(&config.RunScript.PodAppLabel, "pod-app-label", "", "Ex. 1234.dkr.ecr.us-west-2.amazonaws.com ")
-	runScriptCmd.Flags().StringVar(&config.RunScript.Container, "container", "", "Ex. 1234.dkr.ecr.us-west-2.amazonaws.com ")
-	runScriptCmd.Flags().StringArrayVar(&config.RunScript.Cmds, "cmds", []string{}, "Ex. 1234.dkr.ecr.us-west-2.amazonaws.com ")
-
-	rootCmd.AddCommand(runScriptCmd)
-
 	// deployCmd represents the deploy command
 	var deployCmd = &cobra.Command{
 		Use:   "deploy",
 		Short: "A brief description of your command",
-		Long: ``,
+		Long:  ``,
 		Run: func(cmd *cobra.Command, args []string) {
 			config.Init()
 			config.HelmDeploy()
@@ -60,6 +41,7 @@ func main() {
 
 	rootCmd.AddCommand(deployCmd)
 
+	deployCmd.Flags().StringVar(&config.Deploy.ClusterName, "cluster-name", "", "Kubernetes Cluster Name")
 	deployCmd.Flags().StringVar(&config.Deploy.ChartName, "chart-name", "", "Ex. 1234.dkr.ecr.us-west-2.amazonaws.com ")
 	deployCmd.Flags().StringArrayVar(&config.Deploy.HelmSet, "helm-set", []string{}, "Ex. 1234.dkr.ecr.us-west-2.amazonaws.com ")
 
@@ -70,7 +52,7 @@ func main() {
 	var buildCmd = &cobra.Command{
 		Use:   "build",
 		Short: "A brief description of your command",
-		Long: ``,
+		Long:  ``,
 		Run: func(cmd *cobra.Command, args []string) {
 			config.Init()
 			config.DockerBuild()
@@ -87,7 +69,7 @@ func main() {
 	var dnsCmd = &cobra.Command{
 		Use:   "dns",
 		Short: "A brief description of your command",
-		Long: ``,
+		Long:  ``,
 		Run: func(cmd *cobra.Command, args []string) {
 			config.Init()
 			config.DnsDeploy()
