@@ -11,7 +11,7 @@ RUN curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s
     mv ./kubectl /usr/local/bin/kubectl
 
 # Install Helm
-ENV HELM_VERSION=v2.14.3
+ENV HELM_VERSION=v2.10.0
 RUN curl https://raw.githubusercontent.com/kubernetes/helm/master/scripts/get > get_helm.sh
 RUN chmod 700 get_helm.sh
 RUN ./get_helm.sh --version $HELM_VERSION
@@ -25,18 +25,6 @@ RUN apt-key fingerprint 0EBFCD88
 RUN add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/debian $(lsb_release -cs) stable"
 RUN apt-get update -y
 RUN apt-get install docker-ce -y
-
-# Install gcloud
-RUN apt-get install -y curl && curl -sSL https://sdk.cloud.google.com | bash
-ENV PATH="$PATH:/root/google-cloud-sdk/bin"
-
-# Install Azure
-RUN curl -sL https://packages.microsoft.com/keys/microsoft.asc | \
-    gpg --dearmor | \
-    tee /etc/apt/trusted.gpg.d/microsoft.asc.gpg > /dev/null
-RUN echo "deb [arch=amd64] https://packages.microsoft.com/repos/azure-cli/ bionic main" | \
-    tee /etc/apt/sources.list.d/azure-cli.list
-RUN apt-get update -y && sudo apt-get install -y azure-cli
 
 # Install awscli
 RUN pip3 install --upgrade awscli

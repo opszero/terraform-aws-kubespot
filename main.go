@@ -16,23 +16,16 @@ func main() {
 	var rootCmd = &cobra.Command{
 		Use:   "deploytag",
 		Short: "CI /CD Helper for Kubernetes and Serverless Apps",
-		Long: `A longer description that spans multiple lines and likely contains
-examples and usage of using your application. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+		Long: ``,
 		// Uncomment the following line if your bare application
 		// has an action associated with it:
 		//	Run: func(cmd *cobra.Command, args []string) { },
 	}
 
-	rootCmd.PersistentFlags().StringVar(&config.Cloud, "cloud", "", "aws, gcp, or azure")
 	rootCmd.PersistentFlags().StringVar(&config.AWSAccessKeyID, "aws-access-key-id", os.Getenv("AWS_ACCESS_KEY_ID"), "AWS Access Key")
 	rootCmd.PersistentFlags().StringVar(&config.AWSSecretAccessKey, "aws-secret-access-key", os.Getenv("AWS_SECRET_ACCESS_KEY"), "AWS Secret Access Key")
 	rootCmd.PersistentFlags().StringVar(&config.AWSRegion, "aws-region", os.Getenv("AWS_REGION"), "AWS Secret Access Key")
 
-	rootCmd.PersistentFlags().StringVar(&config.CloudAwsSecretId, "cloud-aws-secret-id", "", "Use AWS Secrets Manager for Config. If set it pull the environment variables from aws secrets manager.")
 	rootCmd.PersistentFlags().StringArrayVar(&config.AppAwsSecretIds, "app-aws-secret-ids", []string{}, "Ex. 1234.dkr.ecr.us-west-2.amazonaws.com")
 
 	rootCmd.PersistentFlags().StringVar(&config.Git.Branch, "branch", config.Git.GetDefaultBranch(), "The Git Branch to Tag the Docker Image")
@@ -41,12 +34,7 @@ to quickly create a Cobra application.`,
 	var runScriptCmd = &cobra.Command{
 		Use:   "run-script",
 		Short: "A brief description of your command",
-		Long: `A longer description that spans multiple lines and likely contains examples
-	and usage of using your command. For example:
-	
-	Cobra is a CLI library for Go that empowers applications.
-	This application is a tool to generate the needed files
-	to quickly create a Cobra application.`,
+		Long: ``,
 		Run: func(cmd *cobra.Command, args []string) {
 			config.Init()
 			config.HelmRunScript()
@@ -63,12 +51,7 @@ to quickly create a Cobra application.`,
 	var deployCmd = &cobra.Command{
 		Use:   "deploy",
 		Short: "A brief description of your command",
-		Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+		Long: ``,
 		Run: func(cmd *cobra.Command, args []string) {
 			config.Init()
 			config.HelmDeploy()
@@ -87,12 +70,7 @@ to quickly create a Cobra application.`,
 	var buildCmd = &cobra.Command{
 		Use:   "build",
 		Short: "A brief description of your command",
-		Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+		Long: ``,
 		Run: func(cmd *cobra.Command, args []string) {
 			config.Init()
 			config.DockerBuild()
@@ -109,12 +87,7 @@ to quickly create a Cobra application.`,
 	var dnsCmd = &cobra.Command{
 		Use:   "dns",
 		Short: "A brief description of your command",
-		Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+		Long: ``,
 		Run: func(cmd *cobra.Command, args []string) {
 			config.Init()
 			config.DnsDeploy()

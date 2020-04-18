@@ -17,7 +17,6 @@ import (
 	"github.com/aws/aws-sdk-go/service/secretsmanager"
 
 	"github.com/a8m/envsubst"
-	"github.com/joho/godotenv"
 )
 
 const (
@@ -27,23 +26,10 @@ const (
 	CloudflareZoneID = "CLOUDFLARE_ZONE_ID"
 )
 
-const (
-	AwsCloud   = "aws"
-	GcpCloud   = "gcp"
-	AzureCloud = "azure"
-)
-
 type Config struct {
-	Cloud            string
-	CloudAwsSecretId string
-	CloudEnvConfig   map[string]string
-
 	AWSAccessKeyID     string
 	AWSSecretAccessKey string
 	AWSRegion          string
-
-	GCPServiceKeyFile   string
-	GCPServiceKeyBase64 string
 
 	AppAwsSecretIds []string
 	AppEnvConfig    string
@@ -78,41 +64,6 @@ type Config struct {
 		PodAppLabel string
 		Container   string
 		Cmds        []string
-	}
-}
-
-func (c *Config) loadCloudAwsSecrets() {
-	if c.CloudAwsSecretId == "" {
-		return
-	}
-
-	log.Println("Loading Cloud Secrets")
-
-	svc := secretsmanager.New(session.New())
-	input := &secretsmanager.GetSecretValueInput{
-		SecretId: aws.String(c.CloudAwsSecretId),
-	}
-
-	result, err := svc.GetSecretValue(input)
-	if err != nil {
-		log.Println(err.Error())
-		return
-	}
-
-	if result.SecretString == nil {
-		return
-	}
-
-	c.CloudEnvConfig, err = godotenv.Parse(strings.NewReader(*result.SecretString))
-	if err != nil {
-		log.Println(err)
-	}
-
-	log.Println("Cloud Config", c.CloudEnvConfig)
-
-	for k := range c.CloudEnvConfig {
-		log.Println("Setting up var", k)
-		os.Setenv(k, c.CloudEnvConfig[k])
 	}
 }
 
@@ -161,25 +112,9 @@ func (c *Config) writeAppAwsSecrets(fileName string) {
 
 func (c *Config) Init() {
 	c.loadAppAwsSecrets()
-	c.loadCloudAwsSecrets()
 
-	switch strings.ToLower(c.Cloud) {
-	case AwsCloud:
-		if c.AWSAccessKeyID == "" || c.AWSSecretAccessKey == "" || c.AWSRegion == "" {
-			log.Println("Ensure that AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, and AWS_REGION are set")
-		}
-	case GcpCloud:
-		if os.Getenv("GCLOUD_SERVICE_KEY_BASE64") != "" {
-			runCmd("bash", "-c", "echo $GCLOUD_SERVICE_KEY_BASE64 | base64 -d > /tmp/gcloud-service-key.json")
-		} else {
-			log.Println("No Google Service Account Key given")
-		}
-
-		runCmd("gcloud", "auth", "activate-service-account", "--key-file=/tmp/gcloud-service-key.json")
-	case AzureCloud:
-		runCmd("az", "login", "--service-principal", "--tenant", os.Getenv("AZURE_SERVICE_PRINCIPAL_TENANT"), "--username", os.Getenv("AZURE_SERVICE_PRINCIPAL"), "--password", os.Getenv("AZURE_SERVICE_PRINCIPAL_PASSWORD"))
-	default:
-		log.Println("Invalid Cloud")
+	if c.AWSAccessKeyID == "" || c.AWSSecretAccessKey == "" || c.AWSRegion == "" {
+		log.Println("Ensure that AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, and AWS_REGION are set")
 	}
 
 	os.Setenv("CONTAINER_REGISTRY", c.Build.ContainerRegistry)
@@ -207,32 +142,11 @@ func (c *Config) Init() {
 
 func (c *Config) DockerLogin() {
 	log.Println("Docker Login")
-	switch strings.ToLower(c.Cloud) {
-	case GcpCloud:
-		runCmd("bash", "-c", fmt.Sprintf("gcloud auth print-access-token | docker login -u oauth2accesstoken --password-stdin https://%s", c.Build.ContainerRegistry))
-	case AwsCloud:
-		runCmd("bash", "-c", runCmdOutput("aws", "ecr", "get-login", "--no-include-email"))
-	case AzureCloud:
-		name := strings.TrimSpace(runCmdOutput("bash", "-c", os.ExpandEnv("echo $AZURE_CLUSTER_NAME | sed 's/[^A-Za-z0-9]//g'")))
-		log.Println("Azure Cluster", name)
-		runCmd("az", "acr", "login", "--name", name)
-		c.Build.ContainerRegistry = strings.TrimSpace(runCmdOutput("bash", "-c", os.ExpandEnv("az acr list --resource-group $AZURE_RESOURCE_GROUP --query '[].{acrLoginServer:loginServer}' --output json | jq -r '.[].acrLoginServer'")))
-		log.Println("Azure ContainerRegistry", c.Build.ContainerRegistry)
-	}
+	runCmd("bash", "-c", runCmdOutput("aws", "ecr", "get-login", "--no-include-email"))
 }
 
 func (c *Config) KuberneteConfig() {
-	switch strings.ToLower(c.Cloud) {
-	case GcpCloud:
-		runCmd("gcloud", "--quiet", "config", "set", "project", os.Getenv("GOOGLE_PROJECT_ID"))
-		runCmd("gcloud", "--quiet", "config", "set", "compute/zone", os.Getenv("GOOGLE_COMPUTE_ZONE"))
-		runCmd("gcloud", "auth", "configure-docker", "--quiet")
-		runCmd("gcloud", "--quiet", "container", "clusters", "get-credentials", os.Getenv("GOOGLE_CLUSTER_NAME"))
-	case AwsCloud:
-		runCmd("aws", "eks", "--region", os.Getenv("AWS_DEFAULT_REGION"), "update-kubeconfig", "--name", os.Getenv("AWS_CLUSTER_NAME"))
-	case AzureCloud:
-		runCmd("az", "aks", "get-credentials", "--resource-group", os.Getenv("AZURE_RESOURCE_GROUP"), "--name", os.Getenv("AZURE_CLUSTER_NAME"), "--overwrite-existing")
-	}
+	runCmd("aws", "eks", "--region", os.Getenv("AWS_DEFAULT_REGION"), "update-kubeconfig", "--name", os.Getenv("AWS_CLUSTER_NAME"))
 }
 
 func (c *Config) dockerCircleImageWithSuffix(image, suffix string) string {
@@ -312,7 +226,7 @@ func (c *Config) HelmDeploy() {
 	helmArgs = append(helmArgs,
 		"--set", fmt.Sprintf("image.tag=%s", c.Git.DockerSha1()),
 		"--set", fmt.Sprintf("deploytag.tag=%s", c.Docker.Tag),
-		"--set", fmt.Sprintf("deploytag.cloud=%s", c.Cloud),
+		"--set", fmt.Sprintf("deploytag.cloud=AWS"),
 		"--set", fmt.Sprintf("secrets.files.dotenv.dotenv=%s", base64.StdEncoding.EncodeToString([]byte(c.AppEnvConfig))),
 	)
 
@@ -377,10 +291,7 @@ func (c *Config) DnsDeploy() error {
 		return err
 	}
 
-	recordType := "A"
-	if c.Cloud == AwsCloud {
-		recordType = "CNAME"
-	}
+	recordType := "CNAME"
 
 	for _, externalName := range c.Cloudflare.ExternalHostNames {
 		data := struct {
