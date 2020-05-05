@@ -1,4 +1,6 @@
 controller:
-   config:
-     enable-underscores-in-headers: "true"
-     use-forwarded-headers: "true"
+  config:
+    enable-underscores-in-headers: "true"
+    use-forwarded-headers: "true"
+  proxySetHeaders:
+    use-forwarded-headers: "true"
