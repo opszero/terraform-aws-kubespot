@@ -212,6 +212,18 @@ variable "sql_serverless_max" {
   default = 2
 }
 
+variable "sql_serverless_seconds_until_auto_pause" {
+  default = 300
+}
+
+variable "sql_instance_enabled" {
+  default = false
+}
+
+variable "sql_engine_version" {
+  default = "12.2"
+}
+
 variable "fargate_enabled" {
   default = false
 }
