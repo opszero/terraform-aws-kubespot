@@ -58,7 +58,7 @@ resource "aws_db_instance" "default" {
   engine            = var.sql_engine
   engine_version    = var.sql_engine_version
   instance_class    = var.sql_instance_class
-  name              = var.environment_name
+  name              = replace(var.environment_name, "-", "")
   username          = var.sql_master_username
   password          = var.sql_master_password
 
