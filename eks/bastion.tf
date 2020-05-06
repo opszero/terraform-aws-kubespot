@@ -11,7 +11,7 @@ resource "aws_security_group" "bastion" {
   }
 
   tags = {
-    "Name"                                          = "${var.environment_name}-bastion"
+    "Name" = "${var.environment_name}-bastion"
   }
 }
 

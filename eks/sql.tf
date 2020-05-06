@@ -15,7 +15,6 @@ resource "aws_rds_cluster" "default" {
   master_username = var.sql_master_username
   master_password = var.sql_master_password
 
-
   db_subnet_group_name   = aws_db_subnet_group.default.name
   vpc_security_group_ids = [aws_security_group.node.id]
 
@@ -32,7 +31,7 @@ resource "aws_rds_cluster" "default" {
       auto_pause               = true
       min_capacity             = var.sql_serverless_min
       max_capacity             = var.sql_serverless_max
-      seconds_until_auto_pause = 300
+      seconds_until_auto_pause = var.sql_serverless_seconds_until_auto_pause
       timeout_action           = "ForceApplyCapacityChange"
     }
   }
@@ -49,4 +48,19 @@ resource "aws_rds_cluster_instance" "cluster_instances" {
   instance_class = var.sql_instance_class
 
   db_subnet_group_name = aws_db_subnet_group.default.name
+}
+
+resource "aws_db_instance" "default" {
+  count = var.sql_instance_enabled ? 1 : 0
+
+  allocated_storage = 20
+  storage_type      = "gp2"
+  engine            = var.sql_engine
+  engine_version    = var.sql_engine_version
+  instance_class    = var.sql_instance_class
+  name              = replace(var.environment_name, "-", "")
+  username          = var.sql_master_username
+  password          = var.sql_master_password
+
+  storage_encrypted = true
 }
