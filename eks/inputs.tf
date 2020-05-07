@@ -165,7 +165,7 @@ variable "redis_enabled" {
 }
 
 variable "redis_node_type" {
-  default = "cache.t2.micro"
+  default = "cache.t3.micro"
 }
 
 variable "redis_num_nodes" {
