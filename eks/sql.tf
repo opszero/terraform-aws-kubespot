@@ -67,4 +67,7 @@ resource "aws_db_instance" "default" {
   db_subnet_group_name = aws_db_subnet_group.default.name
 
   storage_encrypted = true
+
+// TODO
+    //deletion_protection     = true // Don't Delete Ever! Except manually.
 }

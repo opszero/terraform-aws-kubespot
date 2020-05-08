@@ -1,5 +1,5 @@
 resource "aws_eip" "bastion_eip" {
-  count    = var.bastion_enabled ? 1 : 0
+  count    = var.bastion_enabled && var.bastion_eip_enabled ? 1 : 0
   instance = aws_instance.bastion.0.id
   vpc      = true
 }
