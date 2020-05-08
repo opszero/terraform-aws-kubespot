@@ -1,3 +1,9 @@
+resource "aws_eip" "bastion_eip" {
+  count    = var.bastion_enabled ? 1 : 0
+  instance = aws_instance.bastion.0.id
+  vpc      = true
+}
+
 resource "aws_security_group" "bastion" {
   name        = "${var.environment_name}-bastion"
   description = "Security group for bastion"
