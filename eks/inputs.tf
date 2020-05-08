@@ -33,6 +33,10 @@ variable "bastion_enabled" {
   default = false
 }
 
+variable "bastion_eip_enabled" {
+  default = false
+}
+
 variable cidr_block {
   default = "10.2.0.0/16"
 }
@@ -126,6 +130,10 @@ variable "nodes_blue_max_instance_lifetime" {
   default = 604800 // Default to 7 days
 }
 
+variable "foxpass_eip_enabled" {
+  default = false
+}
+
 //the following below are required for setting up the vpn
 variable "foxpass_api_key" {
   type    = string
@@ -173,6 +181,10 @@ variable "redis_num_nodes" {
 }
 
 variable "sql_enabled" {
+  default = false
+}
+
+variable "sql_rds_multi_az" {
   default = false
 }
 

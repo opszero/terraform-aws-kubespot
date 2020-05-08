@@ -55,16 +55,25 @@ resource "aws_db_instance" "default" {
 
   identifier = var.environment_name
 
-  allocated_storage = 20
-  storage_type      = "gp2"
-  engine            = var.sql_engine
-  engine_version    = var.sql_engine_version
-  instance_class    = var.sql_instance_class
-  name              = var.sql_database_name
-  username          = var.sql_master_username
-  password          = var.sql_master_password
+  allocated_storage     = 20
+  max_allocated_storage = 200
 
-  db_subnet_group_name = aws_db_subnet_group.default.name
+  storage_type   = "gp2"
+  engine         = var.sql_engine
+  engine_version = var.sql_engine_version
+  instance_class = var.sql_instance_class
+  name           = var.sql_database_name
+  username       = var.sql_master_username
+  password       = var.sql_master_password
+  multi_az       = var.sql_rds_multi_az
 
-  storage_encrypted = true
+  db_subnet_group_name   = aws_db_subnet_group.default.name
+  vpc_security_group_ids = [aws_security_group.node.id]
+
+  storage_encrypted           = true
+  allow_major_version_upgrade = true
+  backup_retention_period     = 35
+
+
+  deletion_protection = true // Don't Delete Ever! Except manually.
 }
