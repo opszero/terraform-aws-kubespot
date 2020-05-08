@@ -64,5 +64,7 @@ resource "aws_db_instance" "default" {
   username          = var.sql_master_username
   password          = var.sql_master_password
 
+  db_subnet_group_name = aws_db_subnet_group.default.name
+
   storage_encrypted = true
 }
