@@ -53,12 +53,14 @@ resource "aws_rds_cluster_instance" "cluster_instances" {
 resource "aws_db_instance" "default" {
   count = var.sql_instance_enabled ? 1 : 0
 
+  identifier = var.environment_name
+
   allocated_storage = 20
   storage_type      = "gp2"
   engine            = var.sql_engine
   engine_version    = var.sql_engine_version
   instance_class    = var.sql_instance_class
-  name              = replace(var.environment_name, "-", "")
+  name              = var.sql_database_name
   username          = var.sql_master_username
   password          = var.sql_master_password
 
