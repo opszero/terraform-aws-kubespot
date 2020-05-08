@@ -184,6 +184,10 @@ variable "sql_enabled" {
   default = false
 }
 
+variable "sql_rds_multi_az" {
+  default = false
+}
+
 variable "sql_engine" {
   default = "aurora-postgresql"
 }
