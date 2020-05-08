@@ -63,12 +63,16 @@ resource "aws_db_instance" "default" {
   name              = var.sql_database_name
   username          = var.sql_master_username
   password          = var.sql_master_password
+  allocated_storage     = 10
 
   db_subnet_group_name = aws_db_subnet_group.default.name
 
+
   storage_encrypted = true
 
+  final_snapshot_identifier = "terraform-20200506231359911200000001"
+
 // TODO
-  skip_final_snapshot = true
+  # skip_final_snapshot = true
     //deletion_protection     = true // Don't Delete Ever! Except manually.
 }
