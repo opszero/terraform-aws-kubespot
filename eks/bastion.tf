@@ -1,3 +1,9 @@
+resource "aws_eip" "bastion_eip" {
+  count    = var.bastion_enabled ? 1 : 0
+  instance = aws_instance.bastion.0.id
+  vpc      = true
+}
+
 resource "aws_security_group" "bastion" {
   name        = "${var.environment_name}-bastion"
   description = "Security group for bastion"
@@ -29,7 +35,7 @@ resource "aws_instance" "bastion" {
   count = var.bastion_enabled ? 1 : 0
 
   ami           = data.aws_ami.ubuntu.id
-  instance_type = "t2.micro"
+  instance_type = "t3.micro"
 
   key_name                    = var.ec2_keypair
   associate_public_ip_address = true

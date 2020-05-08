@@ -1,3 +1,9 @@
+resource "aws_eip" "vpn_eip" {
+  count = var.foxpass_api_key != "" ? 1 : 0
+  instance = aws_instance.vpn.0.id
+  vpc      = true
+}
+
 resource "aws_security_group" "vpn" {
   name        = "${var.environment_name}-vpn"
   description = "Security group for vpn of the cluster"
@@ -57,7 +63,7 @@ resource "aws_instance" "vpn" {
   ami   = data.aws_ami.foxpass_vpn.id
   count = var.foxpass_api_key != "" ? 1 : 0
 
-  instance_type = "t2.micro"
+  instance_type = "t3.micro"
 
   key_name                    = var.ec2_keypair
   associate_public_ip_address = true
