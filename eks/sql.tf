@@ -69,5 +69,6 @@ resource "aws_db_instance" "default" {
   storage_encrypted = true
 
 // TODO
+  skip_final_snapshot = true
     //deletion_protection     = true // Don't Delete Ever! Except manually.
 }
