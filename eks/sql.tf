@@ -66,15 +66,13 @@ resource "aws_db_instance" "default" {
   username          = var.sql_master_username
   password          = var.sql_master_password
 
-  storage_encrypted = true
-
   db_subnet_group_name = aws_db_subnet_group.default.name
+  vpc_security_group_ids = [aws_security_group.node.id]
+
+  storage_encrypted = true
+  allow_major_version_upgrade = true
+  backup_retention_period = 35
 
 
-
-  final_snapshot_identifier = "terraform-20200506231359911200000001"
-
-// TODO
-  # skip_final_snapshot = true
-    //deletion_protection     = true // Don't Delete Ever! Except manually.
+  deletion_protection     = true // Don't Delete Ever! Except manually.
 }
