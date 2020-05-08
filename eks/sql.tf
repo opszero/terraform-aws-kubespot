@@ -56,6 +56,8 @@ resource "aws_db_instance" "default" {
   identifier = var.environment_name
 
   allocated_storage = 20
+  max_allocated_storage = 200
+
   storage_type      = "gp2"
   engine            = var.sql_engine
   engine_version    = var.sql_engine_version
@@ -63,12 +65,12 @@ resource "aws_db_instance" "default" {
   name              = var.sql_database_name
   username          = var.sql_master_username
   password          = var.sql_master_password
-  allocated_storage     = 10
+
+  storage_encrypted = true
 
   db_subnet_group_name = aws_db_subnet_group.default.name
 
 
-  storage_encrypted = true
 
   final_snapshot_identifier = "terraform-20200506231359911200000001"
 
