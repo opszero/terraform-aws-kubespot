@@ -232,6 +232,10 @@ variable "sql_instance_enabled" {
   default = false
 }
 
+variable "sql_instance_engine" {
+  default = "postgres"
+}
+
 variable "sql_engine_version" {
   default = "12.2"
 }

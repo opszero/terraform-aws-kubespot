@@ -59,7 +59,7 @@ resource "aws_db_instance" "default" {
   max_allocated_storage = 200
 
   storage_type   = "gp2"
-  engine         = var.sql_engine
+  engine         = var.sql_instance_engine
   engine_version = var.sql_engine_version
   instance_class = var.sql_instance_class
   name           = var.sql_database_name
