@@ -75,6 +75,9 @@ else
     /etc/init.d/logdna-agent start
 fi
 
+echo "Ciphers aes128-ctr,aes192-ctr,aes256-ctr" >> /etc/ssh/sshd_config
+echo "MACs hmac-sha2-256,hmac-sha2-512,hmac-sha1" >> /etc/ssh/sshd_config
+
 SCRIPT
 
   root_block_device {
