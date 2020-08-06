@@ -116,8 +116,9 @@ else
 fi
 
 echo 'echo "Ciphers aes128-ctr,aes192-ctr,aes256-ctr" | tee -a /etc/ssh/sshd_config' | tee -a /etc/rc.local
-echo 'echo "MACs hmac-sha2-256,hmac-sha2-512,hmac-sha1" | tee -a /etc/ssh/sshd_config' | tee -a /etc/rc.local
-echo 'echo "systemctl reload ssh.service"' | tee -a /etc/rc.local
+echo 'echo "MACs hmac-sha1,hmac-sha2-256,hmac-sha2-512" | tee -a /etc/ssh/sshd_config' | tee -a /etc/rc.local
+echo 'systemctl reload ssh.service' | tee -a /etc/rc.local
+echo 'exit 0' | tee -a /etc/rc.local
 chmod +x /etc/rc.local
 SCRIPT
 
