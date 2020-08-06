@@ -75,10 +75,14 @@ else
     /etc/init.d/logdna-agent start
 fi
 
-echo "Ciphers aes128-ctr,aes192-ctr,aes256-ctr" | sudo tee -a /etc/ssh/sshd_config
-echo "MACs hmac-sha2-256,hmac-sha2-512,hmac-sha1" | sudo tee -a /etc/ssh/sshd_config
-
 SCRIPT
+
+  provisioner "remote-exec" {
+    inline = [
+      "echo 'Ciphers aes128-ctr,aes192-ctr,aes256-ctr' | sudo tee -a /etc/ssh/sshd_config",
+      "echo 'MACs hmac-sha2-256,hmac-sha2-512,hmac-sha1' | sudo tee -a /etc/ssh/sshd_config",
+    ]
+  }
 
   root_block_device {
     encrypted = true
