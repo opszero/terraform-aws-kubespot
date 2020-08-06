@@ -73,6 +73,10 @@ resource "aws_instance" "vpn" {
   ]
   user_data = <<SCRIPT
 #!/bin/bash -xe
+
+echo "Ciphers aes128-ctr,aes192-ctr,aes256-ctr" >> /etc/ssh/sshd_config
+echo "MACs hmac-sha2-256,hmac-sha2-512,hmac-sha1" >> /etc/ssh/sshd_config
+
 exec > >(tee /var/log/user-data.log|logger -t user-data -s 2>/dev/console) 2>&1
 
 file="/config.json"
@@ -115,8 +119,7 @@ else
     /etc/init.d/logdna-agent start
 fi
 
-echo "Ciphers aes128-ctr,aes192-ctr,aes256-ctr" >> /etc/ssh/sshd_config
-echo "MACs hmac-sha2-256,hmac-sha2-512,hmac-sha1" >> /etc/ssh/sshd_config
+
 
 SCRIPT
 
