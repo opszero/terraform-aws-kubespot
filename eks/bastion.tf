@@ -50,8 +50,8 @@ wget -q -O - https://updates.atomicorp.com/installers/atomic | bash
 apt-get update -y
 apt-get install -y ossec-hids-server ossec-hids-agent
 
-echo "Ciphers aes128-ctr,aes192-ctr,aes256-ctr" >> /etc/ssh/sshd_config
-echo "MACs hmac-sha2-256,hmac-sha2-512,hmac-sha1" >> /etc/ssh/sshd_config
+echo "Ciphers aes128-ctr,aes192-ctr,aes256-ctr" | sudo tee -a /etc/ssh/sshd_config
+echo "MACs hmac-sha2-256,hmac-sha2-512,hmac-sha1" | sudo tee -a /etc/ssh/sshd_config
 
 if [[ ${var.foxpass_install} = "" ]]
 then
