@@ -5,17 +5,11 @@ resource "azurerm_postgresql_server" "default" {
 
   sku_name = var.sql_sku_name
 
-  storage_profile {
-    storage_mb            = var.sql_storage_in_mb
-    backup_retention_days = 35
-    geo_redundant_backup  = "Enabled"
-  }
-
   administrator_login          = var.sql_master_username
   administrator_login_password = var.sql_master_password
 
-  version         = var.sql_version
-  ssl_enforcement = "Disabled"
+  version                 = var.sql_version
+  ssl_enforcement_enabled = false
 }
 
 resource "azurerm_postgresql_virtual_network_rule" "default" {

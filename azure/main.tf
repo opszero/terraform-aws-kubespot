@@ -9,7 +9,7 @@ resource "azurerm_kubernetes_cluster" "cluster" {
   resource_group_name = azurerm_resource_group.cluster.name
   dns_prefix          = "auditkube"
 
-  agent_pool_profile {
+  default_node_pool {
     name            = "nodes"
     count           = var.nodes_desired_capacity
     vm_size         = "Standard_D2_v2"
