@@ -13,7 +13,6 @@ resource "azurerm_kubernetes_cluster" "cluster" {
     name            = "nodes"
     count           = var.nodes_desired_capacity
     vm_size         = "Standard_D2_v2"
-    os_type         = "Linux"
     os_disk_size_gb = 30
 
     vnet_subnet_id = azurerm_subnet.cluster.id
