@@ -6,7 +6,7 @@ resource "azurerm_mariadb_server" "default" {
   resource_group_name = azurerm_resource_group.cluster.name
 
   sku_name   = var.sql_sku_name
-  storage_mb = 10000
+  storage_mb = var.sql_storage_in_mb
 
   administrator_login          = var.sql_master_username
   administrator_login_password = var.sql_master_password

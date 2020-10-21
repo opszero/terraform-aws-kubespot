@@ -126,7 +126,7 @@ variable "sql_sku_name" {
 }
 
 variable "sql_storage_in_mb" {
-  default = 20480
+  default = 10240
 }
 
 variable "sql_master_username" {
