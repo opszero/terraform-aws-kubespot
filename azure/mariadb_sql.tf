@@ -33,6 +33,6 @@ resource "azurerm_mariadb_database" "qa" {
   name                = "qa"
   resource_group_name = azurerm_resource_group.cluster.name
   server_name         = azurerm_mariadb_server.default[count.index].name
-  charset             = "UTF8"
-  collation           = "English_United States.1252"
+  charset             = "utf8"
+  collation           = "utf8_general_ci"
 }
