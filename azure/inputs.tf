@@ -117,10 +117,6 @@ variable "sql_storage_in_mb" {
   default = 20480
 }
 
-variable "sql_capacity" {
-  default = 2
-}
-
 variable "sql_master_username" {
   default = ""
 }

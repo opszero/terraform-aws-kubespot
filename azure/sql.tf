@@ -3,12 +3,7 @@ resource "azurerm_postgresql_server" "default" {
   location            = azurerm_resource_group.cluster.location
   resource_group_name = azurerm_resource_group.cluster.name
 
-  sku {
-    name     = var.sql_sku_name
-    capacity = var.sql_capacity
-    tier     = "GeneralPurpose"
-    family   = "Gen5"
-  }
+  sku_name = var.sql_sku_name
 
   storage_profile {
     storage_mb            = var.sql_storage_in_mb
