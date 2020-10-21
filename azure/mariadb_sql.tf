@@ -25,7 +25,6 @@ resource "azurerm_mariadb_virtual_network_rule" "default" {
   resource_group_name                  = azurerm_resource_group.cluster.name
   server_name                          = azurerm_mariadb_server.default[count.index].name
   subnet_id                            = azurerm_subnet.cluster.id
-  ignore_missing_vnet_service_endpoint = true
 }
 
 resource "azurerm_mariadb_database" "qa" {
