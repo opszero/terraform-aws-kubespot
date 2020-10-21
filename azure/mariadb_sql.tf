@@ -13,9 +13,9 @@ resource "azurerm_mariadb_server" "default" {
 
   backup_retention_days = 35
 
-  version                 = var.mariadb_sql_version
-  ssl_enforcement_enabled = false
-  public_network_access   = false
+  version                       = var.mariadb_sql_version
+  ssl_enforcement_enabled       = false
+  public_network_access_enabled = false
 }
 
 resource "azurerm_mariadb_virtual_network_rule" "default" {
