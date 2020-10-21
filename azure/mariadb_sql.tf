@@ -1,7 +1,7 @@
 resource "azurerm_mariadb_server" "default" {
   count = var.mariadb_sql_enabled ? 1 : 0
 
-  name                = var.environment_name
+  name                = "${var.environment_name}-mariadb"
   location            = azurerm_resource_group.cluster.location
   resource_group_name = azurerm_resource_group.cluster.name
 
