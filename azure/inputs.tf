@@ -77,6 +77,10 @@ variable "nodes_desired_capacity" {
 #   default     = ""
 # }
 
+variable "registry_enabled" {
+  default = false
+}
+
 variable "redis_enabled" {
   default = false
 }
