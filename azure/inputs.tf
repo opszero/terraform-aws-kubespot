@@ -101,11 +101,11 @@ variable "redis_sku_name" {
   default = "Standard"
 }
 
-variable "sql_enabled" {
+variable "postgres_sql_enabled" {
   default = false
 }
 
-variable "sql_version" {
+variable "postgres_sql_version" {
   default = "11"
 }
 
