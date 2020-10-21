@@ -10,8 +10,11 @@ resource "azurerm_postgresql_server" "default" {
   administrator_login          = var.sql_master_username
   administrator_login_password = var.sql_master_password
 
+  backup_retention_days = 35
+
   version                 = var.postgres_sql_version
   ssl_enforcement_enabled = false
+  public_network_access   = false
 }
 
 resource "azurerm_postgresql_virtual_network_rule" "default" {
@@ -33,3 +36,5 @@ resource "azurerm_postgresql_database" "qa" {
   charset             = "UTF8"
   collation           = "English_United States.1252"
 }
+
+

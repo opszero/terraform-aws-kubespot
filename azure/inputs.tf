@@ -105,6 +105,14 @@ variable "redis_sku_name" {
   default = "Standard"
 }
 
+variable "mariadb_sql_enabled" {
+  default = false
+}
+
+variable "mariadb_sql_version" {
+  default = "10.2"
+}
+
 variable "postgres_sql_enabled" {
   default = false
 }
