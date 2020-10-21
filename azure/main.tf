@@ -5,18 +5,17 @@ resource "azurerm_resource_group" "cluster" {
 
 resource "azurerm_kubernetes_cluster" "cluster" {
   name                = var.environment_name
-  location            = "${azurerm_resource_group.cluster.location}"
-  resource_group_name = "${azurerm_resource_group.cluster.name}"
+  location            = azurerm_resource_group.cluster.location
+  resource_group_name = azurerm_resource_group.cluster.name
   dns_prefix          = "auditkube"
 
-  agent_pool_profile {
+  default_node_pool {
     name            = "nodes"
-    count           = var.nodes_desired_capacity
+    node_count      = var.nodes_desired_capacity
     vm_size         = "Standard_D2_v2"
-    os_type         = "Linux"
     os_disk_size_gb = 30
 
-    vnet_subnet_id = "${azurerm_subnet.cluster.id}"
+    vnet_subnet_id = azurerm_subnet.cluster.id
   }
 
   service_principal {

@@ -77,6 +77,10 @@ variable "nodes_desired_capacity" {
 #   default     = ""
 # }
 
+variable "registry_enabled" {
+  default = false
+}
+
 variable "redis_enabled" {
   default = false
 }
@@ -101,11 +105,19 @@ variable "redis_sku_name" {
   default = "Standard"
 }
 
-variable "sql_enabled" {
+variable "mariadb_sql_enabled" {
   default = false
 }
 
-variable "sql_version" {
+variable "mariadb_sql_version" {
+  default = "10.2"
+}
+
+variable "postgres_sql_enabled" {
+  default = false
+}
+
+variable "postgres_sql_version" {
   default = "11"
 }
 
@@ -114,11 +126,7 @@ variable "sql_sku_name" {
 }
 
 variable "sql_storage_in_mb" {
-  default = 20480
-}
-
-variable "sql_capacity" {
-  default = 2
+  default = 10240
 }
 
 variable "sql_master_username" {
