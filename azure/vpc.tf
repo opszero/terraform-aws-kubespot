@@ -24,6 +24,8 @@ resource "azurerm_subnet" "cluster" {
   address_prefixes     = ["10.1.0.0/24"]
   virtual_network_name = azurerm_virtual_network.cluster.name
   service_endpoints    = ["Microsoft.Sql"]
+
+  enforce_private_link_endpoint_network_policies = true
 }
 
 resource "azurerm_subnet_route_table_association" "cluster" {
