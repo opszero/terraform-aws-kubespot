@@ -24,6 +24,10 @@ variable "region" {
   default = "Central US"
 }
 
+variable "cidr" {
+  default = "10.0.0.0"
+}
+
 # variable "zones" {
 #   default = ["us-central1-a", "us-central1-b"]
 # }
