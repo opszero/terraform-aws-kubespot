@@ -201,7 +201,7 @@ variable "sql_node_count" {
 }
 
 variable "sql_instance_class" {
-  default = "db.r4.large"
+  default = "db.t3.medium"
 }
 
 variable "sql_database_name" {
