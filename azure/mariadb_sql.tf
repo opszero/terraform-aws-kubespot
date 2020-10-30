@@ -27,7 +27,7 @@ resource "azurerm_mariadb_virtual_network_rule" "default" {
   subnet_id                            = azurerm_subnet.cluster.id
 }
 
-resource "azurerm_mariadb_database" "qa" {
+resource "azurerm_mariadb_database" "default" {
   count = var.mariadb_sql_enabled ? 1 : 0
 
   name                = var.environment_name
