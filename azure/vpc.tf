@@ -19,7 +19,7 @@ resource "azurerm_virtual_network" "cluster" {
 }
 
 resource "azurerm_subnet" "cluster" {
-  name                 = var.enviroment_name
+  name                 = var.environment_name
   resource_group_name  = azurerm_resource_group.cluster.name
   address_prefixes     = ["${var.cidr}/14"]
   virtual_network_name = azurerm_virtual_network.cluster.name
