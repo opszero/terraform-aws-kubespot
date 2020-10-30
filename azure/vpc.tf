@@ -15,13 +15,13 @@ resource "azurerm_virtual_network" "cluster" {
   name                = var.environment_name
   location            = azurerm_resource_group.cluster.location
   resource_group_name = azurerm_resource_group.cluster.name
-  address_space       = ["${var.cidr}/9"]
+  address_space       = ["${var.cidr}/12"]
 }
 
 resource "azurerm_subnet" "cluster" {
   name                 = var.enviroment_name
   resource_group_name  = azurerm_resource_group.cluster.name
-  address_prefixes     = ["${var.cidr}/12"]
+  address_prefixes     = ["${var.cidr}/14"]
   virtual_network_name = azurerm_virtual_network.cluster.name
   service_endpoints    = ["Microsoft.Sql"]
 
