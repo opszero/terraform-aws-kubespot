@@ -30,7 +30,7 @@ resource "azurerm_mariadb_virtual_network_rule" "default" {
 resource "azurerm_mariadb_database" "qa" {
   count = var.mariadb_sql_enabled ? 1 : 0
 
-  name                = "qa"
+  name                = var.environment_name
   resource_group_name = azurerm_resource_group.cluster.name
   server_name         = azurerm_mariadb_server.default[count.index].name
   charset             = "utf8"
