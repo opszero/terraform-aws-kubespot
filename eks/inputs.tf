@@ -237,7 +237,7 @@ variable "sql_instance_engine" {
 }
 
 variable "sql_engine_version" {
-  default = "12.2"
+  default = "12.3"
 }
 
 variable "fargate_enabled" {
