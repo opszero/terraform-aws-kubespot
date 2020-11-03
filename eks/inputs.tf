@@ -28,6 +28,10 @@ variable "cluster_public_access_cidrs" {
   default = ["0.0.0.0/0"]
 }
 
+variable "node_userdata" {
+  default = ""
+}
+
 
 variable "bastion_enabled" {
   default = false
