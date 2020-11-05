@@ -41,7 +41,13 @@ variable "bastion_eip_enabled" {
   default = false
 }
 
-variable cidr_block {
+variable "bastion_vpn_allowed_cidrs" {
+  description = "These are the IPs that the bastion and VPN allow connections from."
+  default = ["0.0.0.0/0"]
+}
+
+variable "cidr_block" {
+  description = "The CIDR block used by the VPC"
   default = "10.2.0.0/16"
 }
 

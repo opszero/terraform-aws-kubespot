@@ -22,8 +22,7 @@ resource "aws_security_group" "bastion" {
 }
 
 resource "aws_security_group_rule" "bastion_ssh" {
-  cidr_blocks       = ["0.0.0.0/0"]
-  description       = "Allow workstation to communicate with the cluster API Server"
+  cidr_blocks       = var.bastion_vpn_allowed_cidrs
   from_port         = 22
   protocol          = "-1"
   security_group_id = aws_security_group.bastion.id

@@ -27,9 +27,7 @@ resource "aws_security_group" "vpn" {
     from_port = 22
     protocol  = "tcp"
     to_port   = 22
-    cidr_blocks = [
-    "0.0.0.0/0"]
-
+    cidr_blocks = var.bastion_vpn_allowed_cidrs
   }
   ingress {
     from_port = 0
@@ -126,4 +124,3 @@ SCRIPT
     Name = "${var.environment_name}-vpn"
   }
 }
-
