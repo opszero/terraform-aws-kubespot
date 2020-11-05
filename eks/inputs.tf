@@ -28,7 +28,7 @@ variable "cluster_public_access_cidrs" {
   default = ["0.0.0.0/0"]
 }
 
-variable "node_userdata" {
+variable "instance_userdata" {
   default = ""
 }
 

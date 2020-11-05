@@ -55,7 +55,7 @@ then
     echo "Not Installing Foxpass"
 else
     wget https://raw.githubusercontent.com/foxpass/foxpass-setup/master/linux/amzn/2.0/foxpass_setup.py
-    python foxpass_setup.py --base-dn {{user `foxpass_base_dn`}}  --bind-user {{user `foxpass_bind_user`}} --bind-pw {{user `foxpass_bind_pw`}} --api-key {{user `foxpass_api_key`}}; fi"
+    python foxpass_setup.py --base-dn ${var.foxpass_base_dn}  --bind-user ${var.foxpass_bind_user} --bind-pw ${var.foxpass_bind_pw} --api-key ${var.foxpass_api_key}
 end
 
 if [[ ${var.logdna_ingestion_key} == ""  ]]
@@ -74,6 +74,9 @@ else
     update-rc.d logdna-agent defaults
     /etc/init.d/logdna-agent start
 fi
+
+
+${var.instance_userdata}
 
 echo 'echo "Ciphers aes128-ctr,aes192-ctr,aes256-ctr" | tee -a /etc/ssh/sshd_config' | tee -a /etc/rc.local
 echo 'echo "MACs hmac-sha1,hmac-sha2-256,hmac-sha2-512" | tee -a /etc/ssh/sshd_config' | tee -a /etc/rc.local
