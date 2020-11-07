@@ -10,6 +10,10 @@ variable "client_secret" {
   type = string
 }
 
+variable "ad_group_ids" {
+  description = "ActiveDirectory Groups that have access to this cluster"
+  default = []
+}
 
 # variable "cluster_version" {
 #   default = "1.13"
