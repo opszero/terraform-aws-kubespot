@@ -50,7 +50,7 @@ resource "aws_cloudwatch_metric_alarm" "database_cpu_database" {
 }
 
 resource "aws_cloudwatch_metric_alarm" "database_disk_database" {
-  alarm_name                = "${var.environment_name}-cpu-database"
+  alarm_name                = "${var.environment_name}-disk-database"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = "2"
   metric_name               = "VolumeReadIOPs"
@@ -58,6 +58,19 @@ resource "aws_cloudwatch_metric_alarm" "database_disk_database" {
   period                    = "300"
   statistic                 = "Average"
   threshold                 = "80"
-  alarm_description         = "This metric monitors RDS cpu utilization"
+  alarm_description         = "This metric monitors RDS disk utilization"
+  insufficient_data_actions = []
+}
+
+resource "aws_cloudwatch_metric_alarm" "database_free_disk_database" {
+  alarm_name                = "${var.environment_name}-free-disk-database"
+  comparison_operator       = "LessThanOrEqualToThreshold"
+  evaluation_periods        = "2"
+  metric_name               = "AuroraVolumeBytesLeftTotal"
+  namespace                 = "AWS/RDS"
+  period                    = "300"
+  statistic                 = "Average"
+  threshold                 = "80"
+  alarm_description         = "This metric monitors RDS free disk space"
   insufficient_data_actions = []
 }
