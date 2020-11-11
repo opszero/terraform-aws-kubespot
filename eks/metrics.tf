@@ -16,6 +16,6 @@
 #}
 #
 
-resource "aws_cloudwatch_log_group" "group" {
+resource "aws_cloudwatch_log_group" "vpc" {
   name = var.environment_name
 }
