@@ -61,7 +61,7 @@ else
     python foxpass_setup.py --base-dn ${var.foxpass_base_dn}  --bind-user ${var.foxpass_bind_user} --bind-pw ${var.foxpass_bind_pw} --api-key ${var.foxpass_api_key}
 fi
 
-if [[ ${var.logdna_ingestion_key} == ""  ]]
+if [[ "${var.logdna_ingestion_key}" = ""  ]]
 then
     echo "Not Installing LogDNA."
 else

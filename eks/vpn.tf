@@ -100,7 +100,7 @@ sleep 15
 
 /opt/bin/config.py $file
 
-if [[ ${var.logdna_ingestion_key} == ""  ]]
+if [[ "${var.logdna_ingestion_key}" = ""  ]]
 then
     echo "Not Installing LogDNA."
 else
