@@ -47,8 +47,8 @@ resource "aws_rds_cluster_instance" "cluster_instances" {
 
   instance_class = var.sql_instance_class
 
-  monitoring_role_arn = var.monitoring_role_arn
-  monitoring_interval = 5
+  monitoring_role_arn          = var.monitoring_role_arn
+  monitoring_interval          = 5
   performance_insights_enabled = true
 
   db_subnet_group_name = aws_db_subnet_group.default.name
