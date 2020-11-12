@@ -15,7 +15,7 @@ resource "aws_cloudwatch_metric_alarm" "nodes_green_cpu_threshold" {
   insufficient_data_actions = []
 
   dimensions = {
-    auto_scaling_group_name = aws_autoscaling_group.nodes_green.name
+    AutoScalingGroupName = aws_autoscaling_group.nodes_green.name
   }
 }
 
@@ -32,7 +32,7 @@ resource "aws_cloudwatch_metric_alarm" "nodes_blue_cpu_threshold" {
   insufficient_data_actions = []
 
   dimensions = {
-    auto_scaling_group_name = aws_autoscaling_group.nodes_blue.name
+    AutoScalingGroupName = aws_autoscaling_group.nodes_blue.name
   }
 }
 
