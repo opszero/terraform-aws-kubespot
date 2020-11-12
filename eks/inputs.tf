@@ -257,3 +257,21 @@ variable "fargate_enabled" {
 variable "monitoring_role_arn" {
   default = ""
 }
+
+variable "enabled_metrics_asg" {
+  default = [
+    "GroupDesiredCapacity",
+    "GroupInServiceCapacity",
+    "GroupInServiceInstances",
+    "GroupMaxSize",
+    "GroupMinSize",
+    "GroupPendingCapacity",
+    "GroupPendingInstances",
+    "GroupStandbyCapacity",
+    "GroupStandbyInstances",
+    "GroupTerminatingCapacity",
+    "GroupTerminatingInstances",
+    "GroupTotalCapacity",
+    "GroupTotalInstances",
+  ]
+}

@@ -132,7 +132,7 @@ resource "aws_autoscaling_group" "nodes_blue" {
 
   vpc_zone_identifier = var.nodes_in_public_subnet ? aws_subnet.public.*.id : aws_subnet.private.*.id
 
-  enabled_metrics = locals.enabled_metrics_asg
+  enabled_metrics = var.enabled_metrics_asg
 
   tags = [
     {
@@ -179,7 +179,7 @@ resource "aws_autoscaling_group" "nodes_green" {
 
   vpc_zone_identifier = var.nodes_in_public_subnet ? aws_subnet.public.*.id : aws_subnet.private.*.id
 
-  enabled_metrics = locals.enabled_metrics_asg
+  enabled_metrics = var.enabled_metrics_asg
 
   tags = [
     {
@@ -196,23 +196,4 @@ resource "aws_autoscaling_group" "nodes_green" {
 }
 
 data "aws_caller_identity" "current" {
-}
-
-
-locals {
-enabled_metrics_asg           = [
-           "GroupDesiredCapacity",
-           "GroupInServiceCapacity",
-           "GroupInServiceInstances",
-           "GroupMaxSize",
-           "GroupMinSize",
-           "GroupPendingCapacity",
-           "GroupPendingInstances",
-           "GroupStandbyCapacity",
-           "GroupStandbyInstances",
-           "GroupTerminatingCapacity",
-           "GroupTerminatingInstances",
-           "GroupTotalCapacity",
-           "GroupTotalInstances",
-        ]
 }
