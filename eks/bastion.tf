@@ -49,15 +49,15 @@ resource "aws_instance" "bastion" {
   user_data = <<SCRIPT
 wget -q -O - https://updates.atomicorp.com/installers/atomic | bash
 apt-get update -y
-apt-get install -y ossec-hids-server ossec-hids-agent
+apt-get install -y ossec-hids-server ossec-hids-agent python-minimal python-urllib3
 
-if [[ ${var.foxpass_install} = "" ]]
+if [[ "${var.foxpass_install}" = "" ]]
 then
     echo "Not Installing Foxpass"
 else
-    wget https://raw.githubusercontent.com/foxpass/foxpass-setup/master/linux/amzn/2.0/foxpass_setup.py
+    wget https://raw.githubusercontent.com/abhiyerra/foxpass-setup/master/linux/ubuntu/18.04/foxpass_setup.py
     python foxpass_setup.py --base-dn ${var.foxpass_base_dn}  --bind-user ${var.foxpass_bind_user} --bind-pw ${var.foxpass_bind_pw} --api-key ${var.foxpass_api_key}
-end
+fi
 
 if [[ ${var.logdna_ingestion_key} == ""  ]]
 then
