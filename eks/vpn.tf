@@ -69,6 +69,10 @@ resource "aws_instance" "vpn" {
   vpc_security_group_ids = [
     aws_security_group.vpn[0].id
   ]
+
+
+  monitoring = true
+
   user_data = <<SCRIPT
 #!/bin/bash -xe
 

@@ -41,6 +41,8 @@ resource "aws_instance" "bastion" {
   subnet_id                   = aws_subnet.public[0].id
   vpc_security_group_ids      = [aws_security_group.node.id, aws_security_group.bastion.id]
 
+  monitoring = true
+
   tags = {
     Name = "${var.environment_name}-bastion"
   }
