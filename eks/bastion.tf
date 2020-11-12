@@ -47,6 +47,8 @@ resource "aws_instance" "bastion" {
     Name = "${var.environment_name}-bastion"
   }
   user_data = <<SCRIPT
+#!/bin/bash
+
 #wget -q -O - https://updates.atomicorp.com/installers/atomic | bash
 apt-get update -y
 apt-get install -y python-minimal python-urllib3
