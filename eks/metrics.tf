@@ -164,6 +164,25 @@ resource "aws_cloudwatch_metric_alarm" "database_free_disk_database3" {
   }
 }
 
+resource "aws_cloudwatch_metric_alarm" "database_free_disk_database4" {
+  count                     = var.sql_enabled ? 1 : 0
+  alarm_name                = "${var.environment_name}-free-disk-database"
+  comparison_operator       = "GreaterThanOrEqualToThreshold"
+  evaluation_periods        = "2"
+  metric_name               = "FreeableMemory"
+  namespace                 = "AWS/RDS"
+  period                    = "300"
+  statistic                 = "Average"
+  threshold                 = "80"
+  alarm_description         = "This metric monitors RDS free disk space"
+  insufficient_data_actions = []
+
+  dimensions = {
+    DBClusterIdentifier = aws_rds_cluster.default[0].cluster_identifier
+  }
+}
+
+
 resource "aws_cloudwatch_metric_alarm" "database_io_postgres" {
   count                     = var.sql_enabled ? 1 : 0
   alarm_name                = "${var.environment_name}-free-disk-database"
