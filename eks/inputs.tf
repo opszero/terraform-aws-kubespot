@@ -253,3 +253,7 @@ variable "sql_engine_version" {
 variable "fargate_enabled" {
   default = false
 }
+
+variable "monitoring_role_arn" {
+  default = ""
+}
