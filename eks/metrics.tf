@@ -47,6 +47,10 @@ resource "aws_cloudwatch_metric_alarm" "database_cpu_database" {
   threshold                 = "80"
   alarm_description         = "This metric monitors RDS cpu utilization"
   insufficient_data_actions = []
+
+  dimensions = {
+    DBClusterIdentifier = aws_rds_cluster.default.cluster_identifier
+  }
 }
 
 resource "aws_cloudwatch_metric_alarm" "database_disk_database" {
@@ -60,6 +64,10 @@ resource "aws_cloudwatch_metric_alarm" "database_disk_database" {
   threshold                 = "80"
   alarm_description         = "This metric monitors RDS disk utilization"
   insufficient_data_actions = []
+
+  dimensions = {
+    DBClusterIdentifier = aws_rds_cluster.default.cluster_identifier
+  }
 }
 
 resource "aws_cloudwatch_metric_alarm" "database_free_disk_database" {
@@ -73,4 +81,42 @@ resource "aws_cloudwatch_metric_alarm" "database_free_disk_database" {
   threshold                 = "80"
   alarm_description         = "This metric monitors RDS free disk space"
   insufficient_data_actions = []
+
+  dimensions = {
+    DBClusterIdentifier = aws_rds_cluster.default.cluster_identifier
+  }
+}
+
+resource "aws_cloudwatch_metric_alarm" "database_free_disk_database2" {
+  alarm_name                = "${var.environment_name}-free-disk-database"
+  comparison_operator       = "LessThanOrEqualToThreshold"
+  evaluation_periods        = "2"
+  metric_name               = "FreeStorageSpace"
+  namespace                 = "AWS/RDS"
+  period                    = "300"
+  statistic                 = "Average"
+  threshold                 = "80"
+  alarm_description         = "This metric monitors RDS free disk space"
+  insufficient_data_actions = []
+
+  dimensions = {
+    DBClusterIdentifier = aws_rds_cluster.default.cluster_identifier
+  }
+}
+
+resource "aws_cloudwatch_metric_alarm" "database_free_disk_database3" {
+  alarm_name                = "${var.environment_name}-free-disk-database"
+  comparison_operator       = "LessThanOrEqualToThreshold"
+  evaluation_periods        = "2"
+  metric_name               = "FreeLocalStorage"
+  namespace                 = "AWS/RDS"
+  period                    = "300"
+  statistic                 = "Average"
+  threshold                 = "80"
+  alarm_description         = "This metric monitors RDS free disk space"
+  insufficient_data_actions = []
+
+  dimensions = {
+    DBClusterIdentifier = aws_rds_cluster.default.cluster_identifier
+  }
 }
