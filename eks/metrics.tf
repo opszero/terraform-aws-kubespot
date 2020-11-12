@@ -37,6 +37,7 @@ resource "aws_cloudwatch_metric_alarm" "nodes_blue_cpu_threshold" {
 }
 
 resource "aws_cloudwatch_metric_alarm" "database_cpu_database" {
+  count = var.sql_enabled ? 1 : 0
   alarm_name                = "${var.environment_name}-cpu-database"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = "2"
@@ -49,11 +50,12 @@ resource "aws_cloudwatch_metric_alarm" "database_cpu_database" {
   insufficient_data_actions = []
 
   dimensions = {
-    DBClusterIdentifier = aws_rds_cluster.default.cluster_identifier
+    DBClusterIdentifier = aws_rds_cluster.default[0].cluster_identifier
   }
 }
 
 resource "aws_cloudwatch_metric_alarm" "database_disk_database" {
+  count = var.sql_enabled ? 1 : 0
   alarm_name                = "${var.environment_name}-disk-database"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = "2"
@@ -66,11 +68,12 @@ resource "aws_cloudwatch_metric_alarm" "database_disk_database" {
   insufficient_data_actions = []
 
   dimensions = {
-    DBClusterIdentifier = aws_rds_cluster.default.cluster_identifier
+    DBClusterIdentifier = aws_rds_cluster.default[0].cluster_identifier
   }
 }
 
 resource "aws_cloudwatch_metric_alarm" "database_free_disk_database" {
+  count = var.sql_enabled ? 1 : 0
   alarm_name                = "${var.environment_name}-free-disk-database"
   comparison_operator       = "LessThanOrEqualToThreshold"
   evaluation_periods        = "2"
@@ -83,11 +86,12 @@ resource "aws_cloudwatch_metric_alarm" "database_free_disk_database" {
   insufficient_data_actions = []
 
   dimensions = {
-    DBClusterIdentifier = aws_rds_cluster.default.cluster_identifier
+    DBClusterIdentifier = aws_rds_cluster.default[0].cluster_identifier
   }
 }
 
 resource "aws_cloudwatch_metric_alarm" "database_free_disk_database2" {
+  count = var.sql_enabled ? 1 : 0
   alarm_name                = "${var.environment_name}-free-disk-database"
   comparison_operator       = "LessThanOrEqualToThreshold"
   evaluation_periods        = "2"
@@ -100,11 +104,12 @@ resource "aws_cloudwatch_metric_alarm" "database_free_disk_database2" {
   insufficient_data_actions = []
 
   dimensions = {
-    DBClusterIdentifier = aws_rds_cluster.default.cluster_identifier
+    DBClusterIdentifier = aws_rds_cluster.default[0].cluster_identifier
   }
 }
 
 resource "aws_cloudwatch_metric_alarm" "database_free_disk_database3" {
+  count = var.sql_enabled ? 1 : 0
   alarm_name                = "${var.environment_name}-free-disk-database"
   comparison_operator       = "LessThanOrEqualToThreshold"
   evaluation_periods        = "2"
@@ -117,6 +122,6 @@ resource "aws_cloudwatch_metric_alarm" "database_free_disk_database3" {
   insufficient_data_actions = []
 
   dimensions = {
-    DBClusterIdentifier = aws_rds_cluster.default.cluster_identifier
+    DBClusterIdentifier = aws_rds_cluster.default[0].cluster_identifier
   }
 }
