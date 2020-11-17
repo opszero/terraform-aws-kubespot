@@ -28,6 +28,10 @@ variable "cluster_public_access_cidrs" {
   default = ["0.0.0.0/0"]
 }
 
+variable "instance_userdata" {
+  default = ""
+}
+
 
 variable "bastion_enabled" {
   default = false
@@ -37,8 +41,14 @@ variable "bastion_eip_enabled" {
   default = false
 }
 
-variable cidr_block {
-  default = "10.2.0.0/16"
+variable "bastion_vpn_allowed_cidrs" {
+  description = "These are the IPs that the bastion and VPN allow connections from."
+  default     = ["0.0.0.0/0"]
+}
+
+variable "cidr_block" {
+  description = "The CIDR block used by the VPC"
+  default     = "10.2.0.0/16"
 }
 
 variable "enable_ipv6" {
@@ -201,7 +211,7 @@ variable "sql_node_count" {
 }
 
 variable "sql_instance_class" {
-  default = "db.r4.large"
+  default = "db.t3.medium"
 }
 
 variable "sql_database_name" {
@@ -237,9 +247,31 @@ variable "sql_instance_engine" {
 }
 
 variable "sql_engine_version" {
-  default = "12.2"
+  default = "12.3"
 }
 
 variable "fargate_enabled" {
   default = false
+}
+
+variable "monitoring_role_arn" {
+  default = ""
+}
+
+variable "enabled_metrics_asg" {
+  default = [
+    "GroupDesiredCapacity",
+    "GroupInServiceCapacity",
+    "GroupInServiceInstances",
+    "GroupMaxSize",
+    "GroupMinSize",
+    "GroupPendingCapacity",
+    "GroupPendingInstances",
+    "GroupStandbyCapacity",
+    "GroupStandbyInstances",
+    "GroupTerminatingCapacity",
+    "GroupTerminatingInstances",
+    "GroupTotalCapacity",
+    "GroupTotalInstances",
+  ]
 }

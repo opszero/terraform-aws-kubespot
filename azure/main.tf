@@ -16,6 +16,7 @@ resource "azurerm_kubernetes_cluster" "cluster" {
     os_disk_size_gb = 30
 
     vnet_subnet_id = azurerm_subnet.cluster.id
+    enable_node_public_ip = true # TURN it off
   }
 
   service_principal {
@@ -29,6 +30,10 @@ resource "azurerm_kubernetes_cluster" "cluster" {
 
   role_based_access_control {
     enabled = true
+    azure_active_directory {
+      managed = true
+      admin_group_object_ids = var.ad_group_ids
+    }
   }
 
   tags = {

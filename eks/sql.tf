@@ -47,6 +47,10 @@ resource "aws_rds_cluster_instance" "cluster_instances" {
 
   instance_class = var.sql_instance_class
 
+  monitoring_role_arn          = var.monitoring_role_arn
+  monitoring_interval          = 5
+  performance_insights_enabled = true
+
   db_subnet_group_name = aws_db_subnet_group.default.name
 }
 
@@ -73,7 +77,6 @@ resource "aws_db_instance" "default" {
   storage_encrypted           = true
   allow_major_version_upgrade = true
   backup_retention_period     = 35
-
 
   deletion_protection = true // Don't Delete Ever! Except manually.
 }

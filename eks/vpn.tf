@@ -24,12 +24,10 @@ resource "aws_security_group" "vpn" {
     "0.0.0.0/0"]
   }
   ingress {
-    from_port = 22
-    protocol  = "tcp"
-    to_port   = 22
-    cidr_blocks = [
-    "0.0.0.0/0"]
-
+    from_port   = 22
+    protocol    = "tcp"
+    to_port     = 22
+    cidr_blocks = var.bastion_vpn_allowed_cidrs
   }
   ingress {
     from_port = 0
@@ -71,6 +69,10 @@ resource "aws_instance" "vpn" {
   vpc_security_group_ids = [
     aws_security_group.vpn[0].id
   ]
+
+
+  monitoring = true
+
   user_data = <<SCRIPT
 #!/bin/bash -xe
 
@@ -98,7 +100,7 @@ sleep 15
 
 /opt/bin/config.py $file
 
-if [[ ${var.logdna_ingestion_key} == ""  ]]
+if [[ "${var.logdna_ingestion_key}" = ""  ]]
 then
     echo "Not Installing LogDNA."
 else
@@ -115,6 +117,8 @@ else
     /etc/init.d/logdna-agent start
 fi
 
+${var.instance_userdata}
+
 echo 'echo "Ciphers aes128-ctr,aes192-ctr,aes256-ctr" | tee -a /etc/ssh/sshd_config' | tee -a /etc/rc.local
 echo 'echo "MACs hmac-sha1,hmac-sha2-256,hmac-sha2-512" | tee -a /etc/ssh/sshd_config' | tee -a /etc/rc.local
 echo 'systemctl reload ssh.service' | tee -a /etc/rc.local
@@ -126,4 +130,3 @@ SCRIPT
     Name = "${var.environment_name}-vpn"
   }
 }
-

@@ -94,6 +94,8 @@ set -o xtrace
 # echo "vm.min_free_kbytes=65536" >>  /etc/sysctl.conf
 # sysctl -p /etc/sysctl.conf
 
+${var.instance_userdata}
+
 /etc/eks/bootstrap.sh --apiserver-endpoint '${aws_eks_cluster.cluster.endpoint}' --b64-cluster-ca '${aws_eks_cluster.cluster.certificate_authority[0].data}' '${var.environment_name}'
 USERDATA
 
@@ -129,6 +131,8 @@ resource "aws_autoscaling_group" "nodes_blue" {
   max_instance_lifetime = var.nodes_blue_max_instance_lifetime
 
   vpc_zone_identifier = var.nodes_in_public_subnet ? aws_subnet.public.*.id : aws_subnet.private.*.id
+
+  enabled_metrics = var.enabled_metrics_asg
 
   tags = [
     {
@@ -175,6 +179,8 @@ resource "aws_autoscaling_group" "nodes_green" {
 
   vpc_zone_identifier = var.nodes_in_public_subnet ? aws_subnet.public.*.id : aws_subnet.private.*.id
 
+  enabled_metrics = var.enabled_metrics_asg
+
   tags = [
     {
       key                 = "Name"
@@ -191,4 +197,3 @@ resource "aws_autoscaling_group" "nodes_green" {
 
 data "aws_caller_identity" "current" {
 }
-
