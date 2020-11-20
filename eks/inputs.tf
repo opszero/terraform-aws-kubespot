@@ -276,6 +276,6 @@ variable "enabled_metrics_asg" {
   ]
 }
 
-variable "vpc_flows_log_enabled" {
+variable "vpc_flow_logs_enabled" {
   default = false
 }
