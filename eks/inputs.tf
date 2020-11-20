@@ -275,3 +275,7 @@ variable "enabled_metrics_asg" {
     "GroupTotalInstances",
   ]
 }
+
+variable "vpc_flow_logs_enabled" {
+  default = false
+}
