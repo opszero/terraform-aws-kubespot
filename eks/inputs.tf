@@ -124,6 +124,11 @@ variable "nodes_blue_root_device_size" {
   default = "20"
 }
 
+variable "ami_image" {
+  default = ""
+}
+
+
 variable "nodes_blue_desired_capacity" {
   default = 1
 }
