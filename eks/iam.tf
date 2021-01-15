@@ -84,10 +84,10 @@ EOF
   depends_on = [aws_iam_openid_connect_provider.cluster]
 }
 
-# resource "aws_iam_role_policy_attachment" "aws_node_oidc" {
-#   role       = aws_iam_role.node_oidc.name
-#   policy_arn = "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy"
-# }
+resource "aws_iam_role_policy_attachment" "aws_node_oidc" {
+  role       = aws_iam_role.node_oidc.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy"
+}
 
 resource "aws_iam_role_policy_attachment" "node-AmazonEKSWorkerNodePolicy" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy"
@@ -96,7 +96,7 @@ resource "aws_iam_role_policy_attachment" "node-AmazonEKSWorkerNodePolicy" {
 
 resource "aws_iam_role_policy_attachment" "node-AmazonEKS_CNI_Policy" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy"
-  role       = aws_iam_role.node_oidc.name
+  role       = aws_iam_role.node.name
 }
 
 resource "aws_iam_role_policy_attachment" "node-AmazonEC2ContainerRegistryReadOnly" {
