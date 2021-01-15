@@ -135,6 +135,33 @@ resource "aws_iam_role_policy" "autoscaling" {
 EOF
 }
 
+resource "aws_iam_role_policy" "autoscaling" {
+  name = "AWSEKSAutoscaler-${var.environment_name}"
+  role = aws_iam_role.node_oidc.id
+
+  policy = <<EOF
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": [
+                "autoscaling:DescribeAutoScalingGroups",
+                "autoscaling:DescribeAutoScalingInstances",
+                "autoscaling:DescribeTags",
+                "autoscaling:DescribeLaunchConfigurations",
+                "autoscaling:SetDesiredCapacity",
+                "autoscaling:TerminateInstanceInAutoScalingGroup",
+                "ec2:DescribeLaunchTemplateVersions"
+            ],
+            "Resource": "*"
+        }
+    ]
+}
+EOF
+}
+
+
 
 resource "aws_iam_role" "fargate" {
   name = "${var.environment_name}-fargate"
