@@ -96,7 +96,7 @@ resource "aws_iam_role_policy_attachment" "node-AmazonEKSWorkerNodePolicy" {
 
 resource "aws_iam_role_policy_attachment" "node-AmazonEKS_CNI_Policy" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy"
-  role       = aws_iam_role.node_odic.name
+  role       = aws_iam_role.node_oidc.name
 }
 
 resource "aws_iam_role_policy_attachment" "node-AmazonEC2ContainerRegistryReadOnly" {
