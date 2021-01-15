@@ -135,8 +135,8 @@ resource "aws_iam_role_policy" "autoscaling" {
 EOF
 }
 
-resource "aws_iam_role_policy" "autoscaling" {
-  name = "AWSEKSAutoscaler-${var.environment_name}"
+resource "aws_iam_role_policy" "autoscaling_oidc" {
+  name = "AWSEKSAutoscaler-oidc-${var.environment_name}"
   role = aws_iam_role.node_oidc.id
 
   policy = <<EOF
