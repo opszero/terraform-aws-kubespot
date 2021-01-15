@@ -68,7 +68,7 @@ resource "aws_iam_role" "node_oidc" {
     {
       "Effect": "Allow",
       "Principal": {
-        "Service": "${aws_iam_openid_connect_provider.cluster.arn}"
+        "Federated": "${aws_iam_openid_connect_provider.cluster.arn}"
       },
       "Action": "sts:AssumeRoleWithWebIdentity",
       "Condition": {
