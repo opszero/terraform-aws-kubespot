@@ -58,6 +58,37 @@ POLICY
 
 }
 
+resource "aws_iam_role" "node_oidc" {
+  name = "${var.environment_name}-node-oidc"
+
+  assume_role_policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Principal": {
+        "Service": "${aws_iam_openid_connect_provider.cluster.arn}"
+      },
+      "Action": "sts:AssumeRoleWithWebIdentity",
+      "Condition": {
+        "StringEquals": {
+          "${replace(aws_iam_openid_connect_provider.cluster.url, "https://", "")}:sub": "system:serviceaccount:kube-system:aws-node"
+        }
+      }
+    }
+  ]
+}
+EOF
+
+  depends_on = [aws_iam_openid_connect_provider.cluster]
+}
+
+resource "aws_iam_role_policy_attachment" "aws_node_oidc" {
+  role       = aws_iam_role.node_oidc.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy"
+}
+
 resource "aws_iam_role_policy_attachment" "node-AmazonEKSWorkerNodePolicy" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy"
   role       = aws_iam_role.node.name
