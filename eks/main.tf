@@ -124,6 +124,16 @@ resource "aws_autoscaling_group" "nodes_blue" {
       value               = "owned"
       propagate_at_launch = true
     },
+    {
+      key                 = "k8s.io/cluster-autoscaler/${var.environment_name}"
+      value               = "owned"
+      propagate_at_launch = true
+    },
+    {
+      key                 = "k8s.io/cluster-autoscaler/enabled"
+      value               = "TRUE"
+      propagate_at_launch = true
+    },
   ]
 }
 
@@ -169,6 +179,16 @@ resource "aws_autoscaling_group" "nodes_green" {
     {
       key                 = "kubernetes.io/cluster/${var.environment_name}"
       value               = "owned"
+      propagate_at_launch = true
+    },
+    {
+      key                 = "k8s.io/cluster-autoscaler/${var.environment_name}"
+      value               = "owned"
+      propagate_at_launch = true
+    },
+    {
+      key                 = "k8s.io/cluster-autoscaler/enabled"
+      value               = "TRUE"
       propagate_at_launch = true
     },
   ]
