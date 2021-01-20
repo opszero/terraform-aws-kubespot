@@ -18,6 +18,16 @@ POLICY
 
 }
 
+data "tls_certificate" "cluster" {
+  url = aws_eks_cluster.cluster.identity.0.oidc.0.issuer
+}
+
+resource "aws_iam_openid_connect_provider" "cluster" {
+  client_id_list  = ["sts.amazonaws.com"]
+  thumbprint_list = [data.tls_certificate.cluster.certificates.0.sha1_fingerprint]
+  url             = aws_eks_cluster.cluster.identity.0.oidc.0.issuer
+}
+
 resource "aws_iam_role_policy_attachment" "cluster-AmazonEKSClusterPolicy" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonEKSClusterPolicy"
   role       = aws_iam_role.cluster.name
@@ -46,6 +56,37 @@ resource "aws_iam_role" "node" {
 }
 POLICY
 
+}
+
+resource "aws_iam_role" "node_oidc" {
+  name = "${var.environment_name}-node-oidc"
+
+  assume_role_policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Principal": {
+        "Federated": "${aws_iam_openid_connect_provider.cluster.arn}"
+      },
+      "Action": "sts:AssumeRoleWithWebIdentity",
+      "Condition": {
+        "StringEquals": {
+          "${replace(aws_iam_openid_connect_provider.cluster.url, "https://", "")}:sub": "system:serviceaccount:kube-system:cluster-autoscaler"
+        }
+      }
+    }
+  ]
+}
+EOF
+
+  depends_on = [aws_iam_openid_connect_provider.cluster]
+}
+
+resource "aws_iam_role_policy_attachment" "aws_node_oidc" {
+  role       = aws_iam_role.node_oidc.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy"
 }
 
 resource "aws_iam_role_policy_attachment" "node-AmazonEKSWorkerNodePolicy" {
@@ -93,6 +134,33 @@ resource "aws_iam_role_policy" "autoscaling" {
 }
 EOF
 }
+
+resource "aws_iam_role_policy" "autoscaling_oidc" {
+  name = "AWSEKSAutoscaler-oidc-${var.environment_name}"
+  role = aws_iam_role.node_oidc.id
+
+  policy = <<EOF
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": [
+                "autoscaling:DescribeAutoScalingGroups",
+                "autoscaling:DescribeAutoScalingInstances",
+                "autoscaling:DescribeTags",
+                "autoscaling:DescribeLaunchConfigurations",
+                "autoscaling:SetDesiredCapacity",
+                "autoscaling:TerminateInstanceInAutoScalingGroup",
+                "ec2:DescribeLaunchTemplateVersions"
+            ],
+            "Resource": "*"
+        }
+    ]
+}
+EOF
+}
+
 
 
 resource "aws_iam_role" "fargate" {

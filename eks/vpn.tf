@@ -14,14 +14,16 @@ resource "aws_security_group" "vpn" {
     to_port   = 0
     protocol  = "-1"
     cidr_blocks = [
-    "0.0.0.0/0"]
+      "0.0.0.0/0"
+    ]
   }
   ingress {
     from_port = 500
     protocol  = "udp"
     to_port   = 500
     cidr_blocks = [
-    "0.0.0.0/0"]
+      "0.0.0.0/0"
+    ]
   }
   ingress {
     from_port   = 22
@@ -34,21 +36,24 @@ resource "aws_security_group" "vpn" {
     protocol  = "50"
     to_port   = 0
     cidr_blocks = [
-    "0.0.0.0/0"]
+      "0.0.0.0/0"
+    ]
   }
   ingress {
     from_port = 4500
     protocol  = "udp"
     to_port   = 4500
     cidr_blocks = [
-    "0.0.0.0/0"]
+      "0.0.0.0/0"
+    ]
   }
   ingress {
     from_port = 1701
     protocol  = "udp"
     to_port   = 1701
     cidr_blocks = [
-    "0.0.0.0/0"]
+      "0.0.0.0/0"
+    ]
   }
 
   tags = {
