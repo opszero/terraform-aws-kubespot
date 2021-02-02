@@ -75,6 +75,10 @@ variable "ec2_keypair" {
   default = "opszero"
 }
 
+variable "bastion_ec2_keypair" {
+  default = "opszero"
+}
+
 variable "aws_profile" {
   default = "opszero"
 }

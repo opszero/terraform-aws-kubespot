@@ -36,7 +36,7 @@ resource "aws_instance" "bastion" {
   ami           = data.aws_ami.ubuntu.id
   instance_type = "t3.micro"
 
-  key_name                    = var.ec2_keypair
+  key_name                    = var.bastion_ec2_keypair
   associate_public_ip_address = true
   subnet_id                   = aws_subnet.public[0].id
   vpc_security_group_ids      = [aws_security_group.node.id, aws_security_group.bastion.id]
