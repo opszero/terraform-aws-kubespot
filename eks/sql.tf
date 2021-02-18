@@ -24,7 +24,7 @@ resource "aws_rds_cluster" "default" {
   deletion_protection     = true // Don't Delete Ever! Except manually.
   backup_retention_period = 20
 
-  enabled_cloudwatch_logs_exports = ["audit", "error", "general", "slowquery"]
+  # enabled_cloudwatch_logs_exports = ["audit", "error", "general", "slowquery"]
 
   dynamic "scaling_configuration" {
     for_each = var.sql_engine_mode == "serverless" ? [1] : []
