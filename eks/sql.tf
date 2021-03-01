@@ -4,7 +4,7 @@ resource "aws_db_subnet_group" "default" {
 }
 
 resource "aws_rds_cluster" "default" {
-  count = var.sql_enabled ? 1 : 0
+  count = var.sql_cluster_enabled ? 1 : 0
 
   cluster_identifier = var.environment_name
 
@@ -39,7 +39,7 @@ resource "aws_rds_cluster" "default" {
 }
 
 resource "aws_rds_cluster_instance" "cluster_instances" {
-  count = var.sql_engine_mode == "serverless" ? 0 : var.sql_node_count
+  count = var.sql_cluster_enabled ? (var.sql_engine_mode == "serverless" ? 0 : var.sql_node_count) : 0
 
   engine     = var.sql_engine
   identifier = "${var.environment_name}-${count.index}"

@@ -199,7 +199,7 @@ variable "redis_num_nodes" {
   default = 1
 }
 
-variable "sql_enabled" {
+variable "sql_cluster_enabled" {
   default = false
 }
 
