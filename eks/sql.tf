@@ -8,8 +8,8 @@ resource "aws_rds_cluster" "default" {
 
   cluster_identifier = var.environment_name
 
-  engine      = var.sql_engine
-  engine_mode = var.sql_engine_mode
+  engine         = var.sql_engine
+  engine_mode    = var.sql_engine_mode
   engine_version = var.sql_engine_version
 
   database_name   = var.sql_database_name
