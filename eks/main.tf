@@ -36,46 +36,6 @@ resource "aws_eks_addon" "core" {
   addon_name   = each.key
 }
 
-locals {
-  kubeconfig = <<KUBECONFIG
-
-
-apiVersion: v1
-clusters:
-- cluster:
-    server: ${aws_eks_cluster.cluster.endpoint}
-    certificate-authority-data: ${aws_eks_cluster.cluster.certificate_authority[0].data}
-  name: kubernetes
-contexts:
-- context:
-    cluster: kubernetes
-    user: aws
-  name: aws
-current-context: aws
-kind: Config
-preferences: {}
-users:
-- name: aws
-  user:
-    exec:
-      apiVersion: client.authentication.k8s.io/v1alpha1
-      command: aws
-      args:
-        - "eks"
-        - "get-token"
-        - "--cluster-name"
-        - "${var.environment_name}"
-      env:
-        - name: AWS_PROFILE
-          value: "${var.aws_profile}"
-KUBECONFIG
-
-}
-
-output "kubeconfig" {
-  value = local.kubeconfig
-}
-
 # EKS currently documents this required userdata for EKS worker nodes to
 # properly configure Kubernetes applications on the EC2 instance.
 # We utilize a Terraform local here to simplify Base64 encoding this
