@@ -14,4 +14,8 @@ when '1.18'
   puts `kubectl patch daemonset kube-proxy -n kube-system -p '{"spec": {"template": {"spec": {"containers": [{"image": "602401143452.dkr.ecr.us-west-2.amazonaws.com/eks/kube-proxy:v1.18.8-eksbuild.1","name":"kube-proxy"}]}}}}'`
   puts `kubectl set image --namespace kube-system deployment.apps/coredns coredns=602401143452.dkr.ecr.us-west-2.amazonaws.com/eks/coredns:v1.7.0-eksbuild.1`
   puts `kubectl apply -f https://raw.githubusercontent.com/aws/amazon-vpc-cni-k8s/master/config/v1.7/aws-k8s-cni.yaml`
+when '1.19'
+  puts `kubectl patch daemonset kube-proxy -n kube-system -p '{"spec": {"template": {"spec": {"containers": [{"image": "602401143452.dkr.ecr.us-west-2.amazonaws.com/eks/kube-proxy:v1.18.8-eksbuild.1","name":"kube-proxy"}]}}}}'`
+  puts `kubectl set image --namespace kube-system deployment.apps/coredns coredns=602401143452.dkr.ecr.us-west-2.amazonaws.com/eks/coredns:v1.8.0-eksbuild.1`
+  puts `kubectl apply -f https://raw.githubusercontent.com/aws/amazon-vpc-cni-k8s/master/config/v1.7/aws-k8s-cni.yaml`
 end
