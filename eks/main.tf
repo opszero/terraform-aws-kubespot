@@ -25,6 +25,17 @@ resource "aws_eks_cluster" "cluster" {
   ]
 }
 
+resource "aws_eks_addon" "core" {
+  for_each = toset([
+    "kube-proxy",
+    "vpc-cni",
+    "coredns"
+  ])
+
+  cluster_name = aws_eks_cluster.cluster.name
+  addon_name   = each.key
+}
+
 locals {
   kubeconfig = <<KUBECONFIG
 
