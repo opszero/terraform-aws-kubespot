@@ -32,8 +32,9 @@ resource "aws_eks_addon" "core" {
     "coredns"
   ])
 
-  cluster_name = aws_eks_cluster.cluster.name
-  addon_name   = each.key
+  cluster_name      = aws_eks_cluster.cluster.name
+  addon_name        = each.key
+  resolve_conflicts = "OVERWRITE"
 }
 
 # EKS currently documents this required userdata for EKS worker nodes to
