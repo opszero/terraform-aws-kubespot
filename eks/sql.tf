@@ -52,7 +52,7 @@ resource "aws_rds_cluster_instance" "cluster_instances" {
   monitoring_interval          = 5
   performance_insights_enabled = true
 
-  deletion_protection     = true // Don't Delete Ever! Except manually.
+  # deletion_protection     = true // Don't Delete Ever! Except manually.
 
   db_subnet_group_name = aws_db_subnet_group.default.name
 }
