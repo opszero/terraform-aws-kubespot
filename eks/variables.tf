@@ -3,7 +3,7 @@ variable "environment_name" {
 }
 
 variable "cluster_version" {
-  default = "1.18"
+  default = "1.20"
 }
 
 variable "cluster_logging" {
