@@ -259,10 +259,6 @@ variable "sql_engine_version" {
   default = "12.5"
 }
 
-variable "fargate_enabled" {
-  default = false
-}
-
 variable "monitoring_role_arn" {
   default = ""
 }
