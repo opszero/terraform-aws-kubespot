@@ -4,12 +4,12 @@ resource "aws_db_subnet_group" "default" {
 }
 
 resource "aws_rds_cluster" "default" {
-  count = var.sql_enabled ? 1 : 0
+  count = var.sql_cluster_enabled ? 1 : 0
 
   cluster_identifier = var.environment_name
 
-  engine      = var.sql_engine
-  engine_mode = var.sql_engine_mode
+  engine         = var.sql_engine
+  engine_mode    = var.sql_engine_mode
   engine_version = var.sql_engine_version
 
   database_name   = var.sql_database_name
@@ -24,7 +24,7 @@ resource "aws_rds_cluster" "default" {
   deletion_protection     = true // Don't Delete Ever! Except manually.
   backup_retention_period = 20
 
-  // enabled_cloudwatch_logs_exports = ["audit", "error", "general"]
+  # enabled_cloudwatch_logs_exports = ["audit", "error", "general", "slowquery"]
 
   dynamic "scaling_configuration" {
     for_each = var.sql_engine_mode == "serverless" ? [1] : []
@@ -39,7 +39,7 @@ resource "aws_rds_cluster" "default" {
 }
 
 resource "aws_rds_cluster_instance" "cluster_instances" {
-  count = var.sql_engine_mode == "serverless" ? 0 : var.sql_node_count
+  count = var.sql_cluster_enabled ? (var.sql_engine_mode == "serverless" ? 0 : var.sql_node_count) : 0
 
   engine     = var.sql_engine
   identifier = "${var.environment_name}-${count.index}"

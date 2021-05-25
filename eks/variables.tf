@@ -3,7 +3,7 @@ variable "environment_name" {
 }
 
 variable "cluster_version" {
-  default = "1.18"
+  default = "1.20"
 }
 
 variable "cluster_logging" {
@@ -72,6 +72,10 @@ variable "eips" {
 }
 
 variable "ec2_keypair" {
+  default = "opszero"
+}
+
+variable "bastion_ec2_keypair" {
   default = "opszero"
 }
 
@@ -195,7 +199,7 @@ variable "redis_num_nodes" {
   default = 1
 }
 
-variable "sql_enabled" {
+variable "sql_cluster_enabled" {
   default = false
 }
 
@@ -252,11 +256,7 @@ variable "sql_instance_engine" {
 }
 
 variable "sql_engine_version" {
-  default = "12.3"
-}
-
-variable "fargate_enabled" {
-  default = false
+  default = "12.5"
 }
 
 variable "monitoring_role_arn" {

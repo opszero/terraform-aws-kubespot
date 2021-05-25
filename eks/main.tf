@@ -25,44 +25,16 @@ resource "aws_eks_cluster" "cluster" {
   ]
 }
 
-locals {
-  kubeconfig = <<KUBECONFIG
+resource "aws_eks_addon" "core" {
+  for_each = toset([
+    "kube-proxy",
+    "vpc-cni",
+    "coredns"
+  ])
 
-
-apiVersion: v1
-clusters:
-- cluster:
-    server: ${aws_eks_cluster.cluster.endpoint}
-    certificate-authority-data: ${aws_eks_cluster.cluster.certificate_authority[0].data}
-  name: kubernetes
-contexts:
-- context:
-    cluster: kubernetes
-    user: aws
-  name: aws
-current-context: aws
-kind: Config
-preferences: {}
-users:
-- name: aws
-  user:
-    exec:
-      apiVersion: client.authentication.k8s.io/v1alpha1
-      command: aws
-      args:
-        - "eks"
-        - "get-token"
-        - "--cluster-name"
-        - "${var.environment_name}"
-      env:
-        - name: AWS_PROFILE
-          value: "${var.aws_profile}"
-KUBECONFIG
-
-}
-
-output "kubeconfig" {
-  value = local.kubeconfig
+  cluster_name      = aws_eks_cluster.cluster.name
+  addon_name        = each.key
+  resolve_conflicts = "OVERWRITE"
 }
 
 # EKS currently documents this required userdata for EKS worker nodes to
