@@ -284,3 +284,7 @@ variable "enabled_metrics_asg" {
 variable "vpc_flow_logs_enabled" {
   default = false
 }
+
+variable "efs_enabled" {
+  default = false
+}

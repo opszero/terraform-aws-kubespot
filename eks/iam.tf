@@ -182,3 +182,58 @@ resource "aws_iam_role_policy_attachment" "fargate-AmazonEKSFargatePodExecutionR
   policy_arn = "arn:aws:iam::aws:policy/AmazonEKSFargatePodExecutionRolePolicy"
   role       = aws_iam_role.fargate.name
 }
+
+module "iam_assumable_role_admin" {
+  count                         = var.efs_enabled ? 1 : 0
+  source                        = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
+  version                       = "3.6.0"
+  create_role                   = true
+  role_name                     = "efs-driver"
+  provider_url                  = replace(aws_iam_openid_connect_provider.cluster.url, "https://", "")
+  role_policy_arns              = [aws_iam_policy.EFS-policy.arn]
+  # namespace and service account name
+  oidc_fully_qualified_subjects = ["system:serviceaccount:kube-system:efs-csi-controller-sa"]
+}
+
+resource "aws_iam_policy" "EFS-policy" {
+  name        = "EFS-policy"
+  description = "EKS cluster policy for EFS"
+
+  policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+        "elasticfilesystem:DescribeAccessPoints",
+        "elasticfilesystem:DescribeFileSystems"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Effect": "Allow",
+      "Action": [
+        "elasticfilesystem:CreateAccessPoint"
+      ],
+      "Resource": "*",
+      "Condition": {
+        "StringLike": {
+          "aws:RequestTag/efs.csi.aws.com/cluster": "true"
+        }
+      }
+    },
+    {
+      "Effect": "Allow",
+      "Action": "elasticfilesystem:DeleteAccessPoint",
+      "Resource": "*",
+      "Condition": {
+        "StringEquals": {
+          "aws:ResourceTag/efs.csi.aws.com/cluster": "true"
+        }
+      }
+    }
+  ]
+}
+EOF
+}
