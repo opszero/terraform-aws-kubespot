@@ -190,13 +190,13 @@ module "iam_assumable_role_admin" {
   create_role                   = true
   role_name                     = "efs-driver"
   provider_url                  = replace(aws_iam_openid_connect_provider.cluster.url, "https://", "")
-  role_policy_arns              = [aws_iam_policy.EFS-policy.arn]
+  role_policy_arns              = [aws_iam_policy.efs_policy.arn]
   # namespace and service account name
   oidc_fully_qualified_subjects = ["system:serviceaccount:kube-system:efs-csi-controller-sa"]
 }
 
-resource "aws_iam_policy" "EFS-policy" {
-  name        = "EFS-policy"
+resource "aws_iam_policy" "efs_policy" {
+  name        = "${var.environment_name}-efs-policy"
   description = "EKS cluster policy for EFS"
 
   policy = <<EOF
