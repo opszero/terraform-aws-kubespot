@@ -1,6 +1,6 @@
 resource "helm_release" "aws_efs_csi_driver" {
   count = var.efs_enabled ? 1 : 0
-  name       = "aws-efs-csi-driver"
+  name  = "aws-efs-csi-driver"
 
   repository = "https://kubernetes-sigs.github.io/aws-efs-csi-driver/"
   chart      = "aws-efs-csi-driver"
@@ -16,7 +16,7 @@ serviceAccount:
     name: efs-csi-controller-sa
     ## Enable if EKS IAM for SA is used
     annotations:
-      eks.amazonaws.com/role-arn: "${module.iam_assumable_role_admin[0].this_iam_role_name}"
+      eks.amazonaws.com/role-arn: "${module.iam_assumable_role_admin[0].this_iam_role_arn}"
 EOF
   ]
 }

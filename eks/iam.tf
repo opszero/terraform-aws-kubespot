@@ -184,13 +184,13 @@ resource "aws_iam_role_policy_attachment" "fargate-AmazonEKSFargatePodExecutionR
 }
 
 module "iam_assumable_role_admin" {
-  count                         = var.efs_enabled ? 1 : 0
-  source                        = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
-  version                       = "3.6.0"
-  create_role                   = true
-  role_name                     = "efs-driver"
-  provider_url                  = replace(aws_iam_openid_connect_provider.cluster.url, "https://", "")
-  role_policy_arns              = [aws_iam_policy.efs_policy.arn]
+  count            = var.efs_enabled ? 1 : 0
+  source           = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
+  version          = "3.6.0"
+  create_role      = true
+  role_name        = "efs-driver"
+  provider_url     = replace(aws_iam_openid_connect_provider.cluster.url, "https://", "")
+  role_policy_arns = [aws_iam_policy.efs_policy.arn]
   # namespace and service account name
   oidc_fully_qualified_subjects = ["system:serviceaccount:kube-system:efs-csi-controller-sa"]
 }
