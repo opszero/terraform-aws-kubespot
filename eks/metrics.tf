@@ -1,5 +1,8 @@
 resource "aws_cloudwatch_log_group" "vpc" {
   name = var.environment_name
+  tags = {
+    "KubespotEnvironment" = var.environment_name
+  }
 }
 
 resource "aws_cloudwatch_metric_alarm" "bastion_cpu_threshold" {
@@ -19,6 +22,10 @@ resource "aws_cloudwatch_metric_alarm" "bastion_cpu_threshold" {
   dimensions = {
     InstanceId = aws_instance.bastion[0].id
   }
+
+  tags = {
+    "KubespotEnvironment" = var.environment_name
+  }
 }
 
 resource "aws_cloudwatch_metric_alarm" "nodes_green_cpu_threshold" {
@@ -36,6 +43,9 @@ resource "aws_cloudwatch_metric_alarm" "nodes_green_cpu_threshold" {
   dimensions = {
     AutoScalingGroupName = aws_autoscaling_group.nodes_green.name
   }
+  tags = {
+    "KubespotEnvironment" = var.environment_name
+  }
 }
 
 resource "aws_cloudwatch_metric_alarm" "nodes_blue_cpu_threshold" {
@@ -52,6 +62,9 @@ resource "aws_cloudwatch_metric_alarm" "nodes_blue_cpu_threshold" {
 
   dimensions = {
     AutoScalingGroupName = aws_autoscaling_group.nodes_blue.name
+  }
+  tags = {
+    "KubespotEnvironment" = var.environment_name
   }
 }
 
@@ -71,6 +84,9 @@ resource "aws_cloudwatch_metric_alarm" "database_cpu_database" {
   dimensions = {
     DBClusterIdentifier = aws_rds_cluster.default[0].cluster_identifier
   }
+  tags = {
+    "KubespotEnvironment" = var.environment_name
+  }
 }
 
 resource "aws_cloudwatch_metric_alarm" "database_disk_database" {
@@ -88,6 +104,9 @@ resource "aws_cloudwatch_metric_alarm" "database_disk_database" {
 
   dimensions = {
     DBClusterIdentifier = aws_rds_cluster.default[0].cluster_identifier
+  }
+  tags = {
+    "KubespotEnvironment" = var.environment_name
   }
 }
 
@@ -107,6 +126,9 @@ resource "aws_cloudwatch_metric_alarm" "database_free_disk_database" {
   dimensions = {
     DBClusterIdentifier = aws_rds_cluster.default[0].cluster_identifier
   }
+  tags = {
+    "KubespotEnvironment" = var.environment_name
+  }
 }
 
 resource "aws_cloudwatch_metric_alarm" "database_free_disk_database2" {
@@ -124,6 +146,9 @@ resource "aws_cloudwatch_metric_alarm" "database_free_disk_database2" {
 
   dimensions = {
     DBClusterIdentifier = aws_rds_cluster.default[0].cluster_identifier
+  }
+  tags = {
+    "KubespotEnvironment" = var.environment_name
   }
 }
 
@@ -143,6 +168,9 @@ resource "aws_cloudwatch_metric_alarm" "database_free_disk_database3" {
   dimensions = {
     DBClusterIdentifier = aws_rds_cluster.default[0].cluster_identifier
   }
+  tags = {
+    "KubespotEnvironment" = var.environment_name
+  }
 }
 
 resource "aws_cloudwatch_metric_alarm" "database_free_disk_database4" {
@@ -160,6 +188,9 @@ resource "aws_cloudwatch_metric_alarm" "database_free_disk_database4" {
 
   dimensions = {
     DBClusterIdentifier = aws_rds_cluster.default[0].cluster_identifier
+  }
+  tags = {
+    "KubespotEnvironment" = var.environment_name
   }
 }
 
@@ -180,6 +211,9 @@ resource "aws_cloudwatch_metric_alarm" "database_io_postgres" {
   dimensions = {
     DBClusterIdentifier = aws_rds_cluster.default[0].cluster_identifier
   }
+  tags = {
+    "KubespotEnvironment" = var.environment_name
+  }
 }
 
 resource "aws_cloudwatch_metric_alarm" "database_io_mysql" {
@@ -197,5 +231,8 @@ resource "aws_cloudwatch_metric_alarm" "database_io_mysql" {
 
   dimensions = {
     DBClusterIdentifier = aws_rds_cluster.default[0].cluster_identifier
+  }
+  tags = {
+    "KubespotEnvironment" = var.environment_name
   }
 }

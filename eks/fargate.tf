@@ -7,4 +7,7 @@ resource "aws_eks_fargate_profile" "fargate" {
   selector {
     namespace = "fargate"
   }
+  tags = {
+    "KubespotEnvironment" = var.environment_name
+  }
 }

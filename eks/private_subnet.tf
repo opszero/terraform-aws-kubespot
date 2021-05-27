@@ -11,11 +11,15 @@ resource "aws_subnet" "private" {
     "Name"                                          = "${var.environment_name}-private"
     "kubernetes.io/cluster/${var.environment_name}" = "shared"
     "kubernetes.io/role/internal-elb"               = "1"
+    "KubespotEnvironment"                           = var.environment_name
   }
 }
 
 resource "aws_eip" "eips" {
   count = var.enable_nat && length(var.eips) == 0 ? 2 : 0
+  tags = {
+    "KubespotEnvironment" = var.environment_name
+  }
 }
 
 
@@ -31,7 +35,8 @@ resource "aws_route_table" "private" {
   vpc_id = aws_vpc.vpc.id
 
   tags = {
-    Name = "${var.environment_name}-private-${count.index}"
+    Name                  = "${var.environment_name}-private-${count.index}"
+    "KubespotEnvironment" = var.environment_name
   }
 }
 
@@ -56,7 +61,8 @@ resource "aws_egress_only_internet_gateway" "egress" {
   vpc_id = aws_vpc.vpc.id
 
   tags = {
-    Name = "${var.environment_name}-egress-${count.index}"
+    Name                  = "${var.environment_name}-egress-${count.index}"
+    "KubespotEnvironment" = var.environment_name
   }
 }
 

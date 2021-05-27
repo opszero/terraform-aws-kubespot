@@ -23,6 +23,10 @@ resource "aws_eks_cluster" "cluster" {
     aws_iam_role_policy_attachment.cluster-AmazonEKSClusterPolicy,
     aws_iam_role_policy_attachment.cluster-AmazonEKSServicePolicy,
   ]
+
+  tags = {
+    "KubespotEnvironment" = var.environment_name
+  }
 }
 
 resource "aws_eks_addon" "core" {
@@ -106,6 +110,11 @@ resource "aws_autoscaling_group" "nodes_blue" {
       value               = "TRUE"
       propagate_at_launch = true
     },
+    {
+      key                 = "KubespotEnvironment"
+      value               = var.environment_name
+      propagate_at_launch = true
+    },
   ]
 }
 
@@ -161,6 +170,11 @@ resource "aws_autoscaling_group" "nodes_green" {
     {
       key                 = "k8s.io/cluster-autoscaler/enabled"
       value               = "TRUE"
+      propagate_at_launch = true
+    },
+    {
+      key                 = "KubespotEnvironment"
+      value               = var.environment_name
       propagate_at_launch = true
     },
   ]
