@@ -2,6 +2,9 @@ resource "aws_eip" "bastion_eip" {
   count    = var.bastion_enabled && var.bastion_eip_enabled ? 1 : 0
   instance = aws_instance.bastion.0.id
   vpc      = true
+  tags = {
+    "KubespotEnvironment" = var.environment_name
+  }
 }
 
 resource "aws_security_group" "bastion" {
@@ -17,7 +20,8 @@ resource "aws_security_group" "bastion" {
   }
 
   tags = {
-    "Name" = "${var.environment_name}-bastion"
+    "Name"                = "${var.environment_name}-bastion"
+    "KubespotEnvironment" = var.environment_name
   }
 }
 
@@ -44,7 +48,8 @@ resource "aws_instance" "bastion" {
   monitoring = true
 
   tags = {
-    Name = "${var.environment_name}-bastion"
+    "Name"                  = "${var.environment_name}-bastion"
+    "KubespotEnvironment" = var.environment_name
   }
   user_data = <<SCRIPT
 #!/bin/bash

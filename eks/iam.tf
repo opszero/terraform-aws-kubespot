@@ -16,6 +16,10 @@ resource "aws_iam_role" "cluster" {
 }
 POLICY
 
+  tags = {
+    "KubespotEnvironment" = var.environment_name
+  }
+
 }
 
 data "tls_certificate" "cluster" {
@@ -26,6 +30,9 @@ resource "aws_iam_openid_connect_provider" "cluster" {
   client_id_list  = ["sts.amazonaws.com"]
   thumbprint_list = [data.tls_certificate.cluster.certificates.0.sha1_fingerprint]
   url             = aws_eks_cluster.cluster.identity.0.oidc.0.issuer
+  tags = {
+    "KubespotEnvironment" = var.environment_name
+  }
 }
 
 resource "aws_iam_role_policy_attachment" "cluster-AmazonEKSClusterPolicy" {
@@ -56,6 +63,9 @@ resource "aws_iam_role" "node" {
 }
 POLICY
 
+  tags = {
+    "KubespotEnvironment" = var.environment_name
+  }
 }
 
 resource "aws_iam_role" "node_oidc" {
@@ -82,6 +92,10 @@ resource "aws_iam_role" "node_oidc" {
 EOF
 
   depends_on = [aws_iam_openid_connect_provider.cluster]
+
+  tags = {
+    "KubespotEnvironment" = var.environment_name
+  }
 }
 
 resource "aws_iam_role_policy_attachment" "aws_node_oidc" {
@@ -107,6 +121,9 @@ resource "aws_iam_role_policy_attachment" "node-AmazonEC2ContainerRegistryReadOn
 resource "aws_iam_instance_profile" "node" {
   name = "${var.environment_name}-node"
   role = aws_iam_role.node.name
+  tags = {
+    "KubespotEnvironment" = var.environment_name
+  }
 }
 
 resource "aws_iam_role_policy" "autoscaling" {
@@ -176,6 +193,11 @@ resource "aws_iam_role" "fargate" {
     }]
     Version = "2012-10-17"
   })
+
+  tags = {
+    "KubespotEnvironment" = var.environment_name
+  }
+
 }
 
 resource "aws_iam_role_policy_attachment" "fargate-AmazonEKSFargatePodExecutionRolePolicy" {
@@ -193,6 +215,9 @@ module "iam_assumable_role_admin" {
   role_policy_arns = [aws_iam_policy.efs_policy.arn]
   # namespace and service account name
   oidc_fully_qualified_subjects = ["system:serviceaccount:kube-system:efs-csi-controller-sa"]
+  tags = {
+    "KubespotEnvironment" = var.environment_name
+  }
 }
 
 resource "aws_iam_policy" "efs_policy" {

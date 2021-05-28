@@ -8,6 +8,7 @@ resource "aws_vpc" "vpc" {
   tags = {
     "Name"                                          = var.environment_name
     "kubernetes.io/cluster/${var.environment_name}" = "shared"
+    "KubespotEnvironment"                           = var.environment_name
   }
 }
 
@@ -24,7 +25,8 @@ resource "aws_security_group" "cluster" {
   }
 
   tags = {
-    Name = var.environment_name
+    Name                  = var.environment_name
+    "KubespotEnvironment" = var.environment_name
   }
 }
 
@@ -43,6 +45,7 @@ resource "aws_security_group" "node" {
   tags = {
     "Name"                                          = "${var.environment_name}-node"
     "kubernetes.io/cluster/${var.environment_name}" = "owned"
+    "KubespotEnvironment"                           = var.environment_name
   }
 }
 

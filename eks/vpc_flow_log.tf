@@ -5,6 +5,9 @@ resource "aws_flow_log" "vpc" {
   log_destination = aws_cloudwatch_log_group.vpc.arn
   traffic_type    = "ALL"
   vpc_id          = aws_vpc.vpc.id
+  tags = {
+    "KubespotEnvironment" = var.environment_name
+  }
 }
 
 resource "aws_iam_role" "vpc" {
@@ -25,6 +28,9 @@ resource "aws_iam_role" "vpc" {
   ]
 }
 EOF
+  tags = {
+    "KubespotEnvironment" = var.environment_name
+  }
 }
 
 resource "aws_iam_role_policy" "vpc" {

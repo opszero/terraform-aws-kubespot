@@ -1,6 +1,9 @@
 resource "aws_db_subnet_group" "default" {
   name       = var.environment_name
   subnet_ids = aws_subnet.private.*.id
+  tags = {
+    "KubespotEnvironment" = var.environment_name
+  }
 }
 
 resource "aws_rds_cluster" "default" {
@@ -36,6 +39,9 @@ resource "aws_rds_cluster" "default" {
       timeout_action           = "ForceApplyCapacityChange"
     }
   }
+  tags = {
+    "KubespotEnvironment" = var.environment_name
+  }
 }
 
 resource "aws_rds_cluster_instance" "cluster_instances" {
@@ -53,6 +59,10 @@ resource "aws_rds_cluster_instance" "cluster_instances" {
   performance_insights_enabled = true
 
   db_subnet_group_name = aws_db_subnet_group.default.name
+
+  tags = {
+    "KubespotEnvironment" = var.environment_name
+  }
 }
 
 resource "aws_db_instance" "default" {
@@ -80,4 +90,8 @@ resource "aws_db_instance" "default" {
   backup_retention_period     = 35
 
   deletion_protection = true // Don't Delete Ever! Except manually.
+
+  tags = {
+    "KubespotEnvironment" = var.environment_name
+  }
 }
