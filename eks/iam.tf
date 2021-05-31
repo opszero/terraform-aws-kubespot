@@ -268,11 +268,11 @@ module "iam_assumable_role_cluster_autoscaler" {
   source           = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
   version          = "3.6.0"
   create_role      = true
-  role_name        = "efs-driver"
+  role_name        = "cluster-autoscaler"
   provider_url     = replace(aws_iam_openid_connect_provider.cluster.url, "https://", "")
   role_policy_arns = [aws_iam_policy.cluster_autoscaler_policy.arn]
   # namespace and service account name
-  oidc_fully_qualified_subjects = ["system:serviceaccount:kube-system:cluster-autoscaler"]
+  oidc_fully_qualified_subjects = ["system:serviceaccount:kube-system:${var.cluster_autoscaler_service_account_name}"]
   tags = {
     "KubespotEnvironment" = var.environment_name
   }

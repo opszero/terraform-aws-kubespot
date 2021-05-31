@@ -6,6 +6,17 @@ variable "cluster_version" {
   default = "1.20"
 }
 
+// App version should match the kubernetes version with in the chart
+// chart version 9.9.2 support kubernetes version 1.20
+// to get the chart version `helm search repo autoscaler/cluster-autoscaler --versions`
+variable "cluster_autoscaler_version" {
+  default = "9.9.2"
+}
+
+variable "cluster_autoscaler_service_account_name" {
+  default = "cluster-autoscaler"
+}
+
 variable "cluster_logging" {
   default = [
     "api",
