@@ -13,7 +13,7 @@ variable "cluster_autoscaler_version" {
   default = "9.9.2"
 }
 
-variable "cluster_autoscaler_service_account_name" {
+variable "cluster_autoscaler_name" {
   default = "cluster-autoscaler"
 }
 
