@@ -262,3 +262,45 @@ resource "aws_iam_policy" "efs_policy" {
 }
 EOF
 }
+
+module "iam_assumable_role_cluster_autoscaler" {
+  source           = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
+  version          = "3.6.0"
+  create_role      = true
+  role_name        = var.cluster_autoscaler_name
+  provider_url     = replace(aws_iam_openid_connect_provider.cluster.url, "https://", "")
+  role_policy_arns = [aws_iam_policy.cluster_autoscaler_policy.arn]
+  # namespace and service account name
+  oidc_fully_qualified_subjects = [
+    "system:serviceaccount:kube-system:${var.cluster_autoscaler_name}"
+  ]
+  tags = {
+    "KubespotEnvironment" = var.environment_name
+  }
+}
+
+resource "aws_iam_policy" "cluster_autoscaler_policy" {
+  name        = "${var.environment_name}-autoscaler-policy"
+  description = "EKS cluster policy for cluster autoscaler"
+
+  policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+          "autoscaling:DescribeAutoScalingGroups",
+          "autoscaling:DescribeAutoScalingInstances",
+          "autoscaling:DescribeLaunchConfigurations",
+          "autoscaling:DescribeTags",
+          "autoscaling:SetDesiredCapacity",
+          "autoscaling:TerminateInstanceInAutoScalingGroup",
+          "ec2:DescribeLaunchTemplateVersions"
+      ],
+      "Resource": "*"
+    }
+  ]
+}
+EOF
+}
