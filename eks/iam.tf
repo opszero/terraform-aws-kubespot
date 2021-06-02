@@ -267,7 +267,7 @@ module "iam_assumable_role_cluster_autoscaler" {
   source           = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
   version          = "3.6.0"
   create_role      = true
-  role_name        = var.cluster_autoscaler_name
+  role_name        = "${var.environment_name}-${var.cluster_autoscaler_name}"
   provider_url     = replace(aws_iam_openid_connect_provider.cluster.url, "https://", "")
   role_policy_arns = [aws_iam_policy.cluster_autoscaler_policy.arn]
   # namespace and service account name
