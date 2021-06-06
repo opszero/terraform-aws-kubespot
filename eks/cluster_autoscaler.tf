@@ -7,6 +7,7 @@ resource "helm_release" "cluster_autoscaler" {
   repository = "https://kubernetes.github.io/autoscaler"
   chart      = "cluster-autoscaler"
   version = var.cluster_autoscaler_version
+  namespace = "kube-system"
   values = [<<EOF
 autoDiscovery:
   clusterName: ${var.environment_name}
