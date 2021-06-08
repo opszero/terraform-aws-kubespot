@@ -16,7 +16,7 @@ resource "aws_internet_gateway" "public" {
   vpc_id = aws_vpc.vpc.id
 
   tags = {
-    "Name"                  = var.environment_name
+    "Name"                = var.environment_name
     "KubespotEnvironment" = var.environment_name
   }
 }
@@ -30,7 +30,7 @@ resource "aws_route_table" "public" {
     gateway_id = aws_internet_gateway.public.id
   }
   tags = {
-    "Name"                  = "${var.environment_name}-public-${count.index}"
+    "Name"                = "${var.environment_name}-public-${count.index}"
     "KubespotEnvironment" = var.environment_name
   }
 }

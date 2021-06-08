@@ -3,11 +3,11 @@ data "aws_region" "current" {
 }
 
 resource "helm_release" "cluster_autoscaler" {
-  name = var.cluster_autoscaler_name
+  name       = var.cluster_autoscaler_name
   repository = "https://kubernetes.github.io/autoscaler"
   chart      = "cluster-autoscaler"
-  version = var.cluster_autoscaler_version
-  namespace = "kube-system"
+  version    = var.cluster_autoscaler_version
+  namespace  = "kube-system"
   values = [<<EOF
 autoDiscovery:
   clusterName: ${var.environment_name}

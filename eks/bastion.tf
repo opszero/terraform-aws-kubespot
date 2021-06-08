@@ -48,7 +48,7 @@ resource "aws_instance" "bastion" {
   monitoring = true
 
   tags = {
-    "Name"                  = "${var.environment_name}-bastion"
+    "Name"                = "${var.environment_name}-bastion"
     "KubespotEnvironment" = var.environment_name
   }
   user_data = <<SCRIPT

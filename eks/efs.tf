@@ -1,6 +1,7 @@
 resource "helm_release" "aws_efs_csi_driver" {
-  count = var.efs_enabled ? 1 : 0
-  name  = "aws-efs-csi-driver"
+  count     = var.efs_enabled ? 1 : 0
+  name      = "aws-efs-csi-driver"
+  namespace = "kube-system"
 
   repository = "https://kubernetes-sigs.github.io/aws-efs-csi-driver/"
   chart      = "aws-efs-csi-driver"
