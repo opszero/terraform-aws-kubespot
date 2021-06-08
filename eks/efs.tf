@@ -7,6 +7,8 @@ resource "helm_release" "aws_efs_csi_driver" {
   chart      = "aws-efs-csi-driver"
   depends_on = [module.iam_assumable_role_admin]
 
+  wait = false
+
   values = [<<EOF
 image:
   repository: 602401143452.dkr.ecr.us-east-1.amazonaws.com/eks/aws-efs-csi-driver
