@@ -20,6 +20,30 @@ resource "kubernetes_config_map" "aws_auth" {
   groups:
     - system:bootstrappers
     - system:nodes
+%{for role in var.sso_roles.admin_roles~}
+- rolearn: ${role}
+  username: adminuser:{{SessionName}}
+  groups:
+    - default:ad-eks-admins
+%{endfor~}
+%{for role in var.sso_roles.readonly_roles~}
+- rolearn: ${role}
+  username: readonlyuser:{{SessionName}}
+  groups:
+    - default:ad-eks-readonly
+%{endfor~}
+%{for role in var.sso_roles.dev_roles~}
+- rolearn: ${role}
+  username: devuser:{{SessionName}}
+  groups:
+    - default:ad-eks-developers
+%{endfor~}
+%{for role in var.sso_roles.monitoring_roles~}
+- rolearn: ${role}
+  username: monitoringadminuser:{{SessionName}}
+  groups:
+    - default:ad-eks-monitoring-admins
+%{endfor~}
 CONFIGMAPAWSAUTH
 
     mapUsers = <<CONFIGMAPAWSUSERS
