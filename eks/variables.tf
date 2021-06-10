@@ -303,16 +303,16 @@ variable "efs_enabled" {
 variable "sso_roles" {
   default = {
     admin_roles = [
-//      "arn:aws:iam::12345:role/AWSReservedSSO_AD-EKS-Admins_b2abd90bad1696ac"
+      // "arn:aws:iam::12345:role/AWSReservedSSO_AD-EKS-Admins_b2abd90bad1696ac"
     ]
     readonly_roles = [
-//      "arn:aws:iam::12345:role/AWSReservedSSO_AD-EKS-ReadOnly_2c5eb8d559b68cb5"
+      // "arn:aws:iam::12345:role/AWSReservedSSO_AD-EKS-ReadOnly_2c5eb8d559b68cb5"
     ]
     dev_roles = [
-//      "arn:aws:iam::12345:role/AWSReservedSSO_AD-EKS-Developers_ac2b0d744059fcd6"
+      // "arn:aws:iam::12345:role/AWSReservedSSO_AD-EKS-Developers_ac2b0d744059fcd6"
     ]
     monitoring_roles = [
-//      "arn:aws:iam::12345:role/AWSReservedSSO_AD-EKS-Monitoring-Admins_ac2b0d744059fcd6"
+      // "arn:aws:iam::12345:role/AWSReservedSSO_AD-EKS-Monitoring-Admins_ac2b0d744059fcd6"
     ]
   }
 
