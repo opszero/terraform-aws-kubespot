@@ -101,7 +101,7 @@ resource "kubernetes_role_binding" "default_eks_developers" {
 resource "kubernetes_role" "default_eks_monitoring_admins" {
   metadata {
     name = "default:ad-eks-monitoringadmins"
-    namespace = "monitoring"
+    namespace = "default"
     labels = {
       sso_role = "eks-monitoringadmins"
     }
@@ -117,7 +117,7 @@ resource "kubernetes_role" "default_eks_monitoring_admins" {
 resource "kubernetes_role_binding" "default_eks_monitoring_admins" {
   metadata {
     name      = "eks-monitoringadmins"
-    namespace = "monitoring"
+    namespace = "default"
   }
   role_ref {
     api_group = "rbac.authorization.k8s.io"
@@ -163,4 +163,3 @@ resource "kubernetes_cluster_role_binding" "eks_readonly_binding" {
     api_group = "rbac.authorization.k8s.io"
   }
 }
-
