@@ -20,22 +20,30 @@ resource "kubernetes_config_map" "aws_auth" {
   groups:
     - system:bootstrappers
     - system:nodes
-- rolearn: arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/AWSReservedSSO_AD-EKS-Admins_b2abd90bad1696ac
-      username: adminuser:{{SessionName}}
-      groups:
-        - default:ad-eks-admins
-- rolearn: arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/AWSReservedSSO_AD-EKS-ReadOnly_2c5eb8d559b68cb5
+%{for role in var.sso_roles.admin_roles~}
+- rolearn: ${role}
+  username: adminuser:{{SessionName}}
+  groups:
+    - default:ad-eks-admins
+%{endfor~}
+%{for role in var.sso_roles.readonly_roles~}
+- rolearn: ${role}
   username: readonlyuser:{{SessionName}}
   groups:
     - default:ad-eks-readonly
-- rolearn: arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/AWSReservedSSO_AD-EKS-Developers_ac2b0d744059fcd6
+%{endfor~}
+%{for role in var.sso_roles.dev_roles~}
+- rolearn: ${role}
   username: devuser:{{SessionName}}
   groups:
     - default:ad-eks-developers
-- rolearn: arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/AWSReservedSSO_AD-EKS-Monitoring-Admins_ac2b0d744059fcd6
+%{endfor~}
+%{for role in var.sso_roles.monitoring_roles~}
+- rolearn: ${role}
   username: monitoringadminuser:{{SessionName}}
   groups:
     - default:ad-eks-monitoring-admins
+%{endfor~}
 CONFIGMAPAWSAUTH
 
     mapUsers = <<CONFIGMAPAWSUSERS

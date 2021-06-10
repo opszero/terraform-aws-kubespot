@@ -4,7 +4,7 @@ resource "kubernetes_role" "default_eks_admins" {
     name = "default:ad-eks-admins"
     namespace = "default"
     labels = {
-      sso_role = "default:ad-eks-admins"
+      sso_role = "eks-admins"
     }
   }
 
@@ -23,11 +23,11 @@ resource "kubernetes_role_binding" "default_eks_admins" {
   role_ref {
     api_group = "rbac.authorization.k8s.io"
     kind      = "Role"
-    name      = kubernetes_role.default_eks_admins.metadata.name
+    name      = kubernetes_role.default_eks_admins.metadata[0].name
   }
   subject {
     kind      = "Group"
-    name      = kubernetes_role.default_eks_admins.metadata.name
+    name      = kubernetes_role.default_eks_admins.metadata[0].name
     api_group = "rbac.authorization.k8s.io"
   }
 }
@@ -37,7 +37,7 @@ resource "kubernetes_role" "default_eks_readonly" {
     name = "default:ad-eks-readonly"
     namespace = "default"
     labels = {
-      sso_role = "default:ad-eks-readonly"
+      sso_role = "eks-readonly"
     }
   }
 
@@ -56,11 +56,11 @@ resource "kubernetes_role_binding" "default_eks_readonly" {
   role_ref {
     api_group = "rbac.authorization.k8s.io"
     kind      = "Role"
-    name      = kubernetes_role.default_eks_readonly.metadata.name
+    name      = kubernetes_role.default_eks_readonly.metadata[0].name
   }
   subject {
     kind      = "Group"
-    name      = kubernetes_role.default_eks_readonly.metadata.name
+    name      = kubernetes_role.default_eks_readonly.metadata[0].name
     api_group = "rbac.authorization.k8s.io"
   }
 }
@@ -70,7 +70,7 @@ resource "kubernetes_role" "default_eks_developers" {
     name = "default:ad-eks-developers"
     namespace = "default"
     labels = {
-      sso_role = "default:ad-eks-developers"
+      sso_role = "eks-developers"
     }
   }
 
@@ -89,11 +89,11 @@ resource "kubernetes_role_binding" "default_eks_developers" {
   role_ref {
     api_group = "rbac.authorization.k8s.io"
     kind      = "Role"
-    name      = kubernetes_role.default_eks_developers.metadata.name
+    name      = kubernetes_role.default_eks_developers.metadata[0].name
   }
   subject {
     kind      = "Group"
-    name      = kubernetes_role.default_eks_developers.metadata.name
+    name      = kubernetes_role.default_eks_developers.metadata[0].name
     api_group = "rbac.authorization.k8s.io"
   }
 }
@@ -103,7 +103,7 @@ resource "kubernetes_role" "default_eks_monitoring_admins" {
     name = "default:ad-eks-monitoringadmins"
     namespace = "monitoring"
     labels = {
-      sso_role = "default:ad-eks-monitoringadmins"
+      sso_role = "eks-monitoringadmins"
     }
   }
 
@@ -122,11 +122,11 @@ resource "kubernetes_role_binding" "default_eks_monitoring_admins" {
   role_ref {
     api_group = "rbac.authorization.k8s.io"
     kind      = "Role"
-    name      = kubernetes_role.default_eks_monitoring_admins.metadata.name
+    name      = kubernetes_role.default_eks_monitoring_admins.metadata[0].name
   }
   subject {
     kind      = "Group"
-    name      = kubernetes_role.default_eks_monitoring_admins.metadata.name
+    name      = kubernetes_role.default_eks_monitoring_admins.metadata[0].name
     api_group = "rbac.authorization.k8s.io"
   }
 }
