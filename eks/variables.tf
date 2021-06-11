@@ -317,3 +317,7 @@ variable "sso_roles" {
   }
 
 }
+
+variable "node_role_policies" {
+  default = []
+}

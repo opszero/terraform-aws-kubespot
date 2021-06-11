@@ -118,6 +118,12 @@ resource "aws_iam_role_policy_attachment" "node-AmazonEC2ContainerRegistryReadOn
   role       = aws_iam_role.node.name
 }
 
+resource "aws_iam_role_policy_attachment" "node_role_policies" {
+  for_each = toset(var.node_role_policies)
+  policy_arn = each.key
+  role       = aws_iam_role.node.name
+}
+
 resource "aws_iam_instance_profile" "node" {
   name = "${var.environment_name}-node"
   role = aws_iam_role.node.name
