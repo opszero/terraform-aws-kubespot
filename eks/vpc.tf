@@ -13,7 +13,7 @@ resource "aws_vpc" "vpc" {
 }
 
 output "vpc_id" {
-  value = aws_vpc.vpc.ip
+  value = aws_vpc.vpc.id
 }
 
 resource "aws_security_group" "cluster" {
