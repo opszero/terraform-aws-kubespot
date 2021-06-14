@@ -119,8 +119,8 @@ resource "aws_iam_role_policy_attachment" "node-AmazonEC2ContainerRegistryReadOn
 }
 
 resource "aws_iam_role_policy_attachment" "node_role_policies" {
-  for_each = toset(var.node_role_policies)
-  policy_arn = each.key
+  count      = length(var.node_role_policies)
+  policy_arn = var.node_role_policies[count.index]
   role       = aws_iam_role.node.name
 }
 
