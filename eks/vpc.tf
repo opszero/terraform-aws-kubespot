@@ -12,6 +12,10 @@ resource "aws_vpc" "vpc" {
   }
 }
 
+output "vpc_id" {
+  value = aws_vpc.vpc.ip
+}
+
 resource "aws_security_group" "cluster" {
   name        = "${var.environment_name}-cluster"
   description = "Cluster communication with worker nodes"
