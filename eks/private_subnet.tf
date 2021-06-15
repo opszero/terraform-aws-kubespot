@@ -40,6 +40,10 @@ resource "aws_route_table" "private" {
   }
 }
 
+output "private_route_table" {
+  value = aws_route_table.private.*.id
+}
+
 resource "aws_route" "nat" {
   count = var.enable_nat ? 2 : 0
 
@@ -72,4 +76,3 @@ resource "aws_route_table_association" "private" {
   subnet_id      = aws_subnet.private[count.index].id
   route_table_id = aws_route_table.private[count.index].id
 }
-
