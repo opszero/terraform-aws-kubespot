@@ -42,3 +42,6 @@ resource "aws_route_table_association" "public" {
   route_table_id = aws_route_table.public[count.index].id
 }
 
+output "public_route_table" {
+  value = aws_route_table.public.*.id
+}
