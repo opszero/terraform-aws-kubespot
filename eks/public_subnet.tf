@@ -23,7 +23,7 @@ resource "aws_internet_gateway" "public" {
 
 resource "aws_route" "ig" {
   count          = 2
-  route_table_id = aws.route_table.public[count.index].id
+  route_table_id = aws_route_table.public[count.index].id
 
   cidr_block = "0.0.0.0/0"
   gateway_id = aws_internet_gateway.public.id
