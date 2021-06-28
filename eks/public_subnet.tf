@@ -21,14 +21,18 @@ resource "aws_internet_gateway" "public" {
   }
 }
 
+resource "aws_route" "ig" {
+  count          = 2
+  route_table_id = aws.route_table.public[count.index].id
+
+  cidr_block = "0.0.0.0/0"
+  gateway_id = aws_internet_gateway.public.id
+}
+
 resource "aws_route_table" "public" {
   count  = 2
   vpc_id = aws_vpc.vpc.id
 
-  route {
-    cidr_block = "0.0.0.0/0"
-    gateway_id = aws_internet_gateway.public.id
-  }
   tags = {
     "Name"                = "${var.environment_name}-public-${count.index}"
     "KubespotEnvironment" = var.environment_name
