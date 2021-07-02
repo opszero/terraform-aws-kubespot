@@ -28,6 +28,10 @@ resource "aws_nat_gateway" "gw" {
 
   allocation_id = length(var.eips) == 0 ? aws_eip.eips[count.index].id : var.eips[count.index].id
   subnet_id     = aws_subnet.public[count.index].id
+
+  tags = {
+    "KubespotEnvironment" = var.environment_name
+  }
 }
 
 resource "aws_route_table" "private" {
