@@ -30,6 +30,7 @@ resource "aws_nat_gateway" "gw" {
   subnet_id     = aws_subnet.public[count.index].id
 
   tags = {
+    "Name"                = var.environment_name
     "KubespotEnvironment" = var.environment_name
   }
 }
