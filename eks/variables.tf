@@ -62,6 +62,22 @@ variable "cidr_block" {
   default     = "10.2.0.0/16"
 }
 
+variable "cidr_block_public_subnet" {
+  description = "The CIDR block used by the private subnet"
+  default = [
+    "10.2.0.0/24",
+    "10.2.1.0/24"
+  ]
+}
+
+variable "cidr_block_private_subnet" {
+  description = "The CIDR block used by the private subnet"
+  default = [
+    "10.2.2.0/24",
+    "10.2.3.0/24"
+  ]
+}
+
 variable "enable_ipv6" {
   default = false
 }
