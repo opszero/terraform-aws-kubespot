@@ -337,3 +337,11 @@ variable "sso_roles" {
 variable "node_role_policies" {
   default = []
 }
+
+variable "fargate_enabled" {
+  default = false
+}
+
+variable "fargate_namespace_selector_name" {
+  default = "serverless"
+}
