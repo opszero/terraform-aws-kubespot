@@ -19,7 +19,7 @@ autoDiscovery:
 
 cloudProvider: aws
 
-replicaCount: 2
+replicaCount: 1
 
 rbac:
  serviceAccount:
