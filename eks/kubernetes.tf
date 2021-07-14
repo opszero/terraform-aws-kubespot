@@ -35,8 +35,6 @@ resource "kubernetes_config_map" "aws_auth" {
     - default:ad-eks-admins
     - system:nodes
     - system:node-proxier
-    - eks:node-manager
-    - eks:addon-manager
 %{endfor~}
 %{for role in var.sso_roles.readonly_roles~}
 - rolearn: ${role}
