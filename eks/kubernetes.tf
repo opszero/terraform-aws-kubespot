@@ -7,6 +7,7 @@ provider "kubernetes" {
 data "aws_eks_cluster_auth" "cluster" {
   name = var.environment_name
 }
+
 resource "kubernetes_config_map" "aws_auth" {
   metadata {
     name      = "aws-auth"
