@@ -31,24 +31,28 @@ resource "kubernetes_config_map" "aws_auth" {
   username: adminuser:{{SessionName}}
   groups:
     - default:ad-eks-admins
+    - system:nodes
 %{endfor~}
 %{for role in var.sso_roles.readonly_roles~}
 - rolearn: ${role}
   username: readonlyuser:{{SessionName}}
   groups:
     - default:ad-eks-readonly
+    - system:nodes
 %{endfor~}
 %{for role in var.sso_roles.dev_roles~}
 - rolearn: ${role}
   username: devuser:{{SessionName}}
   groups:
     - default:ad-eks-developers
+    - system:nodes
 %{endfor~}
 %{for role in var.sso_roles.monitoring_roles~}
 - rolearn: ${role}
   username: monitoringadminuser:{{SessionName}}
   groups:
     - default:ad-eks-monitoring-admins
+    - system:nodes
 %{endfor~}
 CONFIGMAPAWSAUTH
 
