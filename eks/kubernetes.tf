@@ -31,8 +31,8 @@ resource "kubernetes_config_map" "aws_auth" {
 - rolearn: ${role}
   username: adminuser:{{SessionName}}
   groups:
-    - system:bootstrappers
     - default:ad-eks-admins
+    - system:bootstrappers
     - system:nodes
     - system:node-proxier
 %{endfor~}
