@@ -286,6 +286,14 @@ variable "sql_engine_version" {
   default = "12.5"
 }
 
+variable "sql_encrypted" {
+  default = true
+}
+
+variable "sql_identifier" {
+  default = ""
+}
+
 variable "monitoring_role_arn" {
   default = ""
 }
