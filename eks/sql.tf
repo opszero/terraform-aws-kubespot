@@ -68,7 +68,7 @@ resource "aws_rds_cluster_instance" "cluster_instances" {
 resource "aws_db_instance" "default" {
   count = var.sql_instance_enabled ? 1 : 0
 
-  identifier = var.environment_name
+  identifier = var.sql_identifier != "" ? var.sql_identifier : var.environment_name
 
   allocated_storage     = 20
   max_allocated_storage = 200
@@ -85,7 +85,7 @@ resource "aws_db_instance" "default" {
   db_subnet_group_name   = aws_db_subnet_group.default.name
   vpc_security_group_ids = [aws_security_group.node.id]
 
-  storage_encrypted           = true
+  storage_encrypted           = var.sql_encrypted
   allow_major_version_upgrade = true
   backup_retention_period     = 35
 

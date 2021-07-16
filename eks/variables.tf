@@ -6,6 +6,11 @@ variable "cluster_version" {
   default = "1.20"
 }
 
+variable "cluster_autoscaler_enabled" {
+  default = true
+}
+
+
 // App version should match the kubernetes version with in the chart
 // chart version 9.9.2 support kubernetes version 1.20
 // to get the chart version `helm search repo autoscaler/cluster-autoscaler --versions`
@@ -284,6 +289,15 @@ variable "sql_instance_engine" {
 
 variable "sql_engine_version" {
   default = "12.5"
+}
+
+variable "sql_encrypted" {
+  default = true
+}
+
+variable "sql_identifier" {
+  description = "The name of the database"
+  default = ""
 }
 
 variable "monitoring_role_arn" {

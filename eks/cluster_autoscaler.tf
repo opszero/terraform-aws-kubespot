@@ -3,6 +3,7 @@ data "aws_region" "current" {
 }
 
 resource "helm_release" "cluster_autoscaler" {
+  count      = var.cluster_autoscaler_enabled ? 1 : 0
   name       = var.cluster_autoscaler_name
   repository = "https://kubernetes.github.io/autoscaler"
   chart      = "cluster-autoscaler"
