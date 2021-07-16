@@ -296,6 +296,7 @@ variable "sql_encrypted" {
 }
 
 variable "sql_identifier" {
+  description = "The name of the database"
   default = ""
 }
 
