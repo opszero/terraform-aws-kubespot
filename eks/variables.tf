@@ -22,6 +22,14 @@ variable "cluster_autoscaler_name" {
   default = "cluster-autoscaler"
 }
 
+variable "alb_name" {
+  default = " aws-load-balancer-controller"
+}
+
+variable "aws_load_balancer_controller_enabled" {
+  default = true
+}
+
 variable "cluster_logging" {
   default = [
     "api",
