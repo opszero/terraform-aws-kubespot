@@ -3,13 +3,12 @@ resource "helm_release" "aws_load_balancer" {
   name      = var.alb_name
   namespace = "kube-system"
 
-  repository = "https://aws.github.io/eks-charts/"
-  chart      = "eks/aws-load-balancer-controller"
+  repository = "https://aws.github.io/eks-charts"
+  chart      = "aws-load-balancer-controller"
   depends_on = [module.iam_assumable_role_alb]
 
   wait = false
 
-  # set `region` and `vpcId` id for fargate
   values = [<<EOF
 clusterName: ${var.environment_name}
 
