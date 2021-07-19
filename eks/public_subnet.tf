@@ -8,6 +8,7 @@ resource "aws_subnet" "public" {
   tags = {
     "Name"                                          = var.environment_name
     "kubernetes.io/cluster/${var.environment_name}" = "shared"
+    "kubernetes.io/role/elb"                        = "1"
     "KubespotEnvironment"                           = var.environment_name
   }
 }
