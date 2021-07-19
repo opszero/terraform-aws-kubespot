@@ -305,7 +305,7 @@ variable "sql_encrypted" {
 
 variable "sql_identifier" {
   description = "The name of the database"
-  default = ""
+  default     = ""
 }
 
 variable "monitoring_role_arn" {

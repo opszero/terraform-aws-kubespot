@@ -15,6 +15,11 @@ resource "aws_subnet" "private" {
   }
 }
 
+output "private_subnet_ids" {
+  value = aws_subnet.private.*.id
+}
+
+
 resource "aws_eip" "eips" {
   count = var.enable_nat && length(var.eips) == 0 ? 2 : 0
   tags = {
