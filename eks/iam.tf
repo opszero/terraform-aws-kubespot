@@ -320,7 +320,7 @@ module "iam_assumable_role_alb" {
   create_role      = true
   role_name        = "${var.environment_name}-${var.alb_name}"
   provider_url     = replace(aws_iam_openid_connect_provider.cluster.url, "https://", "")
-  role_policy_arns = [aws_iam_policy.alb_policy.arn]
+  role_policy_arns = [aws_iam_policy.alb.arn]
   # namespace and service account name
   oidc_fully_qualified_subjects = [
     "system:serviceaccount:kube-system:${var.alb_name}"
@@ -330,7 +330,12 @@ module "iam_assumable_role_alb" {
   }
 }
 
-resource "aws_iam_policy" "alb_policy" {
+resource "aws_iam_role_policy_attachment" "alb" {
+  policy_arn = aws_iam_policy.alb.arn
+  role       = aws_iam_role.node.name
+}
+
+resource "aws_iam_policy" "alb" {
   name        = "${var.environment_name}-alb-policy"
   description = "EKS cluster policy for aws load balancer"
 
