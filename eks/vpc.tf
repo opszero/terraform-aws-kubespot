@@ -53,6 +53,10 @@ resource "aws_security_group" "node" {
   }
 }
 
+output "node_security_group_id" {
+  value = aws_security_group.node.id
+}
+
 resource "aws_security_group_rule" "node-ingress-self" {
   description              = "Allow node to communicate with each other"
   from_port                = 0
