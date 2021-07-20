@@ -360,10 +360,14 @@ variable "node_role_policies" {
   default = []
 }
 
-variable "fargate_enabled" {
-  default = false
+variable "fargate_selector" {
+  default = {
+    serverless = {
+      role_arn = ""
+    },
+   serverless2 = {
+      role_arn = ""
+   }
+  }
 }
 
-variable "fargate_namespace_selector_name" {
-  default = "serverless"
-}
