@@ -6,7 +6,7 @@ try {
   const previewEnvName = githubRef.replace(/[^A-Za-z0-9]/g, '-')
   console.log(`Preview Env Name ${previewEnvName}!`);
 
-  const isPreview = githubRef.match(/^(bug|epic|feature_deploy)/)
+  const isPreview = !!githubRef.match(/^(bug|epic|feature_deploy)/)
   console.log(`Is Preview: ${isPreview}!`);
 
   core.setOutput("preview-env-name", previewEnvName);
