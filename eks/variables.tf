@@ -365,6 +365,5 @@ variable "fargate_selector" {
     serverless = {
       // role_arn =
     },
-   }
   }
 }
