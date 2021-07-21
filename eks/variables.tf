@@ -367,3 +367,27 @@ variable "fargate_selector" {
     },
   }
 }
+
+variable "redshift_cluster" {
+  type = "map"
+  default = {
+      database_name = redshift
+      node_type = "dc1.large"
+      master_username = ""
+      master_password = ""
+  }
+
+}
+
+variable "dms_cluster" {
+  type = "map"
+  default = {
+      replication_instance_class = "dms.t2.medium"
+      node_type = "dc1.large"
+      migration_type = "full-load-and-cdc"
+      replication_instance_class = "dms.t2.medium"
+      engine_version = "3.1.3"
+      allocated_storage = 30
+  }
+
+}
