@@ -363,11 +363,8 @@ variable "node_role_policies" {
 variable "fargate_selector" {
   default = {
     serverless = {
-      role_arn = ""
+      // role_arn =
     },
-   serverless2 = {
-      role_arn = ""
    }
   }
 }
-
