@@ -27,7 +27,7 @@ resource "aws_elasticache_cluster" "default" {
   cluster_id = var.environment_name
 
   engine    = "redis"
-  node_type = var.redis_node_tye
+  node_type = var.redis_node_type
 
   num_cache_nodes = 1
   engine_version  = var.redis_engine_version
