@@ -3,6 +3,10 @@ resource "aws_elasticache_subnet_group" "default" {
   subnet_ids = concat(aws_subnet.private.*.id, aws_subnet.public.*.id)
 }
 
+output "redis_elasticache_subnet_group_name" {
+  value = aws_elasticache_subnet_group.default.name
+}
+
 # resource "aws_elasticache_parameter_group" "default" {
 #   name   = "cache-params"
 #   family = "redis2.8"
@@ -23,10 +27,10 @@ resource "aws_elasticache_cluster" "default" {
   cluster_id = var.environment_name
 
   engine    = "redis"
-  node_type = var.redis_node_type
+  node_type = var.redis_node_tye
 
-  num_cache_nodes = var.redis_num_nodes
-  engine_version  = "5.0.4"
+  num_cache_nodes = 1
+  engine_version  = var.redis_engine_version
   // TODO: Need to implement the parameter group
   // parameter_group_name = aws_elasticache_parameter_group.default.id
   port = 6379

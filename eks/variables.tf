@@ -235,8 +235,8 @@ variable "redis_node_type" {
   default = "cache.t3.micro"
 }
 
-variable "redis_num_nodes" {
-  default = 1
+variable "redis_engine_version" {
+  default = "6.x"
 }
 
 variable "sql_cluster_enabled" {
