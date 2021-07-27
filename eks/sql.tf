@@ -59,8 +59,8 @@ resource "aws_rds_cluster_instance" "cluster_instances" {
   monitoring_interval          = 5
   performance_insights_enabled = true
 
-  db_subnet_group_name            = aws_db_subnet_group.default.name
-  db_cluster_parameter_group_name = var.sql_parameter_group_name == "" ? null : var.sql_parameter_group_name
+  db_subnet_group_name    = aws_db_subnet_group.default.name
+  db_parameter_group_name = var.sql_parameter_group_name == "" ? null : var.sql_parameter_group_name
 
   tags = {
     "KubespotEnvironment" = var.environment_name
