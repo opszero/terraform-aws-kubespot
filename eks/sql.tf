@@ -19,8 +19,9 @@ resource "aws_rds_cluster" "default" {
   master_username = var.sql_master_username
   master_password = var.sql_master_password
 
-  db_subnet_group_name   = aws_db_subnet_group.default.name
-  vpc_security_group_ids = [aws_security_group.node.id]
+  db_subnet_group_name            = aws_db_subnet_group.default.name
+  db_cluster_parameter_group_name = var.sql_parameter_group_name == "" ? null : var.sql_parameter_group_name
+  vpc_security_group_ids          = [aws_security_group.node.id]
 
   storage_encrypted = true
 
@@ -58,7 +59,8 @@ resource "aws_rds_cluster_instance" "cluster_instances" {
   monitoring_interval          = 5
   performance_insights_enabled = true
 
-  db_subnet_group_name = aws_db_subnet_group.default.name
+  db_subnet_group_name            = aws_db_subnet_group.default.name
+  db_cluster_parameter_group_name = var.sql_parameter_group_name == "" ? null : var.sql_parameter_group_name
 
   tags = {
     "KubespotEnvironment" = var.environment_name

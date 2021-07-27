@@ -308,6 +308,10 @@ variable "sql_identifier" {
   default     = ""
 }
 
+variable "sql_parameter_group_name" {
+  default = ""
+}
+
 variable "monitoring_role_arn" {
   default = ""
 }
