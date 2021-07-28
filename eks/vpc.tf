@@ -86,3 +86,23 @@ resource "aws_security_group_rule" "cluster-ingress-node-https" {
   to_port                  = 443
   type                     = "ingress"
 }
+
+resource "aws_security_group_rule" "public_subnet" {
+  description       = "Allow from public_subnet cidr"
+  from_port         = 0
+  protocol          = "-1"
+  security_group_id = aws_security_group.node.id
+  cidr_blocks       = var.cidr_block_public_subnet
+  to_port           = 65535
+  type              = "ingress"
+}
+
+resource "aws_security_group_rule" "private_subnet" {
+  description       = "Allow from public_subnet cidr"
+  from_port         = 0
+  protocol          = "-1"
+  security_group_id = aws_security_group.node.id
+  cidr_blocks       = var.cidr_block_private_subnet
+  to_port           = 65535
+  type              = "ingress"
+}
