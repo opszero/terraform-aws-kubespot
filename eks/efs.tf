@@ -3,6 +3,8 @@ resource "helm_release" "aws_efs_csi_driver" {
   name      = "aws-efs-csi-driver"
   namespace = "kube-system"
 
+  version    = "1.3.2"
+
   repository = "https://kubernetes-sigs.github.io/aws-efs-csi-driver/"
   chart      = "aws-efs-csi-driver"
   depends_on = [module.iam_assumable_role_admin]
