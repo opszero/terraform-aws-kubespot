@@ -8,6 +8,8 @@ inputs:
 outputs:
   preview-env-name:
     description: 'The name of your preview environment'
+  is-preview:
+    description: 'Is this a preview environment'
 runs:
   using: 'node12'
   main: 'index.js'
