@@ -1,7 +1,7 @@
 resource "aws_subnet" "public" {
   count = 2
 
-  availability_zone = var.zones[count.index]
+  availability_zone = data.aws_availability_zones.available.names[count.index]
   cidr_block        = var.cidr_block_public_subnet[count.index]
   vpc_id            = aws_vpc.vpc.id
 
