@@ -17,3 +17,6 @@ eks/kubeconfig.yaml
 eks/kubeconfig.yaml
 
 .DS_Store
+*~
+
+.idea/
