@@ -15,3 +15,5 @@ aws-marketplace.json
 **/*.tfstate
 eks/kubeconfig.yaml
 eks/kubeconfig.yaml
+
+.DS_Store
