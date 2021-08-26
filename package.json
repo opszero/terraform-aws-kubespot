@@ -1,5 +1,5 @@
 {
-  "name": "deploytag",
+  "name": "kubespot",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -8,15 +8,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/opszero/deploytag.git"
+    "url": "git+https://github.com/opszero/kubespot.git"
   },
   "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "author": "Abhi Yerra",
+  "license": "MPL",
   "bugs": {
-    "url": "https://github.com/opszero/deploytag/issues"
+    "url": "https://github.com/opszero/kubespot/issues"
   },
-  "homepage": "https://github.com/opszero/deploytag#readme",
+  "homepage": "https://www.opszero.com",
   "dependencies": {
     "@actions/core": "^1.5.0",
     "@actions/github": "^5.0.0"
