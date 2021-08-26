@@ -5,7 +5,10 @@ resource "helm_release" "aws_efs_csi_driver" {
 
   repository = "https://kubernetes-sigs.github.io/aws-efs-csi-driver/"
   chart      = "aws-efs-csi-driver"
-  depends_on = [module.iam_assumable_role_admin]
+  depends_on = [
+    module.iam_assumable_role_admin,
+    kubernetes_config_map.aws_auth
+  ]
 
   wait = false
 
@@ -21,9 +24,5 @@ serviceAccount:
     annotations:
       eks.amazonaws.com/role-arn: "${module.iam_assumable_role_admin[0].this_iam_role_arn}"
 EOF
-  ]
-
-  depends_on = [
-    kubernetes_config_map.aws_auth
   ]
 }
