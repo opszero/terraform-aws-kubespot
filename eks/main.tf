@@ -39,6 +39,10 @@ resource "aws_eks_addon" "core" {
   cluster_name      = aws_eks_cluster.cluster.name
   addon_name        = each.key
   resolve_conflicts = "OVERWRITE"
+
+  depends_on = [
+    kubernetes_config_map.aws_auth
+  ]
 }
 
 # EKS currently documents this required userdata for EKS worker nodes to
