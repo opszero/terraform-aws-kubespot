@@ -5,8 +5,10 @@ resource "helm_release" "aws_load_balancer" {
 
   repository = "https://aws.github.io/eks-charts"
   chart      = "aws-load-balancer-controller"
-  depends_on = [module.iam_assumable_role_alb]
-
+  depends_on = [
+    module.iam_assumable_role_alb,
+    kubernetes_config_map.aws_auth
+  ]
   wait = false
 
   values = [<<EOF
