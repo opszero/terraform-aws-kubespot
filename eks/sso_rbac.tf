@@ -13,6 +13,10 @@ resource "kubernetes_role" "default_eks_admins" {
     resources  = ["*"]
     verbs      = ["*"]
   }
+
+  depends_on = [
+    kubernetes_config_map.aws_auth
+  ]
 }
 
 resource "kubernetes_role_binding" "default_eks_admins" {
@@ -30,6 +34,10 @@ resource "kubernetes_role_binding" "default_eks_admins" {
     name      = kubernetes_role.default_eks_admins.metadata[0].name
     api_group = "rbac.authorization.k8s.io"
   }
+
+  depends_on = [
+    kubernetes_config_map.aws_auth
+  ]
 }
 
 resource "kubernetes_role" "default_eks_readonly" {
@@ -46,6 +54,10 @@ resource "kubernetes_role" "default_eks_readonly" {
     resources  = ["*"]
     verbs      = ["get", "list", "watch"]
   }
+
+  depends_on = [
+    kubernetes_config_map.aws_auth
+  ]
 }
 
 resource "kubernetes_role_binding" "default_eks_readonly" {
@@ -63,6 +75,10 @@ resource "kubernetes_role_binding" "default_eks_readonly" {
     name      = kubernetes_role.default_eks_readonly.metadata[0].name
     api_group = "rbac.authorization.k8s.io"
   }
+
+  depends_on = [
+    kubernetes_config_map.aws_auth
+  ]
 }
 
 resource "kubernetes_role" "default_eks_developers" {
@@ -79,6 +95,10 @@ resource "kubernetes_role" "default_eks_developers" {
     resources  = ["services", "deployments", "pods", "configmaps", "pods/log"]
     verbs      = ["get", "list", "watch", "update", "create", "patch"]
   }
+
+  depends_on = [
+    kubernetes_config_map.aws_auth
+  ]
 }
 
 resource "kubernetes_role_binding" "default_eks_developers" {
@@ -96,6 +116,10 @@ resource "kubernetes_role_binding" "default_eks_developers" {
     name      = kubernetes_role.default_eks_developers.metadata[0].name
     api_group = "rbac.authorization.k8s.io"
   }
+
+  depends_on = [
+    kubernetes_config_map.aws_auth
+  ]
 }
 
 resource "kubernetes_role" "default_eks_monitoring_admins" {
@@ -112,6 +136,10 @@ resource "kubernetes_role" "default_eks_monitoring_admins" {
     resources  = ["*"]
     verbs      = ["*"]
   }
+
+  depends_on = [
+    kubernetes_config_map.aws_auth
+  ]
 }
 
 resource "kubernetes_role_binding" "default_eks_monitoring_admins" {
@@ -129,6 +157,10 @@ resource "kubernetes_role_binding" "default_eks_monitoring_admins" {
     name      = kubernetes_role.default_eks_monitoring_admins.metadata[0].name
     api_group = "rbac.authorization.k8s.io"
   }
+
+  depends_on = [
+    kubernetes_config_map.aws_auth
+  ]
 }
 
 #ClusterRoleBinding
@@ -146,6 +178,9 @@ resource "kubernetes_cluster_role_binding" "eks_admins_binding" {
     name      = "default:ad-eks-admins"
     api_group = "rbac.authorization.k8s.io"
   }
+  depends_on = [
+    kubernetes_config_map.aws_auth
+  ]
 }
 
 resource "kubernetes_cluster_role_binding" "eks_readonly_binding" {
@@ -162,4 +197,7 @@ resource "kubernetes_cluster_role_binding" "eks_readonly_binding" {
     name      = "default:ad-eks-readonly"
     api_group = "rbac.authorization.k8s.io"
   }
+  depends_on = [
+    kubernetes_config_map.aws_auth
+  ]
 }
