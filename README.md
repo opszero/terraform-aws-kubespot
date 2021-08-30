@@ -49,7 +49,7 @@ commonalities between them.
 
 ### Infrastructure as Code / Terraform
 
-The infrastructure is setup using AuditKube which is a Terraform module to
+The infrastructure is setup using Kubespot which is a Terraform module to
 create the entire infrastructure. Terraform is used to create Infrastructure as
 Code so you don’t have to go into the Consoles of the different environments and
 point and click to build infrastructure.
@@ -164,9 +164,9 @@ module "opszero-eks" {
   ]
 
   cluster_version  = "1.20"
-  environment_name = "axiom-prod1"
+  environment_name = "kubespot-prod1"
   ec2_keypair      = "opszero"
-  aws_profile      = "axiom-ai"
+  aws_profile      = "kubespot"
   iam_users = [
     "opszero",
     "simonwilliams",
