@@ -12,38 +12,6 @@ on each of the Cloud providers with limited access to the Kubernetes cluster so
 things are further locked down. All of this should lead to setting up a HIPAA /
 PCI / SOC2 being made straightforward and repeatable.
 
-# Features
-
- - Terraform
-    - AWS EKS
-    - Google Cloud
-    - Microsoft Azure
- - Github Actions
-    - Preview Environments
-
-# Example
-
- - [AWS EKS](examples/eks)
- - [GCP](examples/gcp)
-
-# Support
-<a href="https://www.opszero.com"><img src="http://assets.opszero.com.s3.amazonaws.com/images/opszero_11_29_2016.png" width="300px"/></a>
-
-This project is by [opsZero](https://www.opszero.com). We help organizations
-migrate to Kubernetes so [reach out](https://www.opszero.com/#contact) if you
-need help!
-
-# License
-
-This Source Code Form is subject to the terms of the Mozilla Public
-License, v. 2.0. If a copy of the MPL was not distributed with this
-file, You can obtain one at http://mozilla.org/MPL/2.0/.
-
-
-# FAQ
-
-## Why Kubespot?
-
 This covers how we setup your infrastructure on AWS, Google Cloud and Azure.
 These are the three Cloud Providers that we currently support to run Kubernetes.
 Further, we use the managed service provided by each of the Cloud Providers.
@@ -51,7 +19,31 @@ This document covers everything related to how infrastructure is setup within
 each Cloud, how we create an isolated environment for Compliance and the
 commonalities between them.
 
-### Infrastructure as Code / Terraform
+# Tools & Setup
+
+```
+brew install kubectl kubernetes-helm awscli google-cloud-sdk azure-cli terraform packer
+```
+
+# Credentials
+
+## AWS
+
+Add your IAM credentials in ~/.aws/credentials.
+
+```
+[profile_name]
+aws_access_key_id=<>key>
+aws_secret_access_key=<secret_key>
+region=us-west-2
+```
+
+
+# Terraform
+
+ - [AWS EKS](examples/eks)
+ - [Google Cloud](examples/gcp)
+ - Microsoft Azure
 
 The infrastructure is setup using Kubespot which is a Terraform module to
 create the entire infrastructure. Terraform is used to create Infrastructure as
@@ -115,50 +107,26 @@ Node level Encryption
 Google Cloud
 Azure
 
-# Tools
 
-## Command Line Tools
+# Preview Environnments
 
-### How do I install the tools?
+ - Github Actions
 
-```
-brew install kubectl kubernetes-helm awscli google-cloud-sdk azure-cli terraform packer
-```
+# Support
+<a href="https://www.opszero.com"><img src="http://assets.opszero.com.s3.amazonaws.com/images/opszero_11_29_2016.png" width="300px"/></a>
 
-## AWS
+This project is by [opsZero](https://www.opszero.com). We help organizations
+migrate to Kubernetes so [reach out](https://www.opszero.com/#contact) if you
+need help!
 
-Add your IAM credentials in ~/.aws/credentials.
-
-```
-[profile_name]
-aws_access_key_id=<>key>
-aws_secret_access_key=<secret_key>
-region=us-west-2
-```
-
-## SAML
-
-If you setup a user via SAML access via Okta, G Suite or Office 360 they are
-automatically logged in with a default role. Modify this role to include the
-following additional access:
-
-ACCESS_NEEDED
-
-Once that is done we need to give them access to the EKS Cluster. To do this add
-them to the iam_users list that you used to create the cluster. This creates a
-RBAC access to the cluster.
-
-# Kubernetes Cluster
-
-# Basic Usage
-
+# Kubernetes
 
 ## kubeconfig
 
-AWS
-Ensure you have access to EKS. This is done by adding your IAM to the EKS in the terraform configuration.
+### AWS
 
-Login to the Bastion if the API Key is setup for private access
+Ensure you have access to EKS. This is done by adding your IAM to the EKS in the
+terraform configuration.
 
 Get the credentials
 
@@ -168,41 +136,95 @@ KUBECONFIG=./kubeconfig aws --profile=account eks update-kubeconfig --cluster cl
 
 There can be multiple clusters so pick the correct cluster.
 
-Ensure that you set export KUBECONFIG=./kubeconfig to get the correct KUBECONFIG file. This can be added into you .bashrc or .zshrc
+Ensure that you set `export KUBECONFIG=./kubeconfig` to get the correct `KUBECONFIG`
+file. This can be added into you .bashrc or .zshrc
 
 ## List Running Pods
-kubectl get pods --all-namespaces
-Kubernetes lets you divide your cluster into namespaces. Each namespace can have its own set of resources. The above command lists all running pods on every cluster. Pods in the kube-system namespace belong to Kubernetes and helps it function.
+
+``` sh
+kubectl get pods -A
+```
+
+Kubernetes lets you divide your cluster into namespaces. Each namespace can have
+its own set of resources. The above command lists all running pods on every
+cluster. Pods in the kube-system namespace belong to Kubernetes and helps it
+function.
 
 
 ## “SSH”
+
 To connect to the application look at the namespaces:
 
+``` sh
 kubectl get pods --all-namespaces
 kubectl exec -it -n <namespace> <pod> -c <container> -- bash
+```
 
-Logs
+
+## Logs
+
+``` sh
 kubectl get pods --all-namespaces
 kubectl logs -f -n <namespace> <pod> -c <container>
+```
 
-This lets you view the logs of the running pod. The container running on the pod should be configured to output logs to STDOUT/STDERR.
+This lets you view the logs of the running pod. The container running on the pod
+should be configured to output logs to STDOUT/STDERR.
 
-Describe Pods
+## Describe Pods
+
 Troubleshooting Pods
 
 kubectl describe pods
 
 Common Errors:
 
-OOMError
-CrashLoopBackup
-ImageNotFound
+ - OOMError
+ - CrashLoopBackup
+ - ImageNotFound
 
-# How do I restart the Nodes?
+# Usage
+
+How can I restart a pod?
+If you pod is not responding or needs a restart the way to do it is to use the following command. This will delete the pod and replace it with a new pod if it is a part of a deployment.
+
+kubectl delete pod <pod-name>
+How can we remove pods?
+This has to be done through the deployment in the helm chart. Another way to do it is to scale down
+
+kubectl scale --replicas=0 -n <namespace> deployment/<deploymentname>
+
+How can I add pods?
+This has to be done through the deployment in the helm chart.
+
+How can I add nodes?
+Nodes are added through the Terraform module variable. Please check the infrastructure code and where the modules are defined. These will create the scaling groups for nodes.
+
+How can I remove nodes?
+Nodes are added through the Terraform module variable. Please check the infrastructure code and where the modules are defined. These will create the scaling groups for nodes.
+
+How can I restart nodes?
+Nodes can be terminated using the following script:
+
+export aws_profile=profile_name
+
+for i in $(kubectl get nodes | awk '{print $1}' | grep -v NAME)
+do
+        kubectl drain --ignore-daemonsets --grace-period=60 --timeout=30s --force $i
+        aws --profile $aws_profile ec2 terminate-instances --instance-ids $(aws --profile $aws_profile ec2 describe-instances --filter "Name=private-dns-name,Values=$i" | jq -r '.Reservations[].Instances[].InstanceId')
+        sleep 300 # Wait 5 mins for the new machine to come back up
+done
+
+
+
+# Kubernetes Nodes
+
+Restarting nodes may need to happen if you need to change the size of the
+instance, the machine's disk gets full, or you need to update a new AMI.  The
+following code provides the howto.
 
 ## EKS
 
-Restarting EKS nodes may happen if you need to immediately change the size of the instance, the machine's disk gets full, or you need to update a new AMI. The following code provides the howto.
 
 ```
 export AWS_PROFILE=aws_profile
@@ -218,7 +240,11 @@ done
 
 
 Kubernetes
-We setup Kubernetes using the managed service provider on each of the Cloud providers. AWS EKS, Google Cloud GCE, Azure AKS. This ensures that we don’t need to handle running the master nodes which can create additional operational hurdles. We remove this from the picture as much as possible.
+
+We setup Kubernetes using the managed service provider on each of the Cloud
+providers. AWS EKS, Google Cloud GCE, Azure AKS. This ensures that we don’t need
+to handle running the master nodes which can create additional operational
+hurdles. We remove this from the picture as much as possible.
 
 Kubernetes will be running with the following things:
 
@@ -239,7 +265,8 @@ DNS (i.e app.example.com) -> Ingress (Public IP Address/CNAME) -> Kubernetes Ser
 Monitoring
 Monitoring is configured through third party services such as Datadog, New Relic, etc. These services will cover what the issues with the pods are and other metrics. The need to be setup separately but all of them provide a Helm chart to install so no additional configuration is needed.
 
-Helm
+# Helm
+
 When are the Helm templates used in the build process? How does this > fire?
 Are all of the templates run everytime?
 There are a lot of dynamic Helm files in the project that honestly I > have no idea what they are doing. Where can we look to see the > variables that will be used by these charts?
@@ -287,99 +314,17 @@ This increases the number of processes that are running which will increase the 
 AWS Secret Manager
 DeployTag uses AWS Secret Manager as the way to store and retrieve secrets that it populates on deployment. The values in Secret Manager become environment variables.
 
+## Releases
 
+```sh
+TAG=v3.0.1
+gh release create $TAG --discussion-category "General"
+```
 
-# Usage
+git tag v`
 
-How can I restart a pod?
-If you pod is not responding or needs a restart the way to do it is to use the following command. This will delete the pod and replace it with a new pod if it is a part of a deployment.
+# License
 
-kubectl delete pod <pod-name>
-How can we remove pods?
-This has to be done through the deployment in the helm chart. Another way to do it is to scale down
-
-kubectl scale --replicas=0 -n <namespace> deployment/<deploymentname>
-
-How can I add pods?
-This has to be done through the deployment in the helm chart.
-
-How can I add nodes?
-Nodes are added through the Terraform module variable. Please check the infrastructure code and where the modules are defined. These will create the scaling groups for nodes.
-
-How can I remove nodes?
-Nodes are added through the Terraform module variable. Please check the infrastructure code and where the modules are defined. These will create the scaling groups for nodes.
-
-How can I restart nodes?
-Nodes can be terminated using the following script:
-
-export aws_profile=profile_name
-
-for i in $(kubectl get nodes | awk '{print $1}' | grep -v NAME)
-do
-        kubectl drain --ignore-daemonsets --grace-period=60 --timeout=30s --force $i
-        aws --profile $aws_profile ec2 terminate-instances --instance-ids $(aws --profile $aws_profile ec2 describe-instances --filter "Name=private-dns-name,Values=$i" | jq -r '.Reservations[].Instances[].InstanceId')
-        sleep 300 # Wait 5 mins for the new machine to come back up
-done
-
-
-# Troubleshooting
-
-Database
-Check for High Swap Usage Check for Large Number of Connections Is there large queries that are running? PostgreSQL Check for Queries:
-
-SELECT datname,usename,procpid,client_addr,waiting,query_start,current_query FROM pg_stat_activity ;
-
-Applications
-Network IO High
-CPU High
-Kubernetes
-Scale down Apps
-
-Cronjobs
-
-Are any of these crashed?
-
-kubectl get pods -n kube-system
-
-ImagePullBackOff: This usually means that the underlying disk is hosed. It likely ran out of disk space, or some other issue. Example:
-
-weaver-74d8bc5984-jcpcs 0/1 ImageInspectError 0 2h weaver-74d8bc5984-zmg56 0/1 ImageInspectError 0 2h weaver-8c9686b9c-7p8z7 1/1 Running 0 3h weaver-8c9686b9c-ckmpp 1/1 Running 0 3h weaver-8c9686b9c-gbf7j 1/1 Running 0 3h weaver-8c9686b9c-kprf7 1/1 Running 0 3h
-
-Step 1
-kubectl describe pod weaver-74d8bc5984-jcpcs | grep Node:
-kubectl describe pod weaver-74d8bc5984-zmg56 | grep Node:
-
-Output:
-
-Node:           ip-111-41-71-71.us-west-2.compute.internal/172.40.75.73
-Node:           ip-111-41-71-71.us-west-2.compute.internal/172.40.75.73
-
-If you see the same node name then you know that node is actually hosed.
-
-Step 2
-Drain the node
-
-kubectl get nodes
-
-You will see the above node:
-
-ip-111-41-71-71.us-west-2.compute.internal     Ready,node     21d       v1.8.4
-
-To drain it do the following:
-
-kubectl drain ip-111-41-71-71.us-west-2.compute.internal
-
-Should get the output:
-
-node "ip-111-41-71-71.us-west-2.compute.internal" cordoned
-error: DaemonSet-managed pods (use --ignore-daemonsets to ignore): dd-agent-7jqlk, logdna-agent-jjm22, weave-net-fzppb; pods not managed by ReplicationController, ReplicaSet, Job, DaemonSet or StatefulSet (use --force to override): kube-proxy-ip-172-40-75-73.us-west-2.compute.internal
-
-Step 3
-Go into the AWS Console
-Go to EC2
-Find that node and terminate it.
-No further action. The ASG will bring up a new node and remove the old node from the cluster.
-New Cluster / Can’t Read from ECS
-kubectl drain node
-Delete it from AWS Console
-Repeat until all of them are rebuilt
+This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this
+file, You can obtain one at http://mozilla.org/MPL/2.0/.
