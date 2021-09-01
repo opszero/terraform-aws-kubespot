@@ -18,9 +18,13 @@ PCI / SOC2 being made straightforward and repeatable.
     - AWS EKS
     - Google Cloud
     - Microsoft Azure
-  - Preview Environments
+ - Github Actions
+    - Preview Environments
 
 # Example
+
+ - [AWS EKS](examples/eks)
+ - [GCP](examples/gcp)
 
 # Support
 <a href="https://www.opszero.com"><img src="http://assets.opszero.com.s3.amazonaws.com/images/opszero_11_29_2016.png" width="300px"/></a>
@@ -146,95 +150,11 @@ RBAC access to the cluster.
 
 # Kubernetes Cluster
 
-## AWS EKS
-### How do I setup a new EKS cluster?
-
-```
-provider "aws" {
-  profile = "awsprofile"
-  region  = "us-east-1"
-}
-
-module "opszero-eks" {
-  source = "github.com/opszero/kubespot//eks"
-
-  zones = [
-    "us-east-1c",
-    "us-east-1d"
-  ]
-
-  cluster_version  = "1.20"
-  environment_name = "kubespot-prod1"
-  ec2_keypair      = "opszero"
-  aws_profile      = "kubespot"
-  iam_users = [
-    "opszero",
-    "simonwilliams",
-    "yaseer",
-    "jenkins",
-  ]
-
-  cidr_block = "10.3.0.0/16"
-  cidr_block_public_subnet = [
-    "10.3.0.0/18",
-    "10.3.64.0/18",
-  ]
-  cidr_block_private_subnet = [
-    "10.3.128.0/18",
-    "10.3.192.0/18",
-  ]
-
-  enable_nat             = false
-  nodes_in_public_subnet = true
-
-  nodes_green_instance_type    = "t3a.small"
-  nodes_green_desired_capacity = 1
-  nodes_green_min_size         = 1
-  nodes_green_max_size         = 2
-  nodes_blue_instance_type     = "t3a.small"
-  nodes_blue_desired_capacity  = 0
-  nodes_blue_min_size          = 0
-  nodes_blue_max_size          = 0
-
-  bastion_enabled     = false
-  bastion_eip_enabled = false
-
-  bastion_vpn_allowed_cidrs = []
-
-  redis_enabled        = false
-  sql_cluster_enabled  = false
-  sql_instance_enabled = false
-
-  vpc_flow_logs_enabled = false
-
-  efs_enabled = true
-}
-
-
-```
-
-### How do I setup a EKS ECR Repository?
-
-```
-resource "aws_ecr_repository" "kubespot" {
-  name                 = "kubespot"
-  image_tag_mutability = "MUTABLE"
-
-  image_scanning_configuration {
-    scan_on_push = true
-  }
-}
-```
-
-
-
-
-
-
 # Basic Usage
 
 
-kubeconfig
+## kubeconfig
+
 AWS
 Ensure you have access to EKS. This is done by adding your IAM to the EKS in the terraform configuration.
 
@@ -242,18 +162,20 @@ Login to the Bastion if the API Key is setup for private access
 
 Get the credentials
 
+```
 KUBECONFIG=./kubeconfig aws --profile=account eks update-kubeconfig --cluster cluster-name
+```
 
 There can be multiple clusters so pick the correct cluster.
 
 Ensure that you set export KUBECONFIG=./kubeconfig to get the correct KUBECONFIG file. This can be added into you .bashrc or .zshrc
 
-List Running Pods
+## List Running Pods
 kubectl get pods --all-namespaces
 Kubernetes lets you divide your cluster into namespaces. Each namespace can have its own set of resources. The above command lists all running pods on every cluster. Pods in the kube-system namespace belong to Kubernetes and helps it function.
 
 
-“SSH”
+## “SSH”
 To connect to the application look at the namespaces:
 
 kubectl get pods --all-namespaces

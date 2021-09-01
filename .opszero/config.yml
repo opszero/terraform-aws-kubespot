@@ -25,9 +25,14 @@ social:
   github: https://github.com/opszero/kubespot
 
 product:
-  cta:
-    title: Schedule a Call
-    href: https://calendly.com/opszero-llc/opszero
+  hero:
+    cta:
+      title: Schedule a Call
+      href: https://calendly.com/opszero-llc/opszero
+
+  benefits:
+    - title: ""
+      blurb: ""
 
   features:
     header: Helping Your Startup Move Fast
@@ -56,13 +61,20 @@ product:
         blurb: |
           Did you receive a bunch of Cloud credit and want to play Cloud arbitrage? We can help you migrate between different Cloud providers so you can optimize the use of your credits.
 
+contact:
+  supportUrl: ""
+
+team:
+  - githubUsername: abhiyerra
+    title: CEO
 
 marketplaces:
   shopify: ""
   gumroad: ""
   calendly: ""
   rapidApi: ""
-  awsMarketplace: ""
+  awsMarketplace:
+    oneClickInstall: ""
   azureMarketplace: ""
   gcpMarketplace: ""
   digitaloceanMarketplace: ""
