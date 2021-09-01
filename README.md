@@ -2,7 +2,7 @@
 
 <img src="http://assets.opszero.com.s3.amazonaws.com/images/auditkube.png" width="200px" />
 
-Compliance Oriented Kubernetes Setup for Amazon, Google and Azure.
+Compliance Oriented Kubernetes Setup for AWS, Google Cloud and Microsoft Azure.
 
 Kubespot is an open source terraform module that attempts to create a complete
 compliance-oriented Kubernetes setup on AWS, Google Cloud and Azure.  These add
@@ -37,6 +37,55 @@ aws_access_key_id=<>key>
 aws_secret_access_key=<secret_key>
 region=us-west-2
 ```
+
+
+# Network Diagram
+
+We setup Kubernetes using the managed service provider on each of the Cloud
+providers. AWS EKS, Google Cloud GCE, Azure AKS. This ensures that we don’t need
+to handle running the master nodes which can create additional operational
+hurdles. We remove this from the picture as much as possible.
+
+Kubernetes will be running with the following things:
+
+ - Ingress controller to reduce the expense of running multiple LoadBalancers
+Nodes
+Nodes can be configured using Terraform. Each of the modules for EKS, GCP, AKS
+have configuration options for adding and additional nodes. Further, you can
+specify the size and type of the nodes using the Terraform script as well. This
+should be the variables min_size and max_size. The amount of nodes that a master
+does not need to be configured and is handled by the managed service providers.
+
+The way to add additional nodes to the cluster is to increase the min_size of
+the nodes. This will create additional nodes in the cluster. Note that it may
+take up to 5 minutes to bring up additional nodes but there is not downtime. You
+can also do the same by reducing the min_size. This will remove the pods and
+move them to different nodes. Ensure that your code is idempotent to handle
+cases where the service may be killed.
+
+The way to increase the size is to modify the terraform script and run terraform
+apply. This will update the configuration. Further, with Azure and GCP we can
+specify auto update. With EKS there needs to be a manual process for building
+the nodes updating and replacing them which is described in the AWS section.
+
+Request Cycle
+
+Pods are a group of containers. They are in the simplest form a group of pods
+that run on the same node together. The way you specify the pods is through a
+deployment and how you expose these to the outside world is through a service
+and ingress. An example of a HTTP request looks like this:
+
+```
+DNS (i.e app.example.com) -> Ingress (Public IP Address/CNAME) -> Kubernetes Service -> Kubernetes Pods
+```
+
+
+Monitoring
+
+Monitoring is configured through third party services such as Datadog, New
+Relic, etc. These services will cover what the issues with the pods are and
+other metrics. The need to be setup separately but all of them provide a Helm
+chart to install so no additional configuration is needed.
 
 
 # Terraform
@@ -112,13 +161,6 @@ Azure
 
  - Github Actions
 
-# Support
-<a href="https://www.opszero.com"><img src="http://assets.opszero.com.s3.amazonaws.com/images/opszero_11_29_2016.png" width="300px"/></a>
-
-This project is by [opsZero](https://www.opszero.com). We help organizations
-migrate to Kubernetes so [reach out](https://www.opszero.com/#contact) if you
-need help!
-
 # Kubernetes
 
 ## kubeconfig
@@ -139,7 +181,8 @@ There can be multiple clusters so pick the correct cluster.
 Ensure that you set `export KUBECONFIG=./kubeconfig` to get the correct `KUBECONFIG`
 file. This can be added into you .bashrc or .zshrc
 
-## List Running Pods
+## Pods
+### List Running Pods
 
 ``` sh
 kubectl get pods -A
@@ -151,7 +194,7 @@ cluster. Pods in the kube-system namespace belong to Kubernetes and helps it
 function.
 
 
-## “SSH”
+### “SSH”
 
 To connect to the application look at the namespaces:
 
@@ -161,7 +204,7 @@ kubectl exec -it -n <namespace> <pod> -c <container> -- bash
 ```
 
 
-## Logs
+### Logs
 
 ``` sh
 kubectl get pods --all-namespaces
@@ -171,7 +214,7 @@ kubectl logs -f -n <namespace> <pod> -c <container>
 This lets you view the logs of the running pod. The container running on the pod
 should be configured to output logs to STDOUT/STDERR.
 
-## Describe Pods
+### Describe Pods
 
 Troubleshooting Pods
 
@@ -183,47 +226,33 @@ Common Errors:
  - CrashLoopBackup
  - ImageNotFound
 
-# Usage
+## Restart a Pod
 
-How can I restart a pod?
-If you pod is not responding or needs a restart the way to do it is to use the following command. This will delete the pod and replace it with a new pod if it is a part of a deployment.
+If you pod is not responding or needs a restart the way to do it is to use the
+following command. This will delete the pod and replace it with a new pod if it
+is a part of a deployment.
 
 kubectl delete pod <pod-name>
-How can we remove pods?
+
+## Deployments
+
+### Scale Down / Up
+
 This has to be done through the deployment in the helm chart. Another way to do it is to scale down
 
-kubectl scale --replicas=0 -n <namespace> deployment/<deploymentname>
+```
+num=0
 
-How can I add pods?
-This has to be done through the deployment in the helm chart.
+kubectl scale --replicas=${num} -n <namespace> deployment/<deploymentname>
+```
 
-How can I add nodes?
-Nodes are added through the Terraform module variable. Please check the infrastructure code and where the modules are defined. These will create the scaling groups for nodes.
-
-How can I remove nodes?
-Nodes are added through the Terraform module variable. Please check the infrastructure code and where the modules are defined. These will create the scaling groups for nodes.
-
-How can I restart nodes?
-Nodes can be terminated using the following script:
-
-export aws_profile=profile_name
-
-for i in $(kubectl get nodes | awk '{print $1}' | grep -v NAME)
-do
-        kubectl drain --ignore-daemonsets --grace-period=60 --timeout=30s --force $i
-        aws --profile $aws_profile ec2 terminate-instances --instance-ids $(aws --profile $aws_profile ec2 describe-instances --filter "Name=private-dns-name,Values=$i" | jq -r '.Reservations[].Instances[].InstanceId')
-        sleep 300 # Wait 5 mins for the new machine to come back up
-done
-
-
-
-# Kubernetes Nodes
+## Nodes
 
 Restarting nodes may need to happen if you need to change the size of the
 instance, the machine's disk gets full, or you need to update a new AMI.  The
 following code provides the howto.
 
-## EKS
+### EKS
 
 
 ```
@@ -239,80 +268,39 @@ done
 ```
 
 
-Kubernetes
-
-We setup Kubernetes using the managed service provider on each of the Cloud
-providers. AWS EKS, Google Cloud GCE, Azure AKS. This ensures that we don’t need
-to handle running the master nodes which can create additional operational
-hurdles. We remove this from the picture as much as possible.
-
-Kubernetes will be running with the following things:
-
-Ingress controller to reduce the expense of running multiple LoadBalancers
-Pod Autoscaling to increase the pod scaling.
-Nodes
-Nodes can be configured using Terraform. Each of the modules for EKS, GCP, AKS have configuration options for adding and additional nodes. Further, you can specify the size and type of the nodes using the Terraform script as well. This should be the variables min_size and max_size. The amount of nodes that a master does not need to be configured and is handled by the managed service providers.
-
-The way to add additional nodes to the cluster is to increase the min_size of the nodes. This will create additional nodes in the cluster. Note that it may take up to 5 minutes to bring up additional nodes but there is not downtime. You can also do the same by reducing the min_size. This will remove the pods and move them to different nodes. Ensure that your code is idempotent to handle cases where the service may be killed.
-
-The way to increase the size is to modify the terraform script and run terraform apply. This will update the configuration. Further, with Azure and GCP we can specify auto update. With EKS there needs to be a manual process for building the nodes updating and replacing them which is described in the AWS section.
-
-Request Cycle
-Pods are a group of containers. They are in the simplest form a group of pods that run on the same node together. The way you specify the pods is through a deployment and how you expose these to the outside world is through a service and ingress. An example of a HTTP request looks like this:
-
-DNS (i.e app.example.com) -> Ingress (Public IP Address/CNAME) -> Kubernetes Service -> Kubernetes Pods
-
-Monitoring
-Monitoring is configured through third party services such as Datadog, New Relic, etc. These services will cover what the issues with the pods are and other metrics. The need to be setup separately but all of them provide a Helm chart to install so no additional configuration is needed.
 
 # Helm
 
-When are the Helm templates used in the build process? How does this > fire?
-Are all of the templates run everytime?
-There are a lot of dynamic Helm files in the project that honestly I > have no idea what they are doing. Where can we look to see the > variables that will be used by these charts?
-How can we edit this? Why would we edit these?
-When is Helm charts and templates used on the system?
-Ingress
-The ingress is in its simplest form a Kubernetes LoadBalancer. Instead of what would traditionally be this:
+## Ingress
 
+The ingress is in its simplest form a Kubernetes LoadBalancer. Instead of what
+would traditionally be this:
+
+``` sh
 DNS (i.e app.example.com) -> Kubernetes Service -> Kubernetes Pods
+```
 
 It is the following
 
+``` sh
 DNS (i.e app.example.com) -> Ingress (Public IP Address/CNAME) -> Kubernetes Service -> Kubernetes Pods
+```
 
 To break down the Ingress request cycle even further it is the following:
 
+``` sh
 DNS (i.e app.example.com) -> Ingress [Kubernetes Service -> Kubernetes Pods (Nginx) -> Kubernetes Service -> Kubernetes Pods]
+```
 
-The ingress is just another pod such as Nginx that relays the traffic and as such is just another pod in the system. The ingress is a helm chart and is installed manually with the following script.
+The Ingress is just another pod such as Nginx that relays the traffic and as
+such is just another pod in the system. The ingress is a helm chart and is
+installed manually with the following script.
 
 The ingress works at the DNS layer so it needs to be passed a Host to work:
 
+``` sh
 curl -k -H "Host: app.example.com" <https://a54313f35cb5b11e98bb60231b063008-2077563408.us-west-2.elb.amazonaws.com>
-
-By setting the DNS to the above host it will automatically send the correct host that the app is listening on. When using DeployTag it automatically creates a DNS on Cloudflare to point to the correct DNS location.
-
-Ingress is a generic architecture that can allow you to specify different paths to different services. This should be configured as part of the Helm chart that is included into every application. The documentation for this is located here
-
-The ingress controller is run on the default namespace and is configured using this chart. One of the features of DeployTag is the ability to set the subdomain of a ingress correctly. Consider the following.
-
-deploytag --cloud aws \\\\
-            --cloud-aws-secret-id <cloud-secrets> \\\\
-            dns \\\\
-            --cloudflare-zone-id <cloudflare-zone-id> \\\\
-            --record '{.Branch}-guest-server-frontend-aws' \\\\
-            --record '{.Branch}-guest-server-server-aws'
-
-Pods
-Scaling the number of pods is as simple as the following:
-
-kubectl scale -n production --replicas=5 deployments/<name>
-
-This increases the number of processes that are running which will increase the load that can be handled. There should be no downtime for this.
-
-AWS Secret Manager
-DeployTag uses AWS Secret Manager as the way to store and retrieve secrets that it populates on deployment. The values in Secret Manager become environment variables.
+```
 
 ## Releases
 
@@ -321,7 +309,12 @@ TAG=v3.0.1
 gh release create $TAG --discussion-category "General"
 ```
 
-git tag v`
+# Support
+<a href="https://www.opszero.com"><img src="http://assets.opszero.com.s3.amazonaws.com/images/opszero_11_29_2016.png" width="300px"/></a>
+
+This project is by [opsZero](https://www.opszero.com). We help organizations
+migrate to Kubernetes so [reach out](https://www.opszero.com/#contact) if you
+need help!
 
 # License
 
