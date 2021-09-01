@@ -119,10 +119,6 @@ variable "bastion_ec2_keypair" {
   default = "opszero"
 }
 
-variable "aws_profile" {
-  default = "opszero"
-}
-
 variable "iam_users" {
   default = []
 }

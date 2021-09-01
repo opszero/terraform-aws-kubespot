@@ -1,0 +1,87 @@
+name: opsZero Kubespot
+description:
+  short: Managed Kubernetes for HIPAA/PCI/SOC2 Environments with Preview Environments
+  long: |
+    opsZero helps startups build and deploy software faster while ensuring
+    developer productivity, security and compliance, and scalability. We do this
+    by providing an on-prem Kubernetes installation that runs within your AWS,
+    Google Cloud, or Microsoft Azure account. We set up your infrastructure with
+    HIPAA, PCI, and SOC2 compliance right off the bat. Second, we set up a solid
+    CI/CD pipeline allowing your company to deploy code quickly, allowing faster
+    iteration. And lastly, we set up your infrastructure to scale with your growth
+    from a couple of users to millions, whether you use a monolith or
+    microservices.
+
+    Over the lifetime of opsZero, we have set up the infrastructure of many
+    startups valued in the hundreds of millions, including Picnichealth, Lattice,
+    Traction Guest, ScopeAR, BraveCare, and many more. Many were just a couple of
+    people when we worked with them and continued to use our infrastructure
+    through multiple fundraising rounds. Our goal to ensure that your Cloud
+    infrastructure is never your bottleneck for your growth!
+
+social:
+  twitter: https://twitter.com/getopszero
+  linkedin: https://linkedin.com/company/opszero
+  github: https://github.com/opszero/kubespot
+
+product:
+  hero:
+    cta:
+      title: Schedule a Call
+      href: https://calendly.com/opszero-llc/opszero
+
+  benefits:
+    - title: ""
+      blurb: ""
+
+  features:
+    header: Helping Your Startup Move Fast
+    lead: ""
+    blocks:
+      - title: Cloud
+        icon: "fas fa-cloud"
+        blurb: |
+          Does AWS/GCP/Azure flummox your team? Is your IAM untenable? Are you
+          freaking out because you have an enterprise deal lined up but don't know
+          how you will handle the SLA? We got you covered!
+      - title: Dockerization
+        icon: "fab fa-docker"
+        blurb: |
+          Containers revolutionized shipping logistics driving globalization. Containers, the digital kind, are now driving the API Economy. Repeatable builds to accelerate releasing new features and innovations.
+      - title: "CI/CD"
+        icon: "ni ni-books"
+        blurb: |
+          Whether you are writing your services in Node, Ruby, Python, Haskell, etc., we will ensure that your code is deployed quickly and reliably. We use CI/CD services such as Github Actions and CircleCI to help accelerate this.
+      - title: "HIPAA / PCI / SOC2"
+        icon: "ni ni-trophy"
+        blurb: |
+          Security and Compliance like HIPAA / SOC2 / PCI need to be a default minimum standard for every company. Data security is a must in the 21st Century. We can aid in setting up the technical processes to achieve compliance.
+      - title: "Cloud Migration"
+        icon: "fas fa-dollar-sign"
+        blurb: |
+          Did you receive a bunch of Cloud credit and want to play Cloud arbitrage? We can help you migrate between different Cloud providers so you can optimize the use of your credits.
+
+contact:
+  supportUrl: ""
+
+team:
+  - githubUsername: abhiyerra
+    title: CEO
+
+marketplaces:
+  shopify: ""
+  gumroad: ""
+  calendly: ""
+  rapidApi: ""
+  awsMarketplace:
+    oneClickInstall: ""
+  azureMarketplace: ""
+  gcpMarketplace: ""
+  digitaloceanMarketplace: ""
+  alibabaMarketplace: ""
+  oracleCloudMarketplace: ""
+  salesforceMarketplace: ""
+  ibmMarketplace: ""
+  hpeMarketplace: ""
+  vmwareMarketplace: ""
+  hpeMarketplace: ""

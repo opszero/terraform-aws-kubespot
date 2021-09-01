@@ -23,6 +23,5 @@ module "opszero-eks" {
   db_vpc_id = ""
   vpc_peer_name = ""
   ec2_keypair = ""
-  aws_profile = ""
 }
 ```
