@@ -89,7 +89,7 @@ resource "aws_autoscaling_group" "nodes_blue" {
   name                  = "${var.environment_name}-nodes-blue"
   max_instance_lifetime = var.nodes_blue_max_instance_lifetime
 
-  vpc_zone_identifier = var.nodes_in_public_subnet ? aws_subnet.public.*.id : aws_subnet.private.*.id
+  vpc_zone_identifier = len(var.nodes_blue_subnet_ids) == 0 ? (var.nodes_in_public_subnet ? aws_subnet.public.*.id : aws_subnet.private.*.id) : var.nodes_blue_subnet_ids
 
   enabled_metrics = var.enabled_metrics_asg
 
@@ -151,7 +151,7 @@ resource "aws_autoscaling_group" "nodes_green" {
   name                  = "${var.environment_name}-nodes-green"
   max_instance_lifetime = var.nodes_green_max_instance_lifetime
 
-  vpc_zone_identifier = var.nodes_in_public_subnet ? aws_subnet.public.*.id : aws_subnet.private.*.id
+  vpc_zone_identifier = len(var.nodes_green_subnet_ids) == 0 ? (var.nodes_in_public_subnet ? aws_subnet.public.*.id : aws_subnet.private.*.id) : var.nodes_green_subnet_ids
 
   enabled_metrics = var.enabled_metrics_asg
 
