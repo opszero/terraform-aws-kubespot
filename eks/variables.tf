@@ -378,7 +378,3 @@ variable "fargate_selector" {
 variable "metrics_server_enabled" {
   default = true
 }
-
-variable "metrics_server_version" {
-  default = "5.9.3"
-}
