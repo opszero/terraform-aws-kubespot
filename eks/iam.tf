@@ -229,55 +229,6 @@ module "iam_assumable_role_admin" {
   }
 }
 
-resource "aws_iam_role_policy_attachment" "node-EFS" {
-  policy_arn = aws_iam_policy.efs_policy.arn
-  role       = aws_iam_role.node.name
-}
-
-resource "aws_iam_policy" "efs_policy" {
-  name        = "${var.environment_name}-efs-policy"
-  description = "EKS cluster policy for EFS"
-
-  policy = <<EOF
-{
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Effect": "Allow",
-      "Action": [
-        "elasticfilesystem:DescribeAccessPoints",
-        "elasticfilesystem:DescribeFileSystems",
-        "elasticfilesystem:DescribeMountTargets"
-      ],
-      "Resource": "*"
-    },
-    {
-      "Effect": "Allow",
-      "Action": [
-        "elasticfilesystem:CreateAccessPoint"
-      ],
-      "Resource": "*",
-      "Condition": {
-        "StringLike": {
-          "aws:RequestTag/efs.csi.aws.com/cluster": "true"
-        }
-      }
-    },
-    {
-      "Effect": "Allow",
-      "Action": "elasticfilesystem:DeleteAccessPoint",
-      "Resource": "*",
-      "Condition": {
-        "StringEquals": {
-          "aws:ResourceTag/efs.csi.aws.com/cluster": "true"
-        }
-      }
-    }
-  ]
-}
-EOF
-}
-
 module "iam_assumable_role_cluster_autoscaler" {
   source           = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
   version          = "3.6.0"
