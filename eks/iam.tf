@@ -229,6 +229,11 @@ module "iam_assumable_role_admin" {
   }
 }
 
+resource "aws_iam_role_policy_attachment" "node-EFS" {
+  policy_arn = aws_iam_policy.arn
+  role       = aws_iam_role.node.name
+}
+
 resource "aws_iam_policy" "efs_policy" {
   name        = "${var.environment_name}-efs-policy"
   description = "EKS cluster policy for EFS"
