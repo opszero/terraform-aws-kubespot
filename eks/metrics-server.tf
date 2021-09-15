@@ -5,4 +5,9 @@ resource "helm_release" "metrics-server" {
   chart      = "metrics-server"
   namespace  = "kube-system"
   wait       = false
+  values = [<<EOF
+apiService:
+  create: true
+EOF
+  ]
 }
