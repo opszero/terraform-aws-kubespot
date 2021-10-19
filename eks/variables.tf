@@ -383,13 +383,16 @@ variable "node_groups" {
   default = {
     # "t2.micro" = {
     #   instance_types        = ["t2.micro"],
+    #   capacity_type         = "ON_DEMAND"
     #   node_disk_size        = 20,
     #   node_desired_capacity = 1,
     #   nodes_max_size        = 1,
     #   nodes_min_size        = 1
+    #
     # },
     # "t3.small" = {
     #   instance_types        = ["t3.small"],
+    #   capacity_type         = "SPOT"
     #   node_disk_size        = 20,
     #   node_desired_capacity = 1,
     #   nodes_max_size        = 1,
