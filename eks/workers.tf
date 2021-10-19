@@ -1,17 +1,20 @@
 resource "aws_eks_node_group" "workers" {
+
+  for_each = var.node_groups
+  
   cluster_name    = aws_eks_cluster.cluster.name
-  node_group_name = "${var.environment_name}-workers"
+  node_group_name = "${var.environment_name}-workers-${each.key}"
   node_role_arn   = aws_iam_role.node.arn
   subnet_ids = flatten([
     aws_subnet.private.*.id,
   ])
 
-  disk_size      = var.nodes_disk_size
-  instance_types = var.nodes_instance_types
+  disk_size      = lookup(each.value, "node_disk_size", 20)
+  instance_types = lookup(each.value, "instance_type", "t2.micro")
   scaling_config {
-    desired_size = var.nodes_desired_capacity
-    max_size     = var.nodes_max_size
-    min_size     = var.nodes_min_size
+    desired_size = lookup(each.value, "node_desired_capacity", 1)
+    max_size     = lookup(each.value, "nodes_max_size", 1)
+    min_size     = lookup(each.value, "nodes_min_size", 1)
   }
 
   # Ensure that IAM Role permissions are created before and deleted after EKS Node Group handling.
