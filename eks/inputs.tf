@@ -16,6 +16,26 @@ variable "cluster_logging" {
   ]
 }
 
+variable "node_groups" {
+  default = {
+    "t2.micro" = {
+      instance_type = "t2.micro",
+      node_disk_size = 20,
+      node_desired_capacity = 1,
+      nodes_max_size = 1,
+      nodes_min_size = 1
+    },
+    "t3.small" = {
+      instance_type = "t3.small",
+      node_disk_size = 20,
+      node_desired_capacity = 1,
+      nodes_max_size = 1,
+      nodes_min_size = 1
+    },
+    
+  }
+}
+
 variable "bastion_enabled" {
   default = false
 }
@@ -42,26 +62,6 @@ variable "aws_profile" {
 
 variable "iam_users" {
   default = []
-}
-
-variable "nodes_instance_types" {
-  default = ["t2.micro"]
-}
-
-variable "nodes_disk_size" {
-  default = "20"
-}
-
-variable "nodes_desired_capacity" {
-  default = 1
-}
-
-variable "nodes_min_size" {
-  default = 1
-}
-
-variable "nodes_max_size" {
-  default = 1
 }
 
 //the following below are required for setting up the vpn
