@@ -71,6 +71,9 @@ resource "aws_iam_role" "cluster" {
 }
 POLICY
 
+  tags = {
+    "KubespotEnvironment" = var.environment_name
+  }
 }
 
 resource "aws_iam_role_policy_attachment" "cluster-AmazonEKSClusterPolicy" {
