@@ -378,3 +378,29 @@ variable "fargate_selector" {
 variable "metrics_server_enabled" {
   default = true
 }
+
+variable "node_groups" {
+  default = {
+    # "t2.micro" = {
+    #   instance_types        = ["t2.micro"],
+    #   capacity_type         = "ON_DEMAND"
+    #   nodes_in_public_subnet = false,
+    #   subnet_ids = [],
+    #   node_disk_size        = 20,
+    #   node_desired_capacity = 1,
+    #   nodes_max_size        = 1,
+    #   nodes_min_size        = 1
+    #
+    # },
+    # "t3.small" = {
+    #   instance_types        = ["t3.small"],
+    #   capacity_type         = "SPOT"
+    #   nodes_in_public_subnet = true,
+    #   node_disk_size        = 20,
+    #   node_desired_capacity = 1,
+    #   nodes_max_size        = 1,
+    #   nodes_min_size        = 1
+    # },
+
+  }
+}
