@@ -9,7 +9,7 @@ resource "aws_eks_node_group" "node_group" {
   ])
 
   disk_size      = lookup(each.value, "node_disk_size", 20)
-  instance_types = lookup(each.value, "instance_type", ["t2.micro"])
+  instance_types = lookup(each.value, "instance_types", ["t2.micro"])
   scaling_config {
     desired_size = lookup(each.value, "node_desired_capacity", 1)
     max_size     = lookup(each.value, "nodes_max_size", 1)
