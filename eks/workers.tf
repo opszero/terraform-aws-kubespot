@@ -1,7 +1,7 @@
 resource "aws_eks_node_group" "workers" {
 
   for_each = var.node_groups
-  
+
   cluster_name    = aws_eks_cluster.cluster.name
   node_group_name = "${var.environment_name}-workers-${each.key}"
   node_role_arn   = aws_iam_role.node.arn

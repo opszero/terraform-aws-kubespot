@@ -19,20 +19,20 @@ variable "cluster_logging" {
 variable "node_groups" {
   default = {
     "t2.micro" = {
-      instance_type = "t2.micro",
-      node_disk_size = 20,
+      instance_type         = "t2.micro",
+      node_disk_size        = 20,
       node_desired_capacity = 1,
-      nodes_max_size = 1,
-      nodes_min_size = 1
+      nodes_max_size        = 1,
+      nodes_min_size        = 1
     },
     "t3.small" = {
-      instance_type = "t3.small",
-      node_disk_size = 20,
+      instance_type         = "t3.small",
+      node_disk_size        = 20,
       node_desired_capacity = 1,
-      nodes_max_size = 1,
-      nodes_min_size = 1
+      nodes_max_size        = 1,
+      nodes_min_size        = 1
     },
-    
+
   }
 }
 
@@ -40,7 +40,7 @@ variable "bastion_enabled" {
   default = false
 }
 
-variable cidr_block {
+variable "cidr_block" {
   default = "10.2.0.0/16"
 }
 
