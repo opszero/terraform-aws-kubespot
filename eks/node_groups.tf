@@ -5,7 +5,7 @@ resource "aws_eks_node_group" "node_group" {
   node_group_name = "${var.environment_name}-${each.key}"
   node_role_arn   = aws_iam_role.node.arn
 
-  subnet_ids = length(lookup(each.value, "subnet_ids", [])) == 0 ? (lookup(each.value, "nodes_in_public_subnet", true) ? aws_subnet.public.*.id : aws_subnet.private.*.id) : lookup(each.value, "subnet_ids", [])
+  subnet_ids = length(lookup(each.value, "subnet_ids", [])) == 0 ? (lookup(each.value, "nodes_in_public_subnet", false) ? aws_subnet.public.*.id : aws_subnet.private.*.id) : lookup(each.value, "subnet_ids", [])
 
   instance_types = lookup(each.value, "instance_types", ["t2.micro"])
   disk_size      = lookup(each.value, "node_disk_size", 20)
