@@ -382,14 +382,14 @@ variable "metrics_server_enabled" {
 variable "node_groups" {
   default = {
     # "t2.micro" = {
-    #   instance_type         = "t2.micro",
+    #   instance_types        = ["t2.micro"],
     #   node_disk_size        = 20,
     #   node_desired_capacity = 1,
     #   nodes_max_size        = 1,
     #   nodes_min_size        = 1
     # },
     # "t3.small" = {
-    #   instance_type         = "t3.small",
+    #   instance_types        = ["t3.small"],
     #   node_disk_size        = 20,
     #   node_desired_capacity = 1,
     #   nodes_max_size        = 1,
