@@ -29,6 +29,10 @@ resource "aws_iam_role" "fargate" {
     }]
     Version = "2012-10-17"
   })
+
+  tags = {
+    "KubespotEnvironment" = var.environment_name
+  }
 }
 
 resource "aws_iam_role_policy_attachment" "fargate-AmazonEKSFargatePodExecutionRolePolicy" {
