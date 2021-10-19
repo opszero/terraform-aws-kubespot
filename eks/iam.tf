@@ -1,3 +1,64 @@
+resource "aws_iam_openid_connect_provider" "cluster" {
+  client_id_list  = ["sts.amazonaws.com"]
+  thumbprint_list = [data.tls_certificate.cluster.certificates.0.sha1_fingerprint]
+  url             = aws_eks_cluster.cluster.identity.0.oidc.0.issuer
+  tags = {
+    "KubespotEnvironment" = var.environment_name
+  }
+}
+
+resource "aws_iam_role_policy" "autoscaling" {
+  name = "AWSEKSAutoscaler-${var.environment_name}"
+  role = aws_iam_role.node.id
+
+  policy = <<EOF
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": [
+                "autoscaling:DescribeAutoScalingGroups",
+                "autoscaling:DescribeAutoScalingInstances",
+                "autoscaling:DescribeTags",
+                "autoscaling:DescribeLaunchConfigurations",
+                "autoscaling:SetDesiredCapacity",
+                "autoscaling:TerminateInstanceInAutoScalingGroup",
+                "ec2:DescribeLaunchTemplateVersions"
+            ],
+            "Resource": "*"
+        }
+    ]
+}
+EOF
+}
+
+resource "aws_iam_role_policy" "autoscaling_oidc" {
+  name = "AWSEKSAutoscaler-oidc-${var.environment_name}"
+  role = aws_iam_role.node_oidc.id
+
+  policy = <<EOF
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": [
+                "autoscaling:DescribeAutoScalingGroups",
+                "autoscaling:DescribeAutoScalingInstances",
+                "autoscaling:DescribeTags",
+                "autoscaling:DescribeLaunchConfigurations",
+                "autoscaling:SetDesiredCapacity",
+                "autoscaling:TerminateInstanceInAutoScalingGroup",
+                "ec2:DescribeLaunchTemplateVersions"
+            ],
+            "Resource": "*"
+        }
+    ]
+}
+EOF
+}
+
 
 module "iam_assumable_role_cluster_autoscaler" {
   source           = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
