@@ -1,9 +1,10 @@
 resource "aws_subnet" "public" {
   count = 2
 
-  availability_zone = var.zones[count.index]
-  cidr_block        = var.cidr_block_public_subnet[count.index]
-  vpc_id            = aws_vpc.vpc.id
+  availability_zone       = var.zones[count.index]
+  cidr_block              = var.cidr_block_public_subnet[count.index]
+  vpc_id                  = aws_vpc.vpc.id
+  map_public_ip_on_launch = true
 
   tags = {
     "Name"                                          = var.environment_name
@@ -37,8 +38,6 @@ resource "aws_route" "ig" {
 resource "aws_route_table" "public" {
   count  = 2
   vpc_id = aws_vpc.vpc.id
-
-  map_public_ip_on_launch = true
 
   tags = {
     "Name"                = "${var.environment_name}-public-${count.index}"
