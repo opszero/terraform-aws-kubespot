@@ -38,6 +38,8 @@ resource "aws_route_table" "public" {
   count  = 2
   vpc_id = aws_vpc.vpc.id
 
+  map_public_ip_on_launch = true
+
   tags = {
     "Name"                = "${var.environment_name}-public-${count.index}"
     "KubespotEnvironment" = var.environment_name
