@@ -18,6 +18,10 @@ resource "aws_iam_role" "node" {
 
 }
 
+output "node_role" {
+  value = aws_iam_role.node.id
+}
+
 resource "aws_iam_role_policy_attachment" "node-AmazonEKSWorkerNodePolicy" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy"
   role       = aws_iam_role.node.name
