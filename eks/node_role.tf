@@ -18,8 +18,8 @@ resource "aws_iam_role" "node" {
 
 }
 
-output "node_role_name" {
-  value = aws_iam_role.node.name
+output "node_role" {
+  value = aws_iam_role.node
 }
 
 resource "aws_iam_role_policy_attachment" "node-AmazonEKSWorkerNodePolicy" {
