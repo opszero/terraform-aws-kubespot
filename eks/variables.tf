@@ -404,3 +404,15 @@ variable "node_groups" {
 
   }
 }
+
+variable "karpenter_enabled" {
+  default = false
+}
+
+variable "karpenter_name" {
+  default = "karpenter-scaler"
+}
+
+variable "karpenter_version" {
+  default = "0.5.1"
+}
