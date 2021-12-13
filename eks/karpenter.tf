@@ -24,7 +24,7 @@ module "iam_assumable_role_karpenter" {
 }
 
 resource "aws_iam_role_policy" "karpenter_contoller" {
-  name = "karpenter-policy-${aws_eks_cluster.cluster.name}"
+  name = "karpenter-policy-${var.environment_name}"
   role = module.iam_assumable_role_karpenter.iam_role_name
 
   policy = jsonencode({
