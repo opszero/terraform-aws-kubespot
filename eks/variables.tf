@@ -3,7 +3,7 @@ variable "environment_name" {
 }
 
 variable "cluster_version" {
-  default = "1.20"
+  default = "1.21"
 }
 
 variable "cluster_autoscaler_enabled" {
