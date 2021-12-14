@@ -414,5 +414,5 @@ variable "karpenter_name" {
 }
 
 variable "karpenter_version" {
-  default = "0.5.1"
+  default = "0.5.2"
 }
