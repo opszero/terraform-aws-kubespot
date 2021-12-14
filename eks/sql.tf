@@ -86,6 +86,8 @@ resource "aws_db_instance" "default" {
 
   db_subnet_group_name   = aws_db_subnet_group.default.name
   vpc_security_group_ids = [aws_security_group.node.id]
+  parameter_group_name   = var.sql_parameter_group_name == "" ? null : var.sql_parameter_group_name
+
 
   storage_encrypted           = var.sql_encrypted
   allow_major_version_upgrade = true
