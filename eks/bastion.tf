@@ -27,7 +27,7 @@ resource "aws_security_group" "bastion" {
 
 resource "aws_security_group_rule" "bastion_ssh" {
   for_each          = var.bastion_vpn_allowed_cidrs
-  cidr_blocks       = each.key
+  cidr_blocks       = [each.key]
   from_port         = 22
   protocol          = "tcp"
   security_group_id = aws_security_group.bastion.id
