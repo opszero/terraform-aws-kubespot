@@ -298,6 +298,16 @@ variable "sql_instance_engine" {
   default = "postgres"
 }
 
+variable "sql_instance_allocated_storage" {
+  default = 20
+}
+
+variable "sql_instance_max_allocated_storage" {
+  default = 200
+}
+
+
+
 variable "sql_engine_version" {
   default = "12.7"
 }
