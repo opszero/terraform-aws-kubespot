@@ -72,8 +72,8 @@ resource "aws_db_instance" "default" {
 
   identifier = var.sql_identifier != "" ? var.sql_identifier : var.environment_name
 
-  allocated_storage     = 20
-  max_allocated_storage = 200
+  allocated_storage     = var.sql_instance_allocated_storage
+  max_allocated_storage = var.sql_instance_max_allocated_storage
 
   storage_type   = "gp2"
   engine         = var.sql_instance_engine
