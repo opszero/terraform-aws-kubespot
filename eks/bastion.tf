@@ -39,7 +39,7 @@ resource "aws_instance" "bastion" {
   count = var.bastion_enabled ? 1 : 0
 
   ami           = data.aws_ami.ubuntu.id
-  instance_type = "t3.micro"
+  instance_type = var.bastion_instance_type
 
   key_name                    = var.bastion_ec2_keypair
   associate_public_ip_address = true
@@ -96,5 +96,6 @@ SCRIPT
 
   root_block_device {
     encrypted = true
+    volume_size = var.bastion_volume_size
   }
 }
