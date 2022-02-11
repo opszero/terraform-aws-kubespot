@@ -65,6 +65,16 @@ variable "bastion_eip_enabled" {
   default = false
 }
 
+variable "bastion_instance_type" {
+  default = "t3.micro"
+}
+
+variable "bastion_volume_size" {
+  default = 20
+}
+
+
+
 variable "bastion_vpn_allowed_cidrs" {
   description = "These are the IPs that the bastion and VPN allow connections from."
   default     = ["0.0.0.0/0"]
@@ -305,8 +315,6 @@ variable "sql_instance_allocated_storage" {
 variable "sql_instance_max_allocated_storage" {
   default = 200
 }
-
-
 
 variable "sql_engine_version" {
   default = "12.7"
