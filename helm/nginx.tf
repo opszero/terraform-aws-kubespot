@@ -4,7 +4,7 @@ resource "helm_release" "nginx" {
   chart      = "ingress-nginx/ingress-nginx"
 
   values = [
-    "${file("${path.module}/nginx.yml")}"
+    "${file("nginx.yml")}"
   ]
 
   set {
