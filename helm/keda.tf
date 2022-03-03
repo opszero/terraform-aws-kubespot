@@ -1,4 +1,4 @@
-resource "helm_release" "nginx" {
+resource "helm_release" "keda" {
   name       = "nginx"
   repository = "https://kedacore.github.io/charts"
   chart      = "kedacore/keda"
