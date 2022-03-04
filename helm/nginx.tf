@@ -1,4 +1,6 @@
 resource "helm_release" "nginx" {
+  count = var.keda_enabled ? 1 : 0
+
   name       = "nginx"
   repository = "https://kubernetes.github.io/ingress-nginx"
   chart      = "ingress-nginx/ingress-nginx"
