@@ -3,7 +3,7 @@ resource "helm_release" "nginx" {
 
   name       = "nginx"
   repository = "https://kubernetes.github.io/ingress-nginx"
-  chart      = "ingress-nginx/ingress-nginx"
+  chart      = "ingress-nginx"
 
   # values = [
   #   "${file("./nginx.yml")}"
