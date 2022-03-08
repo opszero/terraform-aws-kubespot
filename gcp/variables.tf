@@ -12,10 +12,6 @@ variable "cluster_username" {
 variable "cluster_password" {
 }
 
-variable "project_id" {
-  type = string
-}
-
 variable "region" {
   default = "us-central1"
 }
