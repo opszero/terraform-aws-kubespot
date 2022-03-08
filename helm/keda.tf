@@ -6,4 +6,5 @@ resource "helm_release" "keda" {
   chart            = "keda"
   namespace        = "keda"
   create_namespace = true
+  recreate_pods    = true
 }
