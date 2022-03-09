@@ -41,6 +41,7 @@ resource "aws_iam_role_policy" "karpenter_contoller" {
           "iam:PassRole",
           "ec2:TerminateInstances",
           "ec2:DescribeLaunchTemplates",
+          "ec2:DeleteLaunchTemplate",
           "ec2:DescribeInstances",
           "ec2:DescribeSecurityGroups",
           "ec2:DescribeSubnets",
@@ -84,7 +85,7 @@ resource "helm_release" "karpenter" {
 
   set {
     name  = "aws.defaultInstanceProfile"
-    value = "KarpenterNodeInstanceProfile-${aws_eks_cluster.cluster.name}"
+    value = aws_instance_profile.karpenter.name
   }
 }
 
