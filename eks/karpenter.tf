@@ -4,12 +4,14 @@ data "aws_iam_policy" "ssm_managed_instance" {
 
 resource "aws_iam_role_policy_attachment" "karpenter_ssm_policy" {
   count      = var.karpenter_enabled ? 1 : 0
+
   role       = aws_iam_role.node.name
   policy_arn = data.aws_iam_policy.ssm_managed_instance.arn
 }
 
 resource "aws_iam_instance_profile" "karpenter" {
   count = var.karpenter_enabled ? 1 : 0
+
   name  = "KarpenterNodeInstanceProfile-${aws_eks_cluster.cluster.name}"
   role  = aws_iam_role.node.name
 }
@@ -56,6 +58,7 @@ resource "aws_iam_role_policy" "karpenter_contoller" {
 
 resource "helm_release" "karpenter" {
   count            = var.karpenter_enabled ? 1 : 0
+
   namespace        = "karpenter"
   create_namespace = true
 
@@ -80,6 +83,22 @@ resource "helm_release" "karpenter" {
   }
 }
 
-resource "aws_iam_service_linked_role" "spot" {
-  aws_service_name = "spot.amazonaws.com"
-}
+# data "template_file" "your_template" {
+#   template = "${file("${path.module}/templates/<.yaml>")}"
+# }
+
+# resource "null_resource" "karpenter_crd" {
+#   count            = var.karpenter_enabled ? 1 : 0
+
+#   triggers = {
+#     manifest_sha1 = "${sha1("${data.template_file.your_template.rendered}")}"
+#   }
+
+#   provisioner "local-exec" {
+#     command = "kubectl create -f -<<EOF\n${data.template_file.your_template.rendered}\nEOF"
+#   }
+
+#   depends_on = [
+#     helm_release.karpenter
+#   ]
+# }
