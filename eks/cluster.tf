@@ -13,7 +13,10 @@ resource "aws_eks_cluster" "cluster" {
     endpoint_public_access  = var.cluster_public_access
     public_access_cidrs     = var.cluster_public_access_cidrs
 
-    security_group_ids = [aws_security_group.cluster.id]
+    security_group_ids = [
+      aws_security_group.cluster.id,
+      aws_security_group.node.id,
+    ]
 
     subnet_ids = flatten([
       aws_subnet.public.*.id,
