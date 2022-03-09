@@ -12,7 +12,7 @@ resource "aws_iam_role_policy_attachment" "karpenter_ssm_policy" {
 resource "aws_iam_instance_profile" "karpenter" {
   count = var.karpenter_enabled ? 1 : 0
 
-  name = "${var.environment_name}-KarpenterNodeInstanceProfile"
+  name = "KarpenterNodeInstanceProfile-${var.environment_name}"
   role = aws_iam_role.node.name
 }
 
