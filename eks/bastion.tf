@@ -95,7 +95,7 @@ chmod +x /etc/rc.local
 SCRIPT
 
   root_block_device {
-    encrypted = true
+    encrypted   = true
     volume_size = var.bastion_volume_size
   }
 }

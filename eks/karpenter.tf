@@ -9,13 +9,6 @@ resource "aws_iam_role_policy_attachment" "karpenter_ssm_policy" {
   policy_arn = data.aws_iam_policy.ssm_managed_instance.arn
 }
 
-resource "aws_iam_instance_profile" "karpenter" {
-  count = var.karpenter_enabled ? 1 : 0
-
-  name = "KarpenterNodeInstanceProfile-${var.environment_name}"
-  role = aws_iam_role.node.name
-}
-
 module "iam_assumable_role_karpenter" {
   count = var.karpenter_enabled ? 1 : 0
 
@@ -89,7 +82,7 @@ resource "helm_release" "karpenter" {
 
   set {
     name  = "aws.defaultInstanceProfile"
-    value = aws_iam_instance_profile.karpenter[0].name
+    value = aws_iam_instance_profile.node.name
   }
 }
 
