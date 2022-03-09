@@ -12,11 +12,13 @@ resource "aws_iam_role_policy_attachment" "karpenter_ssm_policy" {
 resource "aws_iam_instance_profile" "karpenter" {
   count = var.karpenter_enabled ? 1 : 0
 
-  name  = "KarpenterNodeInstanceProfile-${aws_eks_cluster.cluster.name}"
+  name  = "KarpenterNodeInstanceProfile-${var.environment_name}"
   role  = aws_iam_role.node.name
 }
 
 module "iam_assumable_role_karpenter" {
+  count = var.karpenter_enabled ? 1 : 0
+
   source                        = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
   version                       = "4.7.0"
   create_role                   = true
@@ -25,9 +27,11 @@ module "iam_assumable_role_karpenter" {
   oidc_fully_qualified_subjects = ["system:serviceaccount:karpenter:karpenter"]
 }
 
-resource "aws_iam_role_policy" "karpenter_contoller" {
-  name = "karpenter-policy-${var.environment_name}"
-  role = module.iam_assumable_role_karpenter.iam_role_name
+resource "aws_iam_role_policy" "karpenter" {
+  count = var.karpenter_enabled ? 1 : 0
+
+  name = "${var.environment_name}-karpenter"
+  role = module.iam_assumable_role_karpenter[0].iam_role_name
 
   policy = jsonencode({
     Version = "2012-10-17"
@@ -70,7 +74,7 @@ resource "helm_release" "karpenter" {
 
   set {
     name  = "serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn"
-    value = module.iam_assumable_role_karpenter.iam_role_arn
+    value = module.iam_assumable_role_karpenter[0].iam_role_arn
   }
 
   set {
