@@ -3,7 +3,7 @@ data "aws_iam_policy" "ssm_managed_instance" {
 }
 
 resource "aws_iam_role_policy_attachment" "karpenter_ssm_policy" {
-  count      = var.karpenter_enabled ? 1 : 0
+  count = var.karpenter_enabled ? 1 : 0
 
   role       = aws_iam_role.node.name
   policy_arn = data.aws_iam_policy.ssm_managed_instance.arn
@@ -12,8 +12,8 @@ resource "aws_iam_role_policy_attachment" "karpenter_ssm_policy" {
 resource "aws_iam_instance_profile" "karpenter" {
   count = var.karpenter_enabled ? 1 : 0
 
-  name  = "KarpenterNodeInstanceProfile-${var.environment_name}"
-  role  = aws_iam_role.node.name
+  name = "${var.environment_name}-KarpenterNodeInstanceProfile"
+  role = aws_iam_role.node.name
 }
 
 module "iam_assumable_role_karpenter" {
@@ -22,7 +22,7 @@ module "iam_assumable_role_karpenter" {
   source                        = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
   version                       = "4.7.0"
   create_role                   = true
-  role_name                     = "karpenter-controller-${var.environment_name}"
+  role_name                     = "${var.environment_name}-karpenter-controller"
   provider_url                  = replace(aws_iam_openid_connect_provider.cluster.url, "https://", "")
   oidc_fully_qualified_subjects = ["system:serviceaccount:karpenter:karpenter"]
 }
@@ -62,7 +62,7 @@ resource "aws_iam_role_policy" "karpenter" {
 }
 
 resource "helm_release" "karpenter" {
-  count            = var.karpenter_enabled ? 1 : 0
+  count = var.karpenter_enabled ? 1 : 0
 
   namespace        = "karpenter"
   create_namespace = true
