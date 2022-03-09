@@ -25,3 +25,9 @@ module "opszero-eks" {
   ec2_keypair = ""
 }
 ```
+
+# Run
+
+``` sh
+aws iam create-service-linked-role --aws-service-name spot.amazonaws.com
+```
