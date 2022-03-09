@@ -86,22 +86,22 @@ resource "helm_release" "karpenter" {
   }
 }
 
-# data "template_file" "your_template" {
-#   template = "${file("${path.module}/templates/<.yaml>")}"
-# }
+data "http" "karpenter_crd" {
+  url = "https://raw.githubusercontent.com/aws/karpenter/${var.karpenter_version}/charts/karpenter/crds/karpenter.sh_provisioners.yaml"
+}
 
-# resource "null_resource" "karpenter_crd" {
-#   count            = var.karpenter_enabled ? 1 : 0
+resource "null_resource" "karpenter_crd" {
+  count            = var.karpenter_enabled ? 1 : 0
 
-#   triggers = {
-#     manifest_sha1 = "${sha1("${data.template_file.your_template.rendered}")}"
-#   }
+  triggers = {
+    manifest_sha1 = "${sha1("${data.http.karpenter_crd.body}")}"
+  }
 
-#   provisioner "local-exec" {
-#     command = "kubectl create -f -<<EOF\n${data.template_file.your_template.rendered}\nEOF"
-#   }
+  provisioner "local-exec" {
+    command = "kubectl apply -f -<<EOF\n${data.http.karpenter_crd.body}\nEOF"
+  }
 
-#   depends_on = [
-#     helm_release.karpenter
-#   ]
-# }
+  depends_on = [
+    helm_release.karpenter
+  ]
+}
