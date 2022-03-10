@@ -17,6 +17,8 @@ resource "google_container_cluster" "cluster" {
   remove_default_node_pool = true
   initial_node_count       = 1
 
+  enable_autopilot = true
+
   master_auth {
     client_certificate_config {
       issue_client_certificate = false

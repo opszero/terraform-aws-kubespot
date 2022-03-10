@@ -6,6 +6,10 @@ variable "cluster_version" {
   default = "1.21"
 }
 
+variable "cluster_enable_autopilot" {
+  default = true
+}
+
 variable "region" {
   default = "us-central1"
 }
