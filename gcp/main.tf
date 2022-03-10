@@ -14,7 +14,7 @@ resource "google_container_cluster" "cluster" {
   # We can't create a cluster with no node pool defined, but we want to only use
   # separately managed node pools. So we create the smallest possible default
   # node pool and immediately delete it.
-  remove_default_node_pool = true
+  remove_default_node_pool = var.cluster_enable_autopilot ? false : true
   initial_node_count       = 1
 
   enable_autopilot = var.cluster_enable_autopilot
