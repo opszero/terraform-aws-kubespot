@@ -17,7 +17,7 @@ resource "google_container_cluster" "cluster" {
   remove_default_node_pool = true
   initial_node_count       = 1
 
-  enable_autopilot = true
+  enable_autopilot = var.cluster_enable_autopilot
 
   master_auth {
     client_certificate_config {
@@ -27,6 +27,8 @@ resource "google_container_cluster" "cluster" {
 }
 
 resource "google_container_node_pool" "nodes" {
+  count = var.cluster_enable_autopilot ? 1 : 0
+
   name       = "nodes"
   location   = var.region
   cluster    = google_container_cluster.cluster.name
