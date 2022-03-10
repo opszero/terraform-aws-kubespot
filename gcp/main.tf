@@ -27,7 +27,7 @@ resource "google_container_cluster" "cluster" {
 }
 
 resource "google_container_node_pool" "nodes" {
-  count = var.cluster_enable_autopilot ? 1 : 0
+  count = var.cluster_enable_autopilot ? 0 : 1
 
   name       = "nodes"
   location   = var.region
