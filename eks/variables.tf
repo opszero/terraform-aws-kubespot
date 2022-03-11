@@ -434,3 +434,7 @@ variable "karpenter_name" {
 variable "karpenter_version" {
   default = "v0.6.5"
 }
+
+variable "legacy_subnet" {
+  default = true
+}
