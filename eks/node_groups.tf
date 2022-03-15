@@ -22,6 +22,14 @@ resource "aws_eks_node_group" "node_group" {
     max_unavailable_percentage = lookup(each.value, "update_unavailable_percent", 50)
   }
 
+  tags = [
+    {
+      key                 = "KubespotEnvironment"
+      value               = var.environment_name
+      propagate_at_launch = true
+    },
+  ]
+
   # Ensure that IAM Role permissions are created before and deleted after EKS Node Group handling.
   # Otherwise, EKS will not be able to properly delete EC2 Instances and Elastic Network Interfaces.
   depends_on = [
