@@ -1,0 +1,2 @@
+fmt:
+	terraform fmt -recursive
