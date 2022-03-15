@@ -23,7 +23,7 @@ resource "aws_eks_node_group" "node_group" {
   }
 
   tags = {
-      "KubespotEnvironment" = var.environment_name
+    "KubespotEnvironment" = var.environment_name
   }
 
   # Ensure that IAM Role permissions are created before and deleted after EKS Node Group handling.

@@ -91,7 +91,7 @@ data "http" "karpenter_crd" {
 }
 
 resource "null_resource" "karpenter_crd" {
-  count            = var.karpenter_enabled ? 1 : 0
+  count = var.karpenter_enabled ? 1 : 0
 
   triggers = {
     manifest_sha1 = "${sha1("${data.http.karpenter_crd.body}")}"
