@@ -4,5 +4,5 @@ variable "nginx_replica_count" {
 
 variable "datadog_api_key" {}
 variable "datadog_values" {
-  default = "${file("${path.module}/datadog.yml")}"
+  default = ""
 }
