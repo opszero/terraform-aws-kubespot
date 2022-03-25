@@ -6,22 +6,6 @@ variable "cluster_version" {
   default = "1.21"
 }
 
-variable "cluster_autoscaler_enabled" {
-  default = true
-}
-
-
-// App version should match the kubernetes version with in the chart
-// chart version 9.9.2 support kubernetes version 1.20
-// to get the chart version `helm search repo autoscaler/cluster-autoscaler --versions`
-variable "cluster_autoscaler_version" {
-  default = "9.9.2"
-}
-
-variable "cluster_autoscaler_name" {
-  default = "cluster-autoscaler"
-}
-
 variable "alb_name" {
   default = "aws-load-balancer-controller"
 }
@@ -72,8 +56,6 @@ variable "bastion_instance_type" {
 variable "bastion_volume_size" {
   default = 20
 }
-
-
 
 variable "bastion_vpn_allowed_cidrs" {
   description = "These are the IPs that the bastion and VPN allow connections from."

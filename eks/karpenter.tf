@@ -105,3 +105,19 @@ resource "null_resource" "karpenter_crd" {
     helm_release.karpenter
   ]
 }
+
+# resource "null_resource" "karpenter_crd" {
+#   count            = var.karpenter_enabled ? 1 : 0
+
+#   triggers = {
+#     manifest_sha1 = "${sha1("${data.http.karpenter_crd.body}")}"
+#   }
+
+#   provisioner "local-exec" {
+#     command = "aws iam create-service-linked-role --aws-service-name spot.amazonaws.com"
+#   }
+
+#   depends_on = [
+#     helm_release.karpenter
+#   ]
+# }
