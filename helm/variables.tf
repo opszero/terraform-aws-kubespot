@@ -6,6 +6,4 @@ variable "nginx_replica_count" {
   default = 1
 }
 
-variable "keda_enabled" {
-  default = true
-}
+variable "datadog_api_key" {}
