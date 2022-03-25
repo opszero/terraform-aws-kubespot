@@ -375,8 +375,8 @@ variable "fargate_selector" {
   }
 }
 
-variable "metrics_server_enabled" {
-  default = true
+variable "metrics_server_version" {
+  default = "0.6.1"
 }
 
 variable "node_groups" {
