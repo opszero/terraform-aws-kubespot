@@ -137,15 +137,15 @@ variable "nodes_green_root_device_size" {
 }
 
 variable "nodes_green_desired_capacity" {
-  default = 1
+  default = 0
 }
 
 variable "nodes_green_min_size" {
-  default = 1
+  default = 0
 }
 
 variable "nodes_green_max_size" {
-  default = 1
+  default = 0
 }
 
 variable "nodes_green_max_instance_lifetime" {
@@ -169,15 +169,15 @@ variable "nodes_blue_subnet_ids" {
 }
 
 variable "nodes_blue_desired_capacity" {
-  default = 1
+  default = 0
 }
 
 variable "nodes_blue_min_size" {
-  default = 1
+  default = 0
 }
 
 variable "nodes_blue_max_size" {
-  default = 1
+  default = 0
 }
 
 variable "nodes_blue_max_instance_lifetime" {

@@ -7,7 +7,7 @@ resource "helm_release" "datadog" {
   create_namespace = true
 
   values = [
-    var.datadog_values
+    var.datadog_values == "" ? "${file("${path.module}/datadog.yml")}" : var.datadog_values
   ]
 
   set {
