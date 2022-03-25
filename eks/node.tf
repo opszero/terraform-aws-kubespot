@@ -46,33 +46,31 @@ resource "aws_autoscaling_group" "nodes_blue" {
 
   enabled_metrics = var.enabled_metrics_asg
 
-  tags = [
-    {
-      key                 = "Name"
-      value               = "${var.environment_name}-nodes-blue"
-      propagate_at_launch = true
-    },
-    {
-      key                 = "kubernetes.io/cluster/${var.environment_name}"
-      value               = "owned"
-      propagate_at_launch = true
-    },
-    {
-      key                 = "k8s.io/cluster-autoscaler/${var.environment_name}"
-      value               = "owned"
-      propagate_at_launch = true
-    },
-    {
-      key                 = "k8s.io/cluster-autoscaler/enabled"
-      value               = "TRUE"
-      propagate_at_launch = true
-    },
-    {
-      key                 = "KubespotEnvironment"
-      value               = var.environment_name
-      propagate_at_launch = true
-    },
-  ]
+  tag {
+    key                 = "Name"
+    value               = "${var.environment_name}-nodes-blue"
+    propagate_at_launch = true
+  }
+  tag {
+    key                 = "kubernetes.io/cluster/${var.environment_name}"
+    value               = "owned"
+    propagate_at_launch = true
+  }
+  tag {
+    key                 = "k8s.io/cluster-autoscaler/${var.environment_name}"
+    value               = "owned"
+    propagate_at_launch = true
+  }
+  tag {
+    key                 = "k8s.io/cluster-autoscaler/enabled"
+    value               = "TRUE"
+    propagate_at_launch = true
+  }
+  tag {
+    key                 = "KubespotEnvironment"
+    value               = var.environment_name
+    propagate_at_launch = true
+  }
 }
 
 resource "aws_launch_configuration" "nodes_green" {
@@ -108,31 +106,29 @@ resource "aws_autoscaling_group" "nodes_green" {
 
   enabled_metrics = var.enabled_metrics_asg
 
-  tags = [
-    {
-      key                 = "Name"
-      value               = "${var.environment_name}-nodes-green"
-      propagate_at_launch = true
-    },
-    {
-      key                 = "kubernetes.io/cluster/${var.environment_name}"
-      value               = "owned"
-      propagate_at_launch = true
-    },
-    {
-      key                 = "k8s.io/cluster-autoscaler/${var.environment_name}"
-      value               = "owned"
-      propagate_at_launch = true
-    },
-    {
-      key                 = "k8s.io/cluster-autoscaler/enabled"
-      value               = "TRUE"
-      propagate_at_launch = true
-    },
-    {
-      key                 = "KubespotEnvironment"
-      value               = var.environment_name
-      propagate_at_launch = true
-    },
-  ]
+  tag {
+    key                 = "Name"
+    value               = "${var.environment_name}-nodes-green"
+    propagate_at_launch = true
+  }
+  tag {
+    key                 = "kubernetes.io/cluster/${var.environment_name}"
+    value               = "owned"
+    propagate_at_launch = true
+  }
+  tag {
+    key                 = "k8s.io/cluster-autoscaler/${var.environment_name}"
+    value               = "owned"
+    propagate_at_launch = true
+  }
+  tag {
+    key                 = "k8s.io/cluster-autoscaler/enabled"
+    value               = "TRUE"
+    propagate_at_launch = true
+  }
+  tag {
+    key                 = "KubespotEnvironment"
+    value               = var.environment_name
+    propagate_at_launch = true
+  }
 }
