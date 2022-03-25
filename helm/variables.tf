@@ -1,3 +1,7 @@
+variable "keda_enabled" {
+  default = true
+}
+
 variable "nginx_enabled" {
   default = true
 }
