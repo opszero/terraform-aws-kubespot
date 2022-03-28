@@ -6,3 +6,6 @@ variable "datadog_api_key" {}
 variable "datadog_values" {
   default = ""
 }
+variable "datadog_values_extra" {
+  default = []
+}

@@ -6,9 +6,9 @@ resource "helm_release" "datadog" {
   namespace        = "datadog"
   create_namespace = true
 
-  values = [
-    var.datadog_values == "" ? "${file("${path.module}/datadog.yml")}" : var.datadog_values
-  ]
+  values = concat(
+    [var.datadog_values == "" ? "${file("${path.module}/datadog.yml")}" : var.datadog_values],
+    var.datadog_values_extra)
 
   set {
     name  = "datadog.apiKey"
