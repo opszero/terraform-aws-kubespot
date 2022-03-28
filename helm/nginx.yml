@@ -1,5 +1,4 @@
 controller:
-  replicaCount: 2
   config:
     enable-underscores-in-headers: "true"
     use-forwarded-headers: "true"
