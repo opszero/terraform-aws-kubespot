@@ -4,6 +4,14 @@ controller:
     use-forwarded-headers: "true"
   proxySetHeaders:
     use-forwarded-headers: "true"
+  metrics:
+    enabled: true
+    service:
+      annotations:
+        prometheus.io/port: "10254"
+        prometheus.io/scrape: "true"
+  keda:
+    enabled: true
   service:
     type: "LoadBalancer"
     annotations:
