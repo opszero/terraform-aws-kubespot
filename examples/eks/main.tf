@@ -3,6 +3,10 @@ provider "aws" {
   region  = "us-east-1"
 }
 
+locals {
+  environment_name = "kubespot-prod1"
+}
+
 module "opszero-eks" {
   source = "github.com/opszero/kubespot//eks"
 
@@ -11,15 +15,11 @@ module "opszero-eks" {
     "us-east-1d"
   ]
 
-  cluster_version  = "1.20"
-  environment_name = "kubespot-prod1"
+  cluster_version  = "1.21"
+  environment_name = var.environment_name
   ec2_keypair      = "opszero"
-  aws_profile      = "kubespot"
   iam_users = [
     "opszero",
-    "simonwilliams",
-    "yaseer",
-    "jenkins",
   ]
 
   cidr_block = "10.3.0.0/16"
