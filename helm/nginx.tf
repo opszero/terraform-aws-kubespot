@@ -14,4 +14,8 @@ resource "helm_release" "nginx" {
     name  = "controller.replicaCount"
     value = var.nginx_replica_count
   }
+
+  depends_on = [
+    helm_release.cert-manager
+  ]
 }
