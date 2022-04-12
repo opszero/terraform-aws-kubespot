@@ -16,6 +16,7 @@ resource "helm_release" "nginx" {
   }
 
   depends_on = [
-    helm_release.cert-manager
+    helm_release.cert-manager,
+    helm_release.prometheus,
   ]
 }
