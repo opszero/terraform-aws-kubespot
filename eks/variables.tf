@@ -6,22 +6,6 @@ variable "cluster_version" {
   default = "1.21"
 }
 
-variable "cluster_autoscaler_enabled" {
-  default = true
-}
-
-
-// App version should match the kubernetes version with in the chart
-// chart version 9.9.2 support kubernetes version 1.20
-// to get the chart version `helm search repo autoscaler/cluster-autoscaler --versions`
-variable "cluster_autoscaler_version" {
-  default = "9.9.2"
-}
-
-variable "cluster_autoscaler_name" {
-  default = "cluster-autoscaler"
-}
-
 variable "alb_name" {
   default = "aws-load-balancer-controller"
 }
@@ -72,8 +56,6 @@ variable "bastion_instance_type" {
 variable "bastion_volume_size" {
   default = 20
 }
-
-
 
 variable "bastion_vpn_allowed_cidrs" {
   description = "These are the IPs that the bastion and VPN allow connections from."
@@ -155,15 +137,15 @@ variable "nodes_green_root_device_size" {
 }
 
 variable "nodes_green_desired_capacity" {
-  default = 1
+  default = 0
 }
 
 variable "nodes_green_min_size" {
-  default = 1
+  default = 0
 }
 
 variable "nodes_green_max_size" {
-  default = 1
+  default = 0
 }
 
 variable "nodes_green_max_instance_lifetime" {
@@ -187,15 +169,15 @@ variable "nodes_blue_subnet_ids" {
 }
 
 variable "nodes_blue_desired_capacity" {
-  default = 1
+  default = 0
 }
 
 variable "nodes_blue_min_size" {
-  default = 1
+  default = 0
 }
 
 variable "nodes_blue_max_size" {
-  default = 1
+  default = 0
 }
 
 variable "nodes_blue_max_instance_lifetime" {
@@ -393,8 +375,8 @@ variable "fargate_selector" {
   }
 }
 
-variable "metrics_server_enabled" {
-  default = true
+variable "metrics_server_version" {
+  default = "3.8.2"
 }
 
 variable "node_groups" {
@@ -432,5 +414,9 @@ variable "karpenter_name" {
 }
 
 variable "karpenter_version" {
-  default = "0.5.2"
+  default = "v0.7.3"
+}
+
+variable "legacy_subnet" {
+  default = true
 }

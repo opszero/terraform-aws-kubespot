@@ -12,7 +12,7 @@ variable "client_secret" {
 
 variable "ad_group_ids" {
   description = "ActiveDirectory Groups that have access to this cluster"
-  default = []
+  default     = []
 }
 
 # variable "cluster_version" {

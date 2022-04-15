@@ -1,0 +1,19 @@
+# https://github.com/DataDog/helm-charts/blob/master/charts/datadog/values.yaml
+datadog:
+  dogstatsd:
+    useHostPort: true
+    nonLocalTraffic: true
+  targetSystem: linux
+  logs:
+    enabled: true
+    containerCollectAll: true
+  apm:
+    portEnabled: true
+  securityAgent:
+    compliance:
+      enabled: true
+    runtime:
+      enabled: false
+  processAgent:
+    enabled: true
+    processCollection: true

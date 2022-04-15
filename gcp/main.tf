@@ -11,51 +11,46 @@ resource "google_container_cluster" "cluster" {
 
   min_master_version = var.cluster_version
 
-  # We can't create a cluster with no node pool defined, but we want to only use
-  # separately managed node pools. So we create the smallest possible default
-  # node pool and immediately delete it.
-  remove_default_node_pool = true
-  initial_node_count       = 1
+  enable_autopilot = true
 
   master_auth {
-    username = var.cluster_username
-    password = var.cluster_password
-
     client_certificate_config {
       issue_client_certificate = false
     }
   }
 }
 
-resource "google_container_node_pool" "nodes" {
-  name       = "nodes"
-  location   = var.region
-  cluster    = google_container_cluster.cluster.name
-  node_count = 1
+# resource "google_container_node_pool" "nodes" {
+#   count = var.cluster_enable_autopilot ? 0 : 1
 
-  autoscaling {
-    min_node_count = var.nodes_min_size
-    max_node_count = var.nodes_max_size
-  }
+#   name       = "nodes"
+#   location   = var.region
+#   cluster    = google_container_cluster.cluster.name
+#   node_count = 1
 
-  management {
-    auto_repair  = true
-    auto_upgrade = true
-  }
+#   autoscaling {
+#     min_node_count = var.nodes_min_size
+#     max_node_count = var.nodes_max_size
+#   }
 
-  node_config {
-    machine_type = var.nodes_instance_type
+#   management {
+#     auto_repair  = true
+#     auto_upgrade = true
+#   }
 
-    metadata = {
-      disable-legacy-endpoints = "true"
-    }
+#   node_config {
+#     machine_type = var.nodes_instance_type
 
-    oauth_scopes = [
-      "https://www.googleapis.com/auth/compute",
-      "https://www.googleapis.com/auth/devstorage.read_only",
-      "https://www.googleapis.com/auth/logging.write",
-      "https://www.googleapis.com/auth/monitoring",
-      "https://www.googleapis.com/auth/cloud-platform",
-    ]
-  }
-}
+#     metadata = {
+#       disable-legacy-endpoints = "true"
+#     }
+
+#     oauth_scopes = [
+#       "https://www.googleapis.com/auth/compute",
+#       "https://www.googleapis.com/auth/devstorage.read_only",
+#       "https://www.googleapis.com/auth/logging.write",
+#       "https://www.googleapis.com/auth/monitoring",
+#       "https://www.googleapis.com/auth/cloud-platform",
+#     ]
+#   }
+# }

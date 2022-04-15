@@ -79,7 +79,7 @@ resource "aws_db_instance" "default" {
   engine         = var.sql_instance_engine
   engine_version = var.sql_engine_version
   instance_class = var.sql_instance_class
-  name           = var.sql_database_name
+  db_name        = var.sql_database_name
   username       = var.sql_master_username
   password       = var.sql_master_password
   multi_az       = var.sql_rds_multi_az

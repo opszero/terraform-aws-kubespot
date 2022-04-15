@@ -1,27 +1,30 @@
-# KubeSeed
+# Karpenter
 
-AWS EKS Setup with some additional security to access the cluster.
-
-- FoxPass
-- Bastion
-
-## Usage
-
+``` sh
+aws iam create-service-linked-role --aws-service-name spot.amazonaws.com
 ```
 
-resource "aws_eip" "cluster" {
-  instance = "${aws_instance.web.id}"
-  vpc      = true
-}
 
-module "opszero-eks" {
-  source = "git::https://github.com/opszero/kubeseed.git"
-
-  cluster-name = "cluster-eks"
-  zones = ["us-west-2a", "us-west-2b"]
-  eips = ["${aws_eip.cluster}]
-  db_vpc_id = ""
-  vpc_peer_name = ""
-  ec2_keypair = ""
+``` sh
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "AllowNonRDS",
+            "Effect": "Allow",
+            "Action": [
+                "*"
+            ],
+            "Resource": "*"
+        },
+        {
+            "Sid": "DenyRDS",
+            "Effect": "Deny",
+            "Action": "rds:*",
+            "Resource": [
+                "*"
+            ]
+        }
+    ]
 }
 ```

@@ -3,17 +3,7 @@ variable "environment_name" {
 }
 
 variable "cluster_version" {
-  default = "1.15"
-}
-
-variable "cluster_username" {
-}
-
-variable "cluster_password" {
-}
-
-variable "project_id" {
-  type = string
+  default = "1.21"
 }
 
 variable "region" {
@@ -65,7 +55,7 @@ variable "sql_enabled" {
 }
 
 variable "sql_engine" {
-  default = "POSTGRES_11"
+  default = "POSTGRES_13"
 }
 
 variable "sql_instance_class" {

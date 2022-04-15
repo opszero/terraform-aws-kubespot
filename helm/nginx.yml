@@ -1,10 +1,17 @@
 controller:
-  replicaCount: 2
   config:
     enable-underscores-in-headers: "true"
     use-forwarded-headers: "true"
   proxySetHeaders:
     use-forwarded-headers: "true"
+  metrics:
+    enabled: true
+    service:
+      annotations:
+        prometheus.io/port: "10254"
+        prometheus.io/scrape: "true"
+  keda:
+    enabled: false
   service:
     type: "LoadBalancer"
     annotations:
