@@ -1,4 +1,4 @@
-# opsZero Kubespot
+# opsZero Kubespot (AWS)
 
 <img src="http://assets.opszero.com.s3.amazonaws.com/images/auditkube.png" width="200px" />
 
