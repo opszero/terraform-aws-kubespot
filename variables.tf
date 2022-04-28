@@ -405,6 +405,10 @@ variable "node_groups" {
   }
 }
 
+variable "node_group_cpu_threshold" {
+  default = "70"
+}
+
 variable "karpenter_enabled" {
   default = false
 }

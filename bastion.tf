@@ -7,6 +7,29 @@ resource "aws_eip" "bastion_eip" {
   }
 }
 
+resource "aws_cloudwatch_metric_alarm" "bastion_cpu_threshold" {
+  count = var.bastion_enabled ? 1 : 0
+
+  alarm_name                = "${var.environment_name}-bastion-cpu-threshold"
+  comparison_operator       = "GreaterThanOrEqualToThreshold"
+  evaluation_periods        = "2"
+  metric_name               = "CPUUtilization"
+  namespace                 = "AWS/EC2"
+  period                    = "300"
+  statistic                 = "Average"
+  threshold                 = "80"
+  alarm_description         = "This metric monitors ec2 cpu utilization"
+  insufficient_data_actions = []
+
+  dimensions = {
+    InstanceId = aws_instance.bastion[0].id
+  }
+
+  tags = {
+    "KubespotEnvironment" = var.environment_name
+  }
+}
+
 resource "aws_security_group" "bastion" {
   name        = "${var.environment_name}-bastion"
   description = "Security group for bastion"
