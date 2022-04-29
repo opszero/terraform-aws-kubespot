@@ -51,7 +51,7 @@ resource "aws_cloudwatch_metric_alarm" "node_group_cpu_threshold" {
   insufficient_data_actions = []
 
   dimensions = {
-    AutoScalingGroupName = join(flatten(each.value.resources[*].autoscaling_groups.*.name))
+    AutoScalingGroupName = join("", flatten(each.value.resources[*].autoscaling_groups.*.name))
   }
   tags = {
     "KubespotEnvironment" = var.environment_name
