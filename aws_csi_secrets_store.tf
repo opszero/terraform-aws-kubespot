@@ -17,9 +17,9 @@ resource "null_resource" "csi_secrets_store_aws_provider" {
   count = var.csi_secrets_store_enabled ? 1 : 0
 
   triggers = {
-    name       = helm_release.csi_secrets_store.name
-    namespace  = helm_release.csi_secrets_store.namespace
-    repository = helm_release.csi_secrets_store.repository
+    name       = helm_release.csi_secrets_store[0].name
+    namespace  = helm_release.csi_secrets_store[0].namespace
+    repository = helm_release.csi_secrets_store[0].repository
   }
 
   depends_on = [helm_release.csi_secrets_store]
