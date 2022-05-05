@@ -424,3 +424,7 @@ variable "karpenter_version" {
 variable "legacy_subnet" {
   default = true
 }
+
+variable "csi_secrets_store_enabled" {
+  default = false
+}
