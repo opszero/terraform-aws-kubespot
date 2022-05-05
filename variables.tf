@@ -424,7 +424,3 @@ variable "legacy_subnet" {
 variable "csi_secrets_store_enabled" {
   default = false
 }
-  
-variable "node_group_cpu_threshold" {
-  default = "70"
-}  
