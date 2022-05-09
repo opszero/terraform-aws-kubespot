@@ -282,6 +282,9 @@ file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 | Name | Description |
 |------|-------------|
+| <a name="output_eks_ca_cert_helm_provider"></a> [eks\_ca\_cert\_helm\_provider](#output\_eks\_ca\_cert\_helm\_provider) | n/a |
+| <a name="output_eks_endpoint_helm_provider"></a> [eks\_endpoint\_helm\_provider](#output\_eks\_endpoint\_helm\_provider) | n/a |
+| <a name="output_eks_token_helm_provider"></a> [eks\_token\_helm\_provider](#output\_eks\_token\_helm\_provider) | n/a |
 | <a name="output_node_role"></a> [node\_role](#output\_node\_role) | n/a |
 | <a name="output_node_security_group_id"></a> [node\_security\_group\_id](#output\_node\_security\_group\_id) | n/a |
 | <a name="output_private_route_table"></a> [private\_route\_table](#output\_private\_route\_table) | n/a |
