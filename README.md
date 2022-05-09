@@ -69,12 +69,12 @@ file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | 4.7.0 |
-| <a name="provider_helm"></a> [helm](#provider\_helm) | 2.5.1 |
-| <a name="provider_http"></a> [http](#provider\_http) | 2.1.0 |
-| <a name="provider_kubernetes"></a> [kubernetes](#provider\_kubernetes) | 2.11.0 |
-| <a name="provider_null"></a> [null](#provider\_null) | 3.1.1 |
-| <a name="provider_tls"></a> [tls](#provider\_tls) | 3.3.0 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | ~> 4.7.0 |
+| <a name="provider_helm"></a> [helm](#provider\_helm) | n/a |
+| <a name="provider_http"></a> [http](#provider\_http) | n/a |
+| <a name="provider_kubernetes"></a> [kubernetes](#provider\_kubernetes) | >= 2.0 |
+| <a name="provider_null"></a> [null](#provider\_null) | n/a |
+| <a name="provider_tls"></a> [tls](#provider\_tls) | n/a |
 ## Inputs
 
 | Name | Description | Type | Default | Required |
