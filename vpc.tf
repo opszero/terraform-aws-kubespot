@@ -12,10 +12,6 @@ resource "aws_vpc" "vpc" {
   }
 }
 
-output "vpc_id" {
-  value = aws_vpc.vpc.id
-}
-
 resource "aws_security_group" "cluster" {
   name        = "${var.environment_name}-cluster"
   description = "Cluster communication with worker nodes"
@@ -51,10 +47,6 @@ resource "aws_security_group" "node" {
     "kubernetes.io/cluster/${var.environment_name}" = "owned"
     "KubespotEnvironment"                           = var.environment_name
   }
-}
-
-output "node_security_group_id" {
-  value = aws_security_group.node.id
 }
 
 resource "aws_security_group_rule" "eks" {

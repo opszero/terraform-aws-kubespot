@@ -3,10 +3,6 @@ resource "aws_elasticache_subnet_group" "default" {
   subnet_ids = concat(aws_subnet.private.*.id, aws_subnet.public.*.id)
 }
 
-output "redis_elasticache_subnet_group_name" {
-  value = aws_elasticache_subnet_group.default.name
-}
-
 # resource "aws_elasticache_parameter_group" "default" {
 #   name   = "cache-params"
 #   family = "redis2.8"

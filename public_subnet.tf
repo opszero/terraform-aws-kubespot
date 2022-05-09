@@ -14,10 +14,6 @@ resource "aws_subnet" "public" {
   }
 }
 
-output "public_subnet_ids" {
-  value = aws_subnet.public.*.id
-}
-
 resource "aws_internet_gateway" "public" {
   vpc_id = aws_vpc.vpc.id
 
@@ -52,6 +48,3 @@ resource "aws_route_table_association" "public" {
   route_table_id = aws_route_table.public[count.index].id
 }
 
-output "public_route_table" {
-  value = aws_route_table.public.*.id
-}
