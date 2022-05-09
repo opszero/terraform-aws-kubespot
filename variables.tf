@@ -424,3 +424,7 @@ variable "legacy_subnet" {
 variable "csi_secrets_store_enabled" {
   default = false
 }
+  
+variable "eks_guardduty_enabled" {
+  default = true 
+}  
