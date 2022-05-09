@@ -100,6 +100,7 @@ file, You can obtain one at http://mozilla.org/MPL/2.0/.
 | <a name="input_ec2_keypair"></a> [ec2\_keypair](#input\_ec2\_keypair) | n/a | `string` | `"opszero"` | no |
 | <a name="input_efs_enabled"></a> [efs\_enabled](#input\_efs\_enabled) | n/a | `bool` | `false` | no |
 | <a name="input_eips"></a> [eips](#input\_eips) | n/a | `list` | `[]` | no |
+| <a name="input_eks_guardduty_enabled"></a> [eks\_guardduty\_enabled](#input\_eks\_guardduty\_enabled) | n/a | `bool` | `true` | no |
 | <a name="input_enable_egress_only_internet_gateway"></a> [enable\_egress\_only\_internet\_gateway](#input\_enable\_egress\_only\_internet\_gateway) | n/a | `bool` | `false` | no |
 | <a name="input_enable_ipv6"></a> [enable\_ipv6](#input\_enable\_ipv6) | n/a | `bool` | `false` | no |
 | <a name="input_enable_nat"></a> [enable\_nat](#input\_enable\_nat) | n/a | `bool` | `true` | no |
