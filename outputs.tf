@@ -29,3 +29,15 @@ output "node_security_group_id" {
 output "redis_elasticache_subnet_group_name" {
   value = aws_elasticache_subnet_group.default.name
 }
+
+output "eks_endpoint_helm_provider" {
+  value = aws_eks_cluster.cluster.endpoint
+}
+
+output "eks_ca_cert_helm_provider" {
+  value = base64decode(aws_eks_cluster.cluster.certificate_authority.0.data)
+}
+
+output "eks_token_helm_provider" {
+  value = data.aws_eks_cluster_auth.cluster.token
+}
