@@ -18,7 +18,7 @@ resource "aws_elasticache_subnet_group" "default" {
 #   }
 # }
 
-resource "aws_elasticache_replication_group" "baz" {
+resource "aws_elasticache_replication_group" "default" {
   count = var.redis_enabled ? 1 : 0
 
   replication_group_id       = var.environment_name
@@ -28,9 +28,9 @@ resource "aws_elasticache_replication_group" "baz" {
   parameter_group_name       = "default.redis6.x.cluster.on"
   automatic_failover_enabled = true
   engine                     = "redis"
-  engine_version             = "6.2"
   subnet_group_name          = aws_elasticache_subnet_group.default.name
   security_group_ids         = [aws_security_group.node.id]
+  multi_az_enabled           = true
 
 
   num_node_groups         = 1
@@ -41,18 +41,22 @@ resource "aws_elasticache_replication_group" "baz" {
 }
 
 resource "aws_appautoscaling_target" "redis" {
+  count = var.redis_enabled ? 1 : 0
+
   service_namespace  = "elasticache"
   scalable_dimension = "elasticache:replication-group:Replicas"
-  resource_id        = "replication-group/${aws_elasticache_replication_group.baz.id}"
+  resource_id        = "replication-group/${aws_elasticache_replication_group.default[count.index].id}"
   min_capacity       = 1
   max_capacity       = 5
 }
 
 resource "aws_appautoscaling_policy" "redis" {
+  count = var.redis_enabled ? 1 : 0
+
   name               = "cpu-auto-scaling"
-  service_namespace  = aws_appautoscaling_target.redis.service_namespace
-  scalable_dimension = aws_appautoscaling_target.redis.scalable_dimension
-  resource_id        = aws_appautoscaling_target.redis.resource_id
+  service_namespace  = aws_appautoscaling_target.redis[count.index].service_namespace
+  scalable_dimension = aws_appautoscaling_target.redis[count.index].scalable_dimension
+  resource_id        = aws_appautoscaling_target.redis[count.index].resource_id
   policy_type        = "TargetTrackingScaling"
 
   target_tracking_scaling_policy_configuration {

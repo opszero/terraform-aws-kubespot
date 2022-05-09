@@ -428,3 +428,7 @@ variable "csi_secrets_store_enabled" {
 variable "eks_guardduty_enabled" {
   default = true
 }
+
+variable "memorydb_enabled" {
+  default = false
+}
