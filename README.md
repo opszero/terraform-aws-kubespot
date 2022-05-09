@@ -69,12 +69,12 @@ file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | ~> 4.7.0 |
-| <a name="provider_helm"></a> [helm](#provider\_helm) | n/a |
-| <a name="provider_http"></a> [http](#provider\_http) | n/a |
-| <a name="provider_kubernetes"></a> [kubernetes](#provider\_kubernetes) | >= 2.0 |
-| <a name="provider_null"></a> [null](#provider\_null) | n/a |
-| <a name="provider_tls"></a> [tls](#provider\_tls) | n/a |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | 4.7.0 |
+| <a name="provider_helm"></a> [helm](#provider\_helm) | 2.5.1 |
+| <a name="provider_http"></a> [http](#provider\_http) | 2.1.0 |
+| <a name="provider_kubernetes"></a> [kubernetes](#provider\_kubernetes) | 2.11.0 |
+| <a name="provider_null"></a> [null](#provider\_null) | 3.1.1 |
+| <a name="provider_tls"></a> [tls](#provider\_tls) | 3.3.0 |
 ## Inputs
 
 | Name | Description | Type | Default | Required |
@@ -121,6 +121,7 @@ file, You can obtain one at http://mozilla.org/MPL/2.0/.
 | <a name="input_karpenter_version"></a> [karpenter\_version](#input\_karpenter\_version) | n/a | `string` | `"v0.7.3"` | no |
 | <a name="input_legacy_subnet"></a> [legacy\_subnet](#input\_legacy\_subnet) | n/a | `bool` | `true` | no |
 | <a name="input_logdna_ingestion_key"></a> [logdna\_ingestion\_key](#input\_logdna\_ingestion\_key) | n/a | `string` | `""` | no |
+| <a name="input_memorydb_enabled"></a> [memorydb\_enabled](#input\_memorydb\_enabled) | n/a | `bool` | `false` | no |
 | <a name="input_metrics_server_version"></a> [metrics\_server\_version](#input\_metrics\_server\_version) | n/a | `string` | `"3.8.2"` | no |
 | <a name="input_monitoring_role_arn"></a> [monitoring\_role\_arn](#input\_monitoring\_role\_arn) | n/a | `string` | `""` | no |
 | <a name="input_node_groups"></a> [node\_groups](#input\_node\_groups) | n/a | `map` | `{}` | no |
@@ -196,10 +197,9 @@ file, You can obtain one at http://mozilla.org/MPL/2.0/.
 | [aws_eks_cluster.cluster](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/eks_cluster) | resource |
 | [aws_eks_fargate_profile.fargate](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/eks_fargate_profile) | resource |
 | [aws_eks_node_group.node_group](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/eks_node_group) | resource |
-| [aws_elasticache_replication_group.baz](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/elasticache_replication_group) | resource |
+| [aws_elasticache_replication_group.default](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/elasticache_replication_group) | resource |
 | [aws_elasticache_subnet_group.default](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/elasticache_subnet_group) | resource |
 | [aws_flow_log.vpc](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/flow_log) | resource |
-| [aws_guardduty_detector.detector](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/guardduty_detector) | resource |
 | [aws_iam_instance_profile.node](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_instance_profile) | resource |
 | [aws_iam_openid_connect_provider.cluster](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_openid_connect_provider) | resource |
 | [aws_iam_policy.alb](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_policy) | resource |
@@ -228,6 +228,8 @@ file, You can obtain one at http://mozilla.org/MPL/2.0/.
 | [aws_internet_gateway.public](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/internet_gateway) | resource |
 | [aws_launch_configuration.nodes_blue](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/launch_configuration) | resource |
 | [aws_launch_configuration.nodes_green](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/launch_configuration) | resource |
+| [aws_memorydb_cluster.example](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/memorydb_cluster) | resource |
+| [aws_memorydb_subnet_group.default](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/memorydb_subnet_group) | resource |
 | [aws_nat_gateway.gw](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/nat_gateway) | resource |
 | [aws_rds_cluster.default](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/rds_cluster) | resource |
 | [aws_rds_cluster_instance.cluster_instances](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/rds_cluster_instance) | resource |
