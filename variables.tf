@@ -290,6 +290,11 @@ variable "sql_instance_engine" {
   default = "postgres"
 }
 
+variable "sql_subnet_group_include_public" {
+  description = "Include public subnets as part of the clusters subnet configuration."
+  default     = false
+}
+
 variable "sql_instance_allocated_storage" {
   default = 20
 }
