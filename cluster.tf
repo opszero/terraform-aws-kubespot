@@ -37,7 +37,8 @@ resource "aws_eks_addon" "core" {
   for_each = toset([
     "kube-proxy",
     "vpc-cni",
-    "coredns"
+    "coredns",
+    "aws-ebs-csi-driver",
   ])
 
   cluster_name      = aws_eks_cluster.cluster.name
