@@ -1,10 +1,10 @@
 resource "helm_release" "csi_secrets_store" {
   count = var.csi_secrets_store_enabled ? 1 : 0
 
-  name       = "csi-secrets-store"
-  repository = "https://kubernetes-sigs.github.io/secrets-store-csi-driver/charts"
-  chart      = "secrets-store-csi-driver"
-
+  name             = "csi-secrets-store"
+  repository       = "https://kubernetes-sigs.github.io/secrets-store-csi-driver/charts"
+  chart            = "secrets-store-csi-driver"
+  version          = var.csi_secrets_store_version
   namespace        = "kube-system"
   create_namespace = false
 }
@@ -28,3 +28,4 @@ resource "null_resource" "csi_secrets_store_aws_provider" {
     command = "kubectl apply -f -<<EOF\n${data.http.csi_secrets_store_aws_provider.body}\nEOF"
   }
 }
+
