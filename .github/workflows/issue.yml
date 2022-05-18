@@ -1,7 +1,7 @@
 name: Weekly Team Sync
 on:
   schedule:
-    - cron: * * * * *
+    - cron: "*/5 * * * *"
 
 jobs:
   create_issue:
@@ -13,13 +13,17 @@ jobs:
       - name: Create team sync issue
         uses: imjohnbo/issue-bot@3daae12aa54d38685d7ff8459fc8a2aee8cea98b
         with:
+          assignees: "monalisa, doctocat, hubot"
           labels: "weekly sync, docs-team"
           title: "Team sync"
           body: |
-            ### Version
+            ### Agenda
 
-            - [ ] Karpenter (https://github.com/opszero/terraform-aws-kubespot/blob/main/variables.tf#L426)
-
+            - [ ] Start the recording
+            - [ ] Check-ins
+            - [ ] Discussion points
+            - [ ] Post the recording
+                    
             ### Discussion Points
             Add things to discuss below
 
