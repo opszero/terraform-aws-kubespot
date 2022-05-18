@@ -290,6 +290,11 @@ variable "sql_instance_engine" {
   default = "postgres"
 }
 
+variable "sql_subnet_group_include_public" {
+  description = "Include public subnets as part of the clusters subnet configuration."
+  default     = false
+}
+
 variable "sql_instance_allocated_storage" {
   default = 20
 }
@@ -405,6 +410,10 @@ variable "node_groups" {
   }
 }
 
+variable "node_group_cpu_threshold" {
+  default = "70"
+}
+
 variable "karpenter_enabled" {
   default = false
 }
@@ -414,7 +423,7 @@ variable "karpenter_name" {
 }
 
 variable "karpenter_version" {
-  default = "v0.7.3"
+  default = "v0.9.1"
 }
 
 variable "legacy_subnet" {
@@ -432,3 +441,4 @@ variable "eks_guardduty_enabled" {
 variable "memorydb_enabled" {
   default = false
 }
+

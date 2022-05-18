@@ -1,6 +1,7 @@
 resource "aws_db_subnet_group" "default" {
   name       = var.environment_name
-  subnet_ids = aws_subnet.private.*.id
+  subnet_ids = var.sql_subnet_group_include_public ? concat(aws_subnet.private.*.id, aws_subnet.public.*.id) : aws_subnet.private.*.id
+
   tags = {
     "KubespotEnvironment" = var.environment_name
   }
