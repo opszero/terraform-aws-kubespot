@@ -41,3 +41,7 @@ output "eks_ca_cert_helm_provider" {
 output "eks_token_helm_provider" {
   value = data.aws_eks_cluster_auth.cluster.token
 }
+
+output "nat_gateway_ids" {
+  value = aws_nat_gateway.gw.*.id
+}
