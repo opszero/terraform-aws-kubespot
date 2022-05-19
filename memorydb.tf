@@ -15,7 +15,5 @@ resource "aws_memorydb_cluster" "example" {
   security_group_ids       = [aws_security_group.node.id]
   snapshot_retention_limit = 7
   subnet_group_name        = aws_memorydb_subnet_group.default.id
-  tags = {
-    "KubespotEnvironment" = var.environment_name
-  }
+  tags                     = local.tags
 }

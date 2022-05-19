@@ -6,21 +6,19 @@ resource "aws_subnet" "public" {
   vpc_id                  = aws_vpc.vpc.id
   map_public_ip_on_launch = true
 
-  tags = {
-    "Name"                                          = var.environment_name
+  tags = merge(local.tags, {
+    "Name"                                          = "${var.environment_name}-public"
     "kubernetes.io/cluster/${var.environment_name}" = "shared"
-    "kubernetes.io/role/elb"                        = "1"
-    "KubespotEnvironment"                           = var.environment_name
-  }
+    "kubernetes.io/role/internal-elb"               = "1"
+  })
 }
 
 resource "aws_internet_gateway" "public" {
   vpc_id = aws_vpc.vpc.id
 
-  tags = {
-    "Name"                = var.environment_name
-    "KubespotEnvironment" = var.environment_name
-  }
+  tags = merge(local.tags, {
+    "Name" = var.environment_name
+  })
 }
 
 resource "aws_route" "ig" {
@@ -35,10 +33,9 @@ resource "aws_route_table" "public" {
   count  = 2
   vpc_id = aws_vpc.vpc.id
 
-  tags = {
-    "Name"                = "${var.environment_name}-public-${count.index}"
-    "KubespotEnvironment" = var.environment_name
-  }
+  tags = merge(local.tags, {
+    Name = "${var.environment_name}-public-${count.index}"
+  })
 }
 
 resource "aws_route_table_association" "public" {

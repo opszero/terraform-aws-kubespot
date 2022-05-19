@@ -433,10 +433,10 @@ variable "legacy_subnet" {
 variable "csi_secrets_store_enabled" {
   default = false
 }
-  
+
 variable "csi_secrets_store_version" {
   default = "1.1.2"
-}  
+}
 
 variable "eks_guardduty_enabled" {
   default = true
@@ -444,5 +444,12 @@ variable "eks_guardduty_enabled" {
 
 variable "memorydb_enabled" {
   default = false
+}
+
+variable "tags" {
+  default = {}
+  #  ManagedBy = "Terraform"
+  #  Project   = "Kubespot"
+  #}  
 }
 

@@ -5,11 +5,10 @@ resource "aws_vpc" "vpc" {
   assign_generated_ipv6_cidr_block = var.enable_ipv6
 
 
-  tags = {
+  tags = merge(local.tags, {
     "Name"                                          = var.environment_name
     "kubernetes.io/cluster/${var.environment_name}" = "shared"
-    "KubespotEnvironment"                           = var.environment_name
-  }
+  })
 }
 
 resource "aws_security_group" "cluster" {
@@ -24,10 +23,9 @@ resource "aws_security_group" "cluster" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-  tags = {
-    Name                  = var.environment_name
-    "KubespotEnvironment" = var.environment_name
-  }
+  tags = merge(local.tags, {
+    "Name" = var.environment_name
+  })
 }
 
 resource "aws_security_group" "node" {
@@ -42,11 +40,10 @@ resource "aws_security_group" "node" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-  tags = {
-    "Name"                                          = "${var.environment_name}-node"
-    "kubernetes.io/cluster/${var.environment_name}" = "owned"
-    "KubespotEnvironment"                           = var.environment_name
-  }
+  tags = merge(local.tags, {
+    "Name" = "${var.environment_name}-node"
+    "kubernetes.io/cluster/${var.environment_name}" = "owned" 
+  })
 }
 
 resource "aws_security_group_rule" "eks" {

@@ -35,9 +35,7 @@ resource "aws_elasticache_replication_group" "default" {
 
   num_node_groups         = 1
   replicas_per_node_group = 1
-  tags = {
-    "KubespotEnvironment" = var.environment_name
-  }
+  tags                    = local.tags
 }
 
 resource "aws_appautoscaling_target" "redis" {

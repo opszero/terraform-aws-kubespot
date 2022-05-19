@@ -2,9 +2,7 @@ resource "aws_eip" "bastion_eip" {
   count    = var.bastion_enabled && var.bastion_eip_enabled ? 1 : 0
   instance = aws_instance.bastion.0.id
   vpc      = true
-  tags = {
-    "KubespotEnvironment" = var.environment_name
-  }
+  tags     = local.tags
 }
 
 resource "aws_cloudwatch_metric_alarm" "bastion_cpu_threshold" {
@@ -25,9 +23,7 @@ resource "aws_cloudwatch_metric_alarm" "bastion_cpu_threshold" {
     InstanceId = aws_instance.bastion[0].id
   }
 
-  tags = {
-    "KubespotEnvironment" = var.environment_name
-  }
+  tags = local.tags
 }
 
 resource "aws_security_group" "bastion" {
@@ -42,10 +38,10 @@ resource "aws_security_group" "bastion" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-  tags = {
+  tags = merge(local.tags, {
     "Name"                = "${var.environment_name}-bastion"
     "KubespotEnvironment" = var.environment_name
-  }
+  })
 }
 
 resource "aws_security_group_rule" "bastion_ssh" {
@@ -71,10 +67,10 @@ resource "aws_instance" "bastion" {
 
   monitoring = true
 
-  tags = {
+  tags = merge(local.tags, {
     "Name"                = "${var.environment_name}-bastion"
     "KubespotEnvironment" = var.environment_name
-  }
+  })
   user_data = <<SCRIPT
 #!/bin/bash
 
