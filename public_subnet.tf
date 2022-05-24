@@ -9,7 +9,7 @@ resource "aws_subnet" "public" {
   tags = merge(local.tags, {
     "Name"                                          = "${var.environment_name}-public"
     "kubernetes.io/cluster/${var.environment_name}" = "shared"
-    "kubernetes.io/role/internal-elb"               = "1"
+    "kubernetes.io/role/elb"                        = "1"
   })
 }
 
