@@ -69,12 +69,12 @@ file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | 4.7.0 |
-| <a name="provider_helm"></a> [helm](#provider\_helm) | 2.5.1 |
-| <a name="provider_http"></a> [http](#provider\_http) | 2.1.0 |
-| <a name="provider_kubernetes"></a> [kubernetes](#provider\_kubernetes) | 2.11.0 |
-| <a name="provider_null"></a> [null](#provider\_null) | 3.1.1 |
-| <a name="provider_tls"></a> [tls](#provider\_tls) | 3.3.0 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | ~> 4.7.0 |
+| <a name="provider_helm"></a> [helm](#provider\_helm) | n/a |
+| <a name="provider_http"></a> [http](#provider\_http) | n/a |
+| <a name="provider_kubernetes"></a> [kubernetes](#provider\_kubernetes) | >= 2.0 |
+| <a name="provider_null"></a> [null](#provider\_null) | n/a |
+| <a name="provider_tls"></a> [tls](#provider\_tls) | n/a |
 ## Inputs
 
 | Name | Description | Type | Default | Required |
@@ -169,7 +169,7 @@ file, You can obtain one at http://mozilla.org/MPL/2.0/.
 | <a name="input_sql_serverless_seconds_until_auto_pause"></a> [sql\_serverless\_seconds\_until\_auto\_pause](#input\_sql\_serverless\_seconds\_until\_auto\_pause) | The time, in seconds, before the DB cluster in serverless mode is paused | `number` | `300` | no |
 | <a name="input_sql_subnet_group_include_public"></a> [sql\_subnet\_group\_include\_public](#input\_sql\_subnet\_group\_include\_public) | Include public subnets as part of the clusters subnet configuration. | `bool` | `false` | no |
 | <a name="input_sso_roles"></a> [sso\_roles](#input\_sso\_roles) | Terraform object of the IAM roles | `map` | <pre>{<br>  "admin_roles": [],<br>  "dev_roles": [],<br>  "monitoring_roles": [],<br>  "readonly_roles": []<br>}</pre> | no |
-| <a name="input_tags"></a> [tags](#input\_tags) | Terraform object to create custom tags for the AWS resources | `map` | `{}` | no |
+| <a name="input_tags"></a> [tags](#input\_tags) | Terraform map to create custom tags for the AWS resources | `map` | `{}` | no |
 | <a name="input_vpc_flow_logs_enabled"></a> [vpc\_flow\_logs\_enabled](#input\_vpc\_flow\_logs\_enabled) | Specify whether the vpc flow log is enabled | `bool` | `false` | no |
 | <a name="input_zones"></a> [zones](#input\_zones) | AZs for the subnets | `list` | <pre>[<br>  "us-west-2a",<br>  "us-west-2b"<br>]</pre> | no |
 ## Resources
