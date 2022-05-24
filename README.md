@@ -1,4 +1,5 @@
-# Kubespot (AWS)
+<!-- BEGIN_TF_DOCS -->
+# opsZero Kubespot (AWS)
 
 <img src="http://assets.opszero.com.s3.amazonaws.com/images/auditkube.png" width="200px" />
 
@@ -78,95 +79,99 @@ file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_alb_name"></a> [alb\_name](#input\_alb\_name) | n/a | `string` | `"aws-load-balancer-controller"` | no |
-| <a name="input_ami_image"></a> [ami\_image](#input\_ami\_image) | n/a | `string` | `""` | no |
-| <a name="input_aws_load_balancer_controller_enabled"></a> [aws\_load\_balancer\_controller\_enabled](#input\_aws\_load\_balancer\_controller\_enabled) | n/a | `bool` | `true` | no |
-| <a name="input_bastion_ec2_keypair"></a> [bastion\_ec2\_keypair](#input\_bastion\_ec2\_keypair) | n/a | `string` | `"opszero"` | no |
-| <a name="input_bastion_eip_enabled"></a> [bastion\_eip\_enabled](#input\_bastion\_eip\_enabled) | n/a | `bool` | `false` | no |
-| <a name="input_bastion_enabled"></a> [bastion\_enabled](#input\_bastion\_enabled) | n/a | `bool` | `false` | no |
-| <a name="input_bastion_instance_type"></a> [bastion\_instance\_type](#input\_bastion\_instance\_type) | n/a | `string` | `"t3.micro"` | no |
-| <a name="input_bastion_volume_size"></a> [bastion\_volume\_size](#input\_bastion\_volume\_size) | n/a | `number` | `20` | no |
+| <a name="input_alb_name"></a> [alb\_name](#input\_alb\_name) | Release name of the ALB controller chart | `string` | `"aws-load-balancer-controller"` | no |
+| <a name="input_ami_image"></a> [ami\_image](#input\_ami\_image) | The EC2 image ID to launch | `string` | `""` | no |
+| <a name="input_aws_load_balancer_controller_enabled"></a> [aws\_load\_balancer\_controller\_enabled](#input\_aws\_load\_balancer\_controller\_enabled) | Enable ALB controller by default | `bool` | `true` | no |
+| <a name="input_bastion_ec2_keypair"></a> [bastion\_ec2\_keypair](#input\_bastion\_ec2\_keypair) | Key name of the Key Pair to use for the bastion host | `string` | `"opszero"` | no |
+| <a name="input_bastion_eip_enabled"></a> [bastion\_eip\_enabled](#input\_bastion\_eip\_enabled) | Whether the EIP for bastion host is enabled | `bool` | `false` | no |
+| <a name="input_bastion_enabled"></a> [bastion\_enabled](#input\_bastion\_enabled) | Whether the bastion host is enabled | `bool` | `false` | no |
+| <a name="input_bastion_instance_type"></a> [bastion\_instance\_type](#input\_bastion\_instance\_type) | The instance type to use for the bastion instance | `string` | `"t3.micro"` | no |
+| <a name="input_bastion_volume_size"></a> [bastion\_volume\_size](#input\_bastion\_volume\_size) | The volume szie to use for the bastion instance | `number` | `20` | no |
 | <a name="input_bastion_vpn_allowed_cidrs"></a> [bastion\_vpn\_allowed\_cidrs](#input\_bastion\_vpn\_allowed\_cidrs) | These are the IPs that the bastion and VPN allow connections from. | `list` | <pre>[<br>  "0.0.0.0/0"<br>]</pre> | no |
 | <a name="input_cidr_block"></a> [cidr\_block](#input\_cidr\_block) | The CIDR block used by the VPC | `string` | `"10.2.0.0/16"` | no |
 | <a name="input_cidr_block_private_subnet"></a> [cidr\_block\_private\_subnet](#input\_cidr\_block\_private\_subnet) | The CIDR block used by the private subnet | `list` | <pre>[<br>  "10.2.2.0/24",<br>  "10.2.3.0/24"<br>]</pre> | no |
 | <a name="input_cidr_block_public_subnet"></a> [cidr\_block\_public\_subnet](#input\_cidr\_block\_public\_subnet) | The CIDR block used by the private subnet | `list` | <pre>[<br>  "10.2.0.0/24",<br>  "10.2.1.0/24"<br>]</pre> | no |
-| <a name="input_cluster_logging"></a> [cluster\_logging](#input\_cluster\_logging) | n/a | `list` | <pre>[<br>  "api",<br>  "audit",<br>  "authenticator",<br>  "controllerManager",<br>  "scheduler"<br>]</pre> | no |
-| <a name="input_cluster_private_access"></a> [cluster\_private\_access](#input\_cluster\_private\_access) | n/a | `bool` | `false` | no |
-| <a name="input_cluster_public_access"></a> [cluster\_public\_access](#input\_cluster\_public\_access) | n/a | `bool` | `true` | no |
-| <a name="input_cluster_public_access_cidrs"></a> [cluster\_public\_access\_cidrs](#input\_cluster\_public\_access\_cidrs) | n/a | `list` | <pre>[<br>  "0.0.0.0/0"<br>]</pre> | no |
-| <a name="input_cluster_version"></a> [cluster\_version](#input\_cluster\_version) | n/a | `string` | `"1.21"` | no |
-| <a name="input_csi_secrets_store_enabled"></a> [csi\_secrets\_store\_enabled](#input\_csi\_secrets\_store\_enabled) | n/a | `bool` | `false` | no |
-| <a name="input_ec2_keypair"></a> [ec2\_keypair](#input\_ec2\_keypair) | n/a | `string` | `"opszero"` | no |
-| <a name="input_efs_enabled"></a> [efs\_enabled](#input\_efs\_enabled) | n/a | `bool` | `false` | no |
-| <a name="input_eips"></a> [eips](#input\_eips) | n/a | `list` | `[]` | no |
-| <a name="input_eks_guardduty_enabled"></a> [eks\_guardduty\_enabled](#input\_eks\_guardduty\_enabled) | n/a | `bool` | `true` | no |
-| <a name="input_enable_egress_only_internet_gateway"></a> [enable\_egress\_only\_internet\_gateway](#input\_enable\_egress\_only\_internet\_gateway) | n/a | `bool` | `false` | no |
-| <a name="input_enable_ipv6"></a> [enable\_ipv6](#input\_enable\_ipv6) | n/a | `bool` | `false` | no |
-| <a name="input_enable_nat"></a> [enable\_nat](#input\_enable\_nat) | n/a | `bool` | `true` | no |
-| <a name="input_enabled_metrics_asg"></a> [enabled\_metrics\_asg](#input\_enabled\_metrics\_asg) | n/a | `list` | <pre>[<br>  "GroupDesiredCapacity",<br>  "GroupInServiceCapacity",<br>  "GroupInServiceInstances",<br>  "GroupMaxSize",<br>  "GroupMinSize",<br>  "GroupPendingCapacity",<br>  "GroupPendingInstances",<br>  "GroupStandbyCapacity",<br>  "GroupStandbyInstances",<br>  "GroupTerminatingCapacity",<br>  "GroupTerminatingInstances",<br>  "GroupTotalCapacity",<br>  "GroupTotalInstances"<br>]</pre> | no |
-| <a name="input_environment_name"></a> [environment\_name](#input\_environment\_name) | n/a | `string` | n/a | yes |
-| <a name="input_fargate_selector"></a> [fargate\_selector](#input\_fargate\_selector) | n/a | `map` | <pre>{<br>  "serverless": {}<br>}</pre> | no |
-| <a name="input_foxpass_api_key"></a> [foxpass\_api\_key](#input\_foxpass\_api\_key) | the following below are required for setting up the vpn | `string` | `""` | no |
-| <a name="input_foxpass_base_dn"></a> [foxpass\_base\_dn](#input\_foxpass\_base\_dn) | n/a | `string` | `""` | no |
-| <a name="input_foxpass_bind_pw"></a> [foxpass\_bind\_pw](#input\_foxpass\_bind\_pw) | n/a | `string` | `""` | no |
-| <a name="input_foxpass_bind_user"></a> [foxpass\_bind\_user](#input\_foxpass\_bind\_user) | n/a | `string` | `""` | no |
-| <a name="input_foxpass_eip_enabled"></a> [foxpass\_eip\_enabled](#input\_foxpass\_eip\_enabled) | n/a | `bool` | `false` | no |
+| <a name="input_cluster_logging"></a> [cluster\_logging](#input\_cluster\_logging) | List of the desired control plane logging to enable | `list` | <pre>[<br>  "api",<br>  "audit",<br>  "authenticator",<br>  "controllerManager",<br>  "scheduler"<br>]</pre> | no |
+| <a name="input_cluster_private_access"></a> [cluster\_private\_access](#input\_cluster\_private\_access) | Whether the Amazon EKS private API server endpoint is enabled | `bool` | `false` | no |
+| <a name="input_cluster_public_access"></a> [cluster\_public\_access](#input\_cluster\_public\_access) | Whether the Amazon EKS private API server endpoint is enabled | `bool` | `true` | no |
+| <a name="input_cluster_public_access_cidrs"></a> [cluster\_public\_access\_cidrs](#input\_cluster\_public\_access\_cidrs) | List of CIDR blocks. Indicates which CIDR blocks can access the Amazon EKS public API server endpoint when enabled | `list` | <pre>[<br>  "0.0.0.0/0"<br>]</pre> | no |
+| <a name="input_cluster_version"></a> [cluster\_version](#input\_cluster\_version) | Desired Kubernetes master version | `string` | `"1.21"` | no |
+| <a name="input_csi_secrets_store_enabled"></a> [csi\_secrets\_store\_enabled](#input\_csi\_secrets\_store\_enabled) | Specify whether the CSI driver is enabled on the EKS cluster | `bool` | `false` | no |
+| <a name="input_csi_secrets_store_version"></a> [csi\_secrets\_store\_version](#input\_csi\_secrets\_store\_version) | The version of the CSI store helm chart | `string` | `"1.1.2"` | no |
+| <a name="input_ec2_keypair"></a> [ec2\_keypair](#input\_ec2\_keypair) | Key name of the Key Pair to use for the EKS nodes | `string` | `"opszero"` | no |
+| <a name="input_efs_enabled"></a> [efs\_enabled](#input\_efs\_enabled) | Specify whether the EFS is enabled on the EKS cluster | `bool` | `false` | no |
+| <a name="input_eips"></a> [eips](#input\_eips) | List of Elastic IPs | `list` | `[]` | no |
+| <a name="input_eks_guardduty_enabled"></a> [eks\_guardduty\_enabled](#input\_eks\_guardduty\_enabled) | whether the guardduty is enabled for the EKS cluster | `bool` | `true` | no |
+| <a name="input_enable_egress_only_internet_gateway"></a> [enable\_egress\_only\_internet\_gateway](#input\_enable\_egress\_only\_internet\_gateway) | Create an egress-only Internet gateway for your VPC0 | `bool` | `false` | no |
+| <a name="input_enable_ipv6"></a> [enable\_ipv6](#input\_enable\_ipv6) | Enable an Amazon-provided IPv6 CIDR block with a /56 prefix length for the VPC | `bool` | `false` | no |
+| <a name="input_enable_nat"></a> [enable\_nat](#input\_enable\_nat) | Whether the NAT gateway is enabled | `bool` | `true` | no |
+| <a name="input_enabled_metrics_asg"></a> [enabled\_metrics\_asg](#input\_enabled\_metrics\_asg) | A list of metrics to collect | `list` | <pre>[<br>  "GroupDesiredCapacity",<br>  "GroupInServiceCapacity",<br>  "GroupInServiceInstances",<br>  "GroupMaxSize",<br>  "GroupMinSize",<br>  "GroupPendingCapacity",<br>  "GroupPendingInstances",<br>  "GroupStandbyCapacity",<br>  "GroupStandbyInstances",<br>  "GroupTerminatingCapacity",<br>  "GroupTerminatingInstances",<br>  "GroupTotalCapacity",<br>  "GroupTotalInstances"<br>]</pre> | no |
+| <a name="input_environment_name"></a> [environment\_name](#input\_environment\_name) | Name of the environment to create AWS resources | `string` | n/a | yes |
+| <a name="input_fargate_selector"></a> [fargate\_selector](#input\_fargate\_selector) | Terraform object to create the EKS fargate profiles | `map` | <pre>{<br>  "serverless": {}<br>}</pre> | no |
+| <a name="input_foxpass_api_key"></a> [foxpass\_api\_key](#input\_foxpass\_api\_key) | The API key to use for the foxpass | `string` | `""` | no |
+| <a name="input_foxpass_base_dn"></a> [foxpass\_base\_dn](#input\_foxpass\_base\_dn) | Enter your base DN | `string` | `""` | no |
+| <a name="input_foxpass_bind_pw"></a> [foxpass\_bind\_pw](#input\_foxpass\_bind\_pw) | The password of an LDAP binder account | `string` | `""` | no |
+| <a name="input_foxpass_bind_user"></a> [foxpass\_bind\_user](#input\_foxpass\_bind\_user) | The username of an LDAP binder account | `string` | `""` | no |
+| <a name="input_foxpass_eip_enabled"></a> [foxpass\_eip\_enabled](#input\_foxpass\_eip\_enabled) | Whether the EIP is enabled | `bool` | `false` | no |
 | <a name="input_foxpass_install"></a> [foxpass\_install](#input\_foxpass\_install) | Make this a string to be read in the user-data | `string` | `""` | no |
 | <a name="input_foxpass_vpn_psk"></a> [foxpass\_vpn\_psk](#input\_foxpass\_vpn\_psk) | use this for psk generation https://cloud.google.com/vpn/docs/how-to/generating-pre-shared-key | `string` | `""` | no |
-| <a name="input_iam_users"></a> [iam\_users](#input\_iam\_users) | n/a | `list` | `[]` | no |
-| <a name="input_instance_userdata"></a> [instance\_userdata](#input\_instance\_userdata) | n/a | `string` | `""` | no |
-| <a name="input_karpenter_enabled"></a> [karpenter\_enabled](#input\_karpenter\_enabled) | n/a | `bool` | `false` | no |
-| <a name="input_karpenter_name"></a> [karpenter\_name](#input\_karpenter\_name) | n/a | `string` | `"karpenter-scaler"` | no |
-| <a name="input_karpenter_version"></a> [karpenter\_version](#input\_karpenter\_version) | n/a | `string` | `"v0.7.3"` | no |
-| <a name="input_legacy_subnet"></a> [legacy\_subnet](#input\_legacy\_subnet) | n/a | `bool` | `true` | no |
-| <a name="input_logdna_ingestion_key"></a> [logdna\_ingestion\_key](#input\_logdna\_ingestion\_key) | n/a | `string` | `""` | no |
-| <a name="input_memorydb_enabled"></a> [memorydb\_enabled](#input\_memorydb\_enabled) | n/a | `bool` | `false` | no |
-| <a name="input_metrics_server_version"></a> [metrics\_server\_version](#input\_metrics\_server\_version) | n/a | `string` | `"3.8.2"` | no |
-| <a name="input_monitoring_role_arn"></a> [monitoring\_role\_arn](#input\_monitoring\_role\_arn) | n/a | `string` | `""` | no |
-| <a name="input_node_groups"></a> [node\_groups](#input\_node\_groups) | n/a | `map` | `{}` | no |
-| <a name="input_node_role_policies"></a> [node\_role\_policies](#input\_node\_role\_policies) | n/a | `list` | `[]` | no |
-| <a name="input_nodes_blue_desired_capacity"></a> [nodes\_blue\_desired\_capacity](#input\_nodes\_blue\_desired\_capacity) | n/a | `number` | `0` | no |
-| <a name="input_nodes_blue_instance_type"></a> [nodes\_blue\_instance\_type](#input\_nodes\_blue\_instance\_type) | n/a | `string` | `"t3.micro"` | no |
-| <a name="input_nodes_blue_max_instance_lifetime"></a> [nodes\_blue\_max\_instance\_lifetime](#input\_nodes\_blue\_max\_instance\_lifetime) | n/a | `number` | `604800` | no |
-| <a name="input_nodes_blue_max_size"></a> [nodes\_blue\_max\_size](#input\_nodes\_blue\_max\_size) | n/a | `number` | `0` | no |
-| <a name="input_nodes_blue_min_size"></a> [nodes\_blue\_min\_size](#input\_nodes\_blue\_min\_size) | n/a | `number` | `0` | no |
-| <a name="input_nodes_blue_root_device_size"></a> [nodes\_blue\_root\_device\_size](#input\_nodes\_blue\_root\_device\_size) | n/a | `string` | `"20"` | no |
-| <a name="input_nodes_blue_subnet_ids"></a> [nodes\_blue\_subnet\_ids](#input\_nodes\_blue\_subnet\_ids) | n/a | `list` | `[]` | no |
-| <a name="input_nodes_green_desired_capacity"></a> [nodes\_green\_desired\_capacity](#input\_nodes\_green\_desired\_capacity) | n/a | `number` | `0` | no |
-| <a name="input_nodes_green_instance_type"></a> [nodes\_green\_instance\_type](#input\_nodes\_green\_instance\_type) | n/a | `string` | `"t3.micro"` | no |
-| <a name="input_nodes_green_max_instance_lifetime"></a> [nodes\_green\_max\_instance\_lifetime](#input\_nodes\_green\_max\_instance\_lifetime) | n/a | `number` | `604800` | no |
-| <a name="input_nodes_green_max_size"></a> [nodes\_green\_max\_size](#input\_nodes\_green\_max\_size) | n/a | `number` | `0` | no |
-| <a name="input_nodes_green_min_size"></a> [nodes\_green\_min\_size](#input\_nodes\_green\_min\_size) | n/a | `number` | `0` | no |
-| <a name="input_nodes_green_root_device_size"></a> [nodes\_green\_root\_device\_size](#input\_nodes\_green\_root\_device\_size) | n/a | `string` | `"20"` | no |
-| <a name="input_nodes_green_subnet_ids"></a> [nodes\_green\_subnet\_ids](#input\_nodes\_green\_subnet\_ids) | n/a | `list` | `[]` | no |
+| <a name="input_iam_users"></a> [iam\_users](#input\_iam\_users) | List of IAM users | `list` | `[]` | no |
+| <a name="input_instance_userdata"></a> [instance\_userdata](#input\_instance\_userdata) | User data to provide when launching the instance | `string` | `""` | no |
+| <a name="input_karpenter_enabled"></a> [karpenter\_enabled](#input\_karpenter\_enabled) | Specify whether the karpenter is enabled | `bool` | `false` | no |
+| <a name="input_karpenter_name"></a> [karpenter\_name](#input\_karpenter\_name) | The release name of the karpenter helm chart | `string` | `"karpenter-scaler"` | no |
+| <a name="input_karpenter_version"></a> [karpenter\_version](#input\_karpenter\_version) | The version of the karpenter helm chart | `string` | `"v0.9.1"` | no |
+| <a name="input_legacy_subnet"></a> [legacy\_subnet](#input\_legacy\_subnet) | Specify how the subnets should be created | `bool` | `true` | no |
+| <a name="input_logdna_ingestion_key"></a> [logdna\_ingestion\_key](#input\_logdna\_ingestion\_key) | An ingestion key used for connecting to a host/source and send log data to LogDNA | `string` | `""` | no |
+| <a name="input_memorydb_enabled"></a> [memorydb\_enabled](#input\_memorydb\_enabled) | Specify whether the memorydb is enabled | `bool` | `false` | no |
+| <a name="input_metrics_server_version"></a> [metrics\_server\_version](#input\_metrics\_server\_version) | The version of the metric server helm chart | `string` | `"3.8.2"` | no |
+| <a name="input_monitoring_role_arn"></a> [monitoring\_role\_arn](#input\_monitoring\_role\_arn) | The ARN for the IAM role that permits RDS to send enhanced monitoring metrics to CloudWatch Logs | `string` | `""` | no |
+| <a name="input_node_group_cpu_threshold"></a> [node\_group\_cpu\_threshold](#input\_node\_group\_cpu\_threshold) | The value of the CPU threshold | `string` | `"70"` | no |
+| <a name="input_node_groups"></a> [node\_groups](#input\_node\_groups) | Terraform object to create the EKS node groups | `map` | `{}` | no |
+| <a name="input_node_role_policies"></a> [node\_role\_policies](#input\_node\_role\_policies) | A list of The ARN of the policies you want to attach | `list` | `[]` | no |
+| <a name="input_nodes_blue_desired_capacity"></a> [nodes\_blue\_desired\_capacity](#input\_nodes\_blue\_desired\_capacity) | The number of Amazon EC2 instances that should be running in the group | `number` | `0` | no |
+| <a name="input_nodes_blue_instance_type"></a> [nodes\_blue\_instance\_type](#input\_nodes\_blue\_instance\_type) | The instance type to use for the instance | `string` | `"t3.micro"` | no |
+| <a name="input_nodes_blue_max_instance_lifetime"></a> [nodes\_blue\_max\_instance\_lifetime](#input\_nodes\_blue\_max\_instance\_lifetime) | The maximum amount of time, in seconds, that an instance can be in service | `number` | `604800` | no |
+| <a name="input_nodes_blue_max_size"></a> [nodes\_blue\_max\_size](#input\_nodes\_blue\_max\_size) | The maximum size of the Auto Scaling Group | `number` | `0` | no |
+| <a name="input_nodes_blue_min_size"></a> [nodes\_blue\_min\_size](#input\_nodes\_blue\_min\_size) | The minimum size of the Auto Scaling Group | `number` | `0` | no |
+| <a name="input_nodes_blue_root_device_size"></a> [nodes\_blue\_root\_device\_size](#input\_nodes\_blue\_root\_device\_size) | Size of the volume in gibibytes (GiB) | `string` | `"20"` | no |
+| <a name="input_nodes_blue_subnet_ids"></a> [nodes\_blue\_subnet\_ids](#input\_nodes\_blue\_subnet\_ids) | A list of subnet IDs to launch resources in | `list` | `[]` | no |
+| <a name="input_nodes_green_desired_capacity"></a> [nodes\_green\_desired\_capacity](#input\_nodes\_green\_desired\_capacity) | The number of Amazon EC2 instances that should be running in the group | `number` | `0` | no |
+| <a name="input_nodes_green_instance_type"></a> [nodes\_green\_instance\_type](#input\_nodes\_green\_instance\_type) | The instance type to use for the instance | `string` | `"t3.micro"` | no |
+| <a name="input_nodes_green_max_instance_lifetime"></a> [nodes\_green\_max\_instance\_lifetime](#input\_nodes\_green\_max\_instance\_lifetime) | The maximum amount of time, in seconds, that an instance can be in service | `number` | `604800` | no |
+| <a name="input_nodes_green_max_size"></a> [nodes\_green\_max\_size](#input\_nodes\_green\_max\_size) | The maximum size of the Auto Scaling Group | `number` | `0` | no |
+| <a name="input_nodes_green_min_size"></a> [nodes\_green\_min\_size](#input\_nodes\_green\_min\_size) | The minimum size of the Auto Scaling Group | `number` | `0` | no |
+| <a name="input_nodes_green_root_device_size"></a> [nodes\_green\_root\_device\_size](#input\_nodes\_green\_root\_device\_size) | Size of the volume in gibibytes (GiB) | `string` | `"20"` | no |
+| <a name="input_nodes_green_subnet_ids"></a> [nodes\_green\_subnet\_ids](#input\_nodes\_green\_subnet\_ids) | A list of subnet IDs to launch resources in | `list` | `[]` | no |
 | <a name="input_nodes_in_public_subnet"></a> [nodes\_in\_public\_subnet](#input\_nodes\_in\_public\_subnet) | INSECURE! Only use this if you want to avoid paying for the NAT. Also set enable\_nat to false | `bool` | `false` | no |
-| <a name="input_redis_enabled"></a> [redis\_enabled](#input\_redis\_enabled) | n/a | `bool` | `false` | no |
-| <a name="input_redis_engine_version"></a> [redis\_engine\_version](#input\_redis\_engine\_version) | n/a | `string` | `"6.x"` | no |
-| <a name="input_redis_node_type"></a> [redis\_node\_type](#input\_redis\_node\_type) | n/a | `string` | `"cache.t3.micro"` | no |
+| <a name="input_redis_enabled"></a> [redis\_enabled](#input\_redis\_enabled) | Whether the redis cluster is enabled | `bool` | `false` | no |
+| <a name="input_redis_engine_version"></a> [redis\_engine\_version](#input\_redis\_engine\_version) | Version number of the cache engine to be used for the cache clusters in this replication group | `string` | `"6.x"` | no |
+| <a name="input_redis_node_type"></a> [redis\_node\_type](#input\_redis\_node\_type) | Instance class of the redis cluster to be used | `string` | `"cache.t3.micro"` | no |
 | <a name="input_repos"></a> [repos](#input\_repos) | n/a | `list` | `[]` | no |
-| <a name="input_sql_cluster_enabled"></a> [sql\_cluster\_enabled](#input\_sql\_cluster\_enabled) | n/a | `bool` | `false` | no |
-| <a name="input_sql_database_name"></a> [sql\_database\_name](#input\_sql\_database\_name) | n/a | `string` | `""` | no |
-| <a name="input_sql_encrypted"></a> [sql\_encrypted](#input\_sql\_encrypted) | n/a | `bool` | `true` | no |
-| <a name="input_sql_engine"></a> [sql\_engine](#input\_sql\_engine) | n/a | `string` | `"aurora-postgresql"` | no |
-| <a name="input_sql_engine_mode"></a> [sql\_engine\_mode](#input\_sql\_engine\_mode) | n/a | `string` | `"serverless"` | no |
-| <a name="input_sql_engine_version"></a> [sql\_engine\_version](#input\_sql\_engine\_version) | n/a | `string` | `"12.7"` | no |
+| <a name="input_sql_cluster_enabled"></a> [sql\_cluster\_enabled](#input\_sql\_cluster\_enabled) | Whether the sql cluster is enabled | `bool` | `false` | no |
+| <a name="input_sql_database_name"></a> [sql\_database\_name](#input\_sql\_database\_name) | The name of the database to create when the DB instance is created | `string` | `""` | no |
+| <a name="input_sql_encrypted"></a> [sql\_encrypted](#input\_sql\_encrypted) | Specify whether the DB instance is encrypted | `bool` | `true` | no |
+| <a name="input_sql_engine"></a> [sql\_engine](#input\_sql\_engine) | The name of the database engine to be used for this DB cluster | `string` | `"aurora-postgresql"` | no |
+| <a name="input_sql_engine_mode"></a> [sql\_engine\_mode](#input\_sql\_engine\_mode) | The database engine mode | `string` | `"serverless"` | no |
+| <a name="input_sql_engine_version"></a> [sql\_engine\_version](#input\_sql\_engine\_version) | The engine version to use | `string` | `"12.7"` | no |
 | <a name="input_sql_identifier"></a> [sql\_identifier](#input\_sql\_identifier) | The name of the database | `string` | `""` | no |
-| <a name="input_sql_instance_allocated_storage"></a> [sql\_instance\_allocated\_storage](#input\_sql\_instance\_allocated\_storage) | n/a | `number` | `20` | no |
-| <a name="input_sql_instance_class"></a> [sql\_instance\_class](#input\_sql\_instance\_class) | n/a | `string` | `"db.t3.medium"` | no |
-| <a name="input_sql_instance_enabled"></a> [sql\_instance\_enabled](#input\_sql\_instance\_enabled) | n/a | `bool` | `false` | no |
-| <a name="input_sql_instance_engine"></a> [sql\_instance\_engine](#input\_sql\_instance\_engine) | n/a | `string` | `"postgres"` | no |
-| <a name="input_sql_instance_max_allocated_storage"></a> [sql\_instance\_max\_allocated\_storage](#input\_sql\_instance\_max\_allocated\_storage) | n/a | `number` | `200` | no |
-| <a name="input_sql_master_password"></a> [sql\_master\_password](#input\_sql\_master\_password) | n/a | `string` | `""` | no |
-| <a name="input_sql_master_username"></a> [sql\_master\_username](#input\_sql\_master\_username) | n/a | `string` | `""` | no |
-| <a name="input_sql_node_count"></a> [sql\_node\_count](#input\_sql\_node\_count) | n/a | `number` | `0` | no |
-| <a name="input_sql_parameter_group_name"></a> [sql\_parameter\_group\_name](#input\_sql\_parameter\_group\_name) | n/a | `string` | `""` | no |
-| <a name="input_sql_rds_multi_az"></a> [sql\_rds\_multi\_az](#input\_sql\_rds\_multi\_az) | n/a | `bool` | `false` | no |
-| <a name="input_sql_serverless_max"></a> [sql\_serverless\_max](#input\_sql\_serverless\_max) | n/a | `number` | `2` | no |
-| <a name="input_sql_serverless_min"></a> [sql\_serverless\_min](#input\_sql\_serverless\_min) | n/a | `number` | `2` | no |
-| <a name="input_sql_serverless_seconds_until_auto_pause"></a> [sql\_serverless\_seconds\_until\_auto\_pause](#input\_sql\_serverless\_seconds\_until\_auto\_pause) | n/a | `number` | `300` | no |
-| <a name="input_sso_roles"></a> [sso\_roles](#input\_sso\_roles) | n/a | `map` | <pre>{<br>  "admin_roles": [],<br>  "dev_roles": [],<br>  "monitoring_roles": [],<br>  "readonly_roles": []<br>}</pre> | no |
-| <a name="input_vpc_flow_logs_enabled"></a> [vpc\_flow\_logs\_enabled](#input\_vpc\_flow\_logs\_enabled) | n/a | `bool` | `false` | no |
-| <a name="input_zones"></a> [zones](#input\_zones) | n/a | `list` | <pre>[<br>  "us-west-2a",<br>  "us-west-2b"<br>]</pre> | no |
+| <a name="input_sql_instance_allocated_storage"></a> [sql\_instance\_allocated\_storage](#input\_sql\_instance\_allocated\_storage) | The allocated storage in gibibytes | `number` | `20` | no |
+| <a name="input_sql_instance_class"></a> [sql\_instance\_class](#input\_sql\_instance\_class) | The instance type of the RDS instance. | `string` | `"db.t3.medium"` | no |
+| <a name="input_sql_instance_enabled"></a> [sql\_instance\_enabled](#input\_sql\_instance\_enabled) | Whether the sql instance is enabled | `bool` | `false` | no |
+| <a name="input_sql_instance_engine"></a> [sql\_instance\_engine](#input\_sql\_instance\_engine) | The database engine to use | `string` | `"postgres"` | no |
+| <a name="input_sql_instance_max_allocated_storage"></a> [sql\_instance\_max\_allocated\_storage](#input\_sql\_instance\_max\_allocated\_storage) | the upper limit to which Amazon RDS can automatically scale the storage of the DB instance | `number` | `200` | no |
+| <a name="input_sql_master_password"></a> [sql\_master\_password](#input\_sql\_master\_password) | Password for the master DB user | `string` | `""` | no |
+| <a name="input_sql_master_username"></a> [sql\_master\_username](#input\_sql\_master\_username) | Username for the master DB user | `string` | `""` | no |
+| <a name="input_sql_node_count"></a> [sql\_node\_count](#input\_sql\_node\_count) | The number of instances to be used for this DB cluster | `number` | `0` | no |
+| <a name="input_sql_parameter_group_name"></a> [sql\_parameter\_group\_name](#input\_sql\_parameter\_group\_name) | Name of the DB parameter group to associate | `string` | `""` | no |
+| <a name="input_sql_rds_multi_az"></a> [sql\_rds\_multi\_az](#input\_sql\_rds\_multi\_az) | Specify if the RDS instance is enabled multi-AZ | `bool` | `false` | no |
+| <a name="input_sql_serverless_max"></a> [sql\_serverless\_max](#input\_sql\_serverless\_max) | The maximum capacity for the DB cluster | `number` | `2` | no |
+| <a name="input_sql_serverless_min"></a> [sql\_serverless\_min](#input\_sql\_serverless\_min) | The maximum capacity for the DB cluster | `number` | `2` | no |
+| <a name="input_sql_serverless_seconds_until_auto_pause"></a> [sql\_serverless\_seconds\_until\_auto\_pause](#input\_sql\_serverless\_seconds\_until\_auto\_pause) | The time, in seconds, before the DB cluster in serverless mode is paused | `number` | `300` | no |
+| <a name="input_sql_subnet_group_include_public"></a> [sql\_subnet\_group\_include\_public](#input\_sql\_subnet\_group\_include\_public) | Include public subnets as part of the clusters subnet configuration. | `bool` | `false` | no |
+| <a name="input_sso_roles"></a> [sso\_roles](#input\_sso\_roles) | Terraform object of the IAM roles | `map` | <pre>{<br>  "admin_roles": [],<br>  "dev_roles": [],<br>  "monitoring_roles": [],<br>  "readonly_roles": []<br>}</pre> | no |
+| <a name="input_tags"></a> [tags](#input\_tags) | Terraform object to create custom tags for the AWS resources | `map` | `{}` | no |
+| <a name="input_vpc_flow_logs_enabled"></a> [vpc\_flow\_logs\_enabled](#input\_vpc\_flow\_logs\_enabled) | Specify whether the vpc flow log is enabled | `bool` | `false` | no |
+| <a name="input_zones"></a> [zones](#input\_zones) | AZs for the subnets | `list` | <pre>[<br>  "us-west-2a",<br>  "us-west-2b"<br>]</pre> | no |
 ## Resources
 
 | Name | Type |
@@ -185,6 +190,7 @@ file, You can obtain one at http://mozilla.org/MPL/2.0/.
 | [aws_cloudwatch_metric_alarm.database_free_disk_database4](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_metric_alarm) | resource |
 | [aws_cloudwatch_metric_alarm.database_io_mysql](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_metric_alarm) | resource |
 | [aws_cloudwatch_metric_alarm.database_io_postgres](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_metric_alarm) | resource |
+| [aws_cloudwatch_metric_alarm.node_group_cpu_threshold](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_metric_alarm) | resource |
 | [aws_cloudwatch_metric_alarm.nodes_blue_cpu_threshold](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_metric_alarm) | resource |
 | [aws_cloudwatch_metric_alarm.nodes_green_cpu_threshold](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_metric_alarm) | resource |
 | [aws_db_instance.default](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/db_instance) | resource |
@@ -254,6 +260,7 @@ file, You can obtain one at http://mozilla.org/MPL/2.0/.
 | [aws_vpc.vpc](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/vpc) | resource |
 | [helm_release.aws_efs_csi_driver](https://registry.terraform.io/providers/hashicorp/helm/latest/docs/resources/release) | resource |
 | [helm_release.aws_load_balancer](https://registry.terraform.io/providers/hashicorp/helm/latest/docs/resources/release) | resource |
+| [helm_release.csi_secrets_store](https://registry.terraform.io/providers/hashicorp/helm/latest/docs/resources/release) | resource |
 | [helm_release.karpenter](https://registry.terraform.io/providers/hashicorp/helm/latest/docs/resources/release) | resource |
 | [helm_release.metrics-server](https://registry.terraform.io/providers/hashicorp/helm/latest/docs/resources/release) | resource |
 | [kubernetes_cluster_role_binding.eks_admins_binding](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/cluster_role_binding) | resource |
@@ -267,6 +274,7 @@ file, You can obtain one at http://mozilla.org/MPL/2.0/.
 | [kubernetes_role_binding.default_eks_developers](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/role_binding) | resource |
 | [kubernetes_role_binding.default_eks_monitoring_admins](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/role_binding) | resource |
 | [kubernetes_role_binding.default_eks_readonly](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/role_binding) | resource |
+| [null_resource.csi_secrets_store_aws_provider](https://registry.terraform.io/providers/hashicorp/null/latest/docs/resources/resource) | resource |
 | [null_resource.karpenter_crd](https://registry.terraform.io/providers/hashicorp/null/latest/docs/resources/resource) | resource |
 | [aws_ami.foxpass_vpn](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/ami) | data source |
 | [aws_ami.ubuntu](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/ami) | data source |
@@ -276,6 +284,7 @@ file, You can obtain one at http://mozilla.org/MPL/2.0/.
 | [aws_iam_policy.ssm_managed_instance](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy) | data source |
 | [aws_region.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/region) | data source |
 | [aws_ssm_parameter.eks_ami](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/ssm_parameter) | data source |
+| [http_http.csi_secrets_store_aws_provider](https://registry.terraform.io/providers/hashicorp/http/latest/docs/data-sources/http) | data source |
 | [http_http.karpenter_crd](https://registry.terraform.io/providers/hashicorp/http/latest/docs/data-sources/http) | data source |
 | [tls_certificate.cluster](https://registry.terraform.io/providers/hashicorp/tls/latest/docs/data-sources/certificate) | data source |
 ## Outputs
