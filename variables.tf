@@ -1,17 +1,21 @@
 variable "environment_name" {
-  type = string
+  type        = string
+  description = "Name of the environment to create AWS resources"
 }
 
 variable "cluster_version" {
-  default = "1.21"
+  default     = "1.21"
+  description = "Desired Kubernetes master version"
 }
 
 variable "alb_name" {
-  default = "aws-load-balancer-controller"
+  default     = "aws-load-balancer-controller"
+  description = "Release name of the ALB controller chart"
 }
 
 variable "aws_load_balancer_controller_enabled" {
-  default = true
+  default     = true
+  description = "Enable ALB controller by default"
 }
 
 variable "cluster_logging" {
@@ -22,39 +26,47 @@ variable "cluster_logging" {
     "controllerManager",
     "scheduler"
   ]
+  description = " List of the desired control plane logging to enable"
 }
 
 variable "cluster_private_access" {
-  default = false
+  default     = false
+  description = "Whether the Amazon EKS private API server endpoint is enabled"
 }
 
 variable "cluster_public_access" {
-  default = true
+  default     = true
+  description = "Whether the Amazon EKS private API server endpoint is enabled"
 }
 
 variable "cluster_public_access_cidrs" {
-  default = ["0.0.0.0/0"]
+  default     = ["0.0.0.0/0"]
+  description = "List of CIDR blocks. Indicates which CIDR blocks can access the Amazon EKS public API server endpoint when enabled"
 }
 
 variable "instance_userdata" {
-  default = ""
+  default     = ""
+  description = "User data to provide when launching the instance"
 }
 
-
 variable "bastion_enabled" {
-  default = false
+  default     = false
+  description = "Whether the bastion host is enabled"
 }
 
 variable "bastion_eip_enabled" {
-  default = false
+  default     = false
+  description = "Whether the EIP for bastion host is enabled"
 }
 
 variable "bastion_instance_type" {
-  default = "t3.micro"
+  default     = "t3.micro"
+  description = "The instance type to use for the bastion instance"
 }
 
 variable "bastion_volume_size" {
-  default = 20
+  default     = 20
+  description = "The volume szie to use for the bastion instance"
 }
 
 variable "bastion_vpn_allowed_cidrs" {
@@ -84,35 +96,44 @@ variable "cidr_block_private_subnet" {
 }
 
 variable "enable_ipv6" {
-  default = false
+  default     = false
+  description = "Enable an Amazon-provided IPv6 CIDR block with a /56 prefix length for the VPC"
 }
 
 variable "enable_nat" {
-  default = true
+  default     = true
+  description = "Whether the NAT gateway is enabled"
 }
 
 variable "enable_egress_only_internet_gateway" {
-  default = false
+  default     = false
+  description = "Create an egress-only Internet gateway for your VPC0"
 }
 
 variable "zones" {
-  default = ["us-west-2a", "us-west-2b"]
+  default     = ["us-west-2a", "us-west-2b"]
+  description = "AZs for the subnets"
 }
 
 variable "eips" {
-  default = []
+  default     = []
+  description = "List of Elastic IPs"
 }
 
 variable "ec2_keypair" {
-  default = "opszero"
+  default     = "opszero"
+  description = "Key name of the Key Pair to use for the EKS nodes"
 }
 
 variable "bastion_ec2_keypair" {
-  default = "opszero"
+  default     = "opszero"
+  description = "Key name of the Key Pair to use for the bastion host"
 }
 
+
 variable "iam_users" {
-  default = []
+  default     = []
+  description = "List of IAM users"
 }
 
 variable "repos" {
@@ -125,73 +146,90 @@ variable "nodes_in_public_subnet" {
 }
 
 variable "nodes_green_subnet_ids" {
-  default = []
+  default     = []
+  description = "A list of subnet IDs to launch resources in"
 }
 
 variable "nodes_green_instance_type" {
-  default = "t3.micro"
+  default     = "t3.micro"
+  description = "The instance type to use for the instance"
 }
 
 variable "nodes_green_root_device_size" {
-  default = "20"
+  default     = "20"
+  description = "Size of the volume in gibibytes (GiB)"
 }
 
 variable "nodes_green_desired_capacity" {
-  default = 0
+  default     = 0
+  description = "The number of Amazon EC2 instances that should be running in the group"
 }
 
 variable "nodes_green_min_size" {
-  default = 0
+  default     = 0
+  description = "The minimum size of the Auto Scaling Group"
 }
 
 variable "nodes_green_max_size" {
-  default = 0
+  default     = 0
+  description = "The maximum size of the Auto Scaling Group"
 }
 
 variable "nodes_green_max_instance_lifetime" {
-  default = 604800 // Default to 7 days
+  default     = 604800 // Default to 7 days
+  description = "The maximum amount of time, in seconds, that an instance can be in service"
 }
 
 variable "nodes_blue_instance_type" {
-  default = "t3.micro"
+  default     = "t3.micro"
+  description = "The instance type to use for the instance"
 }
 
 variable "nodes_blue_root_device_size" {
-  default = "20"
+  default     = "20"
+  description = "Size of the volume in gibibytes (GiB)"
 }
 
 variable "ami_image" {
-  default = ""
+  default     = ""
+  description = "The EC2 image ID to launch"
 }
 
 variable "nodes_blue_subnet_ids" {
-  default = []
+  default     = []
+  description = "A list of subnet IDs to launch resources in"
 }
 
 variable "nodes_blue_desired_capacity" {
-  default = 0
+  default     = 0
+  description = "The number of Amazon EC2 instances that should be running in the group"
 }
 
 variable "nodes_blue_min_size" {
-  default = 0
+  default     = 0
+  description = "The minimum size of the Auto Scaling Group"
 }
 
 variable "nodes_blue_max_size" {
-  default = 0
+  default     = 0
+  description = "The maximum size of the Auto Scaling Group"
 }
 
 variable "nodes_blue_max_instance_lifetime" {
-  default = 604800 // Default to 7 days
+  default     = 604800 // Default to 7 days
+  description = "The maximum amount of time, in seconds, that an instance can be in service"
 }
 
 variable "foxpass_eip_enabled" {
-  default = false
+  default     = false
+  description = "Whether the EIP is enabled"
 }
 
 //the following below are required for setting up the vpn
 variable "foxpass_api_key" {
-  type    = string
-  default = ""
+  type        = string
+  default     = ""
+  description = "The API key to use for the foxpass"
 }
 
 variable "foxpass_vpn_psk" {
@@ -206,88 +244,109 @@ variable "foxpass_install" {
 }
 
 variable "foxpass_base_dn" {
-  default = ""
+  default     = ""
+  description = "Enter your base DN"
 }
 
 variable "foxpass_bind_user" {
-  default = ""
+  default     = ""
+  description = "The username of an LDAP binder account"
 }
 
 variable "foxpass_bind_pw" {
-  default = ""
+  default     = ""
+  description = "The password of an LDAP binder account"
 }
 
 variable "logdna_ingestion_key" {
-  type    = string
-  default = ""
+  type        = string
+  default     = ""
+  description = "An ingestion key used for connecting to a host/source and send log data to LogDNA"
 }
 
 variable "redis_enabled" {
-  default = false
+  default     = false
+  description = "Whether the redis cluster is enabled"
 }
 
 variable "redis_node_type" {
-  default = "cache.t3.micro"
+  default     = "cache.t3.micro"
+  description = "Instance class of the redis cluster to be used"
 }
 
 variable "redis_engine_version" {
-  default = "6.x"
+  default     = "6.x"
+  description = "Version number of the cache engine to be used for the cache clusters in this replication group"
 }
 
 variable "sql_cluster_enabled" {
-  default = false
+  default     = false
+  description = "Whether the sql cluster is enabled"
 }
 
 variable "sql_rds_multi_az" {
-  default = false
+  default     = false
+  description = "Specify if the RDS instance is enabled multi-AZ"
 }
 
 variable "sql_engine" {
-  default = "aurora-postgresql"
+  default     = "aurora-postgresql"
+  description = "The name of the database engine to be used for this DB cluster"
 }
 
 variable "sql_engine_mode" {
-  default = "serverless"
+  default     = "serverless"
+  description = "The database engine mode"
 }
 
 variable "sql_node_count" {
-  default = 0
+  default     = 0
+  description = "The number of instances to be used for this DB cluster"
 }
 
 variable "sql_instance_class" {
-  default = "db.t3.medium"
+  default     = "db.t3.medium"
+  description = "The instance type of the RDS instance."
 }
 
 variable "sql_database_name" {
-  default = ""
+  default     = ""
+  description = "The name of the database to create when the DB instance is created"
 }
 
 variable "sql_master_username" {
-  default = ""
+  default     = ""
+  description = "Username for the master DB user"
 }
 
 variable "sql_master_password" {
-  default = ""
+  default     = ""
+  description = "Password for the master DB user"
 }
 
 variable "sql_serverless_min" {
-  default = 2
+  default     = 2
+  description = "The maximum capacity for the DB cluster"
 }
 
 variable "sql_serverless_max" {
-  default = 2
+  default     = 2
+  description = "The maximum capacity for the DB cluster"
 }
 
 variable "sql_serverless_seconds_until_auto_pause" {
-  default = 300
+  default     = 300
+  description = "The time, in seconds, before the DB cluster in serverless mode is paused"
 }
 
 variable "sql_instance_enabled" {
-  default = false
+  default     = false
+  description = "Whether the sql instance is enabled"
 }
 
 variable "sql_instance_engine" {
-  default = "postgres"
+  default     = "postgres"
+  description = "The database engine to use"
 }
 
 variable "sql_subnet_group_include_public" {
@@ -296,19 +355,23 @@ variable "sql_subnet_group_include_public" {
 }
 
 variable "sql_instance_allocated_storage" {
-  default = 20
+  default     = 20
+  description = "The allocated storage in gibibytes"
 }
 
 variable "sql_instance_max_allocated_storage" {
-  default = 200
+  default     = 200
+  description = "the upper limit to which Amazon RDS can automatically scale the storage of the DB instance"
 }
 
 variable "sql_engine_version" {
-  default = "12.7"
+  default     = "12.7"
+  description = "The engine version to use"
 }
 
 variable "sql_encrypted" {
-  default = true
+  default     = true
+  description = "Specify whether the DB instance is encrypted"
 }
 
 variable "sql_identifier" {
@@ -317,14 +380,17 @@ variable "sql_identifier" {
 }
 
 variable "sql_parameter_group_name" {
-  default = ""
+  default     = ""
+  description = "Name of the DB parameter group to associate"
 }
 
 variable "monitoring_role_arn" {
-  default = ""
+  default     = ""
+  description = " The ARN for the IAM role that permits RDS to send enhanced monitoring metrics to CloudWatch Logs"
 }
 
 variable "enabled_metrics_asg" {
+  description = "A list of metrics to collect"
   default = [
     "GroupDesiredCapacity",
     "GroupInServiceCapacity",
@@ -343,11 +409,13 @@ variable "enabled_metrics_asg" {
 }
 
 variable "vpc_flow_logs_enabled" {
-  default = false
+  default     = false
+  description = "Specify whether the vpc flow log is enabled"
 }
 
 variable "efs_enabled" {
-  default = false
+  default     = false
+  description = "Specify whether the EFS is enabled on the EKS cluster"
 }
 
 variable "sso_roles" {
@@ -365,11 +433,12 @@ variable "sso_roles" {
       // "arn:aws:iam::12345:role/AWSReservedSSO_AD-EKS-Monitoring-Admins_ac2b0d744059fcd6"
     ]
   }
-
+  description = "Terraform object of the IAM roles"
 }
 
 variable "node_role_policies" {
-  default = []
+  default     = []
+  description = "A list of The ARN of the policies you want to attach"
 }
 
 variable "fargate_selector" {
@@ -378,13 +447,16 @@ variable "fargate_selector" {
       // role_arn =
     },
   }
+  description = "Terraform object to create the EKS fargate profiles"
 }
 
 variable "metrics_server_version" {
-  default = "3.8.2"
+  default     = "3.8.2"
+  description = "The version of the metric server helm chart"
 }
 
 variable "node_groups" {
+  description = "Terraform object to create the EKS node groups"
   default = {
     # "t2.micro" = {
     #   instance_types        = ["t2.micro"],
@@ -411,25 +483,55 @@ variable "node_groups" {
 }
 
 variable "node_group_cpu_threshold" {
-  default = "70"
+  default     = "70"
+  description = "The value of the CPU threshold"
 }
 
 variable "karpenter_enabled" {
-  default = false
+  default     = false
+  description = "Specify whether the karpenter is enabled"
 }
 
 variable "karpenter_name" {
-  default = "karpenter-scaler"
+  default     = "karpenter-scaler"
+  description = "The release name of the karpenter helm chart"
 }
 
 variable "karpenter_version" {
-  default = "v0.9.1"
+  default     = "v0.9.1"
+  description = "The version of the karpenter helm chart"
 }
 
 variable "legacy_subnet" {
-  default = true
+  default     = true
+  description = "Specify how the subnets should be created"
 }
 
 variable "csi_secrets_store_enabled" {
-  default = false
+  default     = false
+  description = "Specify whether the CSI driver is enabled on the EKS cluster"
 }
+
+variable "csi_secrets_store_version" {
+  default     = "1.1.2"
+  description = "The version of the CSI store helm chart"
+}
+
+variable "eks_guardduty_enabled" {
+  default     = true
+  description = "whether the guardduty is enabled for the EKS cluster"
+}
+
+variable "memorydb_enabled" {
+  default     = false
+  description = "Specify whether the memorydb is enabled"
+}
+
+variable "tags" {
+  description = "Terraform map to create custom tags for the AWS resources"
+  default     = {}
+  #  ManagedBy = "Terraform"
+  #  Project   = "Kubespot"
+  #}  
+}
+

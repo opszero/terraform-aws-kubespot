@@ -28,9 +28,7 @@ resource "aws_eks_cluster" "cluster" {
     aws_iam_role_policy_attachment.cluster-AmazonEKSServicePolicy,
   ]
 
-  tags = {
-    "KubespotEnvironment" = var.environment_name
-  }
+  tags = local.tags
 }
 
 resource "aws_eks_addon" "core" {
@@ -72,9 +70,7 @@ resource "aws_iam_role" "cluster" {
 }
 POLICY
 
-  tags = {
-    "KubespotEnvironment" = var.environment_name
-  }
+  tags = local.tags
 }
 
 resource "aws_iam_role_policy_attachment" "cluster-AmazonEKSClusterPolicy" {

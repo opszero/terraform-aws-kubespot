@@ -1,0 +1,41 @@
+name: Create issues to update helm chart version
+on:
+  schedule:
+    - cron: 0 0 1 * *
+
+jobs:
+  create_issue:
+    name: Create issues to update helm chart version
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+    steps:
+      - name: Create issues to update helm chart version
+        uses: imjohnbo/issue-bot@3daae12aa54d38685d7ff8459fc8a2aee8cea98b
+        with:
+          title: "Update helm charts version"
+          body: |
+            ### Update helm charts version
+
+            - [ ] Karpenter (https://github.com/opszero/terraform-aws-kubespot/blob/main/variables.tf#L426)
+            - [ ] CSI Secret Store (https://github.com/opszero/terraform-aws-kubespot/blob/main/variables.tf#L438)
+            - [ ] Metric Server (https://github.com/opszero/terraform-aws-kubespot/blob/main/variables.tf#L384)
+
+            ### Change the value of variables in variables.tf
+            
+            variable "metrics_server_version" {
+              default = "3.8.2"
+            }
+
+            variable "karpenter_version" {
+              default = "v0.9.1"
+            }
+
+            variable "csi_secrets_store_version" {
+              default = "1.1.2"
+            }
+
+          pinned: false
+          close-previous: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

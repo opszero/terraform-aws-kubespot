@@ -12,10 +12,7 @@ data "aws_ami" "ubuntu" {
     values = ["ubuntu/images/hvm-ssd/ubuntu-bionic-18.04-amd64-server-*"]
   }
 
-  tags = {
-    "KubespotEnvironment" = var.environment_name
-  }
-
+  tags = local.tags
 }
 
 data "aws_ssm_parameter" "eks_ami" {
@@ -31,7 +28,5 @@ data "aws_ami" "foxpass_vpn" {
   }
   owners = ["679593333241"]
 
-  tags = {
-    "KubespotEnvironment" = var.environment_name
-  }
+  tags = local.tags
 }

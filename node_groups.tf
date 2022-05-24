@@ -22,9 +22,7 @@ resource "aws_eks_node_group" "node_group" {
     max_unavailable_percentage = lookup(each.value, "update_unavailable_percent", 50)
   }
 
-  tags = {
-    "KubespotEnvironment" = var.environment_name
-  }
+  tags = local.tags
 
   # Ensure that IAM Role permissions are created before and deleted after EKS Node Group handling.
   # Otherwise, EKS will not be able to properly delete EC2 Instances and Elastic Network Interfaces.
@@ -53,7 +51,5 @@ resource "aws_cloudwatch_metric_alarm" "node_group_cpu_threshold" {
   dimensions = {
     AutoScalingGroupName = join("", flatten(each.value.resources[*].autoscaling_groups.*.name))
   }
-  tags = {
-    "KubespotEnvironment" = var.environment_name
-  }
+  tags = local.tags
 }

@@ -7,21 +7,17 @@ resource "aws_subnet" "private" {
   cidr_block        = var.cidr_block_private_subnet[count.index]
   vpc_id            = aws_vpc.vpc.id
 
-  tags = {
+  tags = merge(local.tags, {
     "Name"                                          = "${var.environment_name}-private"
     "kubernetes.io/cluster/${var.environment_name}" = "shared"
     "kubernetes.io/role/internal-elb"               = "1"
-    "KubespotEnvironment"                           = var.environment_name
-  }
+  })
 }
 
 resource "aws_eip" "eips" {
   count = var.enable_nat && length(var.eips) == 0 ? 2 : 0
-  tags = {
-    "KubespotEnvironment" = var.environment_name
-  }
+  tags  = local.tags
 }
-
 
 resource "aws_nat_gateway" "gw" {
   count = var.enable_nat ? 2 : 0
@@ -29,20 +25,18 @@ resource "aws_nat_gateway" "gw" {
   allocation_id = length(var.eips) == 0 ? aws_eip.eips[count.index].id : var.eips[count.index].id
   subnet_id     = aws_subnet.public[count.index].id
 
-  tags = {
-    "Name"                = var.environment_name
-    "KubespotEnvironment" = var.environment_name
-  }
+  tags = merge(local.tags, {
+    "Name" = var.environment_name
+  })
 }
 
 resource "aws_route_table" "private" {
   count  = 2
   vpc_id = aws_vpc.vpc.id
 
-  tags = {
-    Name                  = "${var.environment_name}-private-${count.index}"
-    "KubespotEnvironment" = var.environment_name
-  }
+  tags = merge(local.tags, {
+    Name = "${var.environment_name}-private-${count.index}"
+  })
 }
 
 resource "aws_route" "nat" {
@@ -65,10 +59,9 @@ resource "aws_egress_only_internet_gateway" "egress" {
   count  = var.enable_egress_only_internet_gateway ? 1 : 0
   vpc_id = aws_vpc.vpc.id
 
-  tags = {
-    Name                  = "${var.environment_name}-egress-${count.index}"
-    "KubespotEnvironment" = var.environment_name
-  }
+  tags = merge(local.tags, {
+    Name = "${var.environment_name}-egress-${count.index}"
+  })
 }
 
 resource "aws_route_table_association" "private" {

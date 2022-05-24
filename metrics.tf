@@ -188,9 +188,7 @@ resource "aws_cloudwatch_metric_alarm" "database_io_postgres" {
   dimensions = {
     DBClusterIdentifier = aws_rds_cluster.default[0].cluster_identifier
   }
-  tags = {
-    "KubespotEnvironment" = var.environment_name
-  }
+  tags = local.tags
 }
 
 resource "aws_cloudwatch_metric_alarm" "database_io_mysql" {
@@ -209,7 +207,5 @@ resource "aws_cloudwatch_metric_alarm" "database_io_mysql" {
   dimensions = {
     DBClusterIdentifier = aws_rds_cluster.default[0].cluster_identifier
   }
-  tags = {
-    "KubespotEnvironment" = var.environment_name
-  }
+  tags = local.tags
 }

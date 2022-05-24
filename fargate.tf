@@ -8,9 +8,7 @@ resource "aws_eks_fargate_profile" "fargate" {
   selector {
     namespace = each.key
   }
-  tags = {
-    "KubespotEnvironment" = var.environment_name
-  }
+  tags = local.tags
 }
 
 resource "aws_iam_role" "fargate" {
@@ -30,9 +28,7 @@ resource "aws_iam_role" "fargate" {
     Version = "2012-10-17"
   })
 
-  tags = {
-    "KubespotEnvironment" = var.environment_name
-  }
+  tags = local.tags
 }
 
 resource "aws_iam_role_policy_attachment" "fargate-AmazonEKSFargatePodExecutionRolePolicy" {

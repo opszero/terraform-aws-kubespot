@@ -12,14 +12,7 @@ resource "aws_iam_role" "node" {
     Version = "2012-10-17"
   })
 
-  tags = {
-    "KubespotEnvironment" = var.environment_name
-  }
-
-}
-
-output "node_role" {
-  value = aws_iam_role.node
+  tags = local.tags
 }
 
 resource "aws_iam_role_policy_attachment" "node-AmazonEKSWorkerNodePolicy" {
@@ -51,9 +44,7 @@ resource "aws_iam_role_policy_attachment" "node_role_policies" {
 resource "aws_iam_instance_profile" "node" {
   name = "${var.environment_name}-node"
   role = aws_iam_role.node.name
-  tags = {
-    "KubespotEnvironment" = var.environment_name
-  }
+  tags = local.tags
 }
 
 resource "aws_iam_role" "node_oidc" {
@@ -81,7 +72,5 @@ EOF
 
   depends_on = [aws_iam_openid_connect_provider.cluster]
 
-  tags = {
-    "KubespotEnvironment" = var.environment_name
-  }
+  tags = local.tags
 }
