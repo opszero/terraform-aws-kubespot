@@ -1,6 +1,6 @@
 resource "aws_memorydb_subnet_group" "default" {
   name       = var.environment_name
-  subnet_ids = concat(aws_subnet.private.*.id, aws_subnet.public.*.id)
+  subnet_ids = aws_subnet.private.*.id
 }
 
 resource "aws_memorydb_cluster" "example" {
