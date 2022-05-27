@@ -1,4 +1,4 @@
-name: Create issues to update helm chart version
+name: Version Check Github Issue Creator
 on:
   schedule:
     - cron: 0 0 1 * *
