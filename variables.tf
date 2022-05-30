@@ -535,3 +535,7 @@ variable "tags" {
   #}  
 }
 
+variable "alb_controller_version" {
+  description = "The helm chart version of the ALB controller"
+  default     = "1.4.2"
+}  
