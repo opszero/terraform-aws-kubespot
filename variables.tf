@@ -539,4 +539,3 @@ variable "alb_controller_version" {
   description = "The chart version of the ALB controller helm chart"
   default     = "1.4.2"
 }
-
