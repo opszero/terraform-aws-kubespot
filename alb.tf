@@ -2,9 +2,9 @@ resource "helm_release" "aws_load_balancer" {
   count      = var.aws_load_balancer_controller_enabled ? 1 : 0
   name       = var.alb_name
   namespace  = "kube-system"
-  version    = var.alb_controller_version
   repository = "https://aws.github.io/eks-charts"
   chart      = "aws-load-balancer-controller"
+  version    = var.alb_controller_version
   depends_on = [
     module.iam_assumable_role_alb,
     kubernetes_config_map.aws_auth
