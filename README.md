@@ -1,5 +1,5 @@
 <!-- BEGIN_TF_DOCS -->
-# opsZero Kubespot (AWS)
+# Kubespot (AWS)
 
 <img src="http://assets.opszero.com.s3.amazonaws.com/images/auditkube.png" width="200px" />
 
@@ -67,7 +67,7 @@ file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | ~> 4.7.0 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | ~> 4.16.0 |
 | <a name="provider_helm"></a> [helm](#provider\_helm) | n/a |
 | <a name="provider_http"></a> [http](#provider\_http) | n/a |
 | <a name="provider_kubernetes"></a> [kubernetes](#provider\_kubernetes) | >= 2.0 |
