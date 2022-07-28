@@ -42,7 +42,7 @@ region=us-west-2
 
 
 ```
-cd `environments/<nameofenv>`
+cd environments/<nameofenv>
 make kubeconfig
 export KUBECONFIG=./kubeconfig # add to a .zshrc
 kubectl get pods
