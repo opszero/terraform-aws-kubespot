@@ -279,8 +279,7 @@ aws iam create-service-linked-role --aws-service-name spot.amazonaws.com
 
 | Name | Description |
 |------|-------------|
-| <a name="output_eks_ca_cert_helm_provider"></a> [eks\_ca\_cert\_helm\_provider](#output\_eks\_ca\_cert\_helm\_provider) | n/a |
-| <a name="output_eks_endpoint_helm_provider"></a> [eks\_endpoint\_helm\_provider](#output\_eks\_endpoint\_helm\_provider) | n/a |
+| <a name="output_eks_cluster"></a> [eks\_cluster](#output\_eks\_cluster) | n/a |
 | <a name="output_eks_token_helm_provider"></a> [eks\_token\_helm\_provider](#output\_eks\_token\_helm\_provider) | n/a |
 | <a name="output_nat_gateway_ids"></a> [nat\_gateway\_ids](#output\_nat\_gateway\_ids) | n/a |
 | <a name="output_node_role"></a> [node\_role](#output\_node\_role) | n/a |
