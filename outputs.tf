@@ -34,7 +34,7 @@ output "eks_cluster" {
   value = aws_eks_cluster.cluster
 }
 
-output "eks_token_helm_provider" {
+output "eks_cluster_token" {
   value = data.aws_eks_cluster_auth.cluster.token
 }
 
