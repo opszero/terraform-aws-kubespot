@@ -258,12 +258,6 @@ variable "foxpass_bind_pw" {
   description = "The password of an LDAP binder account"
 }
 
-variable "logdna_ingestion_key" {
-  type        = string
-  default     = ""
-  description = "An ingestion key used for connecting to a host/source and send log data to LogDNA"
-}
-
 variable "redis_enabled" {
   default     = false
   description = "Whether the redis cluster is enabled"
