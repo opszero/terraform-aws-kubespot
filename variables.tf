@@ -498,7 +498,7 @@ variable "karpenter_name" {
 }
 
 variable "karpenter_version" {
-  default     = "v0.14.0-rc.0"
+  default     = "v0.13.2"
   description = "The version of the karpenter helm chart"
 }
 
