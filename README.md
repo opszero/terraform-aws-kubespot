@@ -98,13 +98,6 @@ aws iam create-service-linked-role --aws-service-name spot.amazonaws.com
 | <a name="input_enabled_metrics_asg"></a> [enabled\_metrics\_asg](#input\_enabled\_metrics\_asg) | A list of metrics to collect | `list` | <pre>[<br>  "GroupDesiredCapacity",<br>  "GroupInServiceCapacity",<br>  "GroupInServiceInstances",<br>  "GroupMaxSize",<br>  "GroupMinSize",<br>  "GroupPendingCapacity",<br>  "GroupPendingInstances",<br>  "GroupStandbyCapacity",<br>  "GroupStandbyInstances",<br>  "GroupTerminatingCapacity",<br>  "GroupTerminatingInstances",<br>  "GroupTotalCapacity",<br>  "GroupTotalInstances"<br>]</pre> | no |
 | <a name="input_environment_name"></a> [environment\_name](#input\_environment\_name) | Name of the environment to create AWS resources | `string` | n/a | yes |
 | <a name="input_fargate_selector"></a> [fargate\_selector](#input\_fargate\_selector) | Terraform object to create the EKS fargate profiles | `map` | <pre>{<br>  "serverless": {}<br>}</pre> | no |
-| <a name="input_foxpass_api_key"></a> [foxpass\_api\_key](#input\_foxpass\_api\_key) | The API key to use for the foxpass | `string` | `""` | no |
-| <a name="input_foxpass_base_dn"></a> [foxpass\_base\_dn](#input\_foxpass\_base\_dn) | Enter your base DN | `string` | `""` | no |
-| <a name="input_foxpass_bind_pw"></a> [foxpass\_bind\_pw](#input\_foxpass\_bind\_pw) | The password of an LDAP binder account | `string` | `""` | no |
-| <a name="input_foxpass_bind_user"></a> [foxpass\_bind\_user](#input\_foxpass\_bind\_user) | The username of an LDAP binder account | `string` | `""` | no |
-| <a name="input_foxpass_eip_enabled"></a> [foxpass\_eip\_enabled](#input\_foxpass\_eip\_enabled) | Whether the EIP is enabled | `bool` | `false` | no |
-| <a name="input_foxpass_install"></a> [foxpass\_install](#input\_foxpass\_install) | Make this a string to be read in the user-data | `string` | `""` | no |
-| <a name="input_foxpass_vpn_psk"></a> [foxpass\_vpn\_psk](#input\_foxpass\_vpn\_psk) | use this for psk generation https://cloud.google.com/vpn/docs/how-to/generating-pre-shared-key | `string` | `""` | no |
 | <a name="input_iam_users"></a> [iam\_users](#input\_iam\_users) | List of IAM users | `list` | `[]` | no |
 | <a name="input_instance_userdata"></a> [instance\_userdata](#input\_instance\_userdata) | User data to provide when launching the instance | `string` | `""` | no |
 | <a name="input_karpenter_enabled"></a> [karpenter\_enabled](#input\_karpenter\_enabled) | Specify whether the karpenter is enabled | `bool` | `false` | no |
@@ -264,7 +257,6 @@ aws iam create-service-linked-role --aws-service-name spot.amazonaws.com
 | [kubernetes_role_binding.default_eks_readonly](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/role_binding) | resource |
 | [null_resource.csi_secrets_store_aws_provider](https://registry.terraform.io/providers/hashicorp/null/latest/docs/resources/resource) | resource |
 | [null_resource.karpenter_crd](https://registry.terraform.io/providers/hashicorp/null/latest/docs/resources/resource) | resource |
-| [aws_ami.foxpass_vpn](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/ami) | data source |
 | [aws_ami.ubuntu](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/ami) | data source |
 | [aws_availability_zones.available](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/availability_zones) | data source |
 | [aws_caller_identity.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/caller_identity) | data source |
