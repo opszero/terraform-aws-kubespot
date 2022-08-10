@@ -87,7 +87,7 @@ aws iam create-service-linked-role --aws-service-name spot.amazonaws.com
 | <a name="input_cluster_public_access_cidrs"></a> [cluster\_public\_access\_cidrs](#input\_cluster\_public\_access\_cidrs) | List of CIDR blocks. Indicates which CIDR blocks can access the Amazon EKS public API server endpoint when enabled | `list` | <pre>[<br>  "0.0.0.0/0"<br>]</pre> | no |
 | <a name="input_cluster_version"></a> [cluster\_version](#input\_cluster\_version) | Desired Kubernetes master version | `string` | `"1.21"` | no |
 | <a name="input_csi_secrets_store_enabled"></a> [csi\_secrets\_store\_enabled](#input\_csi\_secrets\_store\_enabled) | Specify whether the CSI driver is enabled on the EKS cluster | `bool` | `false` | no |
-| <a name="input_csi_secrets_store_version"></a> [csi\_secrets\_store\_version](#input\_csi\_secrets\_store\_version) | The version of the CSI store helm chart | `string` | `"1.1.2"` | no |
+| <a name="input_csi_secrets_store_version"></a> [csi\_secrets\_store\_version](#input\_csi\_secrets\_store\_version) | The version of the CSI store helm chart | `string` | `"1.2.2"` | no |
 | <a name="input_ec2_keypair"></a> [ec2\_keypair](#input\_ec2\_keypair) | Key name of the Key Pair to use for the EKS nodes | `string` | `"opszero"` | no |
 | <a name="input_efs_enabled"></a> [efs\_enabled](#input\_efs\_enabled) | Specify whether the EFS is enabled on the EKS cluster | `bool` | `false` | no |
 | <a name="input_eips"></a> [eips](#input\_eips) | List of Elastic IPs | `list` | `[]` | no |
@@ -109,7 +109,7 @@ aws iam create-service-linked-role --aws-service-name spot.amazonaws.com
 | <a name="input_instance_userdata"></a> [instance\_userdata](#input\_instance\_userdata) | User data to provide when launching the instance | `string` | `""` | no |
 | <a name="input_karpenter_enabled"></a> [karpenter\_enabled](#input\_karpenter\_enabled) | Specify whether the karpenter is enabled | `bool` | `false` | no |
 | <a name="input_karpenter_name"></a> [karpenter\_name](#input\_karpenter\_name) | The release name of the karpenter helm chart | `string` | `"karpenter-scaler"` | no |
-| <a name="input_karpenter_version"></a> [karpenter\_version](#input\_karpenter\_version) | The version of the karpenter helm chart | `string` | `"v0.9.1"` | no |
+| <a name="input_karpenter_version"></a> [karpenter\_version](#input\_karpenter\_version) | The version of the karpenter helm chart | `string` | `"v0.13.2"` | no |
 | <a name="input_legacy_subnet"></a> [legacy\_subnet](#input\_legacy\_subnet) | Specify how the subnets should be created | `bool` | `true` | no |
 | <a name="input_logdna_ingestion_key"></a> [logdna\_ingestion\_key](#input\_logdna\_ingestion\_key) | An ingestion key used for connecting to a host/source and send log data to LogDNA | `string` | `""` | no |
 | <a name="input_memorydb_enabled"></a> [memorydb\_enabled](#input\_memorydb\_enabled) | Specify whether the memorydb is enabled | `bool` | `false` | no |
