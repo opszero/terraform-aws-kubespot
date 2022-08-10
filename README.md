@@ -26,9 +26,13 @@ commonalities between them.
 brew install kubectl kubernetes-helm awscli terraform
 ```
 
-# Credentials
+# Cluster Usage
 
-Add your IAM credentials in ~/.aws/credentials.
+If the infrastructure is using the
+[opsZero infrastructure as code](https://github.com/opszero/template-infra) template
+then you access the resources like the following:
+
+Add your IAM credentials in `~/.aws/credentials`.
 
 ```
 [profile_name]
@@ -37,32 +41,19 @@ aws_secret_access_key=<secret_key>
 region=us-west-2
 ```
 
-# AWS Configuration
+
+```
+cd `environments/<nameofenv>`
+make kubeconfig
+export KUBECONFIG=./kubeconfig # add to a .zshrc
+kubectl get pods
+```
+
+# Cluster Setup
 
 ```
 aws iam create-service-linked-role --aws-service-name spot.amazonaws.com
 ```
-
-
-## Releases
-
-```sh
-TAG=v3.0.1
-gh release create $TAG --discussion-category "General"
-```
-
-# Support
-<a href="https://www.opszero.com"><img src="http://assets.opszero.com.s3.amazonaws.com/images/opszero_11_29_2016.png" width="300px"/></a>
-
-This project is by [opsZero](https://www.opszero.com). We help organizations
-migrate to Kubernetes so [reach out](https://www.opszero.com/#contact) if you
-need help!
-
-# License
-
-This Source Code Form is subject to the terms of the Mozilla Public
-License, v. 2.0. If a copy of the MPL was not distributed with this
-file, You can obtain one at http://mozilla.org/MPL/2.0/.
 ## Providers
 
 | Name | Version |
@@ -288,8 +279,7 @@ file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 | Name | Description |
 |------|-------------|
-| <a name="output_eks_ca_cert_helm_provider"></a> [eks\_ca\_cert\_helm\_provider](#output\_eks\_ca\_cert\_helm\_provider) | n/a |
-| <a name="output_eks_endpoint_helm_provider"></a> [eks\_endpoint\_helm\_provider](#output\_eks\_endpoint\_helm\_provider) | n/a |
+| <a name="output_eks_cluster"></a> [eks\_cluster](#output\_eks\_cluster) | n/a |
 | <a name="output_eks_token_helm_provider"></a> [eks\_token\_helm\_provider](#output\_eks\_token\_helm\_provider) | n/a |
 | <a name="output_nat_gateway_ids"></a> [nat\_gateway\_ids](#output\_nat\_gateway\_ids) | n/a |
 | <a name="output_node_role"></a> [node\_role](#output\_node\_role) | n/a |
