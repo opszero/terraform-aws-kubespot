@@ -18,15 +18,3 @@ data "aws_ami" "ubuntu" {
 data "aws_ssm_parameter" "eks_ami" {
   name = "/aws/service/eks/optimized-ami/${var.cluster_version}/amazon-linux-2/recommended/image_id"
 }
-
-data "aws_ami" "foxpass_vpn" {
-  most_recent = true
-
-  filter {
-    name   = "name"
-    values = ["foxpass-ipsec-vpn *"]
-  }
-  owners = ["679593333241"]
-
-  tags = local.tags
-}
