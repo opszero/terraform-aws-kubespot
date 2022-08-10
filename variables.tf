@@ -498,7 +498,7 @@ variable "karpenter_name" {
 }
 
 variable "karpenter_version" {
-  default     = "v0.9.1"
+  default     = "v0.14.0-rc.0"
   description = "The version of the karpenter helm chart"
 }
 
@@ -513,7 +513,7 @@ variable "csi_secrets_store_enabled" {
 }
 
 variable "csi_secrets_store_version" {
-  default     = "1.1.2"
+  default     = "1.2.2"
   description = "The version of the CSI store helm chart"
 }
 
