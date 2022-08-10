@@ -78,14 +78,6 @@ resource "aws_instance" "bastion" {
 apt-get update -y
 apt-get install -y python-minimal python-urllib3
 
-if [[ "${var.foxpass_install}" = "" ]]
-then
-    echo "Not Installing Foxpass"
-else
-    wget https://raw.githubusercontent.com/abhiyerra/foxpass-setup/master/linux/ubuntu/18.04/foxpass_setup.py
-    python foxpass_setup.py --base-dn ${var.foxpass_base_dn}  --bind-user ${var.foxpass_bind_user} --bind-pw ${var.foxpass_bind_pw} --api-key ${var.foxpass_api_key}
-fi
-
 ${var.instance_userdata}
 
 echo 'echo "Ciphers aes128-ctr,aes192-ctr,aes256-ctr" | tee -a /etc/ssh/sshd_config' | tee -a /etc/rc.local
