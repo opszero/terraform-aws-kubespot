@@ -280,7 +280,7 @@ aws iam create-service-linked-role --aws-service-name spot.amazonaws.com
 | Name | Description |
 |------|-------------|
 | <a name="output_eks_cluster"></a> [eks\_cluster](#output\_eks\_cluster) | n/a |
-| <a name="output_eks_token_helm_provider"></a> [eks\_token\_helm\_provider](#output\_eks\_token\_helm\_provider) | n/a |
+| <a name="output_eks_cluster_token"></a> [eks\_cluster\_token](#output\_eks\_cluster\_token) | n/a |
 | <a name="output_nat_gateway_ids"></a> [nat\_gateway\_ids](#output\_nat\_gateway\_ids) | n/a |
 | <a name="output_node_role"></a> [node\_role](#output\_node\_role) | n/a |
 | <a name="output_node_security_group_id"></a> [node\_security\_group\_id](#output\_node\_security\_group\_id) | n/a |
