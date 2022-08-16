@@ -1,6 +1,6 @@
 data "aws_iam_policy_document" "cluster_user" {
   statement {
-    actions   = [
+    actions = [
       "eks:AccessKubernetesApi",
       "eks:Describe*",
       "eks:List*",
