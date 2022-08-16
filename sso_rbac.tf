@@ -20,22 +20,22 @@ resource "aws_iam_group" "user_access_admin" {
   name = "${var.environment_name}-user-admin"
 }
 
-resource "aws_iam_group_policy" "user_access_admin" {
-  name  = "${var.environment_name}-user-admin"
-  group = aws_iam_group.user_access_admin.name
+# resource "aws_iam_group_policy" "user_access_admin" {
+#   name  = "${var.environment_name}-user-admin"
+#   group = aws_iam_group.user_access_admin.name
 
-  policy = jsonencode({
-    Version = "2012-10-17"
-    Sid     = "AllowAssumeOrganizationAccountRole"
-    Statement = [
-      {
-        Effect   = "Allow"
-        Action   = "sts:AssumeRole",
-        Resource = aws_iam_role.user_access_admin.arn
-      },
-    ]
-  })
-}
+#   policy = jsonencode({
+#     Version = "2012-10-17"
+#     Sid     = "AllowAssumeOrganizationAccountRole"
+#     Statement = [
+#       {
+#         Effect   = "Allow"
+#         Action   = "sts:AssumeRole",
+#         Resource = aws_iam_role.user_access_admin.arn
+#       },
+#     ]
+#   })
+# }
 
 #Role and RoleBinding
 resource "kubernetes_role" "default_eks_admins" {
