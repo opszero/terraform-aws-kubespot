@@ -1,3 +1,17 @@
+data "aws_iam_policy_document" "cluster_user" {
+  statement {
+    actions   = [
+      "eks:AccessKubernetesApi",
+      "eks:Describe*",
+      "eks:List*",
+    ]
+    effect = "Allow"
+    resources = [
+      aws_eks_cluster.cluster.arn
+    ]
+  }
+}
+
 resource "aws_iam_role" "user_access_admin" {
   name = "${var.environment_name}-user-admin"
 
@@ -12,6 +26,11 @@ resource "aws_iam_role" "user_access_admin" {
     }]
     Version = "2012-10-17"
   })
+
+  inline_policy {
+    name   = "policy-8675309"
+    policy = data.aws_iam_policy_document.cluster_user.json
+  }
 
   tags = local.tags
 }
