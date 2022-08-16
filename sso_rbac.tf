@@ -2,8 +2,8 @@ data "aws_iam_policy_document" "cluster_user" {
   statement {
     actions = [
       "eks:AccessKubernetesApi",
-      "eks:Describe*",
-      "eks:List*",
+      "eks:DescribeCluster",
+      "eks:ListCluster",
     ]
     effect = "Allow"
     resources = [
