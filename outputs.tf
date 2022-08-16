@@ -41,3 +41,7 @@ output "eks_token_helm_provider" {
 output "nat_gateway_ids" {
   value = aws_nat_gateway.gw.*.id
 }
+
+output "user_access_role" {
+  value = aws_iam_role.node
+}

@@ -1,3 +1,20 @@
+resource "aws_iam_role" "node_sso" {
+  name = "${var.environment_name}-user-access-admin"
+
+  assume_role_policy = jsonencode({
+    Statement = [{
+      Action = "sts:AssumeRole"
+      Effect = "Allow"
+      Principal = {
+        Service = "ec2.amazonaws.com"
+      }
+    }]
+    Version = "2012-10-17"
+  })
+
+  tags = local.tags
+}
+
 #Role and RoleBinding
 resource "kubernetes_role" "default_eks_admins" {
   metadata {
