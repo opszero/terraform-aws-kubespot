@@ -43,7 +43,7 @@ region=us-west-2
 
 
 ```
-cd `environments/<nameofenv>`
+cd environments/<nameofenv>
 make kubeconfig
 export KUBECONFIG=./kubeconfig # add to a .zshrc
 kubectl get pods
@@ -87,7 +87,7 @@ aws iam create-service-linked-role --aws-service-name spot.amazonaws.com
 | <a name="input_cluster_public_access_cidrs"></a> [cluster\_public\_access\_cidrs](#input\_cluster\_public\_access\_cidrs) | List of CIDR blocks. Indicates which CIDR blocks can access the Amazon EKS public API server endpoint when enabled | `list` | <pre>[<br>  "0.0.0.0/0"<br>]</pre> | no |
 | <a name="input_cluster_version"></a> [cluster\_version](#input\_cluster\_version) | Desired Kubernetes master version | `string` | `"1.21"` | no |
 | <a name="input_csi_secrets_store_enabled"></a> [csi\_secrets\_store\_enabled](#input\_csi\_secrets\_store\_enabled) | Specify whether the CSI driver is enabled on the EKS cluster | `bool` | `false` | no |
-| <a name="input_csi_secrets_store_version"></a> [csi\_secrets\_store\_version](#input\_csi\_secrets\_store\_version) | The version of the CSI store helm chart | `string` | `"1.1.2"` | no |
+| <a name="input_csi_secrets_store_version"></a> [csi\_secrets\_store\_version](#input\_csi\_secrets\_store\_version) | The version of the CSI store helm chart | `string` | `"1.2.2"` | no |
 | <a name="input_ec2_keypair"></a> [ec2\_keypair](#input\_ec2\_keypair) | Key name of the Key Pair to use for the EKS nodes | `string` | `"opszero"` | no |
 | <a name="input_efs_enabled"></a> [efs\_enabled](#input\_efs\_enabled) | Specify whether the EFS is enabled on the EKS cluster | `bool` | `false` | no |
 | <a name="input_eips"></a> [eips](#input\_eips) | List of Elastic IPs | `list` | `[]` | no |
@@ -98,20 +98,12 @@ aws iam create-service-linked-role --aws-service-name spot.amazonaws.com
 | <a name="input_enabled_metrics_asg"></a> [enabled\_metrics\_asg](#input\_enabled\_metrics\_asg) | A list of metrics to collect | `list` | <pre>[<br>  "GroupDesiredCapacity",<br>  "GroupInServiceCapacity",<br>  "GroupInServiceInstances",<br>  "GroupMaxSize",<br>  "GroupMinSize",<br>  "GroupPendingCapacity",<br>  "GroupPendingInstances",<br>  "GroupStandbyCapacity",<br>  "GroupStandbyInstances",<br>  "GroupTerminatingCapacity",<br>  "GroupTerminatingInstances",<br>  "GroupTotalCapacity",<br>  "GroupTotalInstances"<br>]</pre> | no |
 | <a name="input_environment_name"></a> [environment\_name](#input\_environment\_name) | Name of the environment to create AWS resources | `string` | n/a | yes |
 | <a name="input_fargate_selector"></a> [fargate\_selector](#input\_fargate\_selector) | Terraform object to create the EKS fargate profiles | `map` | <pre>{<br>  "serverless": {}<br>}</pre> | no |
-| <a name="input_foxpass_api_key"></a> [foxpass\_api\_key](#input\_foxpass\_api\_key) | The API key to use for the foxpass | `string` | `""` | no |
-| <a name="input_foxpass_base_dn"></a> [foxpass\_base\_dn](#input\_foxpass\_base\_dn) | Enter your base DN | `string` | `""` | no |
-| <a name="input_foxpass_bind_pw"></a> [foxpass\_bind\_pw](#input\_foxpass\_bind\_pw) | The password of an LDAP binder account | `string` | `""` | no |
-| <a name="input_foxpass_bind_user"></a> [foxpass\_bind\_user](#input\_foxpass\_bind\_user) | The username of an LDAP binder account | `string` | `""` | no |
-| <a name="input_foxpass_eip_enabled"></a> [foxpass\_eip\_enabled](#input\_foxpass\_eip\_enabled) | Whether the EIP is enabled | `bool` | `false` | no |
-| <a name="input_foxpass_install"></a> [foxpass\_install](#input\_foxpass\_install) | Make this a string to be read in the user-data | `string` | `""` | no |
-| <a name="input_foxpass_vpn_psk"></a> [foxpass\_vpn\_psk](#input\_foxpass\_vpn\_psk) | use this for psk generation https://cloud.google.com/vpn/docs/how-to/generating-pre-shared-key | `string` | `""` | no |
 | <a name="input_iam_users"></a> [iam\_users](#input\_iam\_users) | List of IAM users | `list` | `[]` | no |
 | <a name="input_instance_userdata"></a> [instance\_userdata](#input\_instance\_userdata) | User data to provide when launching the instance | `string` | `""` | no |
 | <a name="input_karpenter_enabled"></a> [karpenter\_enabled](#input\_karpenter\_enabled) | Specify whether the karpenter is enabled | `bool` | `false` | no |
 | <a name="input_karpenter_name"></a> [karpenter\_name](#input\_karpenter\_name) | The release name of the karpenter helm chart | `string` | `"karpenter-scaler"` | no |
-| <a name="input_karpenter_version"></a> [karpenter\_version](#input\_karpenter\_version) | The version of the karpenter helm chart | `string` | `"v0.9.1"` | no |
+| <a name="input_karpenter_version"></a> [karpenter\_version](#input\_karpenter\_version) | The version of the karpenter helm chart | `string` | `"v0.13.2"` | no |
 | <a name="input_legacy_subnet"></a> [legacy\_subnet](#input\_legacy\_subnet) | Specify how the subnets should be created | `bool` | `true` | no |
-| <a name="input_logdna_ingestion_key"></a> [logdna\_ingestion\_key](#input\_logdna\_ingestion\_key) | An ingestion key used for connecting to a host/source and send log data to LogDNA | `string` | `""` | no |
 | <a name="input_memorydb_enabled"></a> [memorydb\_enabled](#input\_memorydb\_enabled) | Specify whether the memorydb is enabled | `bool` | `false` | no |
 | <a name="input_metrics_server_version"></a> [metrics\_server\_version](#input\_metrics\_server\_version) | The version of the metric server helm chart | `string` | `"3.8.2"` | no |
 | <a name="input_monitoring_role_arn"></a> [monitoring\_role\_arn](#input\_monitoring\_role\_arn) | The ARN for the IAM role that permits RDS to send enhanced monitoring metrics to CloudWatch Logs | `string` | `""` | no |
@@ -264,7 +256,6 @@ aws iam create-service-linked-role --aws-service-name spot.amazonaws.com
 | [kubernetes_role_binding.default_eks_readonly](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/role_binding) | resource |
 | [null_resource.csi_secrets_store_aws_provider](https://registry.terraform.io/providers/hashicorp/null/latest/docs/resources/resource) | resource |
 | [null_resource.karpenter_crd](https://registry.terraform.io/providers/hashicorp/null/latest/docs/resources/resource) | resource |
-| [aws_ami.foxpass_vpn](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/ami) | data source |
 | [aws_ami.ubuntu](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/ami) | data source |
 | [aws_availability_zones.available](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/availability_zones) | data source |
 | [aws_caller_identity.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/caller_identity) | data source |
@@ -280,7 +271,7 @@ aws iam create-service-linked-role --aws-service-name spot.amazonaws.com
 | Name | Description |
 |------|-------------|
 | <a name="output_eks_cluster"></a> [eks\_cluster](#output\_eks\_cluster) | n/a |
-| <a name="output_eks_token_helm_provider"></a> [eks\_token\_helm\_provider](#output\_eks\_token\_helm\_provider) | n/a |
+| <a name="output_eks_cluster_token"></a> [eks\_cluster\_token](#output\_eks\_cluster\_token) | n/a |
 | <a name="output_nat_gateway_ids"></a> [nat\_gateway\_ids](#output\_nat\_gateway\_ids) | n/a |
 | <a name="output_node_role"></a> [node\_role](#output\_node\_role) | n/a |
 | <a name="output_node_security_group_id"></a> [node\_security\_group\_id](#output\_node\_security\_group\_id) | n/a |

@@ -220,50 +220,6 @@ variable "nodes_blue_max_instance_lifetime" {
   description = "The maximum amount of time, in seconds, that an instance can be in service"
 }
 
-variable "foxpass_eip_enabled" {
-  default     = false
-  description = "Whether the EIP is enabled"
-}
-
-//the following below are required for setting up the vpn
-variable "foxpass_api_key" {
-  type        = string
-  default     = ""
-  description = "The API key to use for the foxpass"
-}
-
-variable "foxpass_vpn_psk" {
-  type        = string
-  description = "use this for psk generation https://cloud.google.com/vpn/docs/how-to/generating-pre-shared-key"
-  default     = ""
-}
-
-variable "foxpass_install" {
-  default     = ""
-  description = "Make this a string to be read in the user-data"
-}
-
-variable "foxpass_base_dn" {
-  default     = ""
-  description = "Enter your base DN"
-}
-
-variable "foxpass_bind_user" {
-  default     = ""
-  description = "The username of an LDAP binder account"
-}
-
-variable "foxpass_bind_pw" {
-  default     = ""
-  description = "The password of an LDAP binder account"
-}
-
-variable "logdna_ingestion_key" {
-  type        = string
-  default     = ""
-  description = "An ingestion key used for connecting to a host/source and send log data to LogDNA"
-}
-
 variable "redis_enabled" {
   default     = false
   description = "Whether the redis cluster is enabled"
@@ -498,7 +454,7 @@ variable "karpenter_name" {
 }
 
 variable "karpenter_version" {
-  default     = "v0.9.1"
+  default     = "v0.13.2"
   description = "The version of the karpenter helm chart"
 }
 
@@ -513,7 +469,7 @@ variable "csi_secrets_store_enabled" {
 }
 
 variable "csi_secrets_store_version" {
-  default     = "1.1.2"
+  default     = "1.2.2"
   description = "The version of the CSI store helm chart"
 }
 
