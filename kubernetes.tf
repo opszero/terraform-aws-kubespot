@@ -27,6 +27,13 @@ resource "kubernetes_config_map" "aws_auth" {
     - system:bootstrappers
     - system:nodes
     - system:node-proxier
+- rolearn: ${aws_iam_role.user_access_admin.arn}
+  username: adminuser:{{SessionName}}
+  groups:
+    - default:ad-eks-admins
+    - system:bootstrappers
+    - system:nodes
+    - system:node-proxier
 %{for role in var.sso_roles.admin_roles~}
 - rolearn: ${role}
   username: adminuser:{{SessionName}}
