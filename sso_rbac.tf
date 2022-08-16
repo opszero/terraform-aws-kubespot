@@ -1,18 +1,40 @@
-resource "aws_iam_role" "node_sso" {
-  name = "${var.environment_name}-user-access-admin"
+resource "aws_iam_role" "user_access_admin" {
+  name = "${var.environment_name}-user-admin"
 
   assume_role_policy = jsonencode({
     Statement = [{
       Action = "sts:AssumeRole"
       Effect = "Allow"
       Principal = {
-        Service = "ec2.amazonaws.com"
+        AWS = data.aws_caller_identity.current.account_id
       }
+      Condition = {}
     }]
     Version = "2012-10-17"
   })
 
   tags = local.tags
+}
+
+resource "aws_iam_group" "user_access_admin" {
+  name = "${var.environment_name}-user-admin"
+}
+
+resource "aws_iam_group_policy" "user_access_admin" {
+  name  = "${var.environment_name}-user-admin"
+  group = aws_iam_group.user_access_admin.name
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Sid     = "AllowAssumeOrganizationAccountRole"
+    Statement = [
+      {
+        Effect   = "Allow"
+        Action   = "sts:AssumeRole",
+        Resource = aws_iam_role.user_access_admin.arn
+      },
+    ]
+  })
 }
 
 #Role and RoleBinding

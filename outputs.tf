@@ -42,6 +42,6 @@ output "nat_gateway_ids" {
   value = aws_nat_gateway.gw.*.id
 }
 
-output "user_access_role" {
-  value = aws_iam_role.node
+output "user_access_admin_role" {
+  value = aws_iam_role.user_access_admin
 }
