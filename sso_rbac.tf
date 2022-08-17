@@ -28,7 +28,7 @@ resource "aws_iam_role" "user_access_admin" {
   })
 
   inline_policy {
-    name   = "${var.environment}-cluster-access"
+    name   = "${var.environment_name}-cluster-access"
     policy = data.aws_iam_policy_document.cluster_user.json
   }
 
