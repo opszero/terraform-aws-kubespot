@@ -28,7 +28,7 @@ resource "aws_iam_role" "user_access_admin" {
   })
 
   inline_policy {
-    name   = "ClusterAccess"
+    name   = "${var.environment}-cluster-access"
     policy = data.aws_iam_policy_document.cluster_user.json
   }
 
@@ -47,10 +47,11 @@ resource "aws_iam_group_policy" "user_access_admin" {
     Version = "2012-10-17"
     Statement = [
       {
-        Sid      = "AllowAssumeOrganizationAccountRole"
         Effect   = "Allow"
-        Action   = "sts:AssumeRole",
-        Resource = aws_iam_role.user_access_admin.arn
+        Action   = "sts:AssumeRole"
+        Resource = [
+          aws_iam_role.user_access_admin.arn
+        ]
       },
     ]
   })
