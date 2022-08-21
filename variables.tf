@@ -49,31 +49,6 @@ variable "instance_userdata" {
   description = "User data to provide when launching the instance"
 }
 
-variable "bastion_enabled" {
-  default     = false
-  description = "Whether the bastion host is enabled"
-}
-
-variable "bastion_eip_enabled" {
-  default     = false
-  description = "Whether the EIP for bastion host is enabled"
-}
-
-variable "bastion_instance_type" {
-  default     = "t3.micro"
-  description = "The instance type to use for the bastion instance"
-}
-
-variable "bastion_volume_size" {
-  default     = 20
-  description = "The volume szie to use for the bastion instance"
-}
-
-variable "bastion_vpn_allowed_cidrs" {
-  description = "These are the IPs that the bastion and VPN allow connections from."
-  default     = ["0.0.0.0/0"]
-}
-
 variable "cidr_block" {
   description = "The CIDR block used by the VPC"
   default     = "10.2.0.0/16"
@@ -124,12 +99,6 @@ variable "ec2_keypair" {
   default     = "opszero"
   description = "Key name of the Key Pair to use for the EKS nodes"
 }
-
-variable "bastion_ec2_keypair" {
-  default     = "opszero"
-  description = "Key name of the Key Pair to use for the bastion host"
-}
-
 
 variable "iam_users" {
   default     = []
