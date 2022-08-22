@@ -44,11 +44,6 @@ variable "cluster_public_access_cidrs" {
   description = "List of CIDR blocks. Indicates which CIDR blocks can access the Amazon EKS public API server endpoint when enabled"
 }
 
-variable "instance_userdata" {
-  default     = ""
-  description = "User data to provide when launching the instance"
-}
-
 variable "cidr_block" {
   description = "The CIDR block used by the VPC"
   default     = "10.2.0.0/16"
