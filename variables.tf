@@ -478,11 +478,6 @@ variable "eks_guardduty_enabled" {
   description = "whether the guardduty is enabled for the EKS cluster"
 }
 
-variable "memorydb_enabled" {
-  default     = false
-  description = "Specify whether the memorydb is enabled"
-}
-
 variable "tags" {
   description = "Terraform map to create custom tags for the AWS resources"
   default     = {}
