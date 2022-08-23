@@ -291,9 +291,9 @@ variable "sql_serverless_min" {
 }
 
 variable "sql_skip_final_snapshot" {
-  default = true
+  default     = true
   description = "Determines whether a final DB snapshot is created before the DB instance is deleted."
-  
+
 }
 
 variable "sql_serverless_max" {

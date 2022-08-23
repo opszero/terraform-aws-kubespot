@@ -32,7 +32,7 @@ resource "aws_rds_cluster" "default" {
 }
 
 resource "aws_rds_cluster_instance" "cluster_instances" {
-  count = var.sql_cluster_enabled ? 2 : 0 
+  count = var.sql_cluster_enabled ? 2 : 0
 
   engine             = var.sql_engine
   engine_version     = var.sql_engine_version
@@ -52,7 +52,7 @@ resource "aws_rds_cluster_instance" "cluster_instances" {
 resource "aws_db_instance" "default" {
   count = var.sql_instance_enabled ? 1 : 0
 
-  identifier = var.sql_identifier != "" ? var.sql_identifier : var.environment_name
+  identifier            = var.sql_identifier != "" ? var.sql_identifier : var.environment_name
   allocated_storage     = var.sql_instance_allocated_storage
   max_allocated_storage = var.sql_instance_max_allocated_storage
 
@@ -64,7 +64,7 @@ resource "aws_db_instance" "default" {
   username       = var.sql_master_username
   password       = var.sql_master_password
   multi_az       = var.sql_rds_multi_az
-  
+
   db_subnet_group_name   = aws_db_subnet_group.default.name
   vpc_security_group_ids = [aws_security_group.node.id]
   parameter_group_name   = var.sql_parameter_group_name == "" ? null : var.sql_parameter_group_name
@@ -72,7 +72,7 @@ resource "aws_db_instance" "default" {
   storage_encrypted           = var.sql_encrypted
   allow_major_version_upgrade = true
   backup_retention_period     = 35
-  deletion_protection = true // Don't Delete Ever! Except manually.
+  deletion_protection         = true // Don't Delete Ever! Except manually.
 
   tags = local.tags
 }
