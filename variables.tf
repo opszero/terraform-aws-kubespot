@@ -251,7 +251,7 @@ variable "sql_engine" {
 }
 
 variable "sql_engine_mode" {
-  default     = "serverless"
+  default     = "provisioned"
   description = "The database engine mode"
 }
 
@@ -263,6 +263,11 @@ variable "sql_node_count" {
 variable "sql_instance_class" {
   default     = "db.t3.medium"
   description = "The instance type of the RDS instance."
+}
+
+variable "sql_serverless_instance_class" {
+  default     = "db.serverless"
+  description = "The serverless instance of the RDS instance."
 }
 
 variable "sql_database_name" {
@@ -283,6 +288,12 @@ variable "sql_master_password" {
 variable "sql_serverless_min" {
   default     = 2
   description = "The maximum capacity for the DB cluster"
+}
+
+variable "sql_skip_final_snapshot" {
+  default = true
+  description = "Determines whether a final DB snapshot is created before the DB instance is deleted."
+  
 }
 
 variable "sql_serverless_max" {
@@ -321,7 +332,7 @@ variable "sql_instance_max_allocated_storage" {
 }
 
 variable "sql_engine_version" {
-  default     = "12.7"
+  default     = "13.7"
   description = "The engine version to use"
 }
 
