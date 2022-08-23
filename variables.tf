@@ -265,11 +265,6 @@ variable "sql_instance_class" {
   description = "The instance type of the RDS instance."
 }
 
-variable "sql_serverless_instance_class" {
-  default     = "db.serverless"
-  description = "The serverless instance of the RDS instance."
-}
-
 variable "sql_database_name" {
   default     = ""
   description = "The name of the database to create when the DB instance is created"
@@ -332,7 +327,7 @@ variable "sql_instance_max_allocated_storage" {
 }
 
 variable "sql_engine_version" {
-  default     = "13.7"
+  default     = "14.3"
   description = "The engine version to use"
 }
 

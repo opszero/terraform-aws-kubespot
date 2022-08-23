@@ -8,36 +8,36 @@ resource "aws_db_subnet_group" "default" {
 resource "aws_rds_cluster" "default" {
   count = var.sql_cluster_enabled ? 1 : 0
 
-  cluster_identifier              = var.environment_name
-  engine                          = var.sql_engine
-  engine_mode                     = var.sql_engine_mode
-  engine_version                  = var.sql_engine_version
-  database_name                   = var.sql_database_name
-  master_username                 = var.sql_master_username
-  master_password                 = var.sql_master_password
+  cluster_identifier = var.environment_name
+  engine             = var.sql_engine
+  engine_mode        = var.sql_engine_mode
+  engine_version     = var.sql_engine_version
+
+  database_name   = var.sql_database_name
+  master_username = var.sql_master_username
+  master_password = var.sql_master_password
+
   db_subnet_group_name            = aws_db_subnet_group.default.name
   vpc_security_group_ids          = [aws_security_group.node.id]
   db_cluster_parameter_group_name = var.sql_parameter_group_name == "" ? null : var.sql_parameter_group_name
-  storage_encrypted               = true
-  deletion_protection             = true // Don't Delete Ever! Except manually.
-  backup_retention_period         = 20
-  skip_final_snapshot             = var.sql_skip_final_snapshot
-  final_snapshot_identifier       = var.environment_name
 
-  serverlessv2_scaling_configuration {
-    max_capacity = var.sql_serverless_max
-    min_capacity = var.sql_serverless_max
-  }
+  storage_encrypted   = true
+  deletion_protection = true // Don't Delete Ever! Except manually.
+
+  backup_retention_period   = 20
+  skip_final_snapshot       = var.sql_skip_final_snapshot
+  final_snapshot_identifier = var.environment_name
+
   tags = local.tags
 }
 
 resource "aws_rds_cluster_instance" "cluster_instances" {
-  count = var.sql_cluster_enabled ? 2 : 0
+  count = var.sql_cluster_enabled ? var.sql_node_count : 0
 
   engine             = var.sql_engine
   engine_version     = var.sql_engine_version
   cluster_identifier = aws_rds_cluster.default.0.id
-  instance_class     = var.sql_serverless_instance_class
+  instance_class     = var.sql_instance_class
 
   monitoring_role_arn          = var.monitoring_role_arn
   monitoring_interval          = 5
