@@ -215,7 +215,7 @@ variable "sql_engine" {
 }
 
 variable "sql_engine_mode" {
-  default     = "serverless"
+  default     = "provisioned"
   description = "The database engine mode"
 }
 
@@ -247,6 +247,12 @@ variable "sql_master_password" {
 variable "sql_serverless_min" {
   default     = 2
   description = "The maximum capacity for the DB cluster"
+}
+
+variable "sql_skip_final_snapshot" {
+  default     = true
+  description = "Determines whether a final DB snapshot is created before the DB instance is deleted."
+
 }
 
 variable "sql_serverless_max" {
@@ -285,7 +291,7 @@ variable "sql_instance_max_allocated_storage" {
 }
 
 variable "sql_engine_version" {
-  default     = "12.7"
+  default     = "14.3"
   description = "The engine version to use"
 }
 
