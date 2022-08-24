@@ -125,8 +125,8 @@ aws iam create-service-linked-role --aws-service-name spot.amazonaws.com
 | <a name="input_sql_database_name"></a> [sql\_database\_name](#input\_sql\_database\_name) | The name of the database to create when the DB instance is created | `string` | `""` | no |
 | <a name="input_sql_encrypted"></a> [sql\_encrypted](#input\_sql\_encrypted) | Specify whether the DB instance is encrypted | `bool` | `true` | no |
 | <a name="input_sql_engine"></a> [sql\_engine](#input\_sql\_engine) | The name of the database engine to be used for this DB cluster | `string` | `"aurora-postgresql"` | no |
-| <a name="input_sql_engine_mode"></a> [sql\_engine\_mode](#input\_sql\_engine\_mode) | The database engine mode | `string` | `"serverless"` | no |
-| <a name="input_sql_engine_version"></a> [sql\_engine\_version](#input\_sql\_engine\_version) | The engine version to use | `string` | `"12.7"` | no |
+| <a name="input_sql_engine_mode"></a> [sql\_engine\_mode](#input\_sql\_engine\_mode) | The database engine mode | `string` | `"provisioned"` | no |
+| <a name="input_sql_engine_version"></a> [sql\_engine\_version](#input\_sql\_engine\_version) | The engine version to use | `string` | `"14.3"` | no |
 | <a name="input_sql_identifier"></a> [sql\_identifier](#input\_sql\_identifier) | The name of the database | `string` | `""` | no |
 | <a name="input_sql_instance_allocated_storage"></a> [sql\_instance\_allocated\_storage](#input\_sql\_instance\_allocated\_storage) | The allocated storage in gibibytes | `number` | `20` | no |
 | <a name="input_sql_instance_class"></a> [sql\_instance\_class](#input\_sql\_instance\_class) | The instance type of the RDS instance. | `string` | `"db.t3.medium"` | no |
@@ -141,6 +141,7 @@ aws iam create-service-linked-role --aws-service-name spot.amazonaws.com
 | <a name="input_sql_serverless_max"></a> [sql\_serverless\_max](#input\_sql\_serverless\_max) | The maximum capacity for the DB cluster | `number` | `2` | no |
 | <a name="input_sql_serverless_min"></a> [sql\_serverless\_min](#input\_sql\_serverless\_min) | The maximum capacity for the DB cluster | `number` | `2` | no |
 | <a name="input_sql_serverless_seconds_until_auto_pause"></a> [sql\_serverless\_seconds\_until\_auto\_pause](#input\_sql\_serverless\_seconds\_until\_auto\_pause) | The time, in seconds, before the DB cluster in serverless mode is paused | `number` | `300` | no |
+| <a name="input_sql_skip_final_snapshot"></a> [sql\_skip\_final\_snapshot](#input\_sql\_skip\_final\_snapshot) | Determines whether a final DB snapshot is created before the DB instance is deleted. | `bool` | `true` | no |
 | <a name="input_sql_subnet_group_include_public"></a> [sql\_subnet\_group\_include\_public](#input\_sql\_subnet\_group\_include\_public) | Include public subnets as part of the clusters subnet configuration. | `bool` | `false` | no |
 | <a name="input_sso_roles"></a> [sso\_roles](#input\_sso\_roles) | Terraform object of the IAM roles | `map` | <pre>{<br>  "admin_roles": [],<br>  "dev_roles": [],<br>  "monitoring_roles": [],<br>  "readonly_roles": []<br>}</pre> | no |
 | <a name="input_tags"></a> [tags](#input\_tags) | Terraform map to create custom tags for the AWS resources | `map` | `{}` | no |
