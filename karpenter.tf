@@ -45,7 +45,8 @@ resource "aws_iam_role_policy" "karpenter" {
           "ec2:DescribeInstanceTypes",
           "ec2:DescribeInstanceTypeOfferings",
           "ec2:DescribeAvailabilityZones",
-          "ssm:GetParameter"
+          "ssm:GetParameter",
+          "pricing:GetProducts"
         ]
         Effect   = "Allow"
         Resource = "*"
