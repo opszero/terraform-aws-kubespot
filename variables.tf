@@ -4,7 +4,7 @@ variable "environment_name" {
 }
 
 variable "cluster_version" {
-  default     = "1.21"
+  default     = "1.23"
   description = "Desired Kubernetes master version"
 }
 
@@ -424,7 +424,7 @@ variable "karpenter_name" {
 }
 
 variable "karpenter_version" {
-  default     = "v0.16.0"
+  default     = "v0.16.1"
   description = "The version of the karpenter helm chart"
 }
 
@@ -439,7 +439,7 @@ variable "csi_secrets_store_enabled" {
 }
 
 variable "csi_secrets_store_version" {
-  default     = "1.2.2"
+  default     = "1.2.4"
   description = "The version of the CSI store helm chart"
 }
 
