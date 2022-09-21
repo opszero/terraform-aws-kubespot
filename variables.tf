@@ -453,11 +453,11 @@ variable "tags" {
   default     = {}
   #  ManagedBy = "Terraform"
   #  Project   = "Kubespot"
-  #}  
+  #}
 }
 
 variable "alb_controller_version" {
   type        = string
   description = "The chart version of the ALB controller helm chart"
-  default     = "1.4.2"
+  default     = "2.4.3"
 }
