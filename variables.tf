@@ -8,6 +8,16 @@ variable "cluster_version" {
   description = "Desired Kubernetes master version"
 }
 
+variable "alb_name" {
+  default     = "aws-load-balancer-controller"
+  description = "Release name of the ALB controller chart"
+}
+
+variable "aws_load_balancer_controller_enabled" {
+  default     = true
+  description = "Enable ALB controller by default"
+}
+
 variable "cluster_logging" {
   default = [
     "api",
@@ -449,5 +459,5 @@ variable "tags" {
 variable "alb_controller_version" {
   type        = string
   description = "The chart version of the ALB controller helm chart"
-  default     = "1.4.4"
+  default     = "2.4.3"
 }
