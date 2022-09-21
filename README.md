@@ -68,7 +68,7 @@ aws iam create-service-linked-role --aws-service-name spot.amazonaws.com
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_alb_controller_version"></a> [alb\_controller\_version](#input\_alb\_controller\_version) | The chart version of the ALB controller helm chart | `string` | `"1.4.2"` | no |
+| <a name="input_alb_controller_version"></a> [alb\_controller\_version](#input\_alb\_controller\_version) | The chart version of the ALB controller helm chart | `string` | `"2.4.3"` | no |
 | <a name="input_alb_name"></a> [alb\_name](#input\_alb\_name) | Release name of the ALB controller chart | `string` | `"aws-load-balancer-controller"` | no |
 | <a name="input_ami_image"></a> [ami\_image](#input\_ami\_image) | The EC2 image ID to launch | `string` | `""` | no |
 | <a name="input_aws_load_balancer_controller_enabled"></a> [aws\_load\_balancer\_controller\_enabled](#input\_aws\_load\_balancer\_controller\_enabled) | Enable ALB controller by default | `bool` | `true` | no |
