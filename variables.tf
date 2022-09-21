@@ -459,5 +459,5 @@ variable "tags" {
 variable "alb_controller_version" {
   type        = string
   description = "The chart version of the ALB controller helm chart"
-  default     = "2.4.3"
+  default     = "1.4.4"
 }
