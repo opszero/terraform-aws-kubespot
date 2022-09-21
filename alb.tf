@@ -1,6 +1,5 @@
 resource "helm_release" "aws_load_balancer" {
-  count      = var.aws_load_balancer_controller_enabled ? 1 : 0
-  name       = var.alb_name
+  name       = "aws-load-balancer-controller"
   namespace  = "kube-system"
   repository = "https://aws.github.io/eks-charts"
   chart      = "aws-load-balancer-controller"
