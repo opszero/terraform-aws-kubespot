@@ -31,22 +31,24 @@ resource "aws_iam_role_policy" "karpenter" {
     Statement = [
       {
         Action = [
-          "ec2:CreateLaunchTemplate",
           "ec2:CreateFleet",
-          "ec2:RunInstances",
+          "ec2:CreateLaunchTemplate",
           "ec2:CreateTags",
-          "iam:PassRole",
-          "ec2:TerminateInstances",
-          "ec2:DescribeLaunchTemplates",
           "ec2:DeleteLaunchTemplate",
-          "ec2:DescribeInstances",
-          "ec2:DescribeSecurityGroups",
-          "ec2:DescribeSubnets",
-          "ec2:DescribeInstanceTypes",
-          "ec2:DescribeInstanceTypeOfferings",
           "ec2:DescribeAvailabilityZones",
+          "ec2:DescribeInstanceTypeOfferings",
+          "ec2:DescribeInstanceTypes",
+          "ec2:DescribeInstances",
+          "ec2:DescribeLaunchTemplates",
+          "ec2:DescribeSecurityGroups",
+          "ec2:DescribeSpotPriceHistory",
+          "ec2:DescribeSubnets",
+          "ec2:RequestSpotInstances",
+          "ec2:RunInstances",
+          "ec2:TerminateInstances",
+          "iam:PassRole",
+          "pricing:GetProducts",
           "ssm:GetParameter",
-          "pricing:GetProducts"
         ]
         Effect   = "Allow"
         Resource = "*"
