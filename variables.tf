@@ -428,17 +428,9 @@ variable "csi_secrets_store_version" {
   description = "The version of the CSI store helm chart"
 }
 
-variable "eks_guardduty_enabled" {
-  default     = true
-  description = "whether the guardduty is enabled for the EKS cluster"
-}
-
 variable "tags" {
   description = "Terraform map to create custom tags for the AWS resources"
   default     = {}
-  #  ManagedBy = "Terraform"
-  #  Project   = "Kubespot"
-  #}
 }
 
 variable "alb_controller_version" {
