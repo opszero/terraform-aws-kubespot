@@ -1,5 +1,5 @@
 data "aws_iam_policy" "ssm_managed_instance" {
-  arn = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
+  arn = "arn:aws:iam:${data.aws_caller_identity.current.account_id}:aws:policy/AmazonSSMManagedInstanceCore"
 }
 
 resource "aws_iam_role_policy_attachment" "karpenter_ssm_policy" {
