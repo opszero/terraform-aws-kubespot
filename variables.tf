@@ -8,11 +8,6 @@ variable "cluster_version" {
   description = "Desired Kubernetes master version"
 }
 
-variable "alb_name" {
-  default     = "aws-load-balancer-controller"
-  description = "Release name of the ALB controller chart"
-}
-
 variable "aws_load_balancer_controller_enabled" {
   default     = true
   description = "Enable ALB controller by default"
@@ -88,11 +83,6 @@ variable "zones" {
 variable "eips" {
   default     = []
   description = "List of Elastic IPs"
-}
-
-variable "ec2_keypair" {
-  default     = "opszero"
-  description = "Key name of the Key Pair to use for the EKS nodes"
 }
 
 variable "iam_users" {

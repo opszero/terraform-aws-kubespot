@@ -22,8 +22,6 @@ resource "aws_launch_configuration" "nodes_blue" {
   user_data_base64            = base64encode(local.node-userdata)
   associate_public_ip_address = var.nodes_in_public_subnet
 
-  key_name = var.ec2_keypair
-
   root_block_device {
     volume_size = var.nodes_blue_root_device_size
     encrypted   = true
@@ -81,8 +79,6 @@ resource "aws_launch_configuration" "nodes_green" {
   security_groups             = [aws_security_group.node.id]
   user_data_base64            = base64encode(local.node-userdata)
   associate_public_ip_address = var.nodes_in_public_subnet
-
-  key_name = var.ec2_keypair
 
   root_block_device {
     volume_size = var.nodes_green_root_device_size
