@@ -342,16 +342,16 @@ variable "efs_enabled" {
 variable "sso_roles" {
   default = {
     admin_roles = [
-      // "arn:aws:iam::12345:role/AWSReservedSSO_AD-EKS-Admins_b2abd90bad1696ac"
+      // "arn:${local.arn_env}:iam::12345:role/AWSReservedSSO_AD-EKS-Admins_b2abd90bad1696ac"
     ]
     readonly_roles = [
-      // "arn:aws:iam::12345:role/AWSReservedSSO_AD-EKS-ReadOnly_2c5eb8d559b68cb5"
+      // "arn:${local.arn_env}:iam::12345:role/AWSReservedSSO_AD-EKS-ReadOnly_2c5eb8d559b68cb5"
     ]
     dev_roles = [
-      // "arn:aws:iam::12345:role/AWSReservedSSO_AD-EKS-Developers_ac2b0d744059fcd6"
+      // "arn:${local.arn_env}:iam::12345:role/AWSReservedSSO_AD-EKS-Developers_ac2b0d744059fcd6"
     ]
     monitoring_roles = [
-      // "arn:aws:iam::12345:role/AWSReservedSSO_AD-EKS-Monitoring-Admins_ac2b0d744059fcd6"
+      // "arn:${local.arn_env}:iam::12345:role/AWSReservedSSO_AD-EKS-Monitoring-Admins_ac2b0d744059fcd6"
     ]
   }
   description = "Terraform object of the IAM roles"
@@ -455,4 +455,11 @@ variable "alb_controller_version" {
   type        = string
   description = "The chart version of the ALB controller helm chart"
   default     = "1.4.4"
+}
+
+
+variable "govcloud" {
+  type        = bool
+  description = "Set if the environment is govcloud"
+  default     = false
 }
