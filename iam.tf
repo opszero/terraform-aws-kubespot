@@ -61,12 +61,12 @@ module "iam_assumable_role_alb" {
   source           = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
   version          = "3.6.0"
   create_role      = true
-  role_name        = "${var.environment_name}-${var.alb_name}"
+  role_name        = "${var.environment_name}-${local.alb_name}"
   provider_url     = replace(aws_iam_openid_connect_provider.cluster.url, "https://", "")
   role_policy_arns = [aws_iam_policy.alb.arn]
   # namespace and service account name
   oidc_fully_qualified_subjects = [
-    "system:serviceaccount:kube-system:${var.alb_name}"
+    "system:serviceaccount:kube-system:${local.alb_name}"
   ]
   tags = local.tags
 }
@@ -156,7 +156,7 @@ resource "aws_iam_policy" "alb" {
             "Action": [
                 "ec2:CreateTags"
             ],
-            "Resource": "arn:aws:ec2:*:*:security-group/*",
+            "Resource": "arn:${local.arn_env}:ec2:*:*:security-group/*",
             "Condition": {
                 "StringEquals": {
                     "ec2:CreateAction": "CreateSecurityGroup"
@@ -172,7 +172,7 @@ resource "aws_iam_policy" "alb" {
                 "ec2:CreateTags",
                 "ec2:DeleteTags"
             ],
-            "Resource": "arn:aws:ec2:*:*:security-group/*",
+            "Resource": "arn:${local.arn_env}:ec2:*:*:security-group/*",
             "Condition": {
                 "Null": {
                     "aws:RequestTag/elbv2.k8s.aws/cluster": "true",
@@ -224,9 +224,9 @@ resource "aws_iam_policy" "alb" {
                 "elasticloadbalancing:RemoveTags"
             ],
             "Resource": [
-                "arn:aws:elasticloadbalancing:*:*:targetgroup/*/*",
-                "arn:aws:elasticloadbalancing:*:*:loadbalancer/net/*/*",
-                "arn:aws:elasticloadbalancing:*:*:loadbalancer/app/*/*"
+                "arn:${local.arn_env}:elasticloadbalancing:*:*:targetgroup/*/*",
+                "arn:${local.arn_env}:elasticloadbalancing:*:*:loadbalancer/net/*/*",
+                "arn:${local.arn_env}:elasticloadbalancing:*:*:loadbalancer/app/*/*"
             ],
             "Condition": {
                 "Null": {
@@ -242,10 +242,10 @@ resource "aws_iam_policy" "alb" {
                 "elasticloadbalancing:RemoveTags"
             ],
             "Resource": [
-                "arn:aws:elasticloadbalancing:*:*:listener/net/*/*/*",
-                "arn:aws:elasticloadbalancing:*:*:listener/app/*/*/*",
-                "arn:aws:elasticloadbalancing:*:*:listener-rule/net/*/*/*",
-                "arn:aws:elasticloadbalancing:*:*:listener-rule/app/*/*/*"
+                "arn:${local.arn_env}:elasticloadbalancing:*:*:listener/net/*/*/*",
+                "arn:${local.arn_env}:elasticloadbalancing:*:*:listener/app/*/*/*",
+                "arn:${local.arn_env}:elasticloadbalancing:*:*:listener-rule/net/*/*/*",
+                "arn:${local.arn_env}:elasticloadbalancing:*:*:listener-rule/app/*/*/*"
             ]
         },
         {
@@ -273,7 +273,7 @@ resource "aws_iam_policy" "alb" {
                 "elasticloadbalancing:RegisterTargets",
                 "elasticloadbalancing:DeregisterTargets"
             ],
-            "Resource": "arn:aws:elasticloadbalancing:*:*:targetgroup/*/*"
+            "Resource": "arn:${local.arn_env}:elasticloadbalancing:*:*:targetgroup/*/*"
         },
         {
             "Effect": "Allow",
@@ -327,8 +327,8 @@ resource "aws_iam_policy" "ebs" {
         "ec2:CreateTags"
       ],
       "Resource": [
-        "arn:aws:ec2:*:*:volume/*",
-        "arn:aws:ec2:*:*:snapshot/*"
+        "arn:${local.arn_env}:ec2:*:*:volume/*",
+        "arn:${local.arn_env}:ec2:*:*:snapshot/*"
       ],
       "Condition": {
         "StringEquals": {
@@ -345,8 +345,8 @@ resource "aws_iam_policy" "ebs" {
         "ec2:DeleteTags"
       ],
       "Resource": [
-        "arn:aws:ec2:*:*:volume/*",
-        "arn:aws:ec2:*:*:snapshot/*"
+        "arn:${local.arn_env}:ec2:*:*:volume/*",
+        "arn:${local.arn_env}:ec2:*:*:snapshot/*"
       ]
     },
     {

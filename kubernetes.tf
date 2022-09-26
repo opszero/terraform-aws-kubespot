@@ -61,7 +61,7 @@ CONFIGMAPAWSAUTH
 
     mapUsers = <<CONFIGMAPAWSUSERS
 %{for user in var.iam_users~}
-- userarn: arn:aws:iam::${data.aws_caller_identity.current.account_id}:user/${user}
+- userarn: arn:${local.arn_env}:iam::${data.aws_caller_identity.current.account_id}:user/${user}
   username: ${user}
   groups:
     - system:masters
