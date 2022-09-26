@@ -154,11 +154,6 @@ variable "nodes_blue_root_device_size" {
   description = "Size of the volume in gibibytes (GiB)"
 }
 
-variable "ami_image" {
-  default     = ""
-  description = "The EC2 image ID to launch"
-}
-
 variable "nodes_blue_subnet_ids" {
   default     = []
   description = "A list of subnet IDs to launch resources in"
