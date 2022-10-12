@@ -18,6 +18,7 @@ resource "aws_launch_configuration" "nodes_blue" {
   image_id                    = data.aws_ssm_parameter.eks_ami.value
   instance_type               = var.nodes_blue_instance_type
   name_prefix                 = "${var.environment_name}-nodes-blue"
+  spot_price                  = var.nodes_blue_spot ? var.blue_spot_price : null
   security_groups             = [aws_security_group.node.id]
   user_data_base64            = base64encode(local.node-userdata)
   associate_public_ip_address = var.nodes_in_public_subnet
@@ -76,6 +77,7 @@ resource "aws_launch_configuration" "nodes_green" {
   image_id                    = data.aws_ssm_parameter.eks_ami.value
   instance_type               = var.nodes_green_instance_type
   name_prefix                 = "${var.environment_name}-nodes-green"
+  spot_price                  = var.nodes_green_spot ? var.green_spot_price : null
   security_groups             = [aws_security_group.node.id]
   user_data_base64            = base64encode(local.node-userdata)
   associate_public_ip_address = var.nodes_in_public_subnet
