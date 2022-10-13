@@ -70,6 +70,7 @@ aws iam create-service-linked-role --aws-service-name spot.amazonaws.com
 |------|-------------|------|---------|:--------:|
 | <a name="input_alb_controller_version"></a> [alb\_controller\_version](#input\_alb\_controller\_version) | The chart version of the ALB controller helm chart | `string` | `"1.4.4"` | no |
 | <a name="input_aws_load_balancer_controller_enabled"></a> [aws\_load\_balancer\_controller\_enabled](#input\_aws\_load\_balancer\_controller\_enabled) | Enable ALB controller by default | `bool` | `true` | no |
+| <a name="input_blue_spot_price"></a> [blue\_spot\_price](#input\_blue\_spot\_price) | The maximum price to use for reserving spot instances. | `any` | n/a | yes |
 | <a name="input_cidr_block"></a> [cidr\_block](#input\_cidr\_block) | The CIDR block used by the VPC | `string` | `"10.2.0.0/16"` | no |
 | <a name="input_cidr_block_private_subnet"></a> [cidr\_block\_private\_subnet](#input\_cidr\_block\_private\_subnet) | The CIDR block used by the private subnet | `list` | <pre>[<br>  "10.2.2.0/24",<br>  "10.2.3.0/24"<br>]</pre> | no |
 | <a name="input_cidr_block_public_subnet"></a> [cidr\_block\_public\_subnet](#input\_cidr\_block\_public\_subnet) | The CIDR block used by the private subnet | `list` | <pre>[<br>  "10.2.0.0/24",<br>  "10.2.1.0/24"<br>]</pre> | no |
@@ -89,6 +90,7 @@ aws iam create-service-linked-role --aws-service-name spot.amazonaws.com
 | <a name="input_environment_name"></a> [environment\_name](#input\_environment\_name) | Name of the environment to create AWS resources | `string` | n/a | yes |
 | <a name="input_fargate_selector"></a> [fargate\_selector](#input\_fargate\_selector) | Terraform object to create the EKS fargate profiles | `map` | <pre>{<br>  "serverless": {}<br>}</pre> | no |
 | <a name="input_govcloud"></a> [govcloud](#input\_govcloud) | Set if the environment is govcloud | `bool` | `false` | no |
+| <a name="input_green_spot_price"></a> [green\_spot\_price](#input\_green\_spot\_price) | The maximum price to use for reserving spot instances. | `any` | n/a | yes |
 | <a name="input_iam_users"></a> [iam\_users](#input\_iam\_users) | List of IAM users | `list` | `[]` | no |
 | <a name="input_karpenter_enabled"></a> [karpenter\_enabled](#input\_karpenter\_enabled) | Specify whether the karpenter is enabled | `bool` | `false` | no |
 | <a name="input_karpenter_name"></a> [karpenter\_name](#input\_karpenter\_name) | The release name of the karpenter helm chart | `string` | `"karpenter-scaler"` | no |
@@ -105,6 +107,7 @@ aws iam create-service-linked-role --aws-service-name spot.amazonaws.com
 | <a name="input_nodes_blue_max_size"></a> [nodes\_blue\_max\_size](#input\_nodes\_blue\_max\_size) | The maximum size of the Auto Scaling Group | `number` | `0` | no |
 | <a name="input_nodes_blue_min_size"></a> [nodes\_blue\_min\_size](#input\_nodes\_blue\_min\_size) | The minimum size of the Auto Scaling Group | `number` | `0` | no |
 | <a name="input_nodes_blue_root_device_size"></a> [nodes\_blue\_root\_device\_size](#input\_nodes\_blue\_root\_device\_size) | Size of the volume in gibibytes (GiB) | `string` | `"20"` | no |
+| <a name="input_nodes_blue_spot"></a> [nodes\_blue\_spot](#input\_nodes\_blue\_spot) | Specify whether the Spot Instance is enabled on the node blue | `bool` | `false` | no |
 | <a name="input_nodes_blue_subnet_ids"></a> [nodes\_blue\_subnet\_ids](#input\_nodes\_blue\_subnet\_ids) | A list of subnet IDs to launch resources in | `list` | `[]` | no |
 | <a name="input_nodes_green_desired_capacity"></a> [nodes\_green\_desired\_capacity](#input\_nodes\_green\_desired\_capacity) | The number of Amazon EC2 instances that should be running in the group | `number` | `0` | no |
 | <a name="input_nodes_green_instance_type"></a> [nodes\_green\_instance\_type](#input\_nodes\_green\_instance\_type) | The instance type to use for the instance | `string` | `"t3.micro"` | no |
@@ -112,6 +115,7 @@ aws iam create-service-linked-role --aws-service-name spot.amazonaws.com
 | <a name="input_nodes_green_max_size"></a> [nodes\_green\_max\_size](#input\_nodes\_green\_max\_size) | The maximum size of the Auto Scaling Group | `number` | `0` | no |
 | <a name="input_nodes_green_min_size"></a> [nodes\_green\_min\_size](#input\_nodes\_green\_min\_size) | The minimum size of the Auto Scaling Group | `number` | `0` | no |
 | <a name="input_nodes_green_root_device_size"></a> [nodes\_green\_root\_device\_size](#input\_nodes\_green\_root\_device\_size) | Size of the volume in gibibytes (GiB) | `string` | `"20"` | no |
+| <a name="input_nodes_green_spot"></a> [nodes\_green\_spot](#input\_nodes\_green\_spot) | Specify whether the Spot Instance is enabled on the node green | `bool` | `false` | no |
 | <a name="input_nodes_green_subnet_ids"></a> [nodes\_green\_subnet\_ids](#input\_nodes\_green\_subnet\_ids) | A list of subnet IDs to launch resources in | `list` | `[]` | no |
 | <a name="input_nodes_in_public_subnet"></a> [nodes\_in\_public\_subnet](#input\_nodes\_in\_public\_subnet) | INSECURE! Only use this if you want to avoid paying for the NAT. Also set enable\_nat to false | `bool` | `false` | no |
 | <a name="input_redis_enabled"></a> [redis\_enabled](#input\_redis\_enabled) | Whether the redis cluster is enabled | `bool` | `false` | no |
