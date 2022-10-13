@@ -446,20 +446,12 @@ variable "govcloud" {
   default     = false
 }
 
-variable "nodes_green_spot" {
-  default     = false
-  description = "Specify whether the Spot Instance is enabled on the node green"
-}
-
-variable "nodes_blue_spot" {
-  default     = false
-  description = "Specify whether the Spot Instance is enabled on the node blue"
-}
-
 variable "nodes_green_spot_price" {
+  default     = null
   description = "The maximum price to use for reserving spot instances."
 }
 
 variable "nodes_blue_spot_price" {
+  default     = null
   description = "The maximum price to use for reserving spot instances."
 }
