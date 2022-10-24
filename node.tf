@@ -14,12 +14,15 @@ USERDATA
 }
 
 resource "aws_launch_configuration" "nodes_blue" {
-  iam_instance_profile        = aws_iam_instance_profile.node.name
-  image_id                    = data.aws_ssm_parameter.eks_ami.value
-  instance_type               = var.nodes_blue_instance_type
-  name_prefix                 = "${var.environment_name}-nodes-blue"
-  spot_price                  = var.nodes_blue_spot_price
-  security_groups             = [aws_security_group.node.id]
+  iam_instance_profile = aws_iam_instance_profile.node.name
+  image_id             = data.aws_ssm_parameter.eks_ami.value
+  instance_type        = var.nodes_blue_instance_type
+  name_prefix          = "${var.environment_name}-nodes-blue"
+  spot_price           = var.nodes_blue_spot_price
+  security_groups = [
+    aws_eks_cluster.cluster.cluster_security_group_id,
+    aws_security_group.node.id
+  ]
   user_data_base64            = base64encode(local.node-userdata)
   associate_public_ip_address = var.nodes_in_public_subnet
 
@@ -73,12 +76,15 @@ resource "aws_autoscaling_group" "nodes_blue" {
 }
 
 resource "aws_launch_configuration" "nodes_green" {
-  iam_instance_profile        = aws_iam_instance_profile.node.name
-  image_id                    = data.aws_ssm_parameter.eks_ami.value
-  instance_type               = var.nodes_green_instance_type
-  name_prefix                 = "${var.environment_name}-nodes-green"
-  spot_price                  = var.nodes_green_spot_price
-  security_groups             = [aws_security_group.node.id]
+  iam_instance_profile = aws_iam_instance_profile.node.name
+  image_id             = data.aws_ssm_parameter.eks_ami.value
+  instance_type        = var.nodes_green_instance_type
+  name_prefix          = "${var.environment_name}-nodes-green"
+  spot_price           = var.nodes_green_spot_price
+  security_groups = [
+    aws_eks_cluster.cluster.cluster_security_group_id,
+    aws_security_group.node.id
+  ]
   user_data_base64            = base64encode(local.node-userdata)
   associate_public_ip_address = var.nodes_in_public_subnet
 
