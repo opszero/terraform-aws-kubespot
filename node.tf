@@ -20,7 +20,7 @@ resource "aws_launch_configuration" "nodes_blue" {
   name_prefix          = "${var.environment_name}-nodes-blue"
   spot_price           = var.nodes_blue_spot_price
   security_groups = [
-    aws_eks_cluster.cluster.cluster_security_group_id,
+    aws_eks_cluster.cluster.vpc_config.cluster_security_group_id,
     aws_security_group.node.id
   ]
   user_data_base64            = base64encode(local.node-userdata)
@@ -82,7 +82,7 @@ resource "aws_launch_configuration" "nodes_green" {
   name_prefix          = "${var.environment_name}-nodes-green"
   spot_price           = var.nodes_green_spot_price
   security_groups = [
-    aws_eks_cluster.cluster.cluster_security_group_id,
+    aws_eks_cluster.cluster.vpc_config.cluster_security_group_id,
     aws_security_group.node.id
   ]
   user_data_base64            = base64encode(local.node-userdata)
