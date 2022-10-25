@@ -210,7 +210,7 @@ variable "sql_node_count" {
 }
 
 variable "sql_instance_class" {
-  default     = "db.t3.medium"
+  default     = "db.t4g.micro"
   description = "The instance type of the RDS instance."
 }
 
