@@ -175,13 +175,18 @@ variable "redis_enabled" {
 }
 
 variable "redis_node_type" {
-  default     = "cache.t3.micro"
+  default     = "cache.t4g.micro"
   description = "Instance class of the redis cluster to be used"
 }
 
 variable "redis_engine_version" {
-  default     = "6.x"
+  default     = "7.x"
   description = "Version number of the cache engine to be used for the cache clusters in this replication group"
+}
+
+variable "redis_num_nodes" {
+  default     = 1
+  description = "Number of nodes for redis"
 }
 
 variable "sql_cluster_enabled" {

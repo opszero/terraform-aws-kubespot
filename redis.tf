@@ -10,7 +10,7 @@ resource "aws_elasticache_cluster" "default" {
   engine    = "redis"
   node_type = var.redis_node_type
 
-  num_cache_nodes = 1
+  num_cache_nodes = var.redis_num_nodes
   engine_version  = var.redis_engine_version
   port            = 6379
 
