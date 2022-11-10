@@ -117,7 +117,7 @@ aws iam create-service-linked-role --aws-service-name spot.amazonaws.com
 | <a name="input_nodes_green_subnet_ids"></a> [nodes\_green\_subnet\_ids](#input\_nodes\_green\_subnet\_ids) | A list of subnet IDs to launch resources in | `list` | `[]` | no |
 | <a name="input_nodes_in_public_subnet"></a> [nodes\_in\_public\_subnet](#input\_nodes\_in\_public\_subnet) | INSECURE! Only use this if you want to avoid paying for the NAT. Also set enable\_nat to false | `bool` | `false` | no |
 | <a name="input_redis_enabled"></a> [redis\_enabled](#input\_redis\_enabled) | Whether the redis cluster is enabled | `bool` | `false` | no |
-| <a name="input_redis_engine_version"></a> [redis\_engine\_version](#input\_redis\_engine\_version) | Version number of the cache engine to be used for the cache clusters in this replication group | `string` | `"7.2"` | no |
+| <a name="input_redis_engine_version"></a> [redis\_engine\_version](#input\_redis\_engine\_version) | Version number of the cache engine to be used for the cache clusters in this replication group | `string` | `"7.0"` | no |
 | <a name="input_redis_node_type"></a> [redis\_node\_type](#input\_redis\_node\_type) | Instance class of the redis cluster to be used | `string` | `"cache.t4g.micro"` | no |
 | <a name="input_redis_num_nodes"></a> [redis\_num\_nodes](#input\_redis\_num\_nodes) | Number of nodes for redis | `number` | `1` | no |
 | <a name="input_repos"></a> [repos](#input\_repos) | n/a | `list` | `[]` | no |
