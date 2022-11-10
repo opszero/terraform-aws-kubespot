@@ -180,7 +180,7 @@ variable "redis_node_type" {
 }
 
 variable "redis_engine_version" {
-  default     = "7.x"
+  default     = "7.2"
   description = "Version number of the cache engine to be used for the cache clusters in this replication group"
 }
 
