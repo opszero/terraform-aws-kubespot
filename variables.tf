@@ -370,6 +370,11 @@ variable "metrics_server_version" {
   description = "The version of the metric server helm chart"
 }
 
+variable "redis_parameter_gp_name" {
+  default     = ""
+  description = "The name of the parameter group to associate with this cache cluster."
+}
+
 variable "node_groups" {
   description = "Terraform object to create the EKS node groups"
   default = {
