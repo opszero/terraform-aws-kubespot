@@ -366,7 +366,7 @@ variable "fargate_selector" {
 }
 
 variable "metrics_server_version" {
-  default     = "3.8.2"
+  default     = "3.8.3"
   description = "The version of the metric server helm chart"
 }
 
@@ -428,7 +428,7 @@ variable "csi_secrets_store_enabled" {
 }
 
 variable "csi_secrets_store_version" {
-  default     = "1.2.4"
+  default     = "1.3.0"
   description = "The version of the CSI store helm chart"
 }
 
