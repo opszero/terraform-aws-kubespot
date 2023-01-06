@@ -12,6 +12,7 @@ Ensure the following tasks are completed.
 - [ ] Are migrations included? `make makemigrations && make migrate`
 - [ ] Does `make up` work?
 - [ ] Does `helm template show ./charts/opszero` work?
+- [ ] Add PR/Issue to opsZero Project and set to `Review` column
 
 # Reviewer Checklist
 
