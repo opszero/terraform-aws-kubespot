@@ -20,7 +20,7 @@ module "karpenter" {
 
   cluster_name = module.eks.cluster_name
 
-  irsa_oidc_provider_arn          = module.eks.oidc_provider_arn
+  irsa_oidc_provider_arn          = aws_iam_openid_connect_provider.cluster.arn
   irsa_namespace_service_accounts = ["karpenter:karpenter"]
 
   create_iam_role = false
