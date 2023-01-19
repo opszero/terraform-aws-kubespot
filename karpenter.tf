@@ -3,8 +3,9 @@ data "aws_iam_policy" "ssm_managed_instance" {
 }
 
 provider "aws" {
-  region = "us-east-1"
-  alias  = "virginia"
+  profile = aws.profile
+  region  = "us-east-1"
+  alias   = "virginia"
 }
 
 data "aws_ecrpublic_authorization_token" "token" {
