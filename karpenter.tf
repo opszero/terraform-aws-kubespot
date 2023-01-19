@@ -18,7 +18,7 @@ module "karpenter" {
   source  = "terraform-aws-modules/eks/aws//modules/karpenter"
   version = "18.31.0"
 
-  cluster_name = module.eks.cluster_name
+  cluster_name = var.environment_name
 
   irsa_oidc_provider_arn          = aws_iam_openid_connect_provider.cluster.arn
   irsa_namespace_service_accounts = ["karpenter:karpenter"]
