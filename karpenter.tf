@@ -3,7 +3,7 @@ data "aws_iam_policy" "ssm_managed_instance" {
 }
 
 provider "aws" {
-  profile = aws.profile
+  profile = var.aws_profile
   region  = "us-east-1"
   alias   = "virginia"
 }
