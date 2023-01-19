@@ -45,43 +45,6 @@ module "iam_assumable_role_karpenter" {
   oidc_fully_qualified_subjects = ["system:serviceaccount:karpenter:karpenter"]
 }
 
-resource "aws_iam_role_policy" "karpenter" {
-  count = var.karpenter_enabled ? 1 : 0
-
-  name = "${var.environment_name}-karpenter"
-  role = module.iam_assumable_role_karpenter[0].iam_role_name
-
-  policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
-      {
-        Action = [
-          "ec2:CreateFleet",
-          "ec2:CreateLaunchTemplate",
-          "ec2:CreateTags",
-          "ec2:DeleteLaunchTemplate",
-          "ec2:DescribeAvailabilityZones",
-          "ec2:DescribeInstanceTypeOfferings",
-          "ec2:DescribeInstanceTypes",
-          "ec2:DescribeInstances",
-          "ec2:DescribeLaunchTemplates",
-          "ec2:DescribeSecurityGroups",
-          "ec2:DescribeSpotPriceHistory",
-          "ec2:DescribeSubnets",
-          "ec2:RequestSpotInstances",
-          "ec2:RunInstances",
-          "ec2:TerminateInstances",
-          "iam:PassRole",
-          "pricing:GetProducts",
-          "ssm:GetParameter",
-        ]
-        Effect   = "Allow"
-        Resource = "*"
-      },
-    ]
-  })
-}
-
 resource "helm_release" "karpenter" {
   count = var.karpenter_enabled ? 1 : 0
 
