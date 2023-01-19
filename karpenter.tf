@@ -96,13 +96,31 @@ resource "null_resource" "karpenter_crd" {
   }
 
   provisioner "local-exec" {
-    command = "kubectl apply -f -<<EOF\n${data.http.karpenter_crd.body}\nEOF"
+    command = "kubectl replace -f https://raw.githubusercontent.com/aws/karpenter/v${var.karpenter_version}/pkg/apis/crds/karpenter.sh_provisioners.yaml"
   }
 
   depends_on = [
     helm_release.karpenter
   ]
 }
+
+resource "null_resource" "karpenter_awsnodetemplates_crd" {
+  count = var.karpenter_enabled ? 1 : 0
+
+  triggers = {
+    manifest_sha1 = "${sha1("${data.http.karpenter_crd.body}")}"
+  }
+
+  provisioner "local-exec" {
+    command = "kubectl replace -f https://raw.githubusercontent.com/aws/karpenter/v${var.karpenter_version}/pkg/apis/crds/karpenter.k8s.aws_awsnodetemplates.yaml"
+  }
+
+  depends_on = [
+    helm_release.karpenter
+  ]
+}
+
+
 
 # resource "null_resource" "karpenter_crd" {
 #   count            = var.karpenter_enabled ? 1 : 0
