@@ -12,6 +12,21 @@ data "aws_ecrpublic_authorization_token" "token" {
   provider = aws.virginia
 }
 
+module "karpenter" {
+  count = var.karpenter_enabled ? 1 : 0
+
+  source  = "terraform-aws-modules/eks/aws//modules/karpenter"
+  version = "18.31.0"
+
+  cluster_name = module.eks.cluster_name
+
+  irsa_oidc_provider_arn          = module.eks.oidc_provider_arn
+  irsa_namespace_service_accounts = ["karpenter:karpenter"]
+
+  create_iam_role = false
+  iam_role_arn    = module.iam_assumable_role_karpenter[0].iam_role_arn
+}
+
 resource "aws_iam_role_policy_attachment" "karpenter_ssm_policy" {
   count = var.karpenter_enabled ? 1 : 0
 
@@ -81,23 +96,28 @@ resource "helm_release" "karpenter" {
   version             = var.karpenter_version
 
   set {
-    name  = "serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn"
-    value = module.iam_assumable_role_karpenter[0].iam_role_arn
-  }
-
-  set {
-    name  = "clusterName"
+    name  = "settings.aws.clusterName"
     value = aws_eks_cluster.cluster.name
   }
 
   set {
-    name  = "clusterEndpoint"
+    name  = "settings.aws.clusterEndpoint"
     value = aws_eks_cluster.cluster.endpoint
   }
 
   set {
-    name  = "aws.defaultInstanceProfile"
-    value = aws_iam_instance_profile.node.name
+    name  = "serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn"
+    value = module.karpenter.irsa_arn
+  }
+
+  set {
+    name  = "settings.aws.defaultInstanceProfile"
+    value = module.karpenter.instance_profile_name
+  }
+
+  set {
+    name  = "settings.aws.interruptionQueueName"
+    value = module.karpenter.queue_name
   }
 }
 
