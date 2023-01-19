@@ -2,6 +2,8 @@ data "aws_iam_policy" "ssm_managed_instance" {
   arn = "arn:${local.arn_env}:iam::aws:policy/AmazonSSMManagedInstanceCore"
 }
 
+data "aws_ecrpublic_authorization_token" "token" {}
+
 resource "aws_iam_role_policy_attachment" "karpenter_ssm_policy" {
   count = var.karpenter_enabled ? 1 : 0
 
