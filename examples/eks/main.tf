@@ -10,6 +10,7 @@ locals {
 module "opszero-eks" {
   source = "github.com/opszero/kubespot//eks"
 
+  aws_profile = "awsprofile"
   zones = [
     "us-east-1c",
     "us-east-1d"

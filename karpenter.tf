@@ -23,8 +23,10 @@ module "karpenter" {
   irsa_oidc_provider_arn          = aws_iam_openid_connect_provider.cluster.arn
   irsa_namespace_service_accounts = ["karpenter:karpenter"]
 
-  create_iam_role = false
-  iam_role_arn    = module.iam_assumable_role_karpenter[0].iam_role_arn
+  create_iam_role = true
+  iam_role_additional_policies = [
+    module.iam_assumable_role_karpenter[0].iam_role_arn,
+  ]
 }
 
 resource "aws_iam_role_policy_attachment" "karpenter_ssm_policy" {
