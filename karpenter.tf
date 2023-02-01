@@ -16,7 +16,7 @@ module "karpenter" {
   count = var.karpenter_enabled ? 1 : 0
 
   source  = "terraform-aws-modules/eks/aws//modules/karpenter"
-  version = "18.31.0"
+  version = "19.6.0"
 
   cluster_name = var.environment_name
 
