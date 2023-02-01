@@ -22,6 +22,7 @@ module "karpenter" {
 
   irsa_oidc_provider_arn          = aws_iam_openid_connect_provider.cluster.arn
   irsa_namespace_service_accounts = ["karpenter:karpenter"]
+  irsa_tag_key                    = "KubespotEnvironment"
 
   iam_role_additional_policies = var.node_role_policies
 }
