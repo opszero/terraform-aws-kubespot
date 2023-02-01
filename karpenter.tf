@@ -24,27 +24,6 @@ module "karpenter" {
   irsa_namespace_service_accounts = ["karpenter:karpenter"]
 
   create_iam_role = true
-  iam_role_additional_policies = [
-    module.iam_assumable_role_karpenter[0].iam_role_arn,
-  ]
-}
-
-resource "aws_iam_role_policy_attachment" "karpenter_ssm_policy" {
-  count = var.karpenter_enabled ? 1 : 0
-
-  role       = aws_iam_role.node.name
-  policy_arn = data.aws_iam_policy.ssm_managed_instance.arn
-}
-
-module "iam_assumable_role_karpenter" {
-  count = var.karpenter_enabled ? 1 : 0
-
-  source                        = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
-  version                       = "4.7.0"
-  create_role                   = true
-  role_name                     = "${var.environment_name}-karpenter-controller"
-  provider_url                  = replace(aws_iam_openid_connect_provider.cluster.url, "https://", "")
-  oidc_fully_qualified_subjects = ["system:serviceaccount:karpenter:karpenter"]
 }
 
 resource "helm_release" "karpenter" {
