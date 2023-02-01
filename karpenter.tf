@@ -24,6 +24,9 @@ module "karpenter" {
   irsa_namespace_service_accounts = ["karpenter:karpenter"]
 
   create_iam_role = true
+  iam_role_additional_policies = [
+    aws_iam_role.node.arn,
+  ]
 }
 
 resource "helm_release" "karpenter" {
