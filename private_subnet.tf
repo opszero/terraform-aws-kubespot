@@ -11,6 +11,7 @@ resource "aws_subnet" "private" {
     "Name"                                          = "${var.environment_name}-private"
     "kubernetes.io/cluster/${var.environment_name}" = "shared"
     "kubernetes.io/role/internal-elb"               = "1"
+    "karpenter.sh/discovery"                        = "true"
   })
 }
 
