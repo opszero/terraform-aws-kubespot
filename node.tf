@@ -73,6 +73,11 @@ resource "aws_autoscaling_group" "nodes_blue" {
     value               = var.environment_name
     propagate_at_launch = true
   }
+  tag {
+    key                 = "karpenter.sh/discovery"
+    value               = var.environment_name
+    propagate_at_launch = true
+  }
 }
 
 resource "aws_launch_configuration" "nodes_green" {
@@ -132,6 +137,11 @@ resource "aws_autoscaling_group" "nodes_green" {
   }
   tag {
     key                 = "KubespotEnvironment"
+    value               = var.environment_name
+    propagate_at_launch = true
+  }
+  tag {
+    key                 = "karpenter.sh/discovery"
     value               = var.environment_name
     propagate_at_launch = true
   }
