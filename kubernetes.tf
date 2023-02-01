@@ -28,7 +28,7 @@ resource "kubernetes_config_map" "aws_auth" {
     - system:nodes
     - system:node-proxier
 %{if var.karpenter_enabled~}
-- rolearn: ${aws_iam_role.karpenter.arn}
+- rolearn: ${module.karpenter[0].role_arn}
   username: system:node:{{EC2PrivateDNSName}}
   groups:
     - system:bootstrappers
