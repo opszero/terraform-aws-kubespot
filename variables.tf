@@ -412,13 +412,8 @@ variable "karpenter_enabled" {
   description = "Specify whether the karpenter is enabled"
 }
 
-variable "karpenter_name" {
-  default     = "karpenter-scaler"
-  description = "The release name of the karpenter helm chart"
-}
-
 variable "karpenter_version" {
-  default     = "v0.22.1"
+  default     = "v0.23.0"
   description = "The version of the karpenter helm chart"
 }
 
