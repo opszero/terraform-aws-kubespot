@@ -12,21 +12,14 @@ data "aws_ecrpublic_authorization_token" "token" {
   provider = aws.virginia
 }
 
-resource "aws_iam_role_policy_attachment" "node-karpenter" {
-  count      = var.karpenter_enabled ? 1 : 0
-  role       = aws_iam_role.node.name
-  policy_arn = aws_iam_role
-}
-
 resource "aws_iam_role_policy" "karpenter" {
   count = var.karpenter_enabled ? 1 : 0
 
   name = "${var.environment_name}-node-karpenter"
   role = aws_iam_role.node.id
 
-  policy = data.aws_iam_policy_document.karpenter.json
+  policy = data.aws_iam_policy_document.karpenter[0].json
 }
-
 
 # Copied from https://github.com/terraform-aws-modules/terraform-aws-eks/blob/v19.6.0/modules/karpenter/main.tf
 data "aws_iam_policy_document" "karpenter" {
