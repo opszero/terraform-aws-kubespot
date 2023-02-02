@@ -30,11 +30,6 @@ resource "aws_iam_role_policy_attachment" "node-AmazonEC2ContainerRegistryReadOn
   role       = aws_iam_role.node.name
 }
 
-resource "aws_iam_role_policy_attachment" "aws_node_oidc" {
-  role       = aws_iam_role.node_oidc.name
-  policy_arn = "arn:${local.partition}:iam::aws:policy/AmazonEKS_CNI_Policy"
-}
-
 resource "aws_iam_role_policy_attachment" "node_role_policies" {
   count      = length(var.node_role_policies)
   policy_arn = var.node_role_policies[count.index]
@@ -44,33 +39,5 @@ resource "aws_iam_role_policy_attachment" "node_role_policies" {
 resource "aws_iam_instance_profile" "node" {
   name = "${var.environment_name}-node"
   role = aws_iam_role.node.name
-  tags = local.tags
-}
-
-resource "aws_iam_role" "node_oidc" {
-  name = "${var.environment_name}-node-oidc"
-
-  assume_role_policy = <<EOF
-{
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Effect": "Allow",
-      "Principal": {
-        "Federated": "${aws_iam_openid_connect_provider.cluster.arn}"
-      },
-      "Action": "sts:AssumeRoleWithWebIdentity",
-      "Condition": {
-        "StringEquals": {
-          "${replace(aws_iam_openid_connect_provider.cluster.url, "https://", "")}:sub": "system:serviceaccount:kube-system:cluster-autoscaler"
-        }
-      }
-    }
-  ]
-}
-EOF
-
-  depends_on = [aws_iam_openid_connect_provider.cluster]
-
   tags = local.tags
 }
