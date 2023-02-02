@@ -105,3 +105,13 @@ resource "aws_security_group_rule" "private_subnet" {
   cidr_blocks       = var.cidr_block_private_subnet
   type              = "ingress"
 }
+
+resource "aws_security_group_rule" "node-ingress-karpenter" {
+  description              = "Cluster API to Node group for Karpenter webhook"
+  from_port                = 8443
+  to_port                  = 8443
+  protocol                 = "-1"
+  security_group_id        = aws_security_group.node.id
+  source_security_group_id = aws_security_group.node.id
+  type                     = "ingress"
+}
