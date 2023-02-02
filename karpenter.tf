@@ -25,6 +25,8 @@ module "karpenter" {
   irsa_tag_key                    = "KubespotEnvironment"
 
   iam_role_additional_policies = var.node_role_policies
+
+  tags = local.tags
 }
 
 resource "helm_release" "karpenter" {
