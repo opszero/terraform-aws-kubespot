@@ -1,6 +1,6 @@
 locals {
   alb_name   = "aws-load-balancer-controller"
-  partition  = var.govcloud ? "aws-us-gov" : "aws"
+  partition  = data.aws_partition.current.partition
   account_id = data.aws_caller_identity.current.account_id
 
   tags = merge(var.tags, {
