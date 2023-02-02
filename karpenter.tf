@@ -12,6 +12,119 @@ data "aws_ecrpublic_authorization_token" "token" {
   provider = aws.virginia
 }
 
+resource "aws_iam_role_policy" "test_policy" {
+  name = "test_policy"
+  role = aws_iam_role.test_role.id
+
+  # Terraform's "jsonencode" function converts a
+  # Terraform expression result to valid JSON syntax.
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = [
+          "ec2:Describe*",
+        ]
+        Effect   = "Allow"
+        Resource = "*"
+      },
+    ]
+  })
+}
+
+
+resource "aws_iam_role_policy_attachment" "node-karpenter" {
+  count      = var.karpenter_enabled ? 1 : 0
+  role       = aws_iam_role.node.name
+  policy_arn = aws_iam_role
+}
+
+resource "aws_iam_role_policy" "test_policy" {
+  count = var.karpenter_enabled ? 1 : 0
+
+  name = "${var.environment_name}-node-karpenter"
+  role = aws_iam_role.node.id
+
+  policy = data.aws_iam_policy_document.karpenter.json
+}
+
+
+# Copied from https://github.com/terraform-aws-modules/terraform-aws-eks/blob/v19.6.0/modules/karpenter/main.tf
+data "aws_iam_policy_document" "karpenter" {
+  count = var.karpenter_enabled ? 1 : 0
+
+  statement {
+    actions = [
+      "ec2:CreateLaunchTemplate",
+      "ec2:CreateFleet",
+      "ec2:CreateTags",
+      "ec2:DescribeLaunchTemplates",
+      "ec2:DescribeImages",
+      "ec2:DescribeInstances",
+      "ec2:DescribeSecurityGroups",
+      "ec2:DescribeSubnets",
+      "ec2:DescribeInstanceTypes",
+      "ec2:DescribeInstanceTypeOfferings",
+      "ec2:DescribeAvailabilityZones",
+      "ec2:DescribeSpotPriceHistory",
+      "pricing:GetProducts",
+    ]
+
+    resources = ["*"]
+  }
+
+  statement {
+    actions = [
+      "ec2:TerminateInstances",
+      "ec2:DeleteLaunchTemplate",
+    ]
+
+    resources = ["*"]
+
+    condition {
+      test     = "StringEquals"
+      variable = "ec2:ResourceTag/KubespotEnvironment"
+      values   = [var.environment_name]
+    }
+  }
+
+  statement {
+    actions = ["ec2:RunInstances"]
+    resources = [
+      "arn:${local.partition}:ec2:*:${local.account_id}:launch-template/*",
+    ]
+
+    condition {
+      test     = "StringEquals"
+      variable = "ec2:ResourceTag/KubespotEnvironment"
+      values   = [var.environment_name]
+    }
+  }
+
+  statement {
+    actions = ["ec2:RunInstances"]
+    resources = [
+      "arn:${local.partition}:ec2:*::image/*",
+      "arn:${local.partition}:ec2:*:${local.account_id}:instance/*",
+      "arn:${local.partition}:ec2:*:${local.account_id}:spot-instances-request/*",
+      "arn:${local.partition}:ec2:*:${local.account_id}:security-group/*",
+      "arn:${local.partition}:ec2:*:${local.account_id}:volume/*",
+      "arn:${local.partition}:ec2:*:${local.account_id}:network-interface/*",
+      "arn:${local.partition}:ec2:*:${local.account_id}:subnet/*",
+    ]
+  }
+
+  statement {
+    actions   = ["ssm:GetParameter"]
+    resources = ["arn:aws:ssm:*:*:parameter/aws/service/*"]
+  }
+
+  statement {
+    actions   = ["iam:PassRole"]
+    resources = [aws_iam_role.node.arn]
+  }
+}
+
 module "karpenter" {
   count = var.karpenter_enabled ? 1 : 0
 
@@ -24,7 +137,10 @@ module "karpenter" {
   irsa_namespace_service_accounts = ["karpenter:karpenter"]
   irsa_tag_key                    = "KubespotEnvironment"
 
-  iam_role_additional_policies = var.node_role_policies
+  create_iam_role = false
+  iam_role_arn    = aws_iam_role.node.arn
+
+  enable_spot_termination = false
 
   tags = local.tags
 }
