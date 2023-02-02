@@ -53,11 +53,12 @@ data "aws_iam_policy_document" "karpenter" {
 
     resources = ["*"]
 
-    condition {
-      test     = "StringEquals"
-      variable = "ec2:ResourceTag/KubespotEnvironment"
-      values   = [var.environment_name]
-    }
+    # TODO
+    # condition {
+    #   test     = "StringEquals"
+    #   variable = "ec2:ResourceTag/KubespotEnvironment"
+    #   values   = [var.environment_name]
+    # }
   }
 
   statement {
@@ -66,11 +67,12 @@ data "aws_iam_policy_document" "karpenter" {
       "arn:${local.partition}:ec2:*:${local.account_id}:launch-template/*",
     ]
 
-    condition {
-      test     = "StringEquals"
-      variable = "ec2:ResourceTag/KubespotEnvironment"
-      values   = [var.environment_name]
-    }
+    # TODO
+    # condition {
+    #   test     = "StringEquals"
+    #   variable = "ec2:ResourceTag/KubespotEnvironment"
+    #   values   = [var.environment_name]
+    # }
   }
 
   statement {
