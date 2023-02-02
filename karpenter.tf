@@ -12,34 +12,13 @@ data "aws_ecrpublic_authorization_token" "token" {
   provider = aws.virginia
 }
 
-resource "aws_iam_role_policy" "test_policy" {
-  name = "test_policy"
-  role = aws_iam_role.test_role.id
-
-  # Terraform's "jsonencode" function converts a
-  # Terraform expression result to valid JSON syntax.
-  policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
-      {
-        Action = [
-          "ec2:Describe*",
-        ]
-        Effect   = "Allow"
-        Resource = "*"
-      },
-    ]
-  })
-}
-
-
 resource "aws_iam_role_policy_attachment" "node-karpenter" {
   count      = var.karpenter_enabled ? 1 : 0
   role       = aws_iam_role.node.name
   policy_arn = aws_iam_role
 }
 
-resource "aws_iam_role_policy" "test_policy" {
+resource "aws_iam_role_policy" "karpenter" {
   count = var.karpenter_enabled ? 1 : 0
 
   name = "${var.environment_name}-node-karpenter"
