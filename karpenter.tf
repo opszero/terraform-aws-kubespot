@@ -1,5 +1,5 @@
 data "aws_iam_policy" "ssm_managed_instance" {
-  arn = "arn:${local.arn_env}:iam::aws:policy/AmazonSSMManagedInstanceCore"
+  arn = "arn:${local.partition}:iam::aws:policy/AmazonSSMManagedInstanceCore"
 }
 
 provider "aws" {

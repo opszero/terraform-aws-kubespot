@@ -104,7 +104,7 @@ resource "aws_iam_policy" "alb" {
             "Action": [
                 "ec2:CreateTags"
             ],
-            "Resource": "arn:${local.arn_env}:ec2:*:*:security-group/*",
+            "Resource": "arn:${local.partition}:ec2:*:*:security-group/*",
             "Condition": {
                 "StringEquals": {
                     "ec2:CreateAction": "CreateSecurityGroup"
@@ -120,7 +120,7 @@ resource "aws_iam_policy" "alb" {
                 "ec2:CreateTags",
                 "ec2:DeleteTags"
             ],
-            "Resource": "arn:${local.arn_env}:ec2:*:*:security-group/*",
+            "Resource": "arn:${local.partition}:ec2:*:*:security-group/*",
             "Condition": {
                 "Null": {
                     "aws:RequestTag/elbv2.k8s.aws/cluster": "true",
@@ -172,9 +172,9 @@ resource "aws_iam_policy" "alb" {
                 "elasticloadbalancing:RemoveTags"
             ],
             "Resource": [
-                "arn:${local.arn_env}:elasticloadbalancing:*:*:targetgroup/*/*",
-                "arn:${local.arn_env}:elasticloadbalancing:*:*:loadbalancer/net/*/*",
-                "arn:${local.arn_env}:elasticloadbalancing:*:*:loadbalancer/app/*/*"
+                "arn:${local.partition}:elasticloadbalancing:*:*:targetgroup/*/*",
+                "arn:${local.partition}:elasticloadbalancing:*:*:loadbalancer/net/*/*",
+                "arn:${local.partition}:elasticloadbalancing:*:*:loadbalancer/app/*/*"
             ],
             "Condition": {
                 "Null": {
@@ -190,10 +190,10 @@ resource "aws_iam_policy" "alb" {
                 "elasticloadbalancing:RemoveTags"
             ],
             "Resource": [
-                "arn:${local.arn_env}:elasticloadbalancing:*:*:listener/net/*/*/*",
-                "arn:${local.arn_env}:elasticloadbalancing:*:*:listener/app/*/*/*",
-                "arn:${local.arn_env}:elasticloadbalancing:*:*:listener-rule/net/*/*/*",
-                "arn:${local.arn_env}:elasticloadbalancing:*:*:listener-rule/app/*/*/*"
+                "arn:${local.partition}:elasticloadbalancing:*:*:listener/net/*/*/*",
+                "arn:${local.partition}:elasticloadbalancing:*:*:listener/app/*/*/*",
+                "arn:${local.partition}:elasticloadbalancing:*:*:listener-rule/net/*/*/*",
+                "arn:${local.partition}:elasticloadbalancing:*:*:listener-rule/app/*/*/*"
             ]
         },
         {
@@ -221,7 +221,7 @@ resource "aws_iam_policy" "alb" {
                 "elasticloadbalancing:RegisterTargets",
                 "elasticloadbalancing:DeregisterTargets"
             ],
-            "Resource": "arn:${local.arn_env}:elasticloadbalancing:*:*:targetgroup/*/*"
+            "Resource": "arn:${local.partition}:elasticloadbalancing:*:*:targetgroup/*/*"
         },
         {
             "Effect": "Allow",
@@ -275,8 +275,8 @@ resource "aws_iam_policy" "ebs" {
         "ec2:CreateTags"
       ],
       "Resource": [
-        "arn:${local.arn_env}:ec2:*:*:volume/*",
-        "arn:${local.arn_env}:ec2:*:*:snapshot/*"
+        "arn:${local.partition}:ec2:*:*:volume/*",
+        "arn:${local.partition}:ec2:*:*:snapshot/*"
       ],
       "Condition": {
         "StringEquals": {
@@ -293,8 +293,8 @@ resource "aws_iam_policy" "ebs" {
         "ec2:DeleteTags"
       ],
       "Resource": [
-        "arn:${local.arn_env}:ec2:*:*:volume/*",
-        "arn:${local.arn_env}:ec2:*:*:snapshot/*"
+        "arn:${local.partition}:ec2:*:*:volume/*",
+        "arn:${local.partition}:ec2:*:*:snapshot/*"
       ]
     },
     {

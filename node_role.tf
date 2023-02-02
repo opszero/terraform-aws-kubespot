@@ -16,23 +16,23 @@ resource "aws_iam_role" "node" {
 }
 
 resource "aws_iam_role_policy_attachment" "node-AmazonEKSWorkerNodePolicy" {
-  policy_arn = "arn:${local.arn_env}:iam::aws:policy/AmazonEKSWorkerNodePolicy"
+  policy_arn = "arn:${local.partition}:iam::aws:policy/AmazonEKSWorkerNodePolicy"
   role       = aws_iam_role.node.name
 }
 
 resource "aws_iam_role_policy_attachment" "node-AmazonEKS_CNI_Policy" {
-  policy_arn = "arn:${local.arn_env}:iam::aws:policy/AmazonEKS_CNI_Policy"
+  policy_arn = "arn:${local.partition}:iam::aws:policy/AmazonEKS_CNI_Policy"
   role       = aws_iam_role.node.name
 }
 
 resource "aws_iam_role_policy_attachment" "node-AmazonEC2ContainerRegistryReadOnly" {
-  policy_arn = "arn:${local.arn_env}:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
+  policy_arn = "arn:${local.partition}:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
   role       = aws_iam_role.node.name
 }
 
 resource "aws_iam_role_policy_attachment" "aws_node_oidc" {
   role       = aws_iam_role.node_oidc.name
-  policy_arn = "arn:${local.arn_env}:iam::aws:policy/AmazonEKS_CNI_Policy"
+  policy_arn = "arn:${local.partition}:iam::aws:policy/AmazonEKS_CNI_Policy"
 }
 
 resource "aws_iam_role_policy_attachment" "node_role_policies" {
