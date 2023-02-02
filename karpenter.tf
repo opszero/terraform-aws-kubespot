@@ -149,11 +149,6 @@ resource "helm_release" "karpenter" {
     name  = "settings.aws.defaultInstanceProfile"
     value = module.karpenter[0].instance_profile_name
   }
-
-  set {
-    name  = "settings.aws.interruptionQueueName"
-    value = module.karpenter[0].queue_name
-  }
 }
 
 data "http" "karpenter_crd" {
