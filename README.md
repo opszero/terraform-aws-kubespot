@@ -6,7 +6,7 @@
 Compliance Oriented Kubernetes Setup for AWS.
 
 Kubespot is an open source terraform module that attempts to create a complete
-compliance-oriented Kubernetes setup on AWS, Google Cloud and Azure.  These add
+compliance-oriented Kubernetes setup on AWS, Google Cloud and Azure. These add
 additional security such as additional system logs, file system monitoring, hard
 disk encryption and access control. Further, we setup the managed Redis and SQL
 on each of the Cloud providers with limited access to the Kubernetes cluster so
@@ -41,12 +41,52 @@ aws_secret_access_key=<secret_key>
 region=us-west-2
 ```
 
-
 ```
 cd environments/<nameofenv>
 make kubeconfig
 export KUBECONFIG=./kubeconfig # add to a .zshrc
 kubectl get pods
+```
+
+# Autoscaler
+
+karpenter.yml
+
+```yml
+apiVersion: karpenter.sh/v1alpha5
+kind: Provisioner
+metadata:
+  name: default
+spec:
+  consolidation:
+    enabled: true # If set to true the nodes will minimize to fit the pods
+  requirements:
+    - key: "karpenter.k8s.aws/instance-category"
+      operator: In
+      values: ["t", "c", "m"]
+    - key: "kubernetes.io/arch"
+      operator: In
+      values: ["amd64"]
+    - key: "karpenter.k8s.aws/instance-cpu"
+      operator: In
+      values: ["1", "2", "4", "8", "16"]
+    - key: "karpenter.k8s.aws/instance-hypervisor"
+      operator: In
+      values: ["nitro"]
+    - key: karpenter.sh/capacity-type
+      operator: In
+      values: ["spot", "on-demand"]
+  limits:
+    resources:
+      cpu: 200
+  provider:
+    securityGroupSelector:
+      Name: <cluster-name>-node
+    subnetSelector:
+      Name: <cluster-name>-private
+    tags:
+      karpenter.sh/discovery: <cluster-name>
+  ttlSecondsUntilExpired: 86400 # How long to keep the node before cycling
 ```
 
 # Cluster Setup
