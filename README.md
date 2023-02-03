@@ -50,7 +50,12 @@ kubectl get pods
 
 # Autoscaler
 
-karpenter.yml
+Kubespot uses [Karpenter](https://karpenter.sh) as the default autoscaler. To
+configure the autoscaler we need to create a file like the one below and run:
+
+```sh
+kubectl apply -f karpenter.yml
+```
 
 ```yml
 apiVersion: karpenter.sh/v1alpha5
