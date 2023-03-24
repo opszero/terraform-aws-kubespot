@@ -197,6 +197,7 @@ aws iam create-service-linked-role --aws-service-name spot.amazonaws.com
 | <a name="input_sql_serverless_min"></a> [sql\_serverless\_min](#input\_sql\_serverless\_min) | The maximum capacity for the DB cluster | `number` | `2` | no |
 | <a name="input_sql_serverless_seconds_until_auto_pause"></a> [sql\_serverless\_seconds\_until\_auto\_pause](#input\_sql\_serverless\_seconds\_until\_auto\_pause) | The time, in seconds, before the DB cluster in serverless mode is paused | `number` | `300` | no |
 | <a name="input_sql_skip_final_snapshot"></a> [sql\_skip\_final\_snapshot](#input\_sql\_skip\_final\_snapshot) | Determines whether a final DB snapshot is created before the DB instance is deleted. | `bool` | `true` | no |
+| <a name="input_sql_storage_type"></a> [sql\_storage\_type](#input\_sql\_storage\_type) | The allocated storage type for DB Instance | `string` | `"gp3"` | no |
 | <a name="input_sql_subnet_group_include_public"></a> [sql\_subnet\_group\_include\_public](#input\_sql\_subnet\_group\_include\_public) | Include public subnets as part of the clusters subnet configuration. | `bool` | `false` | no |
 | <a name="input_sso_roles"></a> [sso\_roles](#input\_sso\_roles) | Terraform object of the IAM roles | `map` | <pre>{<br>  "admin_roles": [],<br>  "dev_roles": [],<br>  "monitoring_roles": [],<br>  "readonly_roles": []<br>}</pre> | no |
 | <a name="input_tags"></a> [tags](#input\_tags) | Terraform map to create custom tags for the AWS resources | `map` | `{}` | no |
