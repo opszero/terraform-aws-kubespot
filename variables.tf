@@ -279,6 +279,11 @@ variable "sql_instance_allocated_storage" {
   description = "The allocated storage in gibibytes"
 }
 
+variable "sql_storage_type" {
+  default     = "gp3"
+  description = "The allocated storage type for DB Instance"
+}
+
 variable "sql_instance_max_allocated_storage" {
   default     = 200
   description = "the upper limit to which Amazon RDS can automatically scale the storage of the DB instance"

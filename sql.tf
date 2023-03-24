@@ -21,6 +21,7 @@ resource "aws_rds_cluster" "default" {
   vpc_security_group_ids          = [aws_security_group.node.id]
   db_cluster_parameter_group_name = var.sql_parameter_group_name == "" ? null : var.sql_parameter_group_name
 
+  storage_type        = var.sql_storage_type
   storage_encrypted   = true
   deletion_protection = true // Don't Delete Ever! Except manually.
 
@@ -56,7 +57,7 @@ resource "aws_db_instance" "default" {
   allocated_storage     = var.sql_instance_allocated_storage
   max_allocated_storage = var.sql_instance_max_allocated_storage
 
-  storage_type   = "gp2"
+  storage_type   = var.sql_storage_type
   engine         = var.sql_instance_engine
   engine_version = var.sql_engine_version
   instance_class = var.sql_instance_class
