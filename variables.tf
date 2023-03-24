@@ -280,7 +280,7 @@ variable "sql_instance_allocated_storage" {
 }
 
 variable "sql_storage_type" {
-  default     = "gp2"
+  default     = "gp3"
   description = "The allocated storage type for DB Instance"
 }
 
