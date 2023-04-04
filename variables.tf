@@ -464,3 +464,9 @@ variable "nodes_blue_spot_price" {
   default     = null
   description = "The maximum price to use for reserving spot instances."
 }
+
+variable "performance_insights_enabled" {
+  default     = false
+  description = " Specifies whether Performance Insights are enabled. Defaults to false"
+}
+
