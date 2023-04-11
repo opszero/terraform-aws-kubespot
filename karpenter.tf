@@ -46,7 +46,7 @@ resource "helm_release" "karpenter" {
   version             = var.karpenter_version
 
   values = [
-    templatefile(${path.module}/karpenter.yml, {
+    templatefile("${path.module}/karpenter.yml", {
         CLUSTER_NAME = aws_eks_cluster.cluster.name,
         NODE_SG = aws_security_group.node.name,
     })
