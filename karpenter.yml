@@ -1,0 +1,25 @@
+apiVersion: karpenter.sh/v1alpha5
+kind: Provisioner
+metadata:
+  name: default
+spec:
+  consolidation:
+    enabled: true
+  requirements:
+    - key: "kubernetes.io/arch"
+      operator: In
+      values: ["amd64"]
+    - key: karpenter.sh/capacity-type
+      operator: In
+      values: ["spot", "on-demand"]
+  limits:
+    resources:
+      cpu: 1000
+  provider:
+    securityGroupSelector:
+      Name: ${NODE_SG}
+    subnetSelector:
+      Name: ${CLUSTER_NAME}-public
+    tags:
+      karpenter.sh/discovery: ${CLUSTER_NAME}
+  ttlSecondsUntilExpired: 86400
