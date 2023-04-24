@@ -9,8 +9,13 @@ variable "environment_name" {
 }
 
 variable "cluster_version" {
-  default     = "1.23"
+  default     = "1.26"
   description = "Desired Kubernetes master version"
+}
+
+variable "cloudwatch_retention_in_days" {
+  default     = "30"
+  description = "How long to keep CloudWatch logs in days"
 }
 
 variable "aws_load_balancer_controller_enabled" {

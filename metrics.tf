@@ -1,5 +1,6 @@
 resource "aws_cloudwatch_log_group" "vpc" {
-  name = var.environment_name
+  name              = var.environment_name
+  retention_in_days = var.cloudwatch_retention_in_days
   tags = {
     "KubespotEnvironment" = var.environment_name
   }
