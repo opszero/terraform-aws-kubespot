@@ -117,7 +117,7 @@ resource "aws_iam_policy" "node_role_karpenter" {
                 "ec2:DeleteLaunchTemplate"
             ],
             "Resource": "*"
-        },
+        }
     ]
 }
 EOF
