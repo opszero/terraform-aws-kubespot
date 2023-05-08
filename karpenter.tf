@@ -130,6 +130,31 @@ resource "aws_iam_role_policy_attachment" "node_role_karpenter" {
   role       = aws_iam_role.node.name
 }
 
+karpenter.sh/provisioner-name
+
+karpenter.sh/provisioner-namme
+
+resource "aws_cloudwatch_metric_alarm" "nodes_blue_cpu_threshold" {
+  count      = var.karpenter_enabled ? 1 : 0
+  alarm_name                = "${var.environment_name}-nodes-karpenter"
+  comparison_operator       = "GreaterThanOrEqualToThreshold"
+  evaluation_periods        = "2"
+  metric_name               = "CPUUtilization"
+  namespace                 = "AWS/EC2"
+  period                    = "300"
+  statistic                 = "Average"
+  threshold                 = "80"
+  alarm_description         = "This metric monitors ec2 cpu utilization"
+  insufficient_data_actions = []
+
+  dimensions = {
+    AutoScalingGroupName = aws_autoscaling_group.nodes_blue.name
+  }
+  tags = {
+    "KubespotEnvironment" = var.environment_name
+  }
+}
+
 
 # resource "null_resource" "karpenter_crd" {
 #   count            = var.karpenter_enabled ? 1 : 0
