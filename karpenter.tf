@@ -103,7 +103,7 @@ resource "null_resource" "karpenter_awsnodetemplates_crd" {
 }
 
 resource "aws_iam_policy" "node_role_karpenter" {
-  count      = var.karpenter_enabled ? 1 : 0
+  count       = var.karpenter_enabled ? 1 : 0
   name        = "${var.environment_name}-karpenter-policy"
   description = "Karpenter delete launch template"
 
@@ -130,9 +130,6 @@ resource "aws_iam_role_policy_attachment" "node_role_karpenter" {
   role       = aws_iam_role.node.name
 }
 
-karpenter.sh/provisioner-name
-
-karpenter.sh/provisioner-namme
 
 resource "aws_cloudwatch_metric_alarm" "nodes_blue_cpu_threshold" {
   count      = var.karpenter_enabled ? 1 : 0
@@ -148,7 +145,7 @@ resource "aws_cloudwatch_metric_alarm" "nodes_blue_cpu_threshold" {
   insufficient_data_actions = []
 
   dimensions = {
-    AutoScalingGroupName = aws_autoscaling_group.nodes_blue.name
+    AutoScalingGroupName = aws_autoscaling_group.nodes_green.name
   }
   tags = {
     "KubespotEnvironment" = var.environment_name
