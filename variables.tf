@@ -25,13 +25,10 @@ variable "aws_load_balancer_controller_enabled" {
 
 variable "cluster_logging" {
   default = [
-    "api",
     "audit",
     "authenticator",
-    "controllerManager",
-    "scheduler"
   ]
-  description = " List of the desired control plane logging to enable"
+  description = " List of the desired control plane logging to enable. https://docs.aws.amazon.com/eks/latest/userguide/control-plane-logs.html"
 }
 
 variable "cluster_private_access" {
