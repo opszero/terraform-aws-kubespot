@@ -184,6 +184,7 @@ aws iam create-service-linked-role --aws-service-name spot.amazonaws.com
 | <a name="input_sql_engine"></a> [sql\_engine](#input\_sql\_engine) | The name of the database engine to be used for this DB cluster | `string` | `"aurora-postgresql"` | no |
 | <a name="input_sql_engine_mode"></a> [sql\_engine\_mode](#input\_sql\_engine\_mode) | The database engine mode | `string` | `"provisioned"` | no |
 | <a name="input_sql_engine_version"></a> [sql\_engine\_version](#input\_sql\_engine\_version) | The engine version to use | `string` | `"14.3"` | no |
+| <a name="input_sql_iam_auth_enabled"></a> [sql\_iam\_auth\_enabled](#input\_sql\_iam\_auth\_enabled) | Specifies whether or not mappings of IAM accounts to database accounts is enabled | `bool` | `true` | no |
 | <a name="input_sql_identifier"></a> [sql\_identifier](#input\_sql\_identifier) | The name of the database | `string` | `""` | no |
 | <a name="input_sql_instance_allocated_storage"></a> [sql\_instance\_allocated\_storage](#input\_sql\_instance\_allocated\_storage) | The allocated storage in gibibytes | `number` | `20` | no |
 | <a name="input_sql_instance_class"></a> [sql\_instance\_class](#input\_sql\_instance\_class) | The instance type of the RDS instance. | `string` | `"db.t4g.micro"` | no |
