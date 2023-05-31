@@ -103,7 +103,7 @@ resource "null_resource" "karpenter_awsnodetemplates_crd" {
 }
 
 resource "aws_iam_policy" "node_role_karpenter" {
-  count      = var.karpenter_enabled ? 1 : 0
+  count       = var.karpenter_enabled ? 1 : 0
   name        = "${var.environment_name}-karpenter-policy"
   description = "Karpenter delete launch template"
 

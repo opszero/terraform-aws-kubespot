@@ -29,6 +29,8 @@ resource "aws_rds_cluster" "default" {
   skip_final_snapshot       = var.sql_skip_final_snapshot
   final_snapshot_identifier = var.environment_name
 
+  iam_database_authentication_enabled = var.sql_iam_auth_enabled
+
   tags = local.tags
 }
 
@@ -74,6 +76,8 @@ resource "aws_db_instance" "default" {
   allow_major_version_upgrade = true
   backup_retention_period     = 35
   deletion_protection         = true // Don't Delete Ever! Except manually.
+
+  iam_database_authentication_enabled = var.sql_iam_auth_enabled
 
   tags = local.tags
 }

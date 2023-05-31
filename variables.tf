@@ -204,6 +204,11 @@ variable "sql_cluster_enabled" {
   description = "Whether the sql cluster is enabled"
 }
 
+variable "sql_iam_auth_enabled" {
+  default     = true
+  description = "Specifies whether or not mappings of IAM accounts to database accounts is enabled"
+}
+
 variable "sql_rds_multi_az" {
   default     = false
   description = "Specify if the RDS instance is enabled multi-AZ"
