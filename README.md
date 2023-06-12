@@ -114,7 +114,7 @@ aws iam create-service-linked-role --aws-service-name spot.amazonaws.com
 |------|---------|
 | <a name="provider_aws"></a> [aws](#provider\_aws) | ~> 4.50.0 |
 | <a name="provider_aws.virginia"></a> [aws.virginia](#provider\_aws.virginia) | ~> 4.50.0 |
-| <a name="provider_helm"></a> [helm](#provider\_helm) | 2.8.0 |
+| <a name="provider_helm"></a> [helm](#provider\_helm) | 2.10.1 |
 | <a name="provider_http"></a> [http](#provider\_http) | n/a |
 | <a name="provider_kubernetes"></a> [kubernetes](#provider\_kubernetes) | >= 2.0 |
 | <a name="provider_null"></a> [null](#provider\_null) | n/a |
@@ -281,11 +281,11 @@ aws iam create-service-linked-role --aws-service-name spot.amazonaws.com
 | [aws_subnet.private](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/subnet) | resource |
 | [aws_subnet.public](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/subnet) | resource |
 | [aws_vpc.vpc](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/vpc) | resource |
-| [helm_release.aws_efs_csi_driver](https://registry.terraform.io/providers/hashicorp/helm/2.8.0/docs/resources/release) | resource |
-| [helm_release.aws_load_balancer](https://registry.terraform.io/providers/hashicorp/helm/2.8.0/docs/resources/release) | resource |
-| [helm_release.csi_secrets_store](https://registry.terraform.io/providers/hashicorp/helm/2.8.0/docs/resources/release) | resource |
-| [helm_release.karpenter](https://registry.terraform.io/providers/hashicorp/helm/2.8.0/docs/resources/release) | resource |
-| [helm_release.metrics-server](https://registry.terraform.io/providers/hashicorp/helm/2.8.0/docs/resources/release) | resource |
+| [helm_release.aws_efs_csi_driver](https://registry.terraform.io/providers/hashicorp/helm/2.10.1/docs/resources/release) | resource |
+| [helm_release.aws_load_balancer](https://registry.terraform.io/providers/hashicorp/helm/2.10.1/docs/resources/release) | resource |
+| [helm_release.csi_secrets_store](https://registry.terraform.io/providers/hashicorp/helm/2.10.1/docs/resources/release) | resource |
+| [helm_release.karpenter](https://registry.terraform.io/providers/hashicorp/helm/2.10.1/docs/resources/release) | resource |
+| [helm_release.metrics-server](https://registry.terraform.io/providers/hashicorp/helm/2.10.1/docs/resources/release) | resource |
 | [kubernetes_cluster_role_binding.eks_admins_binding](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/cluster_role_binding) | resource |
 | [kubernetes_cluster_role_binding.eks_readonly_binding](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/cluster_role_binding) | resource |
 | [kubernetes_config_map.aws_auth](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/config_map) | resource |
