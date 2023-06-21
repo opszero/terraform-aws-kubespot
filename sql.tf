@@ -55,9 +55,10 @@ resource "aws_rds_cluster_instance" "cluster_instances" {
 resource "aws_db_instance" "default" {
   count = var.sql_instance_enabled ? 1 : 0
 
-  identifier            = var.sql_identifier != "" ? var.sql_identifier : var.environment_name
-  allocated_storage     = var.sql_instance_allocated_storage
-  max_allocated_storage = var.sql_instance_max_allocated_storage
+  identifier                   = var.sql_identifier != "" ? var.sql_identifier : var.environment_name
+  allocated_storage            = var.sql_instance_allocated_storage
+  max_allocated_storage        = var.sql_instance_max_allocated_storage
+  performance_insights_enabled = var.sql_performance_insights_enabled
 
   storage_type   = var.sql_storage_type
   engine         = var.sql_instance_engine
