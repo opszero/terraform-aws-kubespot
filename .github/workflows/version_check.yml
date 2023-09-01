@@ -15,6 +15,7 @@ jobs:
         with:
           title: "Update helm charts version"
           labels: routine
+          assignees: thaunghtike-share
           body: |
             ### Update helm charts version
 
