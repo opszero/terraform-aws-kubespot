@@ -383,7 +383,7 @@ variable "fargate_selector" {
 }
 
 variable "metrics_server_version" {
-  default     = "3.10.0"
+  default     = "3.11.0"
   description = "The version of the metric server helm chart"
 }
 
@@ -425,7 +425,7 @@ variable "karpenter_enabled" {
 }
 
 variable "karpenter_version" {
-  default     = "v0.29.0"
+  default     = "v0.30.0"
   description = "The version of the karpenter helm chart"
 }
 
