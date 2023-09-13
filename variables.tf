@@ -100,10 +100,6 @@ variable "iam_users" {
   description = "List of IAM users"
 }
 
-variable "repos" {
-  default = []
-}
-
 variable "nodes_in_public_subnet" {
   default     = false
   description = "INSECURE! Only use this if you want to avoid paying for the NAT. Also set enable_nat to false"
