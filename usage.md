@@ -1,23 +1,28 @@
 # Kubespot (AWS)
 
-<img src="http://assets.opszero.com/images/auditkube.png" width="200px" />
+AWS EKS Setup for PCI-DSS, SOC2, HIPAA
 
-Compliance Oriented Kubernetes Setup for AWS.
+Kubespot is [AWS EKS](https://aws.amazon.com/eks/) customized to add security
+postures around SOC2, HIPAA, and PCI compliance. It is distributed as [an open
+source terraform module](https://github.com/opszero/terraform-aws-kubespot)
+allowing you to run it within your own AWS account without lock-in. Kubespot has
+been developed over a half a decade evolving with the AWS EKS distribution and
+before that [kops.](https://github.com/kubernetes/kops) It is in use within
+multiple startups that have scaled from a couple founders in an apartment to
+billion dollar unicorns. By using Kubespot they were able to achieve the
+technical requirements for compliance while being able to deploy software fast.
 
-Kubespot is an open source terraform module that attempts to create a complete
-compliance-oriented Kubernetes setup on AWS, Google Cloud and Azure. These add
-additional security such as additional system logs, file system monitoring, hard
-disk encryption and access control. Further, we setup the managed Redis and SQL
-on each of the Cloud providers with limited access to the Kubernetes cluster so
-things are further locked down. All of this should lead to setting up a HIPAA /
-PCI / SOC2 being made straightforward and repeatable.
+Kubespot is a light wrapper around AWS EKS. The primary changes included in
+Kubespot are:
 
-This covers how we setup your infrastructure on AWS, Google Cloud and Azure.
-These are the three Cloud Providers that we currently support to run Kubernetes.
-Further, we use the managed service provided by each of the Cloud Providers.
-This document covers everything related to how infrastructure is setup within
-each Cloud, how we create an isolated environment for Compliance and the
-commonalities between them.
+* Locked down with security groups, private subnets and other compliance related requirements.
+* Locked down RDS and Elasticache if needed.
+* Users have a single Load Balancer through which all requests go through to reduce costs.
+* [KEDA](https://keda.sh/) is used for scaling on event metrics such as queue sizes, user requests, CPU, memory or anything else Keda supports.
+* [Karpenter](https://karpenter.sh/) is used for autoscaling.
+* Instance are lockdown with encryption, and a regular node cycle rate is set.
+
+
 
 # Tools & Setup
 
@@ -156,7 +161,7 @@ aws iam create-service-linked-role --aws-service-name spot.amazonaws.com
 | **4.6** | **General Policies**                                                                                     |       |                |                                                                               |
 | 4.6.1   | Create administrative boundaries between resources using namespaces                                      | L1    | Remediate      |                                                                               |
 | 4.6.2   | Apply Security Context to Your Pods and Containers                                                       | L2    | Remediate      |                                                                               |
-| 4.6.3   | The default namespace should not be used                                                                 | L2    | Remediate      |                                                                               |
+| 4.6.3   | The default namespace should not be used                                                                 | L2    | Active         | [tiphys](https://github.com/opszero/tiphys) select namespace                  |
 | **5**   | **Managed services**                                                                                     |       |                |                                                                               |
 | **5.1** | **Image Registry and Image Scanning**                                                                    |       |                |                                                                               |
 | 5.1.1   | Ensure Image Vulnerability Scanning using Amazon ECR image scanning or a third party provider            | L1    | Active         | [Example](examples/eks/main.tf#L79)                                           |
