@@ -102,7 +102,6 @@ aws iam create-service-linked-role --aws-service-name spot.amazonaws.com
 
 # CIS Kubernetes Benchmark
 
-|---------|----------------------------------------------------------------------------------------------------------|-------|----------------|-----------------------------------|
 | Control | Recommendation                                                                                           | Level | Status         | Description                       |
 |---------|----------------------------------------------------------------------------------------------------------|-------|----------------|-----------------------------------|
 | 1       | Control Plane Components                                                                                 |       |                |                                   |
@@ -180,15 +179,6 @@ aws iam create-service-linked-role --aws-service-name spot.amazonaws.com
 | 5.6     | Other Cluster Configurations                                                                             |       |                |                                   |
 | 5.6.1   | Consider Fargate for running untrusted workloads                                                         | L1    | Active         | Set the `fargate_selector`        |
 |---------|----------------------------------------------------------------------------------------------------------|-------|----------------|-----------------------------------|
-# Pro Support
-
-<a href="https://www.opszero.com"><img src="https://assets.opszero.com/images/opszero_11_29_2016.png" width="300px"/></a>
-
-[opsZero provides support](https://www.opszero.com/devops) for our modules including:
-
-- Email support
-- Zoom Calls
-- Implementation Guidance
 ## Providers
 
 | Name | Version |
@@ -407,4 +397,13 @@ aws iam create-service-linked-role --aws-service-name spot.amazonaws.com
 | <a name="output_public_subnet_ids"></a> [public\_subnet\_ids](#output\_public\_subnet\_ids) | n/a |
 | <a name="output_redis_elasticache_subnet_group_name"></a> [redis\_elasticache\_subnet\_group\_name](#output\_redis\_elasticache\_subnet\_group\_name) | n/a |
 | <a name="output_vpc_id"></a> [vpc\_id](#output\_vpc\_id) | n/a |
+# Pro Support
+
+<a href="https://www.opszero.com"><img src="https://assets.opszero.com/images/opszero_11_29_2016.png" width="300px"/></a>
+
+[opsZero provides support](https://www.opszero.com/devops) for our modules including:
+
+- Email support
+- Zoom Calls
+- Implementation Guidance
 <!-- END_TF_DOCS -->
