@@ -344,11 +344,6 @@ variable "vpc_flow_logs_enabled" {
   description = "Specify whether the vpc flow log is enabled"
 }
 
-variable "efs_enabled" {
-  default     = false
-  description = "Specify whether the EFS is enabled on the EKS cluster"
-}
-
 variable "sso_roles" {
   default = {
     admin_roles = [
