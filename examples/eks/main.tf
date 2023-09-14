@@ -1,24 +1,37 @@
 provider "aws" {
-  profile = "awsprofile"
-  region  = "us-east-1"
+  # TODO: Change this
+  profile = "opszero"
+  # TODO: Change this
+  region  = "us-west-2"
+}
+
+provider "helm" {
+  kubernetes {
+    config_path = "./kubeconfig"
+  }
+}
+
+provider "kubernetes" {
+  config_path = "./kubeconfig"
 }
 
 locals {
-  environment_name = "kubespot-prod1"
+  # TODO: Change this
+  environment_name = "opszero"
 }
 
 module "opszero-eks" {
-  source = "github.com/opszero/kubespot//eks"
+  source = "github.com/opszero/terraform-aws-kubespot"
 
-  aws_profile = "awsprofile"
+  # TODO: Change this
+  aws_profile = "opszero"
   zones = [
-    "us-east-1c",
-    "us-east-1d"
+    "eu-west-1a",
+    "eu-west-1b"
   ]
 
-  cluster_version  = "1.21"
-  environment_name = var.environment_name
-  ec2_keypair      = "opszero"
+  cluster_version  = "1.27"
+  environment_name = local.environment_name
   iam_users = [
     "opszero",
   ]
@@ -39,16 +52,11 @@ module "opszero-eks" {
   nodes_green_instance_type    = "t3a.small"
   nodes_green_desired_capacity = 1
   nodes_green_min_size         = 1
-  nodes_green_max_size         = 2
+  nodes_green_max_size         = 1
   nodes_blue_instance_type     = "t3a.small"
-  nodes_blue_desired_capacity  = 0
-  nodes_blue_min_size          = 0
-  nodes_blue_max_size          = 0
-
-  bastion_enabled     = false
-  bastion_eip_enabled = false
-
-  bastion_vpn_allowed_cidrs = []
+  nodes_blue_desired_capacity  = 1
+  nodes_blue_min_size          = 1
+  nodes_blue_max_size          = 1
 
   redis_enabled        = false
   sql_cluster_enabled  = false
@@ -59,12 +67,20 @@ module "opszero-eks" {
   efs_enabled = true
 }
 
+module "helm-common" {
+  source             = "github.com/opszero/terraform-helm-kubespot"
+  cert_manager_email = "ops@opszero.com"
 
-resource "aws_ecr_repository" "kubespot" {
-  name                 = "kubespot"
+  nginx_min_replicas = 1
+  nginx_max_replicas = 3
+}
+
+
+resource "aws_ecr_repository" "opszero" {
+  name                 = "opszero"
   image_tag_mutability = "MUTABLE"
 
-  image_scanning_configuration {
-    scan_on_push = true
-  }
+  # image_scanning_configuration {
+  #   scan_on_push = true
+  # }
 }
