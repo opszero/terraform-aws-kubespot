@@ -33,6 +33,7 @@ resource "aws_eks_addon" "core" {
     "vpc-cni",
     "coredns",
     "aws-ebs-csi-driver",
+    "aws-efs-csi-driver",
   ])
 
   cluster_name      = aws_eks_cluster.cluster.name
