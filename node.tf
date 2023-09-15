@@ -49,7 +49,7 @@ resource "aws_autoscaling_group" "asg_nodes" {
 
   vpc_zone_identifier = length(each.value.subnet_ids) == 0 ? (each.value.nodes_in_public_subnet ? aws_subnet.public.*.id : aws_subnet.private.*.id) : each.value.subnet_ids
 
-  enabled_metrics = lookup(each.value.node_enabled_metrics, [
+  enabled_metrics = lookup(each.value, "node_enabled_metrics", [
     "GroupDesiredCapacity",
     "GroupInServiceCapacity",
     "GroupInServiceInstances",
