@@ -42,7 +42,7 @@ resource "aws_autoscaling_group" "asg_nodes" {
   for_each = var.asg_nodes
 
   desired_capacity      = each.value.nodes_desired_capacity
-  launch_configuration  = aws_launch_configuration.nodes[each.key].id
+  launch_configuration  = aws_launch_configuration.asg_nodes[each.key].id
   max_size              = each.value.nodes_max_size
   min_size              = each.value.nodes_min_size
   name                  = "${var.environment_name}-nodes-${each.key}"
