@@ -15,16 +15,16 @@ USERDATA
 resource "aws_launch_configuration" "asg_nodes" {
   for_each = var.asg_nodes
 
-  iam_instance_profile = aws_iam_instance_profile.node.name
-  image_id             = data.aws_ssm_parameter.eks_ami.value
-  instance_type        = each.value.instance_type
-  name_prefix          = "${var.environment_name}-nodes-${each.key}"
-  spot_price           = each.value.spot_price
-  security_groups = [
+  iam_instance_profile        = aws_iam_instance_profile.node.name
+  image_id                    = data.aws_ssm_parameter.eks_ami.value
+  instance_type               = each.value.instance_type
+  name_prefix                 = "${var.environment_name}-nodes-${each.key}"
+  spot_price                  = each.value.spot_price
+  security_groups             = [
     aws_eks_cluster.cluster.vpc_config[0].cluster_security_group_id,
     aws_security_group.node.id
   ]
-  user_data_base64     = base64encode(local.node-userdata)
+  user_data_base64            = base64encode(local.node-userdata)
   associate_public_ip_address = each.value.nodes_in_public_subnet
 
   root_block_device {
@@ -49,7 +49,21 @@ resource "aws_autoscaling_group" "asg_nodes" {
 
   vpc_zone_identifier = length(each.value.subnet_ids) == 0 ? (each.value.nodes_in_public_subnet ? aws_subnet.public.*.id : aws_subnet.private.*.id) : each.value.subnet_ids
 
-  enabled_metrics = each.value.node_enabled_metrics
+  enabled_metrics = lookup(each.value.node_enabled_metrics, [
+    "GroupDesiredCapacity",
+    "GroupInServiceCapacity",
+    "GroupInServiceInstances",
+    "GroupMaxSize",
+    "GroupMinSize",
+    "GroupPendingCapacity",
+    "GroupPendingInstances",
+    "GroupStandbyCapacity",
+    "GroupStandbyInstances",
+    "GroupTerminatingCapacity",
+    "GroupTerminatingInstances",
+    "GroupTotalCapacity",
+    "GroupTotalInstances"
+  ])
 
   tag {
     key                 = "Name"
