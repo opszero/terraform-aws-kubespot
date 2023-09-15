@@ -307,37 +307,27 @@ variable "asg_nodes" {
     nodes_min_size         = number
     nodes_in_public_subnet = bool
     node_disk_size         = number
-    node_enabled_metrics   = list(string)
+    node_enabled_metrics   = map(bool)
     spot_price             = string
     subnet_ids             = list(string)
   }))
+
   default = {
-    #   nodegreen = {
-    #     instance_type           = "t2.micro"
-    #     max_instance_lifetime   = 7200
-    #     nodes_desired_capacity  = 2
-    #     nodes_max_size          = 3
-    #     nodes_min_size          = 1
-    #     nodes_in_public_subnet  = true
-    #     node_disk_size          = 20
-    #     node_enabled_metrics    = [
-    #       "GroupDesiredCapacity",
-    #       "GroupInServiceCapacity",
-    #       "GroupInServiceInstances",
-    #       "GroupMaxSize",
-    #       "GroupMinSize",
-    #       "GroupPendingCapacity",
-    #       "GroupPendingInstances",
-    #       "GroupStandbyCapacity",
-    #       "GroupStandbyInstances",
-    #       "GroupTerminatingCapacity",
-    #       "GroupTerminatingInstances",
-    #       "GroupTotalCapacity",
-    #       "GroupTotalInstances"
-    #     ]
-    #     spot_price              = "0.05"
-    #     subnet_ids              = []
-    #   }
+    green = {
+      instance_type          = "t2.micro"
+      max_instance_lifetime  = 86400
+      nodes_desired_capacity = 2
+      nodes_max_size         = 3
+      nodes_min_size         = 1
+      nodes_in_public_subnet = true
+      node_disk_size         = 20
+      node_enabled_metrics   = {}
+      #  "GroupMaxSize" = true,
+      #  "GroupMinSize" = true,
+      #}
+      spot_price = "0.05"
+      subnet_ids = []
+    }
   }
 }
 
