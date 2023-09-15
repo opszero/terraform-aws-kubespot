@@ -199,6 +199,7 @@ aws iam create-service-linked-role --aws-service-name spot.amazonaws.com
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
 | <a name="input_alb_controller_version"></a> [alb\_controller\_version](#input\_alb\_controller\_version) | The chart version of the ALB controller helm chart | `string` | `"1.4.4"` | no |
+| <a name="input_asg_nodes"></a> [asg\_nodes](#input\_asg\_nodes) | Map of ASG node configurations | <pre>map(object({<br>    instance_type           = string<br>    max_instance_lifetime   = number<br>    nodes_desired_capacity  = number<br>    nodes_max_size          = number<br>    nodes_min_size          = number<br>    nodes_in_public_subnet  = bool<br>    node_disk_size          = number<br>    node_enabled_metrics    = list(string)<br>    spot_price              = string<br>    subnet_ids              = list(string)<br>  }))</pre> | n/a | yes |
 | <a name="input_aws_load_balancer_controller_enabled"></a> [aws\_load\_balancer\_controller\_enabled](#input\_aws\_load\_balancer\_controller\_enabled) | Enable ALB controller by default | `bool` | `true` | no |
 | <a name="input_aws_profile"></a> [aws\_profile](#input\_aws\_profile) | AWS profile to use | `string` | n/a | yes |
 | <a name="input_cidr_block"></a> [cidr\_block](#input\_cidr\_block) | The CIDR block used by the VPC | `string` | `"10.2.0.0/16"` | no |
@@ -217,7 +218,6 @@ aws iam create-service-linked-role --aws-service-name spot.amazonaws.com
 | <a name="input_enable_egress_only_internet_gateway"></a> [enable\_egress\_only\_internet\_gateway](#input\_enable\_egress\_only\_internet\_gateway) | Create an egress-only Internet gateway for your VPC0 | `bool` | `false` | no |
 | <a name="input_enable_ipv6"></a> [enable\_ipv6](#input\_enable\_ipv6) | Enable an Amazon-provided IPv6 CIDR block with a /56 prefix length for the VPC | `bool` | `false` | no |
 | <a name="input_enable_nat"></a> [enable\_nat](#input\_enable\_nat) | Whether the NAT gateway is enabled | `bool` | `true` | no |
-| <a name="input_enabled_metrics_asg"></a> [enabled\_metrics\_asg](#input\_enabled\_metrics\_asg) | A list of metrics to collect | `list` | <pre>[<br>  "GroupDesiredCapacity",<br>  "GroupInServiceCapacity",<br>  "GroupInServiceInstances",<br>  "GroupMaxSize",<br>  "GroupMinSize",<br>  "GroupPendingCapacity",<br>  "GroupPendingInstances",<br>  "GroupStandbyCapacity",<br>  "GroupStandbyInstances",<br>  "GroupTerminatingCapacity",<br>  "GroupTerminatingInstances",<br>  "GroupTotalCapacity",<br>  "GroupTotalInstances"<br>]</pre> | no |
 | <a name="input_environment_name"></a> [environment\_name](#input\_environment\_name) | Name of the environment to create AWS resources | `string` | n/a | yes |
 | <a name="input_fargate_selector"></a> [fargate\_selector](#input\_fargate\_selector) | Terraform object to create the EKS fargate profiles | `map` | <pre>{<br>  "serverless": {}<br>}</pre> | no |
 | <a name="input_govcloud"></a> [govcloud](#input\_govcloud) | Set if the environment is govcloud | `bool` | `false` | no |
@@ -230,23 +230,8 @@ aws iam create-service-linked-role --aws-service-name spot.amazonaws.com
 | <a name="input_node_group_cpu_threshold"></a> [node\_group\_cpu\_threshold](#input\_node\_group\_cpu\_threshold) | The value of the CPU threshold | `string` | `"70"` | no |
 | <a name="input_node_groups"></a> [node\_groups](#input\_node\_groups) | Terraform object to create the EKS node groups | `map` | `{}` | no |
 | <a name="input_node_role_policies"></a> [node\_role\_policies](#input\_node\_role\_policies) | A list of The ARN of the policies you want to attach | `list` | `[]` | no |
-| <a name="input_nodes_blue_desired_capacity"></a> [nodes\_blue\_desired\_capacity](#input\_nodes\_blue\_desired\_capacity) | The number of Amazon EC2 instances that should be running in the group | `number` | `0` | no |
-| <a name="input_nodes_blue_instance_type"></a> [nodes\_blue\_instance\_type](#input\_nodes\_blue\_instance\_type) | The instance type to use for the instance | `string` | `"t3.micro"` | no |
-| <a name="input_nodes_blue_max_instance_lifetime"></a> [nodes\_blue\_max\_instance\_lifetime](#input\_nodes\_blue\_max\_instance\_lifetime) | The maximum amount of time, in seconds, that an instance can be in service | `number` | `604800` | no |
-| <a name="input_nodes_blue_max_size"></a> [nodes\_blue\_max\_size](#input\_nodes\_blue\_max\_size) | The maximum size of the Auto Scaling Group | `number` | `0` | no |
-| <a name="input_nodes_blue_min_size"></a> [nodes\_blue\_min\_size](#input\_nodes\_blue\_min\_size) | The minimum size of the Auto Scaling Group | `number` | `0` | no |
-| <a name="input_nodes_blue_root_device_size"></a> [nodes\_blue\_root\_device\_size](#input\_nodes\_blue\_root\_device\_size) | Size of the volume in gibibytes (GiB) | `string` | `"20"` | no |
 | <a name="input_nodes_blue_spot_price"></a> [nodes\_blue\_spot\_price](#input\_nodes\_blue\_spot\_price) | The maximum price to use for reserving spot instances. | `any` | `null` | no |
-| <a name="input_nodes_blue_subnet_ids"></a> [nodes\_blue\_subnet\_ids](#input\_nodes\_blue\_subnet\_ids) | A list of subnet IDs to launch resources in | `list` | `[]` | no |
-| <a name="input_nodes_green_desired_capacity"></a> [nodes\_green\_desired\_capacity](#input\_nodes\_green\_desired\_capacity) | The number of Amazon EC2 instances that should be running in the group | `number` | `0` | no |
-| <a name="input_nodes_green_instance_type"></a> [nodes\_green\_instance\_type](#input\_nodes\_green\_instance\_type) | The instance type to use for the instance | `string` | `"t3.micro"` | no |
-| <a name="input_nodes_green_max_instance_lifetime"></a> [nodes\_green\_max\_instance\_lifetime](#input\_nodes\_green\_max\_instance\_lifetime) | The maximum amount of time, in seconds, that an instance can be in service | `number` | `604800` | no |
-| <a name="input_nodes_green_max_size"></a> [nodes\_green\_max\_size](#input\_nodes\_green\_max\_size) | The maximum size of the Auto Scaling Group | `number` | `0` | no |
-| <a name="input_nodes_green_min_size"></a> [nodes\_green\_min\_size](#input\_nodes\_green\_min\_size) | The minimum size of the Auto Scaling Group | `number` | `0` | no |
-| <a name="input_nodes_green_root_device_size"></a> [nodes\_green\_root\_device\_size](#input\_nodes\_green\_root\_device\_size) | Size of the volume in gibibytes (GiB) | `string` | `"20"` | no |
 | <a name="input_nodes_green_spot_price"></a> [nodes\_green\_spot\_price](#input\_nodes\_green\_spot\_price) | The maximum price to use for reserving spot instances. | `any` | `null` | no |
-| <a name="input_nodes_green_subnet_ids"></a> [nodes\_green\_subnet\_ids](#input\_nodes\_green\_subnet\_ids) | A list of subnet IDs to launch resources in | `list` | `[]` | no |
-| <a name="input_nodes_in_public_subnet"></a> [nodes\_in\_public\_subnet](#input\_nodes\_in\_public\_subnet) | INSECURE! Only use this if you want to avoid paying for the NAT. Also set enable\_nat to false | `bool` | `false` | no |
 | <a name="input_redis_enabled"></a> [redis\_enabled](#input\_redis\_enabled) | Whether the redis cluster is enabled | `bool` | `false` | no |
 | <a name="input_redis_engine_version"></a> [redis\_engine\_version](#input\_redis\_engine\_version) | Version number of the cache engine to be used for the cache clusters in this replication group | `string` | `"7.0"` | no |
 | <a name="input_redis_node_type"></a> [redis\_node\_type](#input\_redis\_node\_type) | Instance class of the redis cluster to be used | `string` | `"cache.t4g.micro"` | no |
@@ -284,8 +269,7 @@ aws iam create-service-linked-role --aws-service-name spot.amazonaws.com
 
 | Name | Type |
 |------|------|
-| [aws_autoscaling_group.nodes_blue](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/autoscaling_group) | resource |
-| [aws_autoscaling_group.nodes_green](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/autoscaling_group) | resource |
+| [aws_autoscaling_group.asg_nodes](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/autoscaling_group) | resource |
 | [aws_cloudwatch_log_group.vpc](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_log_group) | resource |
 | [aws_cloudwatch_metric_alarm.database_cpu_database](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_metric_alarm) | resource |
 | [aws_cloudwatch_metric_alarm.database_disk_database](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_metric_alarm) | resource |
@@ -332,8 +316,7 @@ aws iam create-service-linked-role --aws-service-name spot.amazonaws.com
 | [aws_iam_role_policy_attachment.node_role_karpenter](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy_attachment) | resource |
 | [aws_iam_role_policy_attachment.node_role_policies](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy_attachment) | resource |
 | [aws_internet_gateway.public](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/internet_gateway) | resource |
-| [aws_launch_configuration.nodes_blue](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/launch_configuration) | resource |
-| [aws_launch_configuration.nodes_green](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/launch_configuration) | resource |
+| [aws_launch_configuration.asg_nodes](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/launch_configuration) | resource |
 | [aws_nat_gateway.gw](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/nat_gateway) | resource |
 | [aws_rds_cluster.default](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/rds_cluster) | resource |
 | [aws_rds_cluster_instance.cluster_instances](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/rds_cluster_instance) | resource |
