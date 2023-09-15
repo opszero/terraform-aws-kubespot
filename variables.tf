@@ -100,81 +100,6 @@ variable "iam_users" {
   description = "List of IAM users"
 }
 
-variable "nodes_in_public_subnet" {
-  default     = false
-  description = "INSECURE! Only use this if you want to avoid paying for the NAT. Also set enable_nat to false"
-}
-
-variable "nodes_green_subnet_ids" {
-  default     = []
-  description = "A list of subnet IDs to launch resources in"
-}
-
-variable "nodes_green_instance_type" {
-  default     = "t3.micro"
-  description = "The instance type to use for the instance"
-}
-
-variable "nodes_green_root_device_size" {
-  default     = "20"
-  description = "Size of the volume in gibibytes (GiB)"
-}
-
-variable "nodes_green_desired_capacity" {
-  default     = 0
-  description = "The number of Amazon EC2 instances that should be running in the group"
-}
-
-variable "nodes_green_min_size" {
-  default     = 0
-  description = "The minimum size of the Auto Scaling Group"
-}
-
-variable "nodes_green_max_size" {
-  default     = 0
-  description = "The maximum size of the Auto Scaling Group"
-}
-
-variable "nodes_green_max_instance_lifetime" {
-  default     = 604800 // Default to 7 days
-  description = "The maximum amount of time, in seconds, that an instance can be in service"
-}
-
-variable "nodes_blue_instance_type" {
-  default     = "t3.micro"
-  description = "The instance type to use for the instance"
-}
-
-variable "nodes_blue_root_device_size" {
-  default     = "20"
-  description = "Size of the volume in gibibytes (GiB)"
-}
-
-variable "nodes_blue_subnet_ids" {
-  default     = []
-  description = "A list of subnet IDs to launch resources in"
-}
-
-variable "nodes_blue_desired_capacity" {
-  default     = 0
-  description = "The number of Amazon EC2 instances that should be running in the group"
-}
-
-variable "nodes_blue_min_size" {
-  default     = 0
-  description = "The minimum size of the Auto Scaling Group"
-}
-
-variable "nodes_blue_max_size" {
-  default     = 0
-  description = "The maximum size of the Auto Scaling Group"
-}
-
-variable "nodes_blue_max_instance_lifetime" {
-  default     = 604800 // Default to 7 days
-  description = "The maximum amount of time, in seconds, that an instance can be in service"
-}
-
 variable "redis_enabled" {
   default     = false
   description = "Whether the redis cluster is enabled"
@@ -320,25 +245,6 @@ variable "monitoring_role_arn" {
   description = " The ARN for the IAM role that permits RDS to send enhanced monitoring metrics to CloudWatch Logs"
 }
 
-variable "enabled_metrics_asg" {
-  description = "A list of metrics to collect"
-  default = [
-    "GroupDesiredCapacity",
-    "GroupInServiceCapacity",
-    "GroupInServiceInstances",
-    "GroupMaxSize",
-    "GroupMinSize",
-    "GroupPendingCapacity",
-    "GroupPendingInstances",
-    "GroupStandbyCapacity",
-    "GroupStandbyInstances",
-    "GroupTerminatingCapacity",
-    "GroupTerminatingInstances",
-    "GroupTotalCapacity",
-    "GroupTotalInstances",
-  ]
-}
-
 variable "vpc_flow_logs_enabled" {
   default     = false
   description = "Specify whether the vpc flow log is enabled"
@@ -384,6 +290,50 @@ variable "fargate_selector" {
 variable "metrics_server_version" {
   default     = "3.11.0"
   description = "The version of the metric server helm chart"
+}
+
+variable "asg_nodes" {
+  description = "Map of ASG node configurations"
+  type = map(object({
+    instance_type           = string
+    max_instance_lifetime   = number
+    nodes_desired_capacity  = number
+    nodes_max_size          = number
+    nodes_min_size          = number
+    nodes_in_public_subnet  = bool
+    node_disk_size          = number
+    node_enabled_metrics    = list(string)
+    spot_price              = string
+    subnet_ids              = list(string)
+  }))
+  # default = {
+  #   nodegreen = {
+  #     instance_type           = "t2.micro"
+  #     max_instance_lifetime   = 7200
+  #     nodes_desired_capacity  = 2
+  #     nodes_max_size          = 3
+  #     nodes_min_size          = 1
+  #     nodes_in_public_subnet  = true
+  #     node_disk_size          = 20
+  #     node_enabled_metrics    = [
+  #       "GroupDesiredCapacity",
+  #       "GroupInServiceCapacity",
+  #       "GroupInServiceInstances",
+  #       "GroupMaxSize",
+  #       "GroupMinSize",
+  #       "GroupPendingCapacity",
+  #       "GroupPendingInstances",
+  #       "GroupStandbyCapacity",
+  #       "GroupStandbyInstances",
+  #       "GroupTerminatingCapacity",
+  #       "GroupTerminatingInstances",
+  #       "GroupTotalCapacity",
+  #       "GroupTotalInstances"
+  #     ]
+  #     spot_price              = "0.05"
+  #     subnet_ids              = []
+  #   }
+  # }
 }
 
 variable "node_groups" {
