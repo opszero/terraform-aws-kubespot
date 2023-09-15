@@ -306,7 +306,7 @@ variable "asg_nodes" {
     spot_price              = string
     subnet_ids              = list(string)
   }))
-  # default = {
+  default = {
   #   nodegreen = {
   #     instance_type           = "t2.micro"
   #     max_instance_lifetime   = 7200
@@ -333,7 +333,7 @@ variable "asg_nodes" {
   #     spot_price              = "0.05"
   #     subnet_ids              = []
   #   }
-  # }
+  }
 }
 
 variable "node_groups" {
