@@ -199,7 +199,7 @@ aws iam create-service-linked-role --aws-service-name spot.amazonaws.com
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
 | <a name="input_alb_controller_version"></a> [alb\_controller\_version](#input\_alb\_controller\_version) | The chart version of the ALB controller helm chart | `string` | `"1.4.4"` | no |
-| <a name="input_asg_nodes"></a> [asg\_nodes](#input\_asg\_nodes) | Map of ASG node configurations | <pre>map(object({<br>    instance_type           = string<br>    max_instance_lifetime   = number<br>    nodes_desired_capacity  = number<br>    nodes_max_size          = number<br>    nodes_min_size          = number<br>    nodes_in_public_subnet  = bool<br>    node_disk_size          = number<br>    node_enabled_metrics    = list(string)<br>    spot_price              = string<br>    subnet_ids              = list(string)<br>  }))</pre> | `{}` | no |
+| <a name="input_asg_nodes"></a> [asg\_nodes](#input\_asg\_nodes) | Map of ASG node configurations | <pre>map(object({<br>    instance_type          = string<br>    max_instance_lifetime  = number<br>    nodes_desired_capacity = number<br>    nodes_max_size         = number<br>    nodes_min_size         = number<br>    nodes_in_public_subnet = bool<br>    node_disk_size         = number<br>    node_enabled_metrics   = list(string)<br>    spot_price             = string<br>    subnet_ids             = list(string)<br>  }))</pre> | `{}` | no |
 | <a name="input_aws_load_balancer_controller_enabled"></a> [aws\_load\_balancer\_controller\_enabled](#input\_aws\_load\_balancer\_controller\_enabled) | Enable ALB controller by default | `bool` | `true` | no |
 | <a name="input_aws_profile"></a> [aws\_profile](#input\_aws\_profile) | AWS profile to use | `string` | n/a | yes |
 | <a name="input_cidr_block"></a> [cidr\_block](#input\_cidr\_block) | The CIDR block used by the VPC | `string` | `"10.2.0.0/16"` | no |
@@ -230,8 +230,6 @@ aws iam create-service-linked-role --aws-service-name spot.amazonaws.com
 | <a name="input_node_group_cpu_threshold"></a> [node\_group\_cpu\_threshold](#input\_node\_group\_cpu\_threshold) | The value of the CPU threshold | `string` | `"70"` | no |
 | <a name="input_node_groups"></a> [node\_groups](#input\_node\_groups) | Terraform object to create the EKS node groups | `map` | `{}` | no |
 | <a name="input_node_role_policies"></a> [node\_role\_policies](#input\_node\_role\_policies) | A list of The ARN of the policies you want to attach | `list` | `[]` | no |
-| <a name="input_nodes_blue_spot_price"></a> [nodes\_blue\_spot\_price](#input\_nodes\_blue\_spot\_price) | The maximum price to use for reserving spot instances. | `any` | `null` | no |
-| <a name="input_nodes_green_spot_price"></a> [nodes\_green\_spot\_price](#input\_nodes\_green\_spot\_price) | The maximum price to use for reserving spot instances. | `any` | `null` | no |
 | <a name="input_redis_enabled"></a> [redis\_enabled](#input\_redis\_enabled) | Whether the redis cluster is enabled | `bool` | `false` | no |
 | <a name="input_redis_engine_version"></a> [redis\_engine\_version](#input\_redis\_engine\_version) | Version number of the cache engine to be used for the cache clusters in this replication group | `string` | `"7.0"` | no |
 | <a name="input_redis_node_type"></a> [redis\_node\_type](#input\_redis\_node\_type) | Instance class of the redis cluster to be used | `string` | `"cache.t4g.micro"` | no |
@@ -271,6 +269,7 @@ aws iam create-service-linked-role --aws-service-name spot.amazonaws.com
 |------|------|
 | [aws_autoscaling_group.asg_nodes](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/autoscaling_group) | resource |
 | [aws_cloudwatch_log_group.vpc](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_log_group) | resource |
+| [aws_cloudwatch_metric_alarm.asg_nodes_cpu_threshold](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_metric_alarm) | resource |
 | [aws_cloudwatch_metric_alarm.database_cpu_database](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_metric_alarm) | resource |
 | [aws_cloudwatch_metric_alarm.database_disk_database](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_metric_alarm) | resource |
 | [aws_cloudwatch_metric_alarm.database_free_disk_database](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_metric_alarm) | resource |
@@ -280,8 +279,6 @@ aws iam create-service-linked-role --aws-service-name spot.amazonaws.com
 | [aws_cloudwatch_metric_alarm.database_io_mysql](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_metric_alarm) | resource |
 | [aws_cloudwatch_metric_alarm.database_io_postgres](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_metric_alarm) | resource |
 | [aws_cloudwatch_metric_alarm.node_group_cpu_threshold](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_metric_alarm) | resource |
-| [aws_cloudwatch_metric_alarm.nodes_blue_cpu_threshold](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_metric_alarm) | resource |
-| [aws_cloudwatch_metric_alarm.nodes_green_cpu_threshold](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_metric_alarm) | resource |
 | [aws_db_instance.default](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/db_instance) | resource |
 | [aws_db_subnet_group.default](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/db_subnet_group) | resource |
 | [aws_egress_only_internet_gateway.egress](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/egress_only_internet_gateway) | resource |
