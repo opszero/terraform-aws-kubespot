@@ -41,8 +41,7 @@ resource "aws_eks_addon" "core" {
 
   depends_on = [
     kubernetes_config_map.aws_auth,
-    aws_autoscaling_group.nodes_blue,
-    aws_autoscaling_group.nodes_green,
+    aws_autoscaling_group.asg_nodes,
   ]
 }
 
