@@ -21,7 +21,7 @@ resource "aws_cloudwatch_metric_alarm" "asg_nodes_cpu_threshold" {
   insufficient_data_actions = []
 
   dimensions = {
-    AutoScalingGroupName = aws_autoscaling_group.nodes_green.name
+    AutoScalingGroupName = aws_autoscaling_group.asg_nodes[each.key].name
   }
   tags = {
     "KubespotEnvironment" = var.environment_name
