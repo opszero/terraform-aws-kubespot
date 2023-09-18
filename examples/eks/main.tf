@@ -2,7 +2,17 @@ provider "aws" {
   # TODO: Change this
   profile = "opszero"
   # TODO: Change this
-  region  = "us-west-2"
+  region = "us-west-2"
+}
+
+locals {
+  environment_name = "appcensus-dev"
+  profile          = "appcensus-staging"
+}
+
+provider "aws" {
+  profile = local.profile
+  region  = "us-east-1"
 }
 
 provider "helm" {
@@ -15,25 +25,20 @@ provider "kubernetes" {
   config_path = "./kubeconfig"
 }
 
-locals {
-  # TODO: Change this
-  environment_name = "opszero"
-}
-
 module "opszero-eks" {
   source = "github.com/opszero/terraform-aws-kubespot"
 
-  # TODO: Change this
-  aws_profile = "opszero"
+  aws_profile = local.profile
   zones = [
-    "eu-west-1a",
-    "eu-west-1b"
+    "us-east-1a",
+    "us-east-1b"
   ]
 
   cluster_version  = "1.27"
   environment_name = local.environment_name
   iam_users = [
-    "opszero",
+    "abhi@opszero.com",
+    "bitbucket-deployer",
   ]
 
   cidr_block = "10.3.0.0/16"
@@ -46,25 +51,27 @@ module "opszero-eks" {
     "10.3.192.0/18",
   ]
 
-  enable_nat             = false
-  nodes_in_public_subnet = true
-
-  nodes_green_instance_type    = "t3a.small"
-  nodes_green_desired_capacity = 1
-  nodes_green_min_size         = 1
-  nodes_green_max_size         = 1
-  nodes_blue_instance_type     = "t3a.small"
-  nodes_blue_desired_capacity  = 1
-  nodes_blue_min_size          = 1
-  nodes_blue_max_size          = 1
+  node_groups = {
+    "t3a-medium-spot" = {
+      instance_types = [
+        "t3a.medium",
+      ]
+      capacity_type          = "SPOT"
+      nodes_in_public_subnet = false
+      node_disk_size         = 20,
+      node_desired_capacity  = 3,
+      nodes_max_size         = 3,
+      nodes_min_size         = 3
+    }
+  }
 
   redis_enabled        = false
   sql_cluster_enabled  = false
   sql_instance_enabled = false
 
+  nat_enabled           = true
   vpc_flow_logs_enabled = false
-
-  efs_enabled = true
+  efs_enabled           = false
 }
 
 module "helm-common" {
@@ -76,11 +83,11 @@ module "helm-common" {
 }
 
 
-resource "aws_ecr_repository" "opszero" {
-  name                 = "opszero"
-  image_tag_mutability = "MUTABLE"
+# resource "aws_ecr_repository" "opszero" {
+#   name                 = "opszero"
+#   image_tag_mutability = "MUTABLE"
 
-  # image_scanning_configuration {
-  #   scan_on_push = true
-  # }
-}
+#   # image_scanning_configuration {
+#   #   scan_on_push = true
+#   # }
+# }
