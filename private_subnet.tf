@@ -16,12 +16,12 @@ resource "aws_subnet" "private" {
 }
 
 resource "aws_eip" "eips" {
-  count = var.enable_nat && length(var.eips) == 0 ? 2 : 0
+  count = var.nat_enabled && length(var.eips) == 0 ? 2 : 0
   tags  = local.tags
 }
 
 resource "aws_nat_gateway" "gw" {
-  count = var.enable_nat ? 2 : 0
+  count = var.nat_enabled ? 2 : 0
 
   allocation_id = length(var.eips) == 0 ? aws_eip.eips[count.index].id : var.eips[count.index].id
   subnet_id     = aws_subnet.public[count.index].id
@@ -41,7 +41,7 @@ resource "aws_route_table" "private" {
 }
 
 resource "aws_route" "nat" {
-  count = var.enable_nat ? 2 : 0
+  count = var.nat_enabled ? 2 : 0
 
   route_table_id         = aws_route_table.private[count.index].id
   destination_cidr_block = "0.0.0.0/0"

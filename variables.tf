@@ -75,7 +75,7 @@ variable "enable_ipv6" {
   description = "Enable an Amazon-provided IPv6 CIDR block with a /56 prefix length for the VPC"
 }
 
-variable "enable_nat" {
+variable "nat_enabled" {
   default     = true
   description = "Whether the NAT gateway is enabled"
 }

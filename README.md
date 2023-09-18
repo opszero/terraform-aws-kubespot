@@ -217,7 +217,6 @@ aws iam create-service-linked-role --aws-service-name spot.amazonaws.com
 | <a name="input_eips"></a> [eips](#input\_eips) | List of Elastic IPs | `list` | `[]` | no |
 | <a name="input_enable_egress_only_internet_gateway"></a> [enable\_egress\_only\_internet\_gateway](#input\_enable\_egress\_only\_internet\_gateway) | Create an egress-only Internet gateway for your VPC0 | `bool` | `false` | no |
 | <a name="input_enable_ipv6"></a> [enable\_ipv6](#input\_enable\_ipv6) | Enable an Amazon-provided IPv6 CIDR block with a /56 prefix length for the VPC | `bool` | `false` | no |
-| <a name="input_enable_nat"></a> [enable\_nat](#input\_enable\_nat) | Whether the NAT gateway is enabled | `bool` | `true` | no |
 | <a name="input_environment_name"></a> [environment\_name](#input\_environment\_name) | Name of the environment to create AWS resources | `string` | n/a | yes |
 | <a name="input_fargate_selector"></a> [fargate\_selector](#input\_fargate\_selector) | Terraform object to create the EKS fargate profiles | `map` | <pre>{<br>  "serverless": {}<br>}</pre> | no |
 | <a name="input_govcloud"></a> [govcloud](#input\_govcloud) | Set if the environment is govcloud | `bool` | `false` | no |
@@ -227,6 +226,7 @@ aws iam create-service-linked-role --aws-service-name spot.amazonaws.com
 | <a name="input_legacy_subnet"></a> [legacy\_subnet](#input\_legacy\_subnet) | Specify how the subnets should be created | `bool` | `true` | no |
 | <a name="input_metrics_server_version"></a> [metrics\_server\_version](#input\_metrics\_server\_version) | The version of the metric server helm chart | `string` | `"3.11.0"` | no |
 | <a name="input_monitoring_role_arn"></a> [monitoring\_role\_arn](#input\_monitoring\_role\_arn) | The ARN for the IAM role that permits RDS to send enhanced monitoring metrics to CloudWatch Logs | `string` | `""` | no |
+| <a name="input_nat_enabled"></a> [nat\_enabled](#input\_nat\_enabled) | Whether the NAT gateway is enabled | `bool` | `true` | no |
 | <a name="input_node_group_cpu_threshold"></a> [node\_group\_cpu\_threshold](#input\_node\_group\_cpu\_threshold) | The value of the CPU threshold | `string` | `"70"` | no |
 | <a name="input_node_groups"></a> [node\_groups](#input\_node\_groups) | Terraform object to create the EKS node groups | `map` | `{}` | no |
 | <a name="input_node_role_policies"></a> [node\_role\_policies](#input\_node\_role\_policies) | A list of The ARN of the policies you want to attach | `list` | `[]` | no |
