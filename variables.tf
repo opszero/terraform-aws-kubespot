@@ -414,3 +414,14 @@ variable "govcloud" {
   description = "Set if the environment is govcloud"
   default     = false
 }
+
+variable "calico_enabled" {
+  type        = bool
+  description = "Whether calico add-on is installed"
+  default     = false
+}
+
+variable "calico_version" {
+  default     = "v3.26.1"
+  description = "The version of the calico helm chart"
+}
