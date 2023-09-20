@@ -3,7 +3,7 @@ resource "aws_kms_key" "cluster" {
   enable_key_rotation     = true
   deletion_window_in_days = 30
   policy                  = var.cluster_kms_policy
-  tags                    =  local.tags
+  tags                    = local.tags
 }
 
 
@@ -12,7 +12,7 @@ resource "aws_kms_key" "cloudwatch_log" {
   enable_key_rotation     = true
   deletion_window_in_days = 10
   policy                  = data.aws_iam_policy_document.cloudwatch.json
-  tags                    =  local.tags
+  tags                    = local.tags
 }
 
 data "aws_iam_policy_document" "cloudwatch" {

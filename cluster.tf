@@ -2,14 +2,14 @@ locals {
   # Encryption
   cluster_encryption_config = {
     resources        = var.cluster_encryption_config
-    provider_key_arn =  aws_kms_key.cluster.arn
+    provider_key_arn = aws_kms_key.cluster.arn
   }
 }
 
 resource "aws_cloudwatch_log_group" "default" {
   name              = "/aws/eks/${var.environment_name}/cluster"
   retention_in_days = 30
-  tags              =  local.tags
+  tags              = local.tags
   kms_key_id        = aws_kms_key.cloudwatch_log.arn
 }
 
