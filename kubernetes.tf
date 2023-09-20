@@ -58,13 +58,12 @@ resource "kubernetes_config_map" "aws_auth" {
     - system:nodes
 %{endfor~}
 CONFIGMAPAWSAUTH
-
     mapUsers = <<CONFIGMAPAWSUSERS
-%{for user in var.iam_users~}
+%{for user, groups in var.iam_users~}
 - userarn: arn:${local.partition}:iam::${data.aws_caller_identity.current.account_id}:user/${user}
   username: ${user}
   groups:
-    - system:masters
+     ${yamlencode(groups.rbac_groups)}
 %{endfor~}
 CONFIGMAPAWSUSERS
   }
