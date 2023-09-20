@@ -1,72 +1,20 @@
 resource "aws_iam_openid_connect_provider" "cluster" {
   client_id_list  = ["sts.amazonaws.com"]
-  thumbprint_list = [data.tls_certificate.cluster.certificates.0.sha1_fingerprint]
-  url             = aws_eks_cluster.cluster.identity.0.oidc.0.issuer
+  thumbprint_list = data.tls_certificate.cluster.certificates[*].sha1_fingerprint
+  url             = aws_eks_cluster.cluster.identity[0].oidc[0].issuer
   tags            = local.tags
-}
-
-resource "aws_iam_role_policy" "autoscaling" {
-  name = "AWSEKSAutoscaler-${var.environment_name}"
-  role = aws_iam_role.node.id
-
-  policy = <<EOF
-{
-    "Version": "2012-10-17",
-    "Statement": [
-        {
-            "Effect": "Allow",
-            "Action": [
-                "autoscaling:DescribeAutoScalingGroups",
-                "autoscaling:DescribeAutoScalingInstances",
-                "autoscaling:DescribeTags",
-                "autoscaling:DescribeLaunchConfigurations",
-                "autoscaling:SetDesiredCapacity",
-                "autoscaling:TerminateInstanceInAutoScalingGroup",
-                "ec2:DescribeLaunchTemplateVersions"
-            ],
-            "Resource": "*"
-        }
-    ]
-}
-EOF
-}
-
-resource "aws_iam_role_policy" "autoscaling_oidc" {
-  name = "AWSEKSAutoscaler-oidc-${var.environment_name}"
-  role = aws_iam_role.node_oidc.id
-
-  policy = <<EOF
-{
-    "Version": "2012-10-17",
-    "Statement": [
-        {
-            "Effect": "Allow",
-            "Action": [
-                "autoscaling:DescribeAutoScalingGroups",
-                "autoscaling:DescribeAutoScalingInstances",
-                "autoscaling:DescribeTags",
-                "autoscaling:DescribeLaunchConfigurations",
-                "autoscaling:SetDesiredCapacity",
-                "autoscaling:TerminateInstanceInAutoScalingGroup",
-                "ec2:DescribeLaunchTemplateVersions"
-            ],
-            "Resource": "*"
-        }
-    ]
-}
-EOF
 }
 
 module "iam_assumable_role_alb" {
   source           = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
   version          = "3.6.0"
   create_role      = true
-  role_name        = "${var.environment_name}-${var.alb_name}"
+  role_name        = "${var.environment_name}-${local.alb_name}"
   provider_url     = replace(aws_iam_openid_connect_provider.cluster.url, "https://", "")
   role_policy_arns = [aws_iam_policy.alb.arn]
   # namespace and service account name
   oidc_fully_qualified_subjects = [
-    "system:serviceaccount:kube-system:${var.alb_name}"
+    "system:serviceaccount:kube-system:${local.alb_name}"
   ]
   tags = local.tags
 }
@@ -156,7 +104,7 @@ resource "aws_iam_policy" "alb" {
             "Action": [
                 "ec2:CreateTags"
             ],
-            "Resource": "arn:aws:ec2:*:*:security-group/*",
+            "Resource": "arn:${local.partition}:ec2:*:*:security-group/*",
             "Condition": {
                 "StringEquals": {
                     "ec2:CreateAction": "CreateSecurityGroup"
@@ -172,7 +120,7 @@ resource "aws_iam_policy" "alb" {
                 "ec2:CreateTags",
                 "ec2:DeleteTags"
             ],
-            "Resource": "arn:aws:ec2:*:*:security-group/*",
+            "Resource": "arn:${local.partition}:ec2:*:*:security-group/*",
             "Condition": {
                 "Null": {
                     "aws:RequestTag/elbv2.k8s.aws/cluster": "true",
@@ -224,9 +172,9 @@ resource "aws_iam_policy" "alb" {
                 "elasticloadbalancing:RemoveTags"
             ],
             "Resource": [
-                "arn:aws:elasticloadbalancing:*:*:targetgroup/*/*",
-                "arn:aws:elasticloadbalancing:*:*:loadbalancer/net/*/*",
-                "arn:aws:elasticloadbalancing:*:*:loadbalancer/app/*/*"
+                "arn:${local.partition}:elasticloadbalancing:*:*:targetgroup/*/*",
+                "arn:${local.partition}:elasticloadbalancing:*:*:loadbalancer/net/*/*",
+                "arn:${local.partition}:elasticloadbalancing:*:*:loadbalancer/app/*/*"
             ],
             "Condition": {
                 "Null": {
@@ -242,10 +190,10 @@ resource "aws_iam_policy" "alb" {
                 "elasticloadbalancing:RemoveTags"
             ],
             "Resource": [
-                "arn:aws:elasticloadbalancing:*:*:listener/net/*/*/*",
-                "arn:aws:elasticloadbalancing:*:*:listener/app/*/*/*",
-                "arn:aws:elasticloadbalancing:*:*:listener-rule/net/*/*/*",
-                "arn:aws:elasticloadbalancing:*:*:listener-rule/app/*/*/*"
+                "arn:${local.partition}:elasticloadbalancing:*:*:listener/net/*/*/*",
+                "arn:${local.partition}:elasticloadbalancing:*:*:listener/app/*/*/*",
+                "arn:${local.partition}:elasticloadbalancing:*:*:listener-rule/net/*/*/*",
+                "arn:${local.partition}:elasticloadbalancing:*:*:listener-rule/app/*/*/*"
             ]
         },
         {
@@ -273,7 +221,7 @@ resource "aws_iam_policy" "alb" {
                 "elasticloadbalancing:RegisterTargets",
                 "elasticloadbalancing:DeregisterTargets"
             ],
-            "Resource": "arn:aws:elasticloadbalancing:*:*:targetgroup/*/*"
+            "Resource": "arn:${local.partition}:elasticloadbalancing:*:*:targetgroup/*/*"
         },
         {
             "Effect": "Allow",
@@ -287,6 +235,165 @@ resource "aws_iam_policy" "alb" {
             "Resource": "*"
         }
     ]
+}
+EOF
+}
+
+
+resource "aws_iam_role_policy_attachment" "ebs" {
+  policy_arn = aws_iam_policy.ebs.arn
+  role       = aws_iam_role.node.name
+}
+
+resource "aws_iam_policy" "ebs" {
+  name        = "${var.environment_name}-ebs-policy"
+  description = "EKS cluster policy for EBS"
+
+  policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+        "ec2:CreateSnapshot",
+        "ec2:AttachVolume",
+        "ec2:DetachVolume",
+        "ec2:ModifyVolume",
+        "ec2:DescribeAvailabilityZones",
+        "ec2:DescribeInstances",
+        "ec2:DescribeSnapshots",
+        "ec2:DescribeTags",
+        "ec2:DescribeVolumes",
+        "ec2:DescribeVolumesModifications"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Effect": "Allow",
+      "Action": [
+        "ec2:CreateTags"
+      ],
+      "Resource": [
+        "arn:${local.partition}:ec2:*:*:volume/*",
+        "arn:${local.partition}:ec2:*:*:snapshot/*"
+      ],
+      "Condition": {
+        "StringEquals": {
+          "ec2:CreateAction": [
+            "CreateVolume",
+            "CreateSnapshot"
+          ]
+        }
+      }
+    },
+    {
+      "Effect": "Allow",
+      "Action": [
+        "ec2:DeleteTags"
+      ],
+      "Resource": [
+        "arn:${local.partition}:ec2:*:*:volume/*",
+        "arn:${local.partition}:ec2:*:*:snapshot/*"
+      ]
+    },
+    {
+      "Effect": "Allow",
+      "Action": [
+        "ec2:CreateVolume"
+      ],
+      "Resource": "*",
+      "Condition": {
+        "StringLike": {
+          "aws:RequestTag/ebs.csi.aws.com/cluster": "true"
+        }
+      }
+    },
+    {
+      "Effect": "Allow",
+      "Action": [
+        "ec2:CreateVolume"
+      ],
+      "Resource": "*",
+      "Condition": {
+        "StringLike": {
+          "aws:RequestTag/CSIVolumeName": "*"
+        }
+      }
+    },
+    {
+      "Effect": "Allow",
+      "Action": [
+        "ec2:CreateVolume"
+      ],
+      "Resource": "*",
+      "Condition": {
+        "StringLike": {
+          "aws:RequestTag/kubernetes.io/cluster/*": "owned"
+        }
+      }
+    },
+    {
+      "Effect": "Allow",
+      "Action": [
+        "ec2:DeleteVolume"
+      ],
+      "Resource": "*",
+      "Condition": {
+        "StringLike": {
+          "ec2:ResourceTag/ebs.csi.aws.com/cluster": "true"
+        }
+      }
+    },
+    {
+      "Effect": "Allow",
+      "Action": [
+        "ec2:DeleteVolume"
+      ],
+      "Resource": "*",
+      "Condition": {
+        "StringLike": {
+          "ec2:ResourceTag/CSIVolumeName": "*"
+        }
+      }
+    },
+    {
+      "Effect": "Allow",
+      "Action": [
+        "ec2:DeleteVolume"
+      ],
+      "Resource": "*",
+      "Condition": {
+        "StringLike": {
+          "ec2:ResourceTag/kubernetes.io/cluster/*": "owned"
+        }
+      }
+    },
+    {
+      "Effect": "Allow",
+      "Action": [
+        "ec2:DeleteSnapshot"
+      ],
+      "Resource": "*",
+      "Condition": {
+        "StringLike": {
+          "ec2:ResourceTag/CSIVolumeSnapshotName": "*"
+        }
+      }
+    },
+    {
+      "Effect": "Allow",
+      "Action": [
+        "ec2:DeleteSnapshot"
+      ],
+      "Resource": "*",
+      "Condition": {
+        "StringLike": {
+          "ec2:ResourceTag/ebs.csi.aws.com/cluster": "true"
+        }
+      }
+    }
+  ]
 }
 EOF
 }

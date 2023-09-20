@@ -1,57 +1,35 @@
 data "aws_iam_policy" "ssm_managed_instance" {
-  arn = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
+  arn = "arn:${local.partition}:iam::aws:policy/AmazonSSMManagedInstanceCore"
 }
 
-resource "aws_iam_role_policy_attachment" "karpenter_ssm_policy" {
-  count = var.karpenter_enabled ? 1 : 0
-
-  role       = aws_iam_role.node.name
-  policy_arn = data.aws_iam_policy.ssm_managed_instance.arn
+provider "aws" {
+  profile = var.aws_profile
+  region  = "us-east-1"
+  alias   = "virginia"
 }
 
-module "iam_assumable_role_karpenter" {
-  count = var.karpenter_enabled ? 1 : 0
-
-  source                        = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
-  version                       = "4.7.0"
-  create_role                   = true
-  role_name                     = "${var.environment_name}-karpenter-controller"
-  provider_url                  = replace(aws_iam_openid_connect_provider.cluster.url, "https://", "")
-  oidc_fully_qualified_subjects = ["system:serviceaccount:karpenter:karpenter"]
+data "aws_ecrpublic_authorization_token" "token" {
+  provider = aws.virginia
 }
 
-resource "aws_iam_role_policy" "karpenter" {
+module "karpenter" {
   count = var.karpenter_enabled ? 1 : 0
 
-  name = "${var.environment_name}-karpenter"
-  role = module.iam_assumable_role_karpenter[0].iam_role_name
+  source  = "terraform-aws-modules/eks/aws//modules/karpenter"
+  version = "19.6.0"
 
-  policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
-      {
-        Action = [
-          "ec2:CreateLaunchTemplate",
-          "ec2:CreateFleet",
-          "ec2:RunInstances",
-          "ec2:CreateTags",
-          "iam:PassRole",
-          "ec2:TerminateInstances",
-          "ec2:DescribeLaunchTemplates",
-          "ec2:DeleteLaunchTemplate",
-          "ec2:DescribeInstances",
-          "ec2:DescribeSecurityGroups",
-          "ec2:DescribeSubnets",
-          "ec2:DescribeInstanceTypes",
-          "ec2:DescribeInstanceTypeOfferings",
-          "ec2:DescribeAvailabilityZones",
-          "ssm:GetParameter"
-        ]
-        Effect   = "Allow"
-        Resource = "*"
-      },
-    ]
-  })
+  cluster_name = var.environment_name
+
+  irsa_oidc_provider_arn          = aws_iam_openid_connect_provider.cluster.arn
+  irsa_namespace_service_accounts = ["karpenter:karpenter"]
+  irsa_use_name_prefix            = false
+
+  create_iam_role = false
+  iam_role_arn    = aws_iam_role.node.arn
+
+  enable_spot_termination = false
+
+  tags = local.tags
 }
 
 resource "helm_release" "karpenter" {
@@ -60,29 +38,31 @@ resource "helm_release" "karpenter" {
   namespace        = "karpenter"
   create_namespace = true
 
-  name       = "karpenter"
-  repository = "https://charts.karpenter.sh"
-  chart      = "karpenter"
-  version    = var.karpenter_version
+  name                = "karpenter"
+  repository          = "oci://public.ecr.aws/karpenter"
+  repository_username = data.aws_ecrpublic_authorization_token.token.user_name
+  repository_password = data.aws_ecrpublic_authorization_token.token.password
+  chart               = "karpenter"
+  version             = var.karpenter_version
 
   set {
-    name  = "serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn"
-    value = module.iam_assumable_role_karpenter[0].iam_role_arn
-  }
-
-  set {
-    name  = "clusterName"
+    name  = "settings.aws.clusterName"
     value = aws_eks_cluster.cluster.name
   }
 
   set {
-    name  = "clusterEndpoint"
+    name  = "settings.aws.clusterEndpoint"
     value = aws_eks_cluster.cluster.endpoint
   }
 
   set {
-    name  = "aws.defaultInstanceProfile"
-    value = aws_iam_instance_profile.node.name
+    name  = "serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn"
+    value = module.karpenter[0].irsa_arn
+  }
+
+  set {
+    name  = "settings.aws.defaultInstanceProfile"
+    value = module.karpenter[0].instance_profile_name
   }
 }
 
@@ -98,13 +78,58 @@ resource "null_resource" "karpenter_crd" {
   }
 
   provisioner "local-exec" {
-    command = "kubectl apply -f -<<EOF\n${data.http.karpenter_crd.body}\nEOF"
+    command = "kubectl replace -f https://raw.githubusercontent.com/aws/karpenter/${var.karpenter_version}/pkg/apis/crds/karpenter.sh_provisioners.yaml"
   }
 
   depends_on = [
     helm_release.karpenter
   ]
 }
+
+resource "null_resource" "karpenter_awsnodetemplates_crd" {
+  count = var.karpenter_enabled ? 1 : 0
+
+  triggers = {
+    manifest_sha1 = "${sha1("${data.http.karpenter_crd.body}")}"
+  }
+
+  provisioner "local-exec" {
+    command = "kubectl replace -f https://raw.githubusercontent.com/aws/karpenter/${var.karpenter_version}/pkg/apis/crds/karpenter.k8s.aws_awsnodetemplates.yaml"
+  }
+
+  depends_on = [
+    helm_release.karpenter
+  ]
+}
+
+resource "aws_iam_policy" "node_role_karpenter" {
+  count       = var.karpenter_enabled ? 1 : 0
+  name        = "${var.environment_name}-karpenter-policy"
+  description = "Karpenter delete launch template"
+
+  policy = <<EOF
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": [
+                "ec2:DeleteLaunchTemplate"
+            ],
+            "Resource": "*"
+        }
+    ]
+}
+EOF
+}
+
+
+resource "aws_iam_role_policy_attachment" "node_role_karpenter" {
+  count      = var.karpenter_enabled ? 1 : 0
+  policy_arn = aws_iam_policy.node_role_karpenter[0].arn
+  role       = aws_iam_role.node.name
+}
+
 
 # resource "null_resource" "karpenter_crd" {
 #   count            = var.karpenter_enabled ? 1 : 0

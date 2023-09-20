@@ -1,12 +1,15 @@
 resource "aws_cloudwatch_log_group" "vpc" {
-  name = var.environment_name
+  name              = var.environment_name
+  retention_in_days = var.cloudwatch_retention_in_days
   tags = {
     "KubespotEnvironment" = var.environment_name
   }
 }
 
-resource "aws_cloudwatch_metric_alarm" "nodes_green_cpu_threshold" {
-  alarm_name                = "${var.environment_name}-nodes-green-cpu-threshold"
+resource "aws_cloudwatch_metric_alarm" "asg_nodes_cpu_threshold" {
+  for_each = var.asg_nodes
+
+  alarm_name                = "${var.environment_name}-nodes-${each.key}-cpu-threshold"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = "2"
   metric_name               = "CPUUtilization"
@@ -18,27 +21,7 @@ resource "aws_cloudwatch_metric_alarm" "nodes_green_cpu_threshold" {
   insufficient_data_actions = []
 
   dimensions = {
-    AutoScalingGroupName = aws_autoscaling_group.nodes_green.name
-  }
-  tags = {
-    "KubespotEnvironment" = var.environment_name
-  }
-}
-
-resource "aws_cloudwatch_metric_alarm" "nodes_blue_cpu_threshold" {
-  alarm_name                = "${var.environment_name}-nodes-blue-cpu-threshold"
-  comparison_operator       = "GreaterThanOrEqualToThreshold"
-  evaluation_periods        = "2"
-  metric_name               = "CPUUtilization"
-  namespace                 = "AWS/EC2"
-  period                    = "300"
-  statistic                 = "Average"
-  threshold                 = "80"
-  alarm_description         = "This metric monitors ec2 cpu utilization"
-  insufficient_data_actions = []
-
-  dimensions = {
-    AutoScalingGroupName = aws_autoscaling_group.nodes_blue.name
+    AutoScalingGroupName = aws_autoscaling_group.asg_nodes[each.key].name
   }
   tags = {
     "KubespotEnvironment" = var.environment_name

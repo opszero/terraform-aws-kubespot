@@ -41,8 +41,7 @@ resource "aws_security_group" "node" {
   }
 
   tags = merge(local.tags, {
-    "Name"                                          = "${var.environment_name}-node"
-    "kubernetes.io/cluster/${var.environment_name}" = "owned"
+    "Name" = "${var.environment_name}-node"
   })
 }
 

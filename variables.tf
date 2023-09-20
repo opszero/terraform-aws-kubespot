@@ -1,16 +1,21 @@
+variable "aws_profile" {
+  type        = string
+  description = "AWS profile to use"
+}
+
 variable "environment_name" {
   type        = string
   description = "Name of the environment to create AWS resources"
 }
 
 variable "cluster_version" {
-  default     = "1.21"
+  default     = "1.26"
   description = "Desired Kubernetes master version"
 }
 
-variable "alb_name" {
-  default     = "aws-load-balancer-controller"
-  description = "Release name of the ALB controller chart"
+variable "cloudwatch_retention_in_days" {
+  default     = "30"
+  description = "How long to keep CloudWatch logs in days"
 }
 
 variable "aws_load_balancer_controller_enabled" {
@@ -24,9 +29,9 @@ variable "cluster_logging" {
     "audit",
     "authenticator",
     "controllerManager",
-    "scheduler"
+    "scheduler",
   ]
-  description = " List of the desired control plane logging to enable"
+  description = " List of the desired control plane logging to enable. https://docs.aws.amazon.com/eks/latest/userguide/control-plane-logs.html"
 }
 
 variable "cluster_private_access" {
@@ -42,36 +47,6 @@ variable "cluster_public_access" {
 variable "cluster_public_access_cidrs" {
   default     = ["0.0.0.0/0"]
   description = "List of CIDR blocks. Indicates which CIDR blocks can access the Amazon EKS public API server endpoint when enabled"
-}
-
-variable "instance_userdata" {
-  default     = ""
-  description = "User data to provide when launching the instance"
-}
-
-variable "bastion_enabled" {
-  default     = false
-  description = "Whether the bastion host is enabled"
-}
-
-variable "bastion_eip_enabled" {
-  default     = false
-  description = "Whether the EIP for bastion host is enabled"
-}
-
-variable "bastion_instance_type" {
-  default     = "t3.micro"
-  description = "The instance type to use for the bastion instance"
-}
-
-variable "bastion_volume_size" {
-  default     = 20
-  description = "The volume szie to use for the bastion instance"
-}
-
-variable "bastion_vpn_allowed_cidrs" {
-  description = "These are the IPs that the bastion and VPN allow connections from."
-  default     = ["0.0.0.0/0"]
 }
 
 variable "cidr_block" {
@@ -100,7 +75,7 @@ variable "enable_ipv6" {
   description = "Enable an Amazon-provided IPv6 CIDR block with a /56 prefix length for the VPC"
 }
 
-variable "enable_nat" {
+variable "nat_enabled" {
   default     = true
   description = "Whether the NAT gateway is enabled"
 }
@@ -120,104 +95,9 @@ variable "eips" {
   description = "List of Elastic IPs"
 }
 
-variable "ec2_keypair" {
-  default     = "opszero"
-  description = "Key name of the Key Pair to use for the EKS nodes"
-}
-
-variable "bastion_ec2_keypair" {
-  default     = "opszero"
-  description = "Key name of the Key Pair to use for the bastion host"
-}
-
-
 variable "iam_users" {
   default     = []
   description = "List of IAM users"
-}
-
-variable "repos" {
-  default = []
-}
-
-variable "nodes_in_public_subnet" {
-  default     = false
-  description = "INSECURE! Only use this if you want to avoid paying for the NAT. Also set enable_nat to false"
-}
-
-variable "nodes_green_subnet_ids" {
-  default     = []
-  description = "A list of subnet IDs to launch resources in"
-}
-
-variable "nodes_green_instance_type" {
-  default     = "t3.micro"
-  description = "The instance type to use for the instance"
-}
-
-variable "nodes_green_root_device_size" {
-  default     = "20"
-  description = "Size of the volume in gibibytes (GiB)"
-}
-
-variable "nodes_green_desired_capacity" {
-  default     = 0
-  description = "The number of Amazon EC2 instances that should be running in the group"
-}
-
-variable "nodes_green_min_size" {
-  default     = 0
-  description = "The minimum size of the Auto Scaling Group"
-}
-
-variable "nodes_green_max_size" {
-  default     = 0
-  description = "The maximum size of the Auto Scaling Group"
-}
-
-variable "nodes_green_max_instance_lifetime" {
-  default     = 604800 // Default to 7 days
-  description = "The maximum amount of time, in seconds, that an instance can be in service"
-}
-
-variable "nodes_blue_instance_type" {
-  default     = "t3.micro"
-  description = "The instance type to use for the instance"
-}
-
-variable "nodes_blue_root_device_size" {
-  default     = "20"
-  description = "Size of the volume in gibibytes (GiB)"
-}
-
-variable "ami_image" {
-  default     = ""
-  description = "The EC2 image ID to launch"
-}
-
-variable "nodes_blue_subnet_ids" {
-  default     = []
-  description = "A list of subnet IDs to launch resources in"
-}
-
-variable "nodes_blue_desired_capacity" {
-  default     = 0
-  description = "The number of Amazon EC2 instances that should be running in the group"
-}
-
-variable "nodes_blue_min_size" {
-  default     = 0
-  description = "The minimum size of the Auto Scaling Group"
-}
-
-variable "nodes_blue_max_size" {
-  default     = 0
-  description = "The maximum size of the Auto Scaling Group"
-}
-
-variable "nodes_blue_max_instance_lifetime" {
-  default     = 604800 // Default to 7 days
-  description = "The maximum amount of time, in seconds, that an instance can be in service"
 }
 
 variable "redis_enabled" {
@@ -226,18 +106,28 @@ variable "redis_enabled" {
 }
 
 variable "redis_node_type" {
-  default     = "cache.t3.micro"
+  default     = "cache.t4g.micro"
   description = "Instance class of the redis cluster to be used"
 }
 
 variable "redis_engine_version" {
-  default     = "6.x"
+  default     = "7.0"
   description = "Version number of the cache engine to be used for the cache clusters in this replication group"
+}
+
+variable "redis_num_nodes" {
+  default     = 1
+  description = "Number of nodes for redis"
 }
 
 variable "sql_cluster_enabled" {
   default     = false
   description = "Whether the sql cluster is enabled"
+}
+
+variable "sql_iam_auth_enabled" {
+  default     = true
+  description = "Specifies whether or not mappings of IAM accounts to database accounts is enabled"
 }
 
 variable "sql_rds_multi_az" {
@@ -251,7 +141,7 @@ variable "sql_engine" {
 }
 
 variable "sql_engine_mode" {
-  default     = "serverless"
+  default     = "provisioned"
   description = "The database engine mode"
 }
 
@@ -261,7 +151,7 @@ variable "sql_node_count" {
 }
 
 variable "sql_instance_class" {
-  default     = "db.t3.medium"
+  default     = "db.t4g.micro"
   description = "The instance type of the RDS instance."
 }
 
@@ -283,6 +173,11 @@ variable "sql_master_password" {
 variable "sql_serverless_min" {
   default     = 2
   description = "The maximum capacity for the DB cluster"
+}
+
+variable "sql_skip_final_snapshot" {
+  default     = true
+  description = "Determines whether a final DB snapshot is created before the DB instance is deleted."
 }
 
 variable "sql_serverless_max" {
@@ -315,13 +210,18 @@ variable "sql_instance_allocated_storage" {
   description = "The allocated storage in gibibytes"
 }
 
+variable "sql_storage_type" {
+  default     = "gp3"
+  description = "The allocated storage type for DB Instance"
+}
+
 variable "sql_instance_max_allocated_storage" {
   default     = 200
   description = "the upper limit to which Amazon RDS can automatically scale the storage of the DB instance"
 }
 
 variable "sql_engine_version" {
-  default     = "12.7"
+  default     = "14.3"
   description = "The engine version to use"
 }
 
@@ -340,28 +240,14 @@ variable "sql_parameter_group_name" {
   description = "Name of the DB parameter group to associate"
 }
 
+variable "sql_performance_insights_enabled" {
+  default     = false
+  description = " Specifies whether Performance Insights are enabled. Defaults to false"
+}
+
 variable "monitoring_role_arn" {
   default     = ""
   description = " The ARN for the IAM role that permits RDS to send enhanced monitoring metrics to CloudWatch Logs"
-}
-
-variable "enabled_metrics_asg" {
-  description = "A list of metrics to collect"
-  default = [
-    "GroupDesiredCapacity",
-    "GroupInServiceCapacity",
-    "GroupInServiceInstances",
-    "GroupMaxSize",
-    "GroupMinSize",
-    "GroupPendingCapacity",
-    "GroupPendingInstances",
-    "GroupStandbyCapacity",
-    "GroupStandbyInstances",
-    "GroupTerminatingCapacity",
-    "GroupTerminatingInstances",
-    "GroupTotalCapacity",
-    "GroupTotalInstances",
-  ]
 }
 
 variable "vpc_flow_logs_enabled" {
@@ -377,16 +263,16 @@ variable "efs_enabled" {
 variable "sso_roles" {
   default = {
     admin_roles = [
-      // "arn:aws:iam::12345:role/AWSReservedSSO_AD-EKS-Admins_b2abd90bad1696ac"
+      // "arn:${local.partition}:iam::12345:role/AWSReservedSSO_AD-EKS-Admins_b2abd90bad1696ac"
     ]
     readonly_roles = [
-      // "arn:aws:iam::12345:role/AWSReservedSSO_AD-EKS-ReadOnly_2c5eb8d559b68cb5"
+      // "arn:${local.partition}:iam::12345:role/AWSReservedSSO_AD-EKS-ReadOnly_2c5eb8d559b68cb5"
     ]
     dev_roles = [
-      // "arn:aws:iam::12345:role/AWSReservedSSO_AD-EKS-Developers_ac2b0d744059fcd6"
+      // "arn:${local.partition}:iam::12345:role/AWSReservedSSO_AD-EKS-Developers_ac2b0d744059fcd6"
     ]
     monitoring_roles = [
-      // "arn:aws:iam::12345:role/AWSReservedSSO_AD-EKS-Monitoring-Admins_ac2b0d744059fcd6"
+      // "arn:${local.partition}:iam::12345:role/AWSReservedSSO_AD-EKS-Monitoring-Admins_ac2b0d744059fcd6"
     ]
   }
   description = "Terraform object of the IAM roles"
@@ -407,8 +293,52 @@ variable "fargate_selector" {
 }
 
 variable "metrics_server_version" {
-  default     = "3.8.2"
+  default     = "3.11.0"
   description = "The version of the metric server helm chart"
+}
+
+variable "asg_nodes" {
+  description = "Map of ASG node configurations"
+  type = map(object({
+    instance_type          = string
+    max_instance_lifetime  = number
+    nodes_desired_capacity = number
+    nodes_max_size         = number
+    nodes_min_size         = number
+    nodes_in_public_subnet = bool
+    node_disk_size         = number
+    node_enabled_metrics   = list(string)
+    spot_price             = string
+    subnet_ids             = list(string)
+  }))
+  default = {
+    #   nodegreen = {
+    #     instance_type           = "t2.micro"
+    #     max_instance_lifetime   = 7200
+    #     nodes_desired_capacity  = 2
+    #     nodes_max_size          = 3
+    #     nodes_min_size          = 1
+    #     nodes_in_public_subnet  = true
+    #     node_disk_size          = 20
+    #     node_enabled_metrics    = [
+    #       "GroupDesiredCapacity",
+    #       "GroupInServiceCapacity",
+    #       "GroupInServiceInstances",
+    #       "GroupMaxSize",
+    #       "GroupMinSize",
+    #       "GroupPendingCapacity",
+    #       "GroupPendingInstances",
+    #       "GroupStandbyCapacity",
+    #       "GroupStandbyInstances",
+    #       "GroupTerminatingCapacity",
+    #       "GroupTerminatingInstances",
+    #       "GroupTotalCapacity",
+    #       "GroupTotalInstances"
+    #     ]
+    #     spot_price              = "0.05"
+    #     subnet_ids              = []
+    #   }
+  }
 }
 
 variable "node_groups" {
@@ -448,13 +378,8 @@ variable "karpenter_enabled" {
   description = "Specify whether the karpenter is enabled"
 }
 
-variable "karpenter_name" {
-  default     = "karpenter-scaler"
-  description = "The release name of the karpenter helm chart"
-}
-
 variable "karpenter_version" {
-  default     = "v0.15.0"
+  default     = "v0.30.0"
   description = "The version of the karpenter helm chart"
 }
 
@@ -469,30 +394,24 @@ variable "csi_secrets_store_enabled" {
 }
 
 variable "csi_secrets_store_version" {
-  default     = "1.2.2"
+  default     = "1.3.4"
   description = "The version of the CSI store helm chart"
-}
-
-variable "eks_guardduty_enabled" {
-  default     = true
-  description = "whether the guardduty is enabled for the EKS cluster"
-}
-
-variable "memorydb_enabled" {
-  default     = false
-  description = "Specify whether the memorydb is enabled"
 }
 
 variable "tags" {
   description = "Terraform map to create custom tags for the AWS resources"
   default     = {}
-  #  ManagedBy = "Terraform"
-  #  Project   = "Kubespot"
-  #}  
 }
 
 variable "alb_controller_version" {
   type        = string
   description = "The chart version of the ALB controller helm chart"
-  default     = "1.4.2"
+
+  default     = "1.4.4"
+}
+
+variable "govcloud" {
+  type        = bool
+  description = "Set if the environment is govcloud"
+  default     = false
 }
