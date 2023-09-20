@@ -36,11 +36,19 @@ module "opszero-eks" {
 
   cluster_version  = "1.27"
   environment_name = local.environment_name
-  iam_users = [
-    "abhi@opszero.com",
-    "bitbucket-deployer",
-  ]
+  iam_users = {
+    "abhi@opszero.com" = {
+      rbac_groups = [
+        "system:masters"
+      ]
+    },
+    "bitbucket-deployer" = {
+      rbac_groups = [
+        "system:masters"
+      ]
+    },
 
+  }
   cidr_block = "10.3.0.0/16"
   cidr_block_public_subnet = [
     "10.3.0.0/18",

@@ -20,3 +20,4 @@ eks/kubeconfig.yaml
 *~
 
 .idea/
+.terraform.lock.hcl
