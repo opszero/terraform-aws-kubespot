@@ -63,7 +63,7 @@ CONFIGMAPAWSAUTH
 - userarn: arn:${local.partition}:iam::${data.aws_caller_identity.current.account_id}:user/${user}
   username: ${user}
   groups:
-     ${yamlencode(groups.rbac_groups)}
+     ${yamlencode(groups.groups)}
 %{endfor~}
 CONFIGMAPAWSUSERS
   }
