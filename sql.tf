@@ -73,7 +73,7 @@ resource "aws_db_instance" "default" {
   db_name                       = var.sql_database_name
   username                      = var.sql_master_username
   manage_master_user_password   = true
-  master_user_secret_kms_key_id = aws_kms_key.example.key_id
+  master_user_secret_kms_key_id = aws_kms_key.rds.key_id
   multi_az                      = var.sql_rds_multi_az
 
   db_subnet_group_name   = aws_db_subnet_group.default.name
