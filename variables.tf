@@ -170,11 +170,6 @@ variable "sql_master_password" {
   description = "Password for the master DB user"
 }
 
-variable "sql_serverless_min" {
-  default     = 2
-  description = "The maximum capacity for the DB cluster"
-}
-
 variable "sql_skip_final_snapshot" {
   default     = false
   description = "Determines whether a final DB snapshot is created before the DB instance is deleted."
@@ -404,8 +399,3 @@ variable "alb_controller_version" {
   default     = "1.4.4"
 }
 
-variable "govcloud" {
-  type        = bool
-  description = "Set if the environment is govcloud"
-  default     = false
-}
