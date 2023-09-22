@@ -236,7 +236,7 @@ variable "sql_performance_insights_enabled" {
 }
 
 variable "sql_cluster_monitoring_role_arn" {
-  default     = ""
+  default     = null
   description = "The ARN for the IAM role that permits RDS to send enhanced monitoring metrics to CloudWatch Logs"
 }
 
