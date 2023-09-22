@@ -224,7 +224,6 @@ aws iam create-service-linked-role --aws-service-name spot.amazonaws.com
 | <a name="input_karpenter_version"></a> [karpenter\_version](#input\_karpenter\_version) | The version of the karpenter helm chart | `string` | `"v0.30.0"` | no |
 | <a name="input_legacy_subnet"></a> [legacy\_subnet](#input\_legacy\_subnet) | Specify how the subnets should be created | `bool` | `true` | no |
 | <a name="input_metrics_server_version"></a> [metrics\_server\_version](#input\_metrics\_server\_version) | The version of the metric server helm chart | `string` | `"3.11.0"` | no |
-| <a name="input_monitoring_role_arn"></a> [monitoring\_role\_arn](#input\_monitoring\_role\_arn) | The ARN for the IAM role that permits RDS to send enhanced monitoring metrics to CloudWatch Logs | `string` | `""` | no |
 | <a name="input_nat_enabled"></a> [nat\_enabled](#input\_nat\_enabled) | Whether the NAT gateway is enabled | `bool` | `true` | no |
 | <a name="input_node_group_cpu_threshold"></a> [node\_group\_cpu\_threshold](#input\_node\_group\_cpu\_threshold) | The value of the CPU threshold | `string` | `"70"` | no |
 | <a name="input_node_groups"></a> [node\_groups](#input\_node\_groups) | Terraform object to create the EKS node groups | `map` | `{}` | no |
@@ -234,6 +233,8 @@ aws iam create-service-linked-role --aws-service-name spot.amazonaws.com
 | <a name="input_redis_node_type"></a> [redis\_node\_type](#input\_redis\_node\_type) | Instance class of the redis cluster to be used | `string` | `"cache.t4g.micro"` | no |
 | <a name="input_redis_num_nodes"></a> [redis\_num\_nodes](#input\_redis\_num\_nodes) | Number of nodes for redis | `number` | `1` | no |
 | <a name="input_sql_cluster_enabled"></a> [sql\_cluster\_enabled](#input\_sql\_cluster\_enabled) | Whether the sql cluster is enabled | `bool` | `false` | no |
+| <a name="input_sql_cluster_monitoring_interval"></a> [sql\_cluster\_monitoring\_interval](#input\_sql\_cluster\_monitoring\_interval) | Monitoring Interval for SQL Cluster | `any` | `null` | no |
+| <a name="input_sql_cluster_monitoring_role_arn"></a> [sql\_cluster\_monitoring\_role\_arn](#input\_sql\_cluster\_monitoring\_role\_arn) | The ARN for the IAM role that permits RDS to send enhanced monitoring metrics to CloudWatch Logs | `any` | `null` | no |
 | <a name="input_sql_database_name"></a> [sql\_database\_name](#input\_sql\_database\_name) | The name of the database to create when the DB instance is created | `string` | `""` | no |
 | <a name="input_sql_encrypted"></a> [sql\_encrypted](#input\_sql\_encrypted) | Specify whether the DB instance is encrypted | `bool` | `true` | no |
 | <a name="input_sql_engine"></a> [sql\_engine](#input\_sql\_engine) | The name of the database engine to be used for this DB cluster | `string` | `"aurora-postgresql"` | no |
