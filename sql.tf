@@ -6,7 +6,9 @@ resource "aws_db_subnet_group" "default" {
 }
 
 resource "aws_kms_key" "rds" {
-  description = "Example KMS Key"
+  description = "${local.environment} KMS Key"
+
+  prevent_destroy = true
 }
 
 resource "aws_rds_cluster" "default" {
