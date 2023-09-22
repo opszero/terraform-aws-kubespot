@@ -5,12 +5,6 @@ resource "aws_db_subnet_group" "default" {
   tags = local.tags
 }
 
-resource "aws_kms_key" "rds" {
-  description = "${var.environment_name} KMS Key"
-
-  prevent_destroy = true
-}
-
 resource "aws_rds_cluster" "default" {
   count = var.sql_cluster_enabled ? 1 : 0
 
@@ -19,10 +13,9 @@ resource "aws_rds_cluster" "default" {
   engine_mode        = var.sql_engine_mode
   engine_version     = var.sql_engine_version
 
-  database_name                 = var.sql_database_name
-  master_username               = var.sql_master_username
-  manage_master_user_password   = true
-  master_user_secret_kms_key_id = aws_kms_key.rds.key_id
+  database_name               = var.sql_database_name
+  master_username             = var.sql_master_username
+  manage_master_user_password = true
 
   db_subnet_group_name            = aws_db_subnet_group.default.name
   vpc_security_group_ids          = [aws_security_group.node.id]
@@ -66,15 +59,13 @@ resource "aws_db_instance" "default" {
   allocated_storage     = var.sql_instance_allocated_storage
   max_allocated_storage = var.sql_instance_max_allocated_storage
 
-  storage_type                  = var.sql_storage_type
-  engine                        = var.sql_instance_engine
-  engine_version                = var.sql_engine_version
-  instance_class                = var.sql_instance_class
-  db_name                       = var.sql_database_name
-  username                      = var.sql_master_username
-  manage_master_user_password   = true
-  master_user_secret_kms_key_id = aws_kms_key.rds.key_id
-  multi_az                      = var.sql_rds_multi_az
+  storage_type   = var.sql_storage_type
+  engine         = var.sql_instance_engine
+  engine_version = var.sql_engine_version
+  instance_class = var.sql_instance_class
+  db_name        = var.sql_database_name
+  username       = var.sql_master_username
+  multi_az       = var.sql_rds_multi_az
 
   db_subnet_group_name   = aws_db_subnet_group.default.name
   vpc_security_group_ids = [aws_security_group.node.id]
