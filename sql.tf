@@ -37,10 +37,13 @@ resource "aws_rds_cluster" "default" {
 resource "aws_rds_cluster_instance" "cluster_instances" {
   count = var.sql_cluster_enabled ? var.sql_node_count : 0
 
-  engine             = var.sql_engine
-  engine_version     = var.sql_engine_version
+  engine         = var.sql_engine
+  engine_version = var.sql_engine_version
+
   cluster_identifier = aws_rds_cluster.default.0.id
-  instance_class     = var.sql_instance_class
+  identifier         = "${var.environment_name}-${count.index}"
+
+  instance_class = var.sql_instance_class
 
   monitoring_role_arn          = var.sql_cluster_monitoring_role_arn
   monitoring_interval          = var.sql_cluster_monitoring_interval
