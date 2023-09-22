@@ -5,7 +5,7 @@ resource "aws_db_subnet_group" "default" {
   tags = local.tags
 }
 
-resource "aws_kms_key" "example" {
+resource "aws_kms_key" "rds" {
   description = "Example KMS Key"
 }
 
@@ -47,7 +47,7 @@ resource "aws_rds_cluster_instance" "cluster_instances" {
 
   monitoring_role_arn          = var.monitoring_role_arn
   monitoring_interval          = 5
-  performance_insights_enabled = var.performance_insights_enabled
+  performance_insights_enabled = var.sql_performance_insights_enabled
 
   db_subnet_group_name    = aws_db_subnet_group.default.name
   db_parameter_group_name = var.sql_parameter_group_name == "" ? null : var.sql_parameter_group_name
@@ -80,6 +80,8 @@ resource "aws_db_instance" "default" {
   allow_major_version_upgrade = true
   backup_retention_period     = 35
   deletion_protection         = true // Don't Delete Ever! Except manually.
+
+  iam_database_authentication_enabled = var.sql_iam_auth_enabled
 
   tags = local.tags
 }
