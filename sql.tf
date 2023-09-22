@@ -36,6 +36,8 @@ resource "aws_rds_cluster" "default" {
   skip_final_snapshot       = var.sql_skip_final_snapshot
   final_snapshot_identifier = var.environment_name
 
+  iam_database_authentication_enabled = var.sql_iam_auth_enabled
+
   tags = local.tags
 }
 
