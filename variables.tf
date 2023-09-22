@@ -235,9 +235,14 @@ variable "sql_performance_insights_enabled" {
   description = " Specifies whether Performance Insights are enabled. Defaults to false"
 }
 
-variable "monitoring_role_arn" {
+variable "sql_cluster_monitoring_role_arn" {
   default     = ""
-  description = " The ARN for the IAM role that permits RDS to send enhanced monitoring metrics to CloudWatch Logs"
+  description = "The ARN for the IAM role that permits RDS to send enhanced monitoring metrics to CloudWatch Logs"
+}
+
+variable "sql_cluster_monitoring_interval" {
+  default     = null
+  description = "Monitoring Interval for SQL Cluster"
 }
 
 variable "vpc_flow_logs_enabled" {
