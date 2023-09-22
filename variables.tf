@@ -176,13 +176,8 @@ variable "sql_serverless_min" {
 }
 
 variable "sql_skip_final_snapshot" {
-  default     = true
+  default     = false
   description = "Determines whether a final DB snapshot is created before the DB instance is deleted."
-}
-
-variable "sql_serverless_max" {
-  default     = 2
-  description = "The maximum capacity for the DB cluster"
 }
 
 variable "sql_serverless_seconds_until_auto_pause" {
@@ -221,8 +216,8 @@ variable "sql_instance_max_allocated_storage" {
 }
 
 variable "sql_engine_version" {
-  default     = "14.3"
-  description = "The engine version to use"
+  default     = "15.3"
+  description = "The SQL engine version to use"
 }
 
 variable "sql_encrypted" {
