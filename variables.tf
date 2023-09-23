@@ -255,21 +255,14 @@ variable "efs_enabled" {
   description = "Specify whether the EFS is enabled on the EKS cluster"
 }
 
-variable "sso_roles" {
-  default = {
-    admin_roles = [
-      // "arn:${local.partition}:iam::12345:role/AWSReservedSSO_AD-EKS-Admins_b2abd90bad1696ac"
-    ]
-    readonly_roles = [
-      // "arn:${local.partition}:iam::12345:role/AWSReservedSSO_AD-EKS-ReadOnly_2c5eb8d559b68cb5"
-    ]
-    dev_roles = [
-      // "arn:${local.partition}:iam::12345:role/AWSReservedSSO_AD-EKS-Developers_ac2b0d744059fcd6"
-    ]
-    monitoring_roles = [
-      // "arn:${local.partition}:iam::12345:role/AWSReservedSSO_AD-EKS-Monitoring-Admins_ac2b0d744059fcd6"
-    ]
-  }
+variable "iam_roles" {
+  # default = {
+  #   "arn:${local.partition}:iam::12345:role/AWSReservedSSO_AD-EKS-Admins_b2abd90bad1696ac" = {
+  #     rbac_groups = [
+  #       "system:masters"
+  #     }
+  #   }
+  # }
   description = "Terraform object of the IAM roles"
 }
 
