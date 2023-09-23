@@ -182,19 +182,9 @@ variable "sql_master_password" {
   description = "Password for the master DB user"
 }
 
-variable "sql_serverless_min" {
-  default     = 2
-  description = "The maximum capacity for the DB cluster"
-}
-
 variable "sql_skip_final_snapshot" {
-  default     = true
+  default     = false
   description = "Determines whether a final DB snapshot is created before the DB instance is deleted."
-}
-
-variable "sql_serverless_max" {
-  default     = 2
-  description = "The maximum capacity for the DB cluster"
 }
 
 variable "sql_serverless_seconds_until_auto_pause" {
@@ -233,8 +223,8 @@ variable "sql_instance_max_allocated_storage" {
 }
 
 variable "sql_engine_version" {
-  default     = "14.3"
-  description = "The engine version to use"
+  default     = "15.3"
+  description = "The SQL engine version to use"
 }
 
 variable "sql_encrypted" {
@@ -257,9 +247,14 @@ variable "sql_performance_insights_enabled" {
   description = " Specifies whether Performance Insights are enabled. Defaults to false"
 }
 
-variable "monitoring_role_arn" {
-  default     = ""
-  description = " The ARN for the IAM role that permits RDS to send enhanced monitoring metrics to CloudWatch Logs"
+variable "sql_cluster_monitoring_role_arn" {
+  default     = null
+  description = "The ARN for the IAM role that permits RDS to send enhanced monitoring metrics to CloudWatch Logs"
+}
+
+variable "sql_cluster_monitoring_interval" {
+  default     = null
+  description = "Monitoring Interval for SQL Cluster"
 }
 
 variable "vpc_flow_logs_enabled" {
@@ -421,8 +416,3 @@ variable "alb_controller_version" {
   default     = "1.4.4"
 }
 
-variable "govcloud" {
-  type        = bool
-  description = "Set if the environment is govcloud"
-  default     = false
-}
