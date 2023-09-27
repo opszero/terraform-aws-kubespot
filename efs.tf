@@ -79,7 +79,7 @@ EOF
 module "iam_assumable_role_admin" {
   count            = var.efs_enabled ? 1 : 0
   source           = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
-  version          = "3.6.0"
+  version          = "5.30.0"
   create_role      = true
   role_name        = "${var.environment_name}-efs-driver"
   provider_url     = replace(aws_iam_openid_connect_provider.cluster.url, "https://", "")
