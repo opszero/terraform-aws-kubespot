@@ -79,3 +79,43 @@ resource "aws_iam_role_policy_attachment" "cluster-AmazonEKSServicePolicy" {
   policy_arn = "arn:${local.partition}:iam::aws:policy/AmazonEKSServicePolicy"
   role       = aws_iam_role.cluster.name
 }
+
+resource "helm_release" "calico" {
+  count = var.calico_enabled ? 1 : 0
+
+  name       = "calico"
+  repository = "https://docs.tigera.io/calico/charts"
+  chart      = "tigera-operator"
+  version    = var.calico_version
+
+  # Set Calico-specific configuration values
+  set {
+    name  = "kubernetesProvider"
+    value = "EKS"
+  }
+
+  set {
+    name  = "cni.type"
+    value = "Calico"
+  }
+
+  set {
+    name  = "calicoNetwork.bgp"
+    value = "Disabled"
+  }
+}
+
+resource "null_resource" "delete_aws_node" {
+  count = var.calico_enabled ? 1 : 0
+
+  triggers = {
+    always_run = "${timestamp()}"
+  }
+
+  provisioner "local-exec" {
+    command = <<-EOT
+      kubectl patch installation default --type='json' -p='[{"op": "replace", "path": "/spec/cni", "value": {"type":"Calico"} }]'
+      kubectl delete daemonset -n kube-system aws-node
+    EOT
+  }
+}

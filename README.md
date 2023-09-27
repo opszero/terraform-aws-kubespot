@@ -107,6 +107,10 @@ aws iam create-service-linked-role --aws-service-name spot.amazonaws.com
 
 # CIS Kubernetes Benchmark
 
+Note: PodSecurityPolicy (PSP) is deprecated and PodSecurity admission controller
+is the new standard. The CIS Benchmark is still using PSP.  We have converted
+the PSP to the [equivalent new standard](https://kubernetes.io/docs/tasks/configure-pod-container/migrate-from-psp/).
+
 | Control | Recommendation                                                                                           | Level | Status    | Description                                                                                           |
 |---------|----------------------------------------------------------------------------------------------------------|-------|-----------|-------------------------------------------------------------------------------------------------------|
 | **1**   | **Control Plane Components**                                                                             |       |           |                                                                                                       |
@@ -151,7 +155,7 @@ aws iam create-service-linked-role --aws-service-name spot.amazonaws.com
 | 4.2.5   | Minimize the admission of containers with allowPrivilegeEscalation                                       | L1    | Active    | [tiphys](https://github.com/opszero/tiphys) defaultSecurityContext.allowPrivilegeEscalation=false     |
 | 4.2.6   | Minimize the admission of root containers                                                                | L2    | Active    | [tiphys](https://github.com/opszero/tiphys) defaultSecurityContext.[runAsNonRoot=true,runAsUser=1001] |
 | 4.2.7   | Minimize the admission of containers with added capabilities                                             | L1    | Active    | [tiphys](https://github.com/opszero/tiphys) defaultSecurityContext.allowPrivilegeEscalation=false     |
-| 4.2.8   | Minimize the admission of containers with capabilities assigned                                          | L1    | Remediate |                                                                                                       |
+| 4.2.8   | Minimize the admission of containers with capabilities assigned                                          | L1    | Active    | [tiphys](https://github.com/opszero/tiphys) defaultSecurityContext.capabilities.drop: ALL             |
 | **4.3** | **CNI Plugin**                                                                                           |       |           |                                                                                                       |
 | 4.3.1   | Ensure CNI plugin supports network policies.                                                             | L1    | Remediate |                                                                                                       |
 | 4.3.2   | Ensure that all Namespaces have Network Policies defined                                                 | L1    | Remediate |                                                                                                       |
@@ -202,6 +206,8 @@ aws iam create-service-linked-role --aws-service-name spot.amazonaws.com
 | <a name="input_asg_nodes"></a> [asg\_nodes](#input\_asg\_nodes) | Map of ASG node configurations | <pre>map(object({<br>    instance_type          = string<br>    max_instance_lifetime  = number<br>    nodes_desired_capacity = number<br>    nodes_max_size         = number<br>    nodes_min_size         = number<br>    nodes_in_public_subnet = bool<br>    node_disk_size         = number<br>    node_enabled_metrics   = list(string)<br>    spot_price             = string<br>    subnet_ids             = list(string)<br>  }))</pre> | `{}` | no |
 | <a name="input_aws_load_balancer_controller_enabled"></a> [aws\_load\_balancer\_controller\_enabled](#input\_aws\_load\_balancer\_controller\_enabled) | Enable ALB controller by default | `bool` | `true` | no |
 | <a name="input_aws_profile"></a> [aws\_profile](#input\_aws\_profile) | AWS profile to use | `string` | n/a | yes |
+| <a name="input_calico_enabled"></a> [calico\_enabled](#input\_calico\_enabled) | Whether calico add-on is installed | `bool` | `false` | no |
+| <a name="input_calico_version"></a> [calico\_version](#input\_calico\_version) | The version of the calico helm chart | `string` | `"v3.26.1"` | no |
 | <a name="input_cidr_block"></a> [cidr\_block](#input\_cidr\_block) | The CIDR block used by the VPC | `string` | `"10.2.0.0/16"` | no |
 | <a name="input_cidr_block_private_subnet"></a> [cidr\_block\_private\_subnet](#input\_cidr\_block\_private\_subnet) | The CIDR block used by the private subnet | `list` | <pre>[<br>  "10.2.2.0/24",<br>  "10.2.3.0/24"<br>]</pre> | no |
 | <a name="input_cidr_block_public_subnet"></a> [cidr\_block\_public\_subnet](#input\_cidr\_block\_public\_subnet) | The CIDR block used by the private subnet | `list` | <pre>[<br>  "10.2.0.0/24",<br>  "10.2.1.0/24"<br>]</pre> | no |
@@ -335,11 +341,13 @@ aws iam create-service-linked-role --aws-service-name spot.amazonaws.com
 | [aws_vpc.vpc](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/vpc) | resource |
 | [helm_release.aws_efs_csi_driver](https://registry.terraform.io/providers/hashicorp/helm/2.10.1/docs/resources/release) | resource |
 | [helm_release.aws_load_balancer](https://registry.terraform.io/providers/hashicorp/helm/2.10.1/docs/resources/release) | resource |
+| [helm_release.calico](https://registry.terraform.io/providers/hashicorp/helm/2.10.1/docs/resources/release) | resource |
 | [helm_release.csi_secrets_store](https://registry.terraform.io/providers/hashicorp/helm/2.10.1/docs/resources/release) | resource |
 | [helm_release.karpenter](https://registry.terraform.io/providers/hashicorp/helm/2.10.1/docs/resources/release) | resource |
 | [helm_release.metrics-server](https://registry.terraform.io/providers/hashicorp/helm/2.10.1/docs/resources/release) | resource |
 | [kubernetes_config_map.aws_auth](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/config_map) | resource |
 | [null_resource.csi_secrets_store_aws_provider](https://registry.terraform.io/providers/hashicorp/null/latest/docs/resources/resource) | resource |
+| [null_resource.delete_aws_node](https://registry.terraform.io/providers/hashicorp/null/latest/docs/resources/resource) | resource |
 | [null_resource.karpenter_awsnodetemplates_crd](https://registry.terraform.io/providers/hashicorp/null/latest/docs/resources/resource) | resource |
 | [null_resource.karpenter_crd](https://registry.terraform.io/providers/hashicorp/null/latest/docs/resources/resource) | resource |
 | [aws_availability_zones.available](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/availability_zones) | data source |

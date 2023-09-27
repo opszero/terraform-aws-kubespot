@@ -397,3 +397,13 @@ variable "alb_controller_version" {
   default     = "1.4.4"
 }
 
+variable "calico_enabled" {
+  type        = bool
+  description = "Whether calico add-on is installed"
+  default     = false
+}
+
+variable "calico_version" {
+  default     = "v3.26.1"
+  description = "The version of the calico helm chart"
+}
