@@ -106,6 +106,10 @@ aws iam create-service-linked-role --aws-service-name spot.amazonaws.com
 
 # CIS Kubernetes Benchmark
 
+Note: PodSecurityPolicy (PSP) is deprecated and PodSecurity admission controller
+is the new standard. The CIS Benchmark is still using PSP.  We have converted
+the PSP to the [equivalent new standard](https://kubernetes.io/docs/tasks/configure-pod-container/migrate-from-psp/).
+
 | Control | Recommendation                                                                                           | Level | Status    | Description                                                                                           |
 |---------|----------------------------------------------------------------------------------------------------------|-------|-----------|-------------------------------------------------------------------------------------------------------|
 | **1**   | **Control Plane Components**                                                                             |       |           |                                                                                                       |
@@ -150,7 +154,7 @@ aws iam create-service-linked-role --aws-service-name spot.amazonaws.com
 | 4.2.5   | Minimize the admission of containers with allowPrivilegeEscalation                                       | L1    | Active    | [tiphys](https://github.com/opszero/tiphys) defaultSecurityContext.allowPrivilegeEscalation=false     |
 | 4.2.6   | Minimize the admission of root containers                                                                | L2    | Active    | [tiphys](https://github.com/opszero/tiphys) defaultSecurityContext.[runAsNonRoot=true,runAsUser=1001] |
 | 4.2.7   | Minimize the admission of containers with added capabilities                                             | L1    | Active    | [tiphys](https://github.com/opszero/tiphys) defaultSecurityContext.allowPrivilegeEscalation=false     |
-| 4.2.8   | Minimize the admission of containers with capabilities assigned                                          | L1    | Remediate |                                                                                                       |
+| 4.2.8   | Minimize the admission of containers with capabilities assigned                                          | L1    | Active    | [tiphys](https://github.com/opszero/tiphys) defaultSecurityContext.capabilities.drop: ALL             |
 | **4.3** | **CNI Plugin**                                                                                           |       |           |                                                                                                       |
 | 4.3.1   | Ensure CNI plugin supports network policies.                                                             | L1    | Remediate |                                                                                                       |
 | 4.3.2   | Ensure that all Namespaces have Network Policies defined                                                 | L1    | Remediate |                                                                                                       |
