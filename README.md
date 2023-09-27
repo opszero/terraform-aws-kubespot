@@ -157,7 +157,7 @@ the PSP to the [equivalent new standard](https://kubernetes.io/docs/tasks/config
 | 4.2.7   | Minimize the admission of containers with added capabilities                                             | L1    | Active    | [tiphys](https://github.com/opszero/tiphys) defaultSecurityContext.allowPrivilegeEscalation=false            |
 | 4.2.8   | Minimize the admission of containers with capabilities assigned                                          | L1    | Active    | [tiphys](https://github.com/opszero/tiphys) defaultSecurityContext.capabilities.drop: ALL                    |
 | **4.3** | **CNI Plugin**                                                                                           |       |           |                                                                                                              |
-| 4.3.1   | Ensure CNI plugin supports network policies.                                                             | L1    | Remediate |                                                                                                              |
+| 4.3.1   | Ensure CNI plugin supports network policies.                                                             | L1    | Manual    | `calico_enabled=true`                                                                                        |
 | 4.3.2   | Ensure that all Namespaces have Network Policies defined                                                 | L1    | Remediate |                                                                                                              |
 | **4.4** | **Secrets Management**                                                                                   |       |           |                                                                                                              |
 | 4.4.1   | Prefer using secrets as files over secrets as environment variables                                      | L2    | Active    | [tiphys](https://github.com/opszero/tiphys) writes secrets to file                                           |
@@ -191,8 +191,8 @@ the PSP to the [equivalent new standard](https://kubernetes.io/docs/tasks/config
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | ~> 5.17.0 |
-| <a name="provider_aws.virginia"></a> [aws.virginia](#provider\_aws.virginia) | ~> 5.17.0 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | >= 5.17.0 |
+| <a name="provider_aws.virginia"></a> [aws.virginia](#provider\_aws.virginia) | >= 5.17.0 |
 | <a name="provider_helm"></a> [helm](#provider\_helm) | 2.10.1 |
 | <a name="provider_http"></a> [http](#provider\_http) | n/a |
 | <a name="provider_kubernetes"></a> [kubernetes](#provider\_kubernetes) | >= 2.0 |
