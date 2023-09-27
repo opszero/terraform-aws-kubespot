@@ -191,8 +191,8 @@ the PSP to the [equivalent new standard](https://kubernetes.io/docs/tasks/config
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | ~> 5.17.0 |
-| <a name="provider_aws.virginia"></a> [aws.virginia](#provider\_aws.virginia) | ~> 5.17.0 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | >= 5.17.0 |
+| <a name="provider_aws.virginia"></a> [aws.virginia](#provider\_aws.virginia) | >= 5.17.0 |
 | <a name="provider_helm"></a> [helm](#provider\_helm) | 2.10.1 |
 | <a name="provider_http"></a> [http](#provider\_http) | n/a |
 | <a name="provider_kubernetes"></a> [kubernetes](#provider\_kubernetes) | >= 2.0 |
