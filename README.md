@@ -143,7 +143,7 @@ the PSP to the [equivalent new standard](https://kubernetes.io/docs/tasks/config
 | 4.1.2   | Minimize access to secrets                                                                               | L1    | Active    | `iam_roles` pass limited RBAC                                                                                |
 | 4.1.3   | Minimize wildcard use in Roles and ClusterRoles                                                          | L1    | Manual    | [terraform-kubernetes-rbac](https://github.com/opszero/terraform-kubernetes-rbac) Set role                   |
 | 4.1.4   | Minimize access to create pods                                                                           | L1    | Manual    | [terraform-kubernetes-rbac](https://github.com/opszero/terraform-kubernetes-rbac) Limit role with pod create |
-| 4.1.5   | Ensure that default service accounts are not actively used                                               | L1    | Remediate |                                                                                                              |
+| 4.1.5   | Ensure that default service accounts are not actively used                                               | L1    | Manual | `kubectl patch serviceaccount default -p $'automountServiceAccountToken: false'`                                                                                                              |
 | 4.1.6   | Ensure that Service Account Tokens are only mounted where necessary                                      | L1    | Remediate |                                                                                                              |
 | 4.1.7   | Avoid use of system:masters group                                                                        | L1    | Active    | Must manually add users and roles to `system:masters`                                                        |
 | 4.1.8   | Limit use of the Bind, Impersonate and Escalate permissions in the Kubernetes cluster                    | L1    | Manual    | Limit users with system:masters role                                                                         |
@@ -193,9 +193,9 @@ the PSP to the [equivalent new standard](https://kubernetes.io/docs/tasks/config
 |------|---------|
 | <a name="provider_aws"></a> [aws](#provider\_aws) | >= 5.17.0 |
 | <a name="provider_aws.virginia"></a> [aws.virginia](#provider\_aws.virginia) | >= 5.17.0 |
-| <a name="provider_helm"></a> [helm](#provider\_helm) | 2.10.1 |
+| <a name="provider_helm"></a> [helm](#provider\_helm) | >= 2.11 |
 | <a name="provider_http"></a> [http](#provider\_http) | n/a |
-| <a name="provider_kubernetes"></a> [kubernetes](#provider\_kubernetes) | >= 2.0 |
+| <a name="provider_kubernetes"></a> [kubernetes](#provider\_kubernetes) | >= 2.23 |
 | <a name="provider_null"></a> [null](#provider\_null) | n/a |
 | <a name="provider_tls"></a> [tls](#provider\_tls) | n/a |
 ## Inputs
@@ -339,12 +339,12 @@ the PSP to the [equivalent new standard](https://kubernetes.io/docs/tasks/config
 | [aws_subnet.private](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/subnet) | resource |
 | [aws_subnet.public](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/subnet) | resource |
 | [aws_vpc.vpc](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/vpc) | resource |
-| [helm_release.aws_efs_csi_driver](https://registry.terraform.io/providers/hashicorp/helm/2.10.1/docs/resources/release) | resource |
-| [helm_release.aws_load_balancer](https://registry.terraform.io/providers/hashicorp/helm/2.10.1/docs/resources/release) | resource |
-| [helm_release.calico](https://registry.terraform.io/providers/hashicorp/helm/2.10.1/docs/resources/release) | resource |
-| [helm_release.csi_secrets_store](https://registry.terraform.io/providers/hashicorp/helm/2.10.1/docs/resources/release) | resource |
-| [helm_release.karpenter](https://registry.terraform.io/providers/hashicorp/helm/2.10.1/docs/resources/release) | resource |
-| [helm_release.metrics-server](https://registry.terraform.io/providers/hashicorp/helm/2.10.1/docs/resources/release) | resource |
+| [helm_release.aws_efs_csi_driver](https://registry.terraform.io/providers/hashicorp/helm/latest/docs/resources/release) | resource |
+| [helm_release.aws_load_balancer](https://registry.terraform.io/providers/hashicorp/helm/latest/docs/resources/release) | resource |
+| [helm_release.calico](https://registry.terraform.io/providers/hashicorp/helm/latest/docs/resources/release) | resource |
+| [helm_release.csi_secrets_store](https://registry.terraform.io/providers/hashicorp/helm/latest/docs/resources/release) | resource |
+| [helm_release.karpenter](https://registry.terraform.io/providers/hashicorp/helm/latest/docs/resources/release) | resource |
+| [helm_release.metrics-server](https://registry.terraform.io/providers/hashicorp/helm/latest/docs/resources/release) | resource |
 | [kubernetes_config_map.aws_auth](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/config_map) | resource |
 | [null_resource.csi_secrets_store_aws_provider](https://registry.terraform.io/providers/hashicorp/null/latest/docs/resources/resource) | resource |
 | [null_resource.delete_aws_node](https://registry.terraform.io/providers/hashicorp/null/latest/docs/resources/resource) | resource |
