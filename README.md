@@ -206,6 +206,8 @@ the PSP to the [equivalent new standard](https://kubernetes.io/docs/tasks/config
 | <a name="input_asg_nodes"></a> [asg\_nodes](#input\_asg\_nodes) | Map of ASG node configurations | <pre>map(object({<br>    instance_type          = string<br>    max_instance_lifetime  = number<br>    nodes_desired_capacity = number<br>    nodes_max_size         = number<br>    nodes_min_size         = number<br>    nodes_in_public_subnet = bool<br>    node_disk_size         = number<br>    node_enabled_metrics   = list(string)<br>    spot_price             = string<br>    subnet_ids             = list(string)<br>  }))</pre> | `{}` | no |
 | <a name="input_aws_load_balancer_controller_enabled"></a> [aws\_load\_balancer\_controller\_enabled](#input\_aws\_load\_balancer\_controller\_enabled) | Enable ALB controller by default | `bool` | `true` | no |
 | <a name="input_aws_profile"></a> [aws\_profile](#input\_aws\_profile) | AWS profile to use | `string` | n/a | yes |
+| <a name="input_calico_enabled"></a> [calico\_enabled](#input\_calico\_enabled) | Whether calico add-on is installed | `bool` | `false` | no |
+| <a name="input_calico_version"></a> [calico\_version](#input\_calico\_version) | The version of the calico helm chart | `string` | `"v3.26.1"` | no |
 | <a name="input_cidr_block"></a> [cidr\_block](#input\_cidr\_block) | The CIDR block used by the VPC | `string` | `"10.2.0.0/16"` | no |
 | <a name="input_cidr_block_private_subnet"></a> [cidr\_block\_private\_subnet](#input\_cidr\_block\_private\_subnet) | The CIDR block used by the private subnet | `list` | <pre>[<br>  "10.2.2.0/24",<br>  "10.2.3.0/24"<br>]</pre> | no |
 | <a name="input_cidr_block_public_subnet"></a> [cidr\_block\_public\_subnet](#input\_cidr\_block\_public\_subnet) | The CIDR block used by the private subnet | `list` | <pre>[<br>  "10.2.0.0/24",<br>  "10.2.1.0/24"<br>]</pre> | no |
@@ -339,11 +341,13 @@ the PSP to the [equivalent new standard](https://kubernetes.io/docs/tasks/config
 | [aws_vpc.vpc](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/vpc) | resource |
 | [helm_release.aws_efs_csi_driver](https://registry.terraform.io/providers/hashicorp/helm/2.10.1/docs/resources/release) | resource |
 | [helm_release.aws_load_balancer](https://registry.terraform.io/providers/hashicorp/helm/2.10.1/docs/resources/release) | resource |
+| [helm_release.calico](https://registry.terraform.io/providers/hashicorp/helm/2.10.1/docs/resources/release) | resource |
 | [helm_release.csi_secrets_store](https://registry.terraform.io/providers/hashicorp/helm/2.10.1/docs/resources/release) | resource |
 | [helm_release.karpenter](https://registry.terraform.io/providers/hashicorp/helm/2.10.1/docs/resources/release) | resource |
 | [helm_release.metrics-server](https://registry.terraform.io/providers/hashicorp/helm/2.10.1/docs/resources/release) | resource |
 | [kubernetes_config_map.aws_auth](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/config_map) | resource |
 | [null_resource.csi_secrets_store_aws_provider](https://registry.terraform.io/providers/hashicorp/null/latest/docs/resources/resource) | resource |
+| [null_resource.delete_aws_node](https://registry.terraform.io/providers/hashicorp/null/latest/docs/resources/resource) | resource |
 | [null_resource.karpenter_awsnodetemplates_crd](https://registry.terraform.io/providers/hashicorp/null/latest/docs/resources/resource) | resource |
 | [null_resource.karpenter_crd](https://registry.terraform.io/providers/hashicorp/null/latest/docs/resources/resource) | resource |
 | [aws_availability_zones.available](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/availability_zones) | data source |
