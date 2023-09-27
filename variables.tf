@@ -170,19 +170,9 @@ variable "sql_master_password" {
   description = "Password for the master DB user"
 }
 
-variable "sql_serverless_min" {
-  default     = 2
-  description = "The maximum capacity for the DB cluster"
-}
-
 variable "sql_skip_final_snapshot" {
-  default     = true
+  default     = false
   description = "Determines whether a final DB snapshot is created before the DB instance is deleted."
-}
-
-variable "sql_serverless_max" {
-  default     = 2
-  description = "The maximum capacity for the DB cluster"
 }
 
 variable "sql_serverless_seconds_until_auto_pause" {
@@ -221,8 +211,8 @@ variable "sql_instance_max_allocated_storage" {
 }
 
 variable "sql_engine_version" {
-  default     = "14.3"
-  description = "The engine version to use"
+  default     = "15.3"
+  description = "The SQL engine version to use"
 }
 
 variable "sql_encrypted" {
@@ -245,9 +235,14 @@ variable "sql_performance_insights_enabled" {
   description = " Specifies whether Performance Insights are enabled. Defaults to false"
 }
 
-variable "monitoring_role_arn" {
-  default     = ""
-  description = " The ARN for the IAM role that permits RDS to send enhanced monitoring metrics to CloudWatch Logs"
+variable "sql_cluster_monitoring_role_arn" {
+  default     = null
+  description = "The ARN for the IAM role that permits RDS to send enhanced monitoring metrics to CloudWatch Logs"
+}
+
+variable "sql_cluster_monitoring_interval" {
+  default     = null
+  description = "Monitoring Interval for SQL Cluster"
 }
 
 variable "vpc_flow_logs_enabled" {
@@ -260,21 +255,14 @@ variable "efs_enabled" {
   description = "Specify whether the EFS is enabled on the EKS cluster"
 }
 
-variable "sso_roles" {
-  default = {
-    admin_roles = [
-      // "arn:${local.partition}:iam::12345:role/AWSReservedSSO_AD-EKS-Admins_b2abd90bad1696ac"
-    ]
-    readonly_roles = [
-      // "arn:${local.partition}:iam::12345:role/AWSReservedSSO_AD-EKS-ReadOnly_2c5eb8d559b68cb5"
-    ]
-    dev_roles = [
-      // "arn:${local.partition}:iam::12345:role/AWSReservedSSO_AD-EKS-Developers_ac2b0d744059fcd6"
-    ]
-    monitoring_roles = [
-      // "arn:${local.partition}:iam::12345:role/AWSReservedSSO_AD-EKS-Monitoring-Admins_ac2b0d744059fcd6"
-    ]
-  }
+variable "iam_roles" {
+  # default = {
+  #   "arn:${local.partition}:iam::12345:role/AWSReservedSSO_AD-EKS-Admins_b2abd90bad1696ac" = {
+  #     rbac_groups = [
+  #       "system:masters"
+  #     }
+  #   }
+  # }
   description = "Terraform object of the IAM roles"
 }
 
@@ -407,12 +395,6 @@ variable "alb_controller_version" {
   type        = string
   description = "The chart version of the ALB controller helm chart"
   default     = "1.4.4"
-}
-
-variable "govcloud" {
-  type        = bool
-  description = "Set if the environment is govcloud"
-  default     = false
 }
 
 variable "calico_enabled" {
