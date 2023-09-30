@@ -12,6 +12,15 @@ resource "aws_eks_node_group" "node_group" {
   disk_size      = lookup(each.value, "node_disk_size", 20)
   capacity_type  = lookup(each.value, "capacity_type", "ON_DEMAND")
 
+  dynamic "launch_template" {
+    for_each = lookup(each.value, "launch_template", [])
+    content {
+      id      = lookup(launch_template.value, "id", null)
+      name    = lookup(launch_template.value, "name", null)
+      version = lookup(launch_template.value, "version")
+    }
+  }
+
   scaling_config {
     desired_size = lookup(each.value, "node_desired_capacity", 1)
     max_size     = lookup(each.value, "nodes_max_size", 1)
