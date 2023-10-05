@@ -28,12 +28,13 @@ resource "aws_eks_cluster" "cluster" {
 }
 
 resource "aws_eks_addon" "core" {
-  for_each = toset([
+  for_each = toset(flatten([
     "kube-proxy",
     "vpc-cni",
     "coredns",
     "aws-ebs-csi-driver",
-  ])
+    var.efs_enabled ? ["aws-efs-csi-driver"] : [],
+  ]))
 
   cluster_name      = aws_eks_cluster.cluster.name
   addon_name        = each.key
