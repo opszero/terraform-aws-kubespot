@@ -8,7 +8,11 @@ module "iam_assumable_role_efs_csi" {
   provider_url     = replace(aws_iam_openid_connect_provider.cluster.url, "https://", "")
   role_policy_arns = ["arn:aws:iam::aws:policy/service-role/AmazonEFSCSIDriverPolicy"]
   # namespace and service account name
-  oidc_fully_qualified_subjects = ["system:serviceaccount:kube-system:efs-csi-controller-sa", "system:serviceaccount:kube-system:efs-csi-node-sa"]
+  oidc_fully_qualified_subjects = [
+    "system:serviceaccount:kube-system:efs-csi-controller-sa",
+    "system:serviceaccount:kube-system:efs-csi-node-sa",
+    "system:serviceaccount:kube-system:efs-csi-*"
+  ]
   tags = {
     "KubespotEnvironment" = var.environment_name
   }
