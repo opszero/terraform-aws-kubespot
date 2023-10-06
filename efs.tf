@@ -2,7 +2,7 @@
 module "iam_assumable_role_efs_csi" {
   count                  = var.efs_enabled ? 1 : 0
   source                 = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
-  version                = "3.6.0"
+  version                = "5.3.0"
   create_role            = true
   allow_self_assume_role = true
   role_name              = "${var.environment_name}-AmazonEFSCSIDriverPolicy"
