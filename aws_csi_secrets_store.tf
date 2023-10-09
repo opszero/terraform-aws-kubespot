@@ -25,7 +25,7 @@ resource "null_resource" "csi_secrets_store_aws_provider" {
   depends_on = [helm_release.csi_secrets_store]
 
   provisioner "local-exec" {
-    command = "kubectl apply -f -<<EOF\n${data.http.csi_secrets_store_aws_provider.body}\nEOF"
+    command = "kubectl apply -f ${data.http.csi_secrets_store_aws_provider.url}"
   }
 }
 
