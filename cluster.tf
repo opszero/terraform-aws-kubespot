@@ -36,10 +36,9 @@ resource "aws_eks_addon" "core" {
     var.efs_enabled ? ["aws-efs-csi-driver"] : [],
   ]))
 
-  cluster_name                = aws_eks_cluster.cluster.name
-  addon_name                  = each.key
-  resolve_conflicts_on_update = "OVERWRITE"
-  resolve_conflicts_on_create = "OVERWRITE"
+  cluster_name      = aws_eks_cluster.cluster.name
+  addon_name        = each.key
+  resolve_conflicts = "OVERWRITE"
 
   depends_on = [
     kubernetes_config_map.aws_auth,
