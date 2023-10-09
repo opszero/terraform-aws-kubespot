@@ -257,11 +257,11 @@ variable "efs_enabled" {
 
 variable "iam_roles" {
   default = {
-  #   "arn:${local.partition}:iam::12345:role/AWSReservedSSO_AD-EKS-Admins_b2abd90bad1696ac" = {
-  #     rbac_groups = [
-  #       "system:masters"
-  #     }
-  #   }
+    #   "arn:${local.partition}:iam::12345:role/AWSReservedSSO_AD-EKS-Admins_b2abd90bad1696ac" = {
+    #     rbac_groups = [
+    #       "system:masters"
+    #     }
+    #   }
   }
   description = "Terraform object of the IAM roles"
 }
