@@ -20,3 +20,37 @@ module "iam_assumable_role_efs_csi" {
     "KubespotEnvironment" = var.environment_name
   }
 }
+
+resource "kubernetes_service_account" "efs_csi_controller_sa" {
+  count            = var.efs_enabled ? 1 : 0
+
+  metadata {
+    name      = "efs-csi-controller-sa"
+    namespace = "kube-system"
+
+    labels = {
+      "app.kubernetes.io/name" = "aws-efs-csi-driver"
+    }
+
+    annotations = {
+      "eks.amazonaws.com/role-arn" = module.iam_assumable_role_efs_csi.iam_role_arn
+    }
+  }
+}
+
+resource "kubernetes_service_account" "efs_csi_node_sa" {
+  count            = var.efs_enabled ? 1 : 0
+
+  metadata {
+    name      = "efs-csi-node-sa"
+    namespace = "kube-system"
+
+    labels = {
+      "app.kubernetes.io/name" = "aws-efs-csi-driver"
+    }
+
+    annotations = {
+      "eks.amazonaws.com/role-arn" = module.iam_assumable_role_efs_csi.iam_role_arn
+    }
+  }
+}
