@@ -33,7 +33,7 @@ resource "kubernetes_service_account" "efs_csi_controller_sa" {
     }
 
     annotations = {
-      "eks.amazonaws.com/role-arn" = module.iam_assumable_role_efs_csi.iam_role_arn
+      "eks.amazonaws.com/role-arn" = module.iam_assumable_role_efs_csi[0].iam_role_arn
     }
   }
 }
@@ -50,7 +50,7 @@ resource "kubernetes_service_account" "efs_csi_node_sa" {
     }
 
     annotations = {
-      "eks.amazonaws.com/role-arn" = module.iam_assumable_role_efs_csi.iam_role_arn
+      "eks.amazonaws.com/role-arn" =  module.iam_assumable_role_efs_csi[0].iam_role_arn
     }
   }
 }
