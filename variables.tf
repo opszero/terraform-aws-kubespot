@@ -14,7 +14,7 @@ variable "cluster_version" {
 }
 
 variable "cloudwatch_retention_in_days" {
-  default     = "30"
+  default     = 30
   description = "How long to keep CloudWatch logs in days"
 }
 

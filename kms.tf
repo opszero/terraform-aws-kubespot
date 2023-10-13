@@ -1,4 +1,4 @@
-resource "aws_kms_key" "cluster" {
+resource "aws_kms_key" "cluster_secrets" {
   description             = "EKS Cluster ${var.environment_name} Encryption Config KMS Key"
   enable_key_rotation     = true
   deletion_window_in_days = 30
@@ -10,13 +10,13 @@ resource "aws_kms_key" "cluster" {
 resource "aws_kms_key" "cloudwatch_log" {
   description             = "CloudWatch log group ${var.environment_name} Encryption Config KMS Key"
   enable_key_rotation     = true
-  deletion_window_in_days = 10
+  deletion_window_in_days = 30
   policy                  = data.aws_iam_policy_document.cloudwatch.json
   tags                    = local.tags
 }
 
 data "aws_iam_policy_document" "cloudwatch" {
-  policy_id = "key-policy-cloudwatch"
+  policy_id = "${var.environment_name}-kms-key-cloudwatch"
   statement {
     sid = "Enable IAM User Permissions"
     actions = [
