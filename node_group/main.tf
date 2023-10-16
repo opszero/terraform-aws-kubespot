@@ -2,37 +2,18 @@ data "aws_partition" "current" {}
 
 data "aws_caller_identity" "current" {}
 
-#Module      : label
-#Description : Terraform module to create consistent naming for multiple names.
-module "labels" {
-  source  = "clouddrove/labels/aws"
-  version = "1.3.0"
-
-  name        = var.name
-  repository  = var.repository
-  environment = var.environment
-  managedby   = var.managedby
-  extra_tags  = var.tags
-  attributes  = compact(concat(var.attributes, ["nodes"]))
-  label_order = var.label_order
-}
-
 
 ################################################################################
 # Launch template
 ################################################################################
 
-
-
-resource "aws_launch_template" "this" {
-  count       = var.enabled ? 1 : 0
-  name        = module.labels.id
+resource "aws_launch_template" "node_template" {
+  name        = format("%s-%s-node-tpl", var.environment, var.name)
   description = var.launch_template_description
 
   ebs_optimized = var.ebs_optimized
   image_id      = var.ami_id
   # # Set on node group instead
-  # instance_type = var.launch_template_instance_type
   key_name               = var.key_name
   user_data              = var.before_cluster_joining_userdata
   vpc_security_group_ids = var.vpc_security_group_ids
@@ -179,8 +160,8 @@ resource "aws_launch_template" "this" {
     content {
       resource_type = tag_specifications.key
       tags = merge(
-        module.labels.tags,
-      { Name = module.labels.id })
+        var.tags,
+      { Name = format("%s-node-template", var.environment) })
     }
   }
 
@@ -189,15 +170,14 @@ resource "aws_launch_template" "this" {
     create_before_destroy = true
   }
 
-  tags = module.labels.tags
+  tags = var.tags
 }
 
 ################################################################################
 # Node Group
 ################################################################################
 
-resource "aws_eks_node_group" "this" {
-  count = var.enabled ? 1 : 0
+resource "aws_eks_node_group" "node_group" {
 
   # Required
   cluster_name  = var.cluster_name
@@ -211,7 +191,7 @@ resource "aws_eks_node_group" "this" {
   }
 
   # Optional
-  node_group_name = module.labels.id
+  node_group_name = format("%s-%s-nodes", var.environment, var.name)
 
   # https://docs.aws.amazon.com/eks/latest/userguide/launch-templates.html#launch-template-custom-ami
   ami_type        = var.ami_id != "" ? null : var.ami_type
@@ -227,8 +207,8 @@ resource "aws_eks_node_group" "this" {
   dynamic "launch_template" {
     for_each = var.enabled ? [1] : []
     content {
-      name    = try(aws_launch_template.this[0].name)
-      version = try(aws_launch_template.this[0].latest_version)
+      name    = try(aws_launch_template.node_template[0].name)
+      version = try(aws_launch_template.node_template[0].latest_version)
     }
   }
 
@@ -270,7 +250,7 @@ resource "aws_eks_node_group" "this" {
     ]
   }
 
-  tags = module.labels.tags
+  tags = var.tags
 }
 
 #-----------------------------------------------ASG-Schedule----------------------------------------------------------------
@@ -291,4 +271,27 @@ resource "aws_autoscaling_schedule" "this" {
   # [Minute] [Hour] [Day_of_Month] [Month_of_Year] [Day_of_Week]
   # Cron examples: https://crontab.guru/examples.html
   recurrence = lookup(each.value, "recurrence", null)
+}
+
+
+#-----------------------------------------------ASG-Schedule----------------------------------------------------------------
+
+resource "aws_cloudwatch_metric_alarm" "node_group_cpu_threshold" {
+  # One Alarm Per One Node Group
+
+  alarm_name                = format("%s-%s", var.environment, var.name)
+  comparison_operator       = "GreaterThanOrEqualToThreshold"
+  evaluation_periods        = "2"
+  metric_name               = "CPUUtilization"
+  namespace                 = "AWS/EC2"
+  period                    = "300"
+  statistic                 = "Average"
+  threshold                 = var.node_group_cpu_threshold
+  alarm_description         = "This metric monitors ec2 cpu utilization"
+  insufficient_data_actions = []
+
+  dimensions = {
+    AutoScalingGroupName = join("", flatten(each.value.resources[*].autoscaling_groups.*.name))
+  }
+  tags = var.tags
 }

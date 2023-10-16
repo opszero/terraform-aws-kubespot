@@ -348,31 +348,17 @@ variable "asg_nodes" {
   }
 }
 
-variable "node_groups" {
-  description = "Terraform object to create the EKS node groups"
-  default = {
-    # "t2.micro" = {
-    #   instance_types        = ["t2.micro"],
-    #   capacity_type         = "ON_DEMAND"
-    #   nodes_in_public_subnet = false,
-    #   subnet_ids = [],
-    #   node_disk_size        = 20,
-    #   node_desired_capacity = 1,
-    #   nodes_max_size        = 1,
-    #   nodes_min_size        = 1
-    #
-    # },
-    # "t3.small" = {
-    #   instance_types        = ["t3.small"],
-    #   capacity_type         = "SPOT"
-    #   nodes_in_public_subnet = true,
-    #   node_disk_size        = 20,
-    #   node_desired_capacity = 1,
-    #   nodes_max_size        = 1,
-    #   nodes_min_size        = 1
-    # },
 
-  }
+variable "node_group_defaults" {
+  type        = any
+  default     = {}
+  description = "Map of eks-managed node group definitions to create"
+}
+
+variable "node_groups" {
+  type        = any
+  default     = {}
+  description = "Map of eks-managed node group definitions to create"
 }
 
 variable "node_group_cpu_threshold" {

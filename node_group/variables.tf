@@ -6,34 +6,10 @@ variable "name" {
   description = "Name  (e.g. `app` or `cluster`)."
 }
 
-variable "repository" {
-  type        = string
-  default     = "https://github.com/clouddrove/terraform-aws-eks"
-  description = "Terraform current module repo"
-}
-
 variable "environment" {
   type        = string
   default     = ""
   description = "Environment (e.g. `prod`, `dev`, `staging`)."
-}
-
-variable "label_order" {
-  type        = list(any)
-  default     = []
-  description = "Label order, e.g. `name`,`application`."
-}
-
-variable "managedby" {
-  type        = string
-  default     = "hello@clouddrove.com"
-  description = "ManagedBy, eg 'CloudDrove' or 'AnmolNagpal'."
-}
-
-variable "attributes" {
-  type        = list(any)
-  default     = []
-  description = "Additional attributes (e.g. `1`)."
 }
 
 variable "tags" {
@@ -58,21 +34,21 @@ variable "cluster_name" {
 #-----------------------------------------------------------Launch_Template---------------------------------------------------------
 
 variable "launch_template_description" {
-  description = "Description of the launch template"
   type        = string
   default     = null
+  description = "Description of the launch template"
 }
 
 variable "ebs_optimized" {
-  description = "If true, the launched EC2 instance(s) will be EBS-optimized"
   type        = bool
   default     = null
+  description = "If true, the launched EC2 instance(s) will be EBS-optimized"
 }
 
 variable "ami_id" {
-  description = "The AMI from which to launch the instance. If not supplied, EKS will use its own default image"
   type        = string
   default     = ""
+  description = "The AMI from which to launch the instance. If not supplied, EKS will use its own default image"
 }
 
 variable "key_name" {
@@ -335,4 +311,11 @@ variable "schedules" {
   description = "Map of autoscaling group schedule to create"
   type        = map(any)
   default     = {}
+}
+
+#-----------------------------------------------ASG-Schedule----------------------------------------------------------------
+
+variable "node_group_cpu_threshold" {
+  default     = "70"
+  description = "The value of the CPU threshold"
 }
