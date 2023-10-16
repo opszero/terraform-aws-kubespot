@@ -1,9 +1,3 @@
-provider "aws" {
-  # TODO: Change this
-  profile = "opszero"
-  # TODO: Change this
-  region = "us-west-2"
-}
 
 locals {
   environment_name = "appcensus-dev"
@@ -11,8 +5,7 @@ locals {
 }
 
 provider "aws" {
-  profile = local.profile
-  region  = "us-east-1"
+  region = "us-east-1"
 }
 
 provider "helm" {
@@ -26,7 +19,7 @@ provider "kubernetes" {
 }
 
 module "opszero-eks" {
-  source = "github.com/opszero/terraform-aws-kubespot"
+  source = "./../../"
 
   aws_profile = local.profile
   zones = [
@@ -81,14 +74,14 @@ module "opszero-eks" {
   vpc_flow_logs_enabled = false
   efs_enabled           = false
 }
-
-module "helm-common" {
-  source             = "github.com/opszero/terraform-helm-kubespot"
-  cert_manager_email = "ops@opszero.com"
-
-  nginx_min_replicas = 1
-  nginx_max_replicas = 3
-}
+#
+#module "helm-common" {
+#  source             = "github.com/opszero/terraform-helm-kubespot"
+#  cert_manager_email = "ops@opszero.com"
+#
+#  nginx_min_replicas = 1
+#  nginx_max_replicas = 3
+#}
 
 
 # resource "aws_ecr_repository" "opszero" {
