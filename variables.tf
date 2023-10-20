@@ -1,7 +1,7 @@
-variable "aws_profile" {
-  type        = string
-  description = "AWS profile to use"
-}
+#variable "aws_profile" {
+#  type        = string
+#  description = "AWS profile to use"
+#}
 
 variable "environment_name" {
   type        = string
@@ -353,6 +353,12 @@ variable "node_group_defaults" {
   type        = any
   default     = {}
   description = "Map of eks-managed node group definitions to create"
+}
+
+variable "iam_role_additional_policies" {
+  description = "Additional policies to be added to the IAM role"
+  type        = map(string)
+  default     = {}
 }
 
 variable "node_groups" {

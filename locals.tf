@@ -6,6 +6,14 @@ locals {
   tags = merge(var.tags, {
     "KubespotEnvironment" = var.environment_name
   })
+  metadata_options = {
+    http_endpoint               = "enabled"
+    http_tokens                 = "required"
+    http_put_response_hop_limit = 2
+  }
+
+  aws_policy_prefix             = format("arn:%s:iam::aws:policy", join("", data.aws_partition.current.*.partition))
+
 }
 
 data "aws_caller_identity" "current" {}

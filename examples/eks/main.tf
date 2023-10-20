@@ -21,7 +21,7 @@ provider "kubernetes" {
 module "opszero-eks" {
   source = "./../../"
 
-  aws_profile = local.profile
+  #aws_profile = local.profile
   zones = [
     "us-east-1a",
     "us-east-1b"
@@ -52,17 +52,32 @@ module "opszero-eks" {
     "10.3.192.0/18",
   ]
 
+
+  node_group_defaults = {
+    block_device_mappings = {
+      xvda = {
+        device_name = "/dev/xvda"
+        ebs = {
+          volume_size = 16
+          volume_type = "gp3"
+          iops        = 3000
+          throughput  = 150
+          encrypted   = true
+        }
+      }
+    }
+  }
+
+
   node_groups = {
     "t3a-medium-spot" = {
-      instance_types = [
-        "t3a.medium",
-      ]
+
+      instance_types = ["t3a.medium","t3.medium" ]
       capacity_type          = "SPOT"
-      nodes_in_public_subnet = false
-      node_disk_size         = 20,
-      node_desired_capacity  = 3,
-      nodes_max_size         = 3,
-      nodes_min_size         = 3
+      min_size              = 1
+      max_size              = 1
+      desired_size           = 1
+      nodes_min_size         = 1
     }
   }
 

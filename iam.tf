@@ -397,3 +397,60 @@ resource "aws_iam_policy" "ebs" {
 }
 EOF
 }
+
+
+#-------------------------------------------------------IAM FOR node Group----------------------------------------------
+
+#Module      : IAM ROLE
+#Description : Provides an IAM role.
+resource "aws_iam_role" "node_groups" {
+  name               = format("%s-node_group", var.environment_name)
+  assume_role_policy = data.aws_iam_policy_document.node_group.json
+  tags               = local.tags
+}
+
+#Module      : IAM ROLE POLICY ATTACHMENT CNI
+#Description : Attaches a Managed IAM Policy to an IAM role.
+resource "aws_iam_role_policy_attachment" "amazon_eks_cni_policy" {
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy"
+  role       = aws_iam_role.node_groups.name
+}
+
+resource "aws_iam_role_policy_attachment" "additional" {
+  for_each = var.iam_role_additional_policies
+
+  policy_arn = each.value
+  role       = aws_iam_role.node_groups.name
+}
+
+#Module      : IAM ROLE POLICY ATTACHMENT EC2 CONTAINER REGISTRY READ ONLY
+#Description : Attaches a Managed IAM Policy to an IAM role.
+resource "aws_iam_role_policy_attachment" "amazon_ec2_container_registry_read_only" {
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
+  role       = aws_iam_role.node_groups.name
+}
+
+resource "aws_iam_role_policy_attachment" "amazon_eks_worker_node_policy" {
+  policy_arn = format("%s/%s", local.aws_policy_prefix, "AmazonEKSWorkerNodePolicy")
+  role       = aws_iam_role.node_groups.name
+}
+
+data "aws_iam_policy_document" "node_group" {
+
+  statement {
+    effect  = "Allow"
+    actions = ["sts:AssumeRole"]
+
+    principals {
+      type        = "Service"
+      identifiers = ["ec2.amazonaws.com"]
+    }
+  }
+}
+
+#Module      : IAM INSTANCE PROFILE
+#Description : Provides an IAM instance profile.
+resource "aws_iam_instance_profile" "default" {
+  name  = format("%s-instance-profile", var.environment_name)
+  role  = aws_iam_role.node_groups.name
+}

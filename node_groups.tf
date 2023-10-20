@@ -1,4 +1,4 @@
-module "eks_managed_node_group" {
+module "node_groups" {
   source = "./node_group"
 
   for_each = var.node_groups
@@ -7,7 +7,7 @@ module "eks_managed_node_group" {
   cluster_version = var.cluster_version
   vpc_security_group_ids = compact(
     concat(
-      aws_eks_cluster.cluster.vpc_config.0.cluster_security_group_id
+      aws_eks_cluster.cluster.vpc_config.*.cluster_security_group_id
       #var.nodes_additional_security_group_ids
 
     )
@@ -21,12 +21,12 @@ module "eks_managed_node_group" {
   max_size     = try(each.value.max_size, var.node_group_defaults.max_size, 1)
   desired_size = try(each.value.desired_size, var.node_group_defaults.desired_size, 1)
 
-  ami_id              = try(each.value.ami_id, var.node_group_defaults.ami_id, "BOTTLEROCKET_x86_64")
+  ami_id              = try(each.value.ami_id, var.node_group_defaults.ami_id, "")
   ami_type            = try(each.value.ami_type, var.node_group_defaults.ami_type, null)
   ami_release_version = try(each.value.ami_release_version, var.node_group_defaults.ami_release_version, null)
 
   capacity_type        = try(each.value.capacity_type, var.node_group_defaults.capacity_type, null)
-  disk_size            = try(each.value.disk_size, var.node_group_defaults.disk_size, 20)
+  disk_size            = try(each.value.disk_size, var.node_group_defaults.disk_size, null)
   force_update_version = try(each.value.force_update_version, var.node_group_defaults.force_update_version, null)
   instance_types       = try(each.value.instance_types, var.node_group_defaults.instance_types, ["t2.micro"])
   labels               = try(each.value.labels, var.node_group_defaults.labels, null)
@@ -71,7 +71,7 @@ module "eks_managed_node_group" {
   placement                          = try(each.value.placement, var.node_group_defaults.placement, null)
 
   # IAM role
-  iam_role_arn = try(each.value.iam_role_arn, var.node_group_defaults.iam_role_arn, null)
+  iam_role_arn = join("", aws_iam_role.node_groups.*.arn)
 
   tags = merge(var.tags,
     try(each.value.tags, {
@@ -81,25 +81,3 @@ module "eks_managed_node_group" {
 }
 
 
-
-
-resource "aws_cloudwatch_metric_alarm" "node_group_cpu_threshold" {
-  # One Alarm Per One Node Group
-  for_each = aws_eks_node_group.node_group
-
-  alarm_name                = "${var.environment_name}-${each.value.node_group_name}"
-  comparison_operator       = "GreaterThanOrEqualToThreshold"
-  evaluation_periods        = "2"
-  metric_name               = "CPUUtilization"
-  namespace                 = "AWS/EC2"
-  period                    = "300"
-  statistic                 = "Average"
-  threshold                 = var.node_group_cpu_threshold
-  alarm_description         = "This metric monitors ec2 cpu utilization"
-  insufficient_data_actions = []
-
-  dimensions = {
-    AutoScalingGroupName = join("", flatten(each.value.resources[*].autoscaling_groups.*.name))
-  }
-  tags = var.tags
-}

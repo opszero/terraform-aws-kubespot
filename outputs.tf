@@ -34,9 +34,9 @@ output "eks_cluster" {
   value = aws_eks_cluster.cluster
 }
 
-output "eks_cluster_token" {
-  value = data.aws_eks_cluster_auth.cluster.token
-}
+#output "eks_cluster_token" {
+#  value = data.aws_eks_cluster_auth.cluster.token
+#}
 
 output "nat_gateway_ids" {
   value = aws_nat_gateway.gw.*.id

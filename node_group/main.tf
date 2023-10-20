@@ -38,7 +38,7 @@ resource "aws_launch_template" "node_template" {
           iops                  = lookup(ebs.value, "iops", null)
           throughput            = lookup(ebs.value, "throughput", null)
           snapshot_id           = lookup(ebs.value, "snapshot_id", null)
-          volume_size           = lookup(ebs.value, "volume_size", null)
+          volume_size           = lookup(ebs.value, "volume_size", 20)
           volume_type           = lookup(ebs.value, "volume_type", null)
         }
       }
@@ -199,7 +199,6 @@ resource "aws_eks_node_group" "node_group" {
   version         = var.ami_id != "" ? null : var.cluster_version
 
   capacity_type        = var.capacity_type
-  disk_size            = var.disk_size
   force_update_version = var.force_update_version
   instance_types       = var.instance_types
   labels               = var.labels
@@ -207,8 +206,8 @@ resource "aws_eks_node_group" "node_group" {
   dynamic "launch_template" {
     for_each = var.enabled ? [1] : []
     content {
-      name    = try(aws_launch_template.node_template[0].name)
-      version = try(aws_launch_template.node_template[0].latest_version)
+      name    = try(aws_launch_template.node_template.name)
+      version = try(aws_launch_template.node_template.latest_version)
     }
   }
 
@@ -250,48 +249,5 @@ resource "aws_eks_node_group" "node_group" {
     ]
   }
 
-  tags = var.tags
-}
-
-#-----------------------------------------------ASG-Schedule----------------------------------------------------------------
-
-resource "aws_autoscaling_schedule" "this" {
-  for_each = var.enabled && var.create_schedule ? var.schedules : {}
-
-  scheduled_action_name  = each.key
-  autoscaling_group_name = aws_eks_node_group.this[0].resources[0].autoscaling_groups[0].name
-
-  min_size         = lookup(each.value, "min_size", null)
-  max_size         = lookup(each.value, "max_size", null)
-  desired_capacity = lookup(each.value, "desired_size", null)
-  start_time       = lookup(each.value, "start_time", null)
-  end_time         = lookup(each.value, "end_time", null)
-  time_zone        = lookup(each.value, "time_zone", null)
-
-  # [Minute] [Hour] [Day_of_Month] [Month_of_Year] [Day_of_Week]
-  # Cron examples: https://crontab.guru/examples.html
-  recurrence = lookup(each.value, "recurrence", null)
-}
-
-
-#-----------------------------------------------ASG-Schedule----------------------------------------------------------------
-
-resource "aws_cloudwatch_metric_alarm" "node_group_cpu_threshold" {
-  # One Alarm Per One Node Group
-
-  alarm_name                = format("%s-%s", var.environment, var.name)
-  comparison_operator       = "GreaterThanOrEqualToThreshold"
-  evaluation_periods        = "2"
-  metric_name               = "CPUUtilization"
-  namespace                 = "AWS/EC2"
-  period                    = "300"
-  statistic                 = "Average"
-  threshold                 = var.node_group_cpu_threshold
-  alarm_description         = "This metric monitors ec2 cpu utilization"
-  insufficient_data_actions = []
-
-  dimensions = {
-    AutoScalingGroupName = join("", flatten(each.value.resources[*].autoscaling_groups.*.name))
-  }
   tags = var.tags
 }
