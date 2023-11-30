@@ -1,8 +1,3 @@
-variable "aws_profile" {
-  type        = string
-  description = "AWS profile to use"
-}
-
 variable "environment_name" {
   type        = string
   description = "Name of the environment to create AWS resources"

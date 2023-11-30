@@ -2,16 +2,6 @@ data "aws_iam_policy" "ssm_managed_instance" {
   arn = "arn:${local.partition}:iam::aws:policy/AmazonSSMManagedInstanceCore"
 }
 
-provider "aws" {
-  profile = var.aws_profile
-  region  = "us-east-1"
-  alias   = "virginia"
-}
-
-data "aws_ecrpublic_authorization_token" "token" {
-  provider = aws.virginia
-}
-
 module "karpenter" {
   count = var.karpenter_enabled ? 1 : 0
 
@@ -38,12 +28,12 @@ resource "helm_release" "karpenter" {
   namespace        = "karpenter"
   create_namespace = true
 
-  name                = "karpenter"
-  repository          = "oci://public.ecr.aws/karpenter"
-  repository_username = data.aws_ecrpublic_authorization_token.token.user_name
-  repository_password = data.aws_ecrpublic_authorization_token.token.password
-  chart               = "karpenter"
-  version             = var.karpenter_version
+  name       = "karpenter"
+  repository = "oci://public.ecr.aws/karpenter"
+  # repository_username = data.aws_ecrpublic_authorization_token.token.user_name
+  # repository_password = data.aws_ecrpublic_authorization_token.token.password
+  chart   = "karpenter"
+  version = var.karpenter_version
 
   set {
     name  = "settings.aws.clusterName"
@@ -101,35 +91,6 @@ resource "null_resource" "karpenter_awsnodetemplates_crd" {
     helm_release.karpenter
   ]
 }
-
-resource "aws_iam_policy" "node_role_karpenter" {
-  count       = var.karpenter_enabled ? 1 : 0
-  name        = "${var.environment_name}-karpenter-policy"
-  description = "Karpenter delete launch template"
-
-  policy = <<EOF
-{
-    "Version": "2012-10-17",
-    "Statement": [
-        {
-            "Effect": "Allow",
-            "Action": [
-                "ec2:DeleteLaunchTemplate"
-            ],
-            "Resource": "*"
-        }
-    ]
-}
-EOF
-}
-
-
-resource "aws_iam_role_policy_attachment" "node_role_karpenter" {
-  count      = var.karpenter_enabled ? 1 : 0
-  policy_arn = aws_iam_policy.node_role_karpenter[0].arn
-  role       = aws_iam_role.node.name
-}
-
 
 # resource "null_resource" "karpenter_crd" {
 #   count            = var.karpenter_enabled ? 1 : 0

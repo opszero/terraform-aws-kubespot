@@ -22,7 +22,7 @@ module "iam_assumable_role_efs_csi" {
 }
 
 resource "kubernetes_service_account" "efs_csi_controller_sa" {
-  count            = var.efs_enabled ? 1 : 0
+  count = var.efs_enabled ? 1 : 0
 
   metadata {
     name      = "efs-csi-controller-sa"
@@ -39,7 +39,7 @@ resource "kubernetes_service_account" "efs_csi_controller_sa" {
 }
 
 resource "kubernetes_service_account" "efs_csi_node_sa" {
-  count            = var.efs_enabled ? 1 : 0
+  count = var.efs_enabled ? 1 : 0
 
   metadata {
     name      = "efs-csi-node-sa"
@@ -50,7 +50,7 @@ resource "kubernetes_service_account" "efs_csi_node_sa" {
     }
 
     annotations = {
-      "eks.amazonaws.com/role-arn" =  module.iam_assumable_role_efs_csi[0].iam_role_arn
+      "eks.amazonaws.com/role-arn" = module.iam_assumable_role_efs_csi[0].iam_role_arn
     }
   }
 }
