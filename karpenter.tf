@@ -2,16 +2,6 @@ data "aws_iam_policy" "ssm_managed_instance" {
   arn = "arn:${local.partition}:iam::aws:policy/AmazonSSMManagedInstanceCore"
 }
 
-# provider "aws" {
-#   profile = var.aws_profile
-#   region  = "us-east-1"
-#   alias   = "virginia"
-# }
-
-# data "aws_ecrpublic_authorization_token" "token" {
-#   provider = aws.virginia
-# }
-
 module "karpenter" {
   count = var.karpenter_enabled ? 1 : 0
 
