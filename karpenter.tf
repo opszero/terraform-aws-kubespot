@@ -114,7 +114,8 @@ resource "aws_iam_policy" "node_role_karpenter" {
         {
             "Effect": "Allow",
             "Action": [
-                "ec2:DeleteLaunchTemplate"
+                "ec2:DeleteLaunchTemplate",
+                "ec2:DescribeInstanceTypes"
             ],
             "Resource": "*"
         }
