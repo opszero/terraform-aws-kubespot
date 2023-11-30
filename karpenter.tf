@@ -2,15 +2,15 @@ data "aws_iam_policy" "ssm_managed_instance" {
   arn = "arn:${local.partition}:iam::aws:policy/AmazonSSMManagedInstanceCore"
 }
 
-provider "aws" {
-  profile = var.aws_profile
-  region  = "us-east-1"
-  alias   = "virginia"
-}
+# provider "aws" {
+#   profile = var.aws_profile
+#   region  = "us-east-1"
+#   alias   = "virginia"
+# }
 
-data "aws_ecrpublic_authorization_token" "token" {
-  provider = aws.virginia
-}
+# data "aws_ecrpublic_authorization_token" "token" {
+#   provider = aws.virginia
+# }
 
 module "karpenter" {
   count = var.karpenter_enabled ? 1 : 0
@@ -38,12 +38,12 @@ resource "helm_release" "karpenter" {
   namespace        = "karpenter"
   create_namespace = true
 
-  name                = "karpenter"
-  repository          = "oci://public.ecr.aws/karpenter"
-  repository_username = data.aws_ecrpublic_authorization_token.token.user_name
-  repository_password = data.aws_ecrpublic_authorization_token.token.password
-  chart               = "karpenter"
-  version             = var.karpenter_version
+  name       = "karpenter"
+  repository = "oci://public.ecr.aws/karpenter"
+  # repository_username = data.aws_ecrpublic_authorization_token.token.user_name
+  # repository_password = data.aws_ecrpublic_authorization_token.token.password
+  chart   = "karpenter"
+  version = var.karpenter_version
 
   set {
     name  = "settings.aws.clusterName"
