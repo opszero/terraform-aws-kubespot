@@ -402,3 +402,16 @@ variable "calico_version" {
   default     = "v3.26.1"
   description = "The version of the calico helm chart"
 }
+
+variable "eks_pod_logs_cloudwatch" {
+  default     = false
+  type        = bool
+  description = "Stream EKS pod logs to cloudwatch"
+}
+
+variable "eks_pod_logs_cloudwatch_fluent_bit_version" {
+  default = "1.3.19"
+  type    = string
+  # https://github.com/aws-samples/amazon-cloudwatch-container-insights/releases
+  description = "Fluent bit version released by cloudwatch"
+}
