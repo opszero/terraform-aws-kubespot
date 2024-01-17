@@ -15,12 +15,12 @@ resource "kubernetes_config_map" "fluent_bit_cluster_info" {
   }
 
   data = {
-    "cluster.name" = "cluster-name"
-    "http.server"  = On
+    "cluster.name" = aws_eks_cluster.cluster.name
+    "http.server"  = "On"
     "http.port"    = 2020
-    "read.head"    = Off
-    "read.tail"    = On
-    "logs.region"  = "cluster-region"
+    "read.head"    = "Off"
+    "read.tail"    = "On"
+    "logs.region"  = data.aws_region.current.name
   }
 }
 
