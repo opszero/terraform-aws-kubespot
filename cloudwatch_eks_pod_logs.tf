@@ -15,12 +15,12 @@ resource "kubernetes_config_map" "fluent_bit_cluster_info" {
   }
 
   data = {
-    "cluster.name" = "cluster-name"
-    "http.server"  = On
+    "cluster.name" = aws_eks_cluster.cluster.name
+    "http.server"  = "On"
     "http.port"    = 2020
-    "read.head"    = Off
-    "read.tail"    = On
-    "logs.region"  = "cluster-region"
+    "read.head"    = "Off"
+    "read.tail"    = "On"
+    "logs.region"  = data.aws_region.current.name
   }
 }
 
@@ -37,7 +37,7 @@ resource "null_resource" "eks_pod_cloudwatch" {
   }
 
   provisioner "local-exec" {
-    command = "kubectl replace -f https://raw.githubusercontent.com/aws-samples/amazon-cloudwatch-container-insights/k8s/${local.eks_pod_logs_cloudwatch_fluent_bit_version}/k8s-deployment-manifest-templates/deployment-mode/daemonset/container-insights-monitoring/fluent-bit/fluent-bit.yaml"
+    command = "kubectl apply -f https://raw.githubusercontent.com/aws-samples/amazon-cloudwatch-container-insights/k8s/${local.eks_pod_logs_cloudwatch_fluent_bit_version}/k8s-deployment-manifest-templates/deployment-mode/daemonset/container-insights-monitoring/fluent-bit/fluent-bit.yaml"
   }
 
   depends_on = [
