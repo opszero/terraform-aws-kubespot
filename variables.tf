@@ -402,3 +402,10 @@ variable "calico_version" {
   default     = "v3.26.1"
   description = "The version of the calico helm chart"
 }
+
+variable "enable_pods_logs_to_cloudwatch" {
+  default     = false
+  type        = bool
+  description = "Stream EKS pod logs to cloudwatch"
+}
+
