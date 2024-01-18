@@ -35,7 +35,7 @@ resource "aws_eks_node_group" "node_group" {
     for_each = lookup(each.value, "taints", [])
     content {
       key    = taint.value["key"]
-      value  = taint.value["value"]
+      value  = lookup(taint.value, "value", null)
       effect = taint.value["effect"]
     }
   }
