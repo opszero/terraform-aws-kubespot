@@ -9,13 +9,25 @@ variable "cluster_version" {
 }
 
 variable "cloudwatch_retention_in_days" {
-  default     = "30"
+  default     = 30
   description = "How long to keep CloudWatch logs in days"
 }
 
 variable "aws_load_balancer_controller_enabled" {
   default     = true
   description = "Enable ALB controller by default"
+}
+
+variable "cluster_encryption_config" {
+  type        = list(any)
+  default     = ["secrets"]
+  description = "Cluster Encryption Config Resources to encrypt, e.g. ['secrets']"
+}
+
+variable "cluster_kms_policy" {
+  type        = string
+  default     = null
+  description = "Cluster Encryption Config KMS Key Resource argument - key policy"
 }
 
 variable "cluster_logging" {

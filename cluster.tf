@@ -1,3 +1,19 @@
+locals {
+  # Encryption
+  cluster_encryption_config = {
+    resources        = var.cluster_encryption_config
+    provider_key_arn = aws_kms_key.cluster_secrets.arn
+  }
+}
+
+resource "aws_cloudwatch_log_group" "cluster" {
+  name              = "/aws/eks/${var.environment_name}/cluster"
+  retention_in_days = var.cloudwatch_retention_in_days
+  tags              = local.tags
+  kms_key_id        = aws_kms_key.cloudwatch_log.arn
+}
+
+
 resource "aws_eks_cluster" "cluster" {
   name     = var.environment_name
   role_arn = aws_iam_role.cluster.arn
@@ -17,6 +33,15 @@ resource "aws_eks_cluster" "cluster" {
     ])
   }
 
+  dynamic "encryption_config" {
+    for_each = [local.cluster_encryption_config]
+    content {
+      resources = lookup(encryption_config.value, "resources")
+      provider {
+        key_arn = lookup(encryption_config.value, "provider_key_arn")
+      }
+    }
+  }
   enabled_cluster_log_types = var.cluster_logging
 
   depends_on = [
