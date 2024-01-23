@@ -31,6 +31,15 @@ resource "aws_eks_node_group" "node_group" {
     max_unavailable_percentage = lookup(each.value, "update_unavailable_percent", 50)
   }
 
+  dynamic "taint" {
+    for_each = lookup(each.value, "taints", [])
+    content {
+      key    = taint.value["key"]
+      value  = lookup(taint.value, "value", null)
+      effect = taint.value["effect"]
+    }
+  }
+
   tags = merge(
     local.tags,
     {
