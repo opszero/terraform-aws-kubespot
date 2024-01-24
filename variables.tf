@@ -13,6 +13,12 @@ variable "cloudwatch_retention_in_days" {
   description = "How long to keep CloudWatch logs in days"
 }
 
+variable "cloudwatch_pod_logs_enabled" {
+  default     = false
+  type        = bool
+  description = "Stream EKS pod logs to cloudwatch"
+}
+
 variable "aws_load_balancer_controller_enabled" {
   default     = true
   description = "Enable ALB controller by default"
@@ -415,9 +421,5 @@ variable "calico_version" {
   description = "The version of the calico helm chart"
 }
 
-variable "enable_pods_logs_to_cloudwatch" {
-  default     = false
-  type        = bool
-  description = "Stream EKS pod logs to cloudwatch"
-}
+
 
