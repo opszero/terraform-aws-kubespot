@@ -423,3 +423,16 @@ variable "calico_version" {
 
 
 
+variable "access_policies" {
+  # [
+  #   {
+  #     principal_arn = "arn:aws:iam::111111111111:role/github-deployer"
+  #     policy_arn    = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSEditPolicy"
+  #     access_scope_type = {
+  #       type = "cluster"
+  #     }
+  #   }
+  # ]
+  description = "access policies"
+  default     = []
+}
