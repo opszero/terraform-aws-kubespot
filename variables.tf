@@ -4,7 +4,7 @@ variable "environment_name" {
 }
 
 variable "cluster_version" {
-  default     = "1.26"
+  default     = "1.29"
   description = "Desired Kubernetes master version"
 }
 
