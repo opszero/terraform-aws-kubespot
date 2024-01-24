@@ -6,14 +6,6 @@ locals {
   }
 }
 
-resource "aws_cloudwatch_log_group" "cluster" {
-  name              = "/aws/eks/${var.environment_name}/cluster"
-  retention_in_days = var.cloudwatch_retention_in_days
-  tags              = local.tags
-  kms_key_id        = aws_kms_key.cloudwatch_log.arn
-}
-
-
 resource "aws_eks_cluster" "cluster" {
   name     = var.environment_name
   role_arn = aws_iam_role.cluster.arn
