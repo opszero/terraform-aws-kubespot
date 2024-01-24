@@ -7,7 +7,7 @@ resource "aws_eks_access_policy_association" "policies" {
     for_each = var.access_policies[count.index].access_scope
     content {
       type       = lookup(access_scope, "type", "cluster")
-      namespaces = lookup(access_scope, "namespaces", ["default"])
+      namespaces = lookup(access_scope, "namespaces", null)
     }
   }
 }
