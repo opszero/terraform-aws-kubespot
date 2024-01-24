@@ -10,4 +10,12 @@ resource "aws_eks_access_policy_association" "policies" {
       namespaces = lookup(access_scope, "namespaces", null)
     }
   }
+
+  depends_on = [aws_eks_access_entry.entries]
+}
+
+resource "aws_eks_access_entry" "entries" {
+  count         = length(var.access_policies)
+  cluster_name  = aws_eks_cluster.cluster.name
+  principal_arn = var.access_policies[count.index].principal_arn
 }
