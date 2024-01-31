@@ -52,60 +52,20 @@ resource "helm_release" "karpenter" {
     name  = "settings.aws.defaultInstanceProfile"
     value = module.karpenter[0].instance_profile_name
   }
-}
-
-data "http" "karpenter_crd" {
-  url = "https://raw.githubusercontent.com/aws/karpenter/${var.karpenter_version}/charts/karpenter/crds/karpenter.sh_provisioners.yaml"
-}
-
-resource "null_resource" "karpenter_crd" {
-  count = var.karpenter_enabled ? 1 : 0
-
-  triggers = {
-    manifest_sha1 = "${sha1("${data.http.karpenter_crd.body}")}"
-  }
-
-  provisioner "local-exec" {
-    command = [
-      "kubectl apply -f https://raw.githubusercontent.com/aws/karpenter-provider-aws/${var.karpenter_version}/pkg/apis/crds/karpenter.sh_nodepools.yaml",
-      "kubectl apply -f https://raw.githubusercontent.com/aws/karpenter-provider-aws/${var.karpenter_version}/pkg/apis/crds/karpenter.sh_nodeclaims.yaml",
-      "kubectl apply -f https://raw.githubusercontent.com/aws/karpenter-provider-aws/${var.karpenter_version}/pkg/apis/crds/karpenter.k8s.aws_ec2nodeclasses.yaml",
-    ]
-  }
 
   depends_on = [
-    helm_release.karpenter
+    helm_release.karpenter_crd
   ]
 }
 
-resource "null_resource" "karpenter_awsnodetemplates_crd" {
+resource "helm_release" "karpenter_crd" {
   count = var.karpenter_enabled ? 1 : 0
 
-  triggers = {
-    manifest_sha1 = "${sha1("${data.http.karpenter_crd.body}")}"
-  }
+  namespace        = "karpenter"
+  create_namespace = true
 
-  provisioner "local-exec" {
-    command = "kubectl replace -f https://raw.githubusercontent.com/aws/karpenter/${var.karpenter_version}/pkg/apis/crds/karpenter.k8s.aws_awsnodetemplates.yaml"
-  }
-
-  depends_on = [
-    helm_release.karpenter
-  ]
+  name       = "karpenter-crd"
+  repository = "oci://public.ecr.aws/karpenter"
+  chart      = "karpenter-crd"
+  version    = var.karpenter_version
 }
-
-# resource "null_resource" "karpenter_crd" {
-#   count            = var.karpenter_enabled ? 1 : 0
-
-#   triggers = {
-#     manifest_sha1 = "${sha1("${data.http.karpenter_crd.body}")}"
-#   }
-
-#   provisioner "local-exec" {
-#     command = "aws iam create-service-linked-role --aws-service-name spot.amazonaws.com"
-#   }
-
-#   depends_on = [
-#     helm_release.karpenter
-#   ]
-# }
