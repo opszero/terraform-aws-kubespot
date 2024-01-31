@@ -422,7 +422,7 @@ variable "calico_version" {
 }
 
 
-
+# aws --profile opszero eks list-access-policies
 variable "access_policies" {
   # [
   #   {

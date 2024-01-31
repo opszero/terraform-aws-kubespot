@@ -66,7 +66,11 @@ resource "null_resource" "karpenter_crd" {
   }
 
   provisioner "local-exec" {
-    command = "kubectl replace -f https://raw.githubusercontent.com/aws/karpenter/${var.karpenter_version}/pkg/apis/crds/karpenter.sh_provisioners.yaml"
+    command = [
+      "kubectl apply -f https://raw.githubusercontent.com/aws/karpenter-provider-aws/${var.karpenter_version}/pkg/apis/crds/karpenter.sh_nodepools.yaml",
+      "kubectl apply -f https://raw.githubusercontent.com/aws/karpenter-provider-aws/${var.karpenter_version}/pkg/apis/crds/karpenter.sh_nodeclaims.yaml",
+      "kubectl apply -f https://raw.githubusercontent.com/aws/karpenter-provider-aws/${var.karpenter_version}/pkg/apis/crds/karpenter.k8s.aws_ec2nodeclasses.yaml",
+    ]
   }
 
   depends_on = [
