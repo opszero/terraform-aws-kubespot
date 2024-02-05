@@ -25,10 +25,6 @@ module "karpenter" {
   queue_name              = "${var.environment_name}-spot-termination"
 
   tags = local.tags
-
-  depends_on = [
-    aws_eks_cluster.cluster
-  ]
 }
 
 resource "helm_release" "karpenter" {
