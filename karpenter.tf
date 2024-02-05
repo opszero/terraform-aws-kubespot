@@ -58,19 +58,19 @@ resource "helm_release" "karpenter" {
     value = module.karpenter[0].instance_profile_name
   }
 
-  depends_on = [
-    helm_release.karpenter_crd
-  ]
+  # depends_on = [
+  #   helm_release.karpenter_crd
+  # ]
 }
 
-resource "helm_release" "karpenter_crd" {
-  count = var.karpenter_enabled ? 1 : 0
+# resource "helm_release" "karpenter_crd" {
+#   count = var.karpenter_enabled ? 1 : 0
 
-  namespace        = "karpenter"
-  create_namespace = true
+#   namespace        = "karpenter"
+#   create_namespace = true
 
-  name       = "karpenter-crd"
-  repository = "oci://public.ecr.aws/karpenter"
-  chart      = "karpenter-crd"
-  version    = var.karpenter_version
-}
+#   name       = "karpenter-crd"
+#   repository = "oci://public.ecr.aws/karpenter"
+#   chart      = "karpenter-crd"
+#   version    = var.karpenter_version
+# }
