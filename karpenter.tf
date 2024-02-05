@@ -54,11 +54,6 @@ resource "helm_release" "karpenter" {
     value = module.karpenter[0].iam_role_arn
   }
 
-  set {
-    name  = "settings.aws.defaultInstanceProfile"
-    value = module.karpenter[0].instance_profile_name
-  }
-
   depends_on = [
     helm_release.karpenter_crd
   ]
