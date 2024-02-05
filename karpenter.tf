@@ -50,7 +50,7 @@ resource "helm_release" "karpenter" {
 
   set {
     name  = "serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn"
-    value = module.karpenter[0].irsa_arn
+    value = module.karpenter[0].iam_role_arn
   }
 
   set {
