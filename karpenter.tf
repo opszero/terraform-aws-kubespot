@@ -23,6 +23,7 @@ module "karpenter" {
   create_instance_profile = true
 
   enable_spot_termination = false
+  queue_name              = "${var.environment_name}-spot-termination"
 
   tags = local.tags
 }
