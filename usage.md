@@ -15,14 +15,12 @@ technical requirements for compliance while being able to deploy software fast.
 Kubespot is a light wrapper around AWS EKS. The primary changes included in
 Kubespot are:
 
-* Locked down with security groups, private subnets and other compliance related requirements.
-* Locked down RDS and Elasticache if needed.
-* Users have a single Load Balancer through which all requests go through to reduce costs.
-* [KEDA](https://keda.sh/) is used for scaling on event metrics such as queue sizes, user requests, CPU, memory or anything else Keda supports.
-* [Karpenter](https://karpenter.sh/) is used for autoscaling.
-* Instance are lockdown with encryption, and a regular node cycle rate is set.
-
-
+- Locked down with security groups, private subnets and other compliance related requirements.
+- Locked down RDS and Elasticache if needed.
+- Users have a single Load Balancer through which all requests go through to reduce costs.
+- [KEDA](https://keda.sh/) is used for scaling on event metrics such as queue sizes, user requests, CPU, memory or anything else Keda supports.
+- [Karpenter](https://karpenter.sh/) is used for autoscaling.
+- Instance are lockdown with encryption, and a regular node cycle rate is set.
 
 # Tools & Setup
 
@@ -98,6 +96,14 @@ spec:
   ttlSecondsUntilExpired: 86400 # How long to keep the node before cycling
 ```
 
+# Knative
+
+```
+brew install knative/client/kn
+brew tap knative-extensions/kn-plugins
+brew install func
+```
+
 # Cluster Setup
 
 ```
@@ -107,11 +113,11 @@ aws iam create-service-linked-role --aws-service-name spot.amazonaws.com
 # CIS Kubernetes Benchmark
 
 Note: PodSecurityPolicy (PSP) is deprecated and PodSecurity admission controller
-is the new standard. The CIS Benchmark is still using PSP.  We have converted
+is the new standard. The CIS Benchmark is still using PSP. We have converted
 the PSP to the [equivalent new standard](https://kubernetes.io/docs/tasks/configure-pod-container/migrate-from-psp/).
 
 | Control | Recommendation                                                                                           | Level | Status    | Description                                                                                                  |
-|---------|----------------------------------------------------------------------------------------------------------|-------|-----------|--------------------------------------------------------------------------------------------------------------|
+| ------- | -------------------------------------------------------------------------------------------------------- | ----- | --------- | ------------------------------------------------------------------------------------------------------------ |
 | **1**   | **Control Plane Components**                                                                             |       |           |                                                                                                              |
 | **2**   | **Control Plane Configuration**                                                                          |       |           |                                                                                                              |
 | **2.1** | **Logging**                                                                                              |       |           |                                                                                                              |
@@ -175,7 +181,7 @@ the PSP to the [equivalent new standard](https://kubernetes.io/docs/tasks/config
 | **5.2** | **Identity and Access Management (IAM)**                                                                 |       |           |                                                                                                              |
 | 5.2.1   | Prefer using dedicated EKS Service Accounts                                                              | L1    | Active    | [terraform-aws-mrmgr](https://github.com/opszero/terraform-aws-mrmgr) with OIDC                              |
 | **5.3** | **AWS EKS Key Management Service**                                                                       |       |           |                                                                                                              |
-| 5.3.1   | Ensure Kubernetes Secrets are encrypted using Customer Master Keys (CMKs) managed in AWS KMS             | L1    | Remediate |                                                                                                              |
+| 5.3.1   | Ensure Kubernetes Secrets are encrypted using Customer Master Keys (CMKs) managed in AWS KMS             | L1    | Active    |                                                                                                              |
 | **5.4** | **Cluster Networking**                                                                                   |       |           |                                                                                                              |
 | 5.4.1   | Restrict Access to the Control Plane Endpoint                                                            | L1    | Active    | Set `cluster_public_access_cidrs`                                                                            |
 | 5.4.2   | Ensure clusters are created with Private Endpoint Enabled and Public Access Disabled                     | L2    | Active    | Set `cluster_private_access = true` and `cluster_public_access = false`                                      |
