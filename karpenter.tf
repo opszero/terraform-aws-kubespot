@@ -13,7 +13,6 @@ module "karpenter" {
   enable_irsa                     = true
   irsa_oidc_provider_arn          = aws_iam_openid_connect_provider.cluster.arn
   irsa_namespace_service_accounts = ["karpenter:karpenter"]
-  irsa_use_name_prefix            = false
 
   create_iam_role = true
   iam_role_name   = "${var.environment_name}-karpenter-controller"
