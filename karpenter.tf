@@ -17,12 +17,13 @@ module "karpenter" {
   create_iam_role = true
   iam_role_name   = "${var.environment_name}-karpenter-controller"
 
-  create_node_iam_role = true
-  node_iam_role_arn    = aws_iam_role.node.arn
+  create_node_iam_role          = true
+  node_iam_role_use_name_prefix = false
+  node_iam_role_arn             = aws_iam_role.node.arn
 
   create_instance_profile = true
 
-  queue_name              = "${var.environment_name}-spot-termination"
+  queue_name = "${var.environment_name}-spot-termination"
 
   tags = local.tags
 }
