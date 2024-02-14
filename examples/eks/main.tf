@@ -25,6 +25,13 @@ provider "kubernetes" {
   config_path = "./kubeconfig"
 }
 
+module "encrypted-launch-template" {
+  source = "github.com/opszero/terraform-aws-kubespot//module/encrypted-launch-template?ref=developv8"
+
+  eks_cluster         = module.eks_cluster
+  eks_cluster_version = "1.29"
+}
+
 module "opszero-eks" {
   source = "github.com/opszero/terraform-aws-kubespot"
 
@@ -66,7 +73,22 @@ module "opszero-eks" {
       ]
       capacity_type          = "SPOT"
       nodes_in_public_subnet = false
-      node_disk_size         = 20,
+      node_desired_capacity  = 3,
+      nodes_max_size         = 3,
+      nodes_min_size         = 3
+      ami_type               = "CUSTOM"
+      launch_template = [{
+        id      = module.encrypted-launch-template.launch_template_id
+        version = "$Latest"
+      }]
+    },
+    "t3a-medium-spot2" = {
+      instance_types = [
+        "t3a.medium",
+      ]
+      capacity_type          = "SPOT"
+      node_disk_size         = 20
+      nodes_in_public_subnet = false
       node_desired_capacity  = 3,
       nodes_max_size         = 3,
       nodes_min_size         = 3
