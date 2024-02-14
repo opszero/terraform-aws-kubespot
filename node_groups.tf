@@ -9,7 +9,7 @@ module "eks_mng_bottlerocket_custom_ami" {
 
   cluster_name        = var.environment_name
   cluster_endpoint    = aws_eks_cluster.cluster.endpoint
-  cluster_auth_base64 = aws_eks_clsuter.cluster.certificate_authority[0].data
+  cluster_auth_base64 = aws_eks_cluster.cluster.certificate_authority[0].data
 
   enable_bootstrap_user_data = true
 
