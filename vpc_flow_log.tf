@@ -1,6 +1,5 @@
 resource "aws_flow_log" "vpc" {
-  count = var.vpc_flow_logs_enabled ? 1 : 0
-
+  count           = var.vpc_flow_logs_enabled ? 1 : 0
   iam_role_arn    = aws_iam_role.vpc.arn
   log_destination = aws_cloudwatch_log_group.vpc.arn
   traffic_type    = "ALL"

@@ -38,7 +38,7 @@ resource "aws_iam_role_policy_attachment" "node_role_policies" {
 
 
 resource "aws_iam_policy" "eks_pod_logs_to_cloudwatch" {
-  count       = var.enable_pods_logs_to_cloudwatch ? 1 : 0
+  count       = var.cloudwatch_pod_logs_enabled ? 1 : 0
   name        = "${var.environment_name}-EksPodLogsToCloudwatch"
   description = "Used by fluentbit agent to send eks pods logs to cloudwatch"
 
@@ -64,7 +64,7 @@ EOF
 
 
 resource "aws_iam_role_policy_attachment" "node_eks_pod_logs_to_cloudwatch" {
-  count      = var.enable_pods_logs_to_cloudwatch ? 1 : 0
+  count      = var.cloudwatch_pod_logs_enabled ? 1 : 0
   policy_arn = aws_iam_policy.eks_pod_logs_to_cloudwatch[count.index].arn
   role       = aws_iam_role.node.name
 }

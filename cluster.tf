@@ -1,3 +1,11 @@
+locals {
+  # Encryption
+  cluster_encryption_config = {
+    resources        = var.cluster_encryption_config
+    provider_key_arn = aws_kms_key.cluster_secrets.arn
+  }
+}
+
 resource "aws_eks_cluster" "cluster" {
   name     = var.environment_name
   role_arn = aws_iam_role.cluster.arn
@@ -17,6 +25,19 @@ resource "aws_eks_cluster" "cluster" {
     ])
   }
 
+  access_config {
+    authentication_mode = "API_AND_CONFIG_MAP"
+  }
+
+  dynamic "encryption_config" {
+    for_each = [local.cluster_encryption_config]
+    content {
+      resources = lookup(encryption_config.value, "resources")
+      provider {
+        key_arn = lookup(encryption_config.value, "provider_key_arn")
+      }
+    }
+  }
   enabled_cluster_log_types = var.cluster_logging
 
   depends_on = [
@@ -36,9 +57,10 @@ resource "aws_eks_addon" "core" {
     var.efs_enabled ? ["aws-efs-csi-driver"] : [],
   ]))
 
-  cluster_name      = aws_eks_cluster.cluster.name
-  addon_name        = each.key
-  resolve_conflicts = "OVERWRITE"
+  cluster_name                = aws_eks_cluster.cluster.name
+  addon_name                  = each.key
+  resolve_conflicts_on_create = "OVERWRITE"
+  resolve_conflicts_on_update = "OVERWRITE"
 
   depends_on = [
     kubernetes_config_map.aws_auth,

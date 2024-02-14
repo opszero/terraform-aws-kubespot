@@ -4,18 +4,36 @@ variable "environment_name" {
 }
 
 variable "cluster_version" {
-  default     = "1.26"
+  default     = "1.29"
   description = "Desired Kubernetes master version"
 }
 
 variable "cloudwatch_retention_in_days" {
-  default     = "30"
+  default     = 30
   description = "How long to keep CloudWatch logs in days"
+}
+
+variable "cloudwatch_pod_logs_enabled" {
+  default     = false
+  type        = bool
+  description = "Stream EKS pod logs to cloudwatch"
 }
 
 variable "aws_load_balancer_controller_enabled" {
   default     = true
   description = "Enable ALB controller by default"
+}
+
+variable "cluster_encryption_config" {
+  type        = list(any)
+  default     = ["secrets"]
+  description = "Cluster Encryption Config Resources to encrypt, e.g. ['secrets']"
+}
+
+variable "cluster_kms_policy" {
+  type        = string
+  default     = null
+  description = "Cluster Encryption Config KMS Key Resource argument - key policy"
 }
 
 variable "cluster_logging" {
@@ -362,7 +380,7 @@ variable "karpenter_enabled" {
 }
 
 variable "karpenter_version" {
-  default     = "v0.32.2"
+  default     = "v0.33.2"
   description = "The version of the karpenter helm chart"
 }
 
@@ -403,9 +421,18 @@ variable "calico_version" {
   description = "The version of the calico helm chart"
 }
 
-variable "enable_pods_logs_to_cloudwatch" {
-  default     = false
-  type        = bool
-  description = "Stream EKS pod logs to cloudwatch"
-}
 
+# aws --profile opszero eks list-access-policies
+variable "access_policies" {
+  # [
+  #   {
+  #     principal_arn = "arn:aws:iam::111111111111:role/github-deployer"
+  #     policy_arn    = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSEditPolicy"
+  #     access_scope_type = {
+  #       type = "cluster"
+  #     }
+  #   }
+  # ]
+  description = "access policies"
+  default     = []
+}

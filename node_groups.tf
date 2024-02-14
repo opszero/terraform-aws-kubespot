@@ -1,3 +1,59 @@
+data "aws_ssm_parameter" "bottlerocket_image_id" {
+  name = "/aws/service/bottlerocket/aws-k8s-${var.cluster_version}/x86_64/latest/image_id"
+}
+
+module "eks_mng_bottlerocket_custom_ami" {
+  source = "github.com/terraform-aws-modules/terraform-aws-eks/modules/_user_data"
+
+  platform = "bottlerocket"
+
+  cluster_name        = var.environment_name
+  cluster_endpoint    = aws_eks_cluster.cluster.endpoint
+  cluster_auth_base64 = aws_eks_cluster.cluster.certificate_authority[0].data
+
+  enable_bootstrap_user_data = true
+
+  bootstrap_extra_args = <<-EOT
+    # extra args added
+    [settings.kernel]
+    lockdown = "integrity"
+  EOT
+}
+
+resource "aws_launch_template" "encrypted_launch_template" {
+  for_each = var.node_groups != null ? { for k, v in var.node_groups : k => v if lookup(v, "node_disk_encrypted", false) == true } : {}
+
+  name_prefix = "${var.environment_name}-${each.key}"
+  image_id    = data.aws_ssm_parameter.bottlerocket_image_id.value
+  user_data   = module.eks_mng_bottlerocket_custom_ami.user_data
+
+  monitoring {
+    enabled = true
+  }
+
+  block_device_mappings {
+    device_name = "/dev/xvda"
+    no_device   = true
+    ebs {
+      delete_on_termination = true
+      volume_size           = 2
+      volume_type           = "gp3"
+      encrypted             = true
+    }
+  }
+
+  block_device_mappings {
+    device_name = "/dev/xvdb"
+    no_device   = true
+    ebs {
+      delete_on_termination = true
+      volume_size           = lookup(each.value, "node_disk_size", 20)
+      volume_type           = "gp3"
+      encrypted             = true
+    }
+  }
+}
+
 resource "aws_eks_node_group" "node_group" {
   for_each = var.node_groups
 
@@ -7,13 +63,17 @@ resource "aws_eks_node_group" "node_group" {
 
   subnet_ids = length(lookup(each.value, "subnet_ids", [])) == 0 ? (lookup(each.value, "nodes_in_public_subnet", true) ? aws_subnet.public.*.id : aws_subnet.private.*.id) : lookup(each.value, "subnet_ids", [])
 
-  ami_type       = lookup(each.value, "ami_type", "BOTTLEROCKET_x86_64")
+  ami_type       = lookup(each.value, "node_disk_encrypted", false) ? "CUSTOM" : lookup(each.value, "ami_type", "BOTTLEROCKET_x86_64")
   instance_types = lookup(each.value, "instance_types", ["t2.micro"])
-  disk_size      = lookup(each.value, "node_disk_size", 20)
+  disk_size      = lookup(each.value, "node_disk_encrypted", false) ? null : lookup(each.value, "node_disk_size", null)
   capacity_type  = lookup(each.value, "capacity_type", "ON_DEMAND")
 
   dynamic "launch_template" {
-    for_each = lookup(each.value, "launch_template", [])
+    for_each = lookup(each.value, "node_disk_encrypted", false) ? [{
+      id      = aws_launch_template.encrypted_launch_template[each.key].id
+      version = "$Latest"
+    }] : lookup(each.value, "launch_template", [])
+
     content {
       id      = lookup(launch_template.value, "id", null)
       name    = lookup(launch_template.value, "name", null)

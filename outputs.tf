@@ -41,3 +41,7 @@ output "eks_cluster_token" {
 output "nat_gateway_ids" {
   value = aws_nat_gateway.gw.*.id
 }
+
+output "internet_gateway_id" {
+  value = aws_internet_gateway.public.id
+}
