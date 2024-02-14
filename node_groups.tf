@@ -9,7 +9,7 @@ resource "aws_eks_node_group" "node_group" {
 
   ami_type       = lookup(each.value, "ami_type", "BOTTLEROCKET_x86_64")
   instance_types = lookup(each.value, "instance_types", ["t2.micro"])
-  disk_size      = lookup(each.value, "node_disk_size", 20)
+  disk_size      = lookup(each.value, "node_disk_size", null)
   capacity_type  = lookup(each.value, "capacity_type", "ON_DEMAND")
 
   dynamic "launch_template" {

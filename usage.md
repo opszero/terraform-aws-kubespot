@@ -60,40 +60,48 @@ kubectl apply -f karpenter.yml
 ```
 
 ```yml
-apiVersion: karpenter.sh/v1alpha5
-kind: Provisioner
+apiVersion: karpenter.sh/v1beta1
+kind: NodePool
 metadata:
   name: default
 spec:
-  consolidation:
-    enabled: true # If set to true the nodes will minimize to fit the pods
-  requirements:
-    - key: "karpenter.k8s.aws/instance-category"
-      operator: In
-      values: ["t", "c", "m"]
-    - key: "kubernetes.io/arch"
-      operator: In
-      values: ["amd64"]
-    - key: "karpenter.k8s.aws/instance-cpu"
-      operator: In
-      values: ["1", "2", "4", "8", "16"]
-    - key: "karpenter.k8s.aws/instance-hypervisor"
-      operator: In
-      values: ["nitro"]
-    - key: karpenter.sh/capacity-type
-      operator: In
-      values: ["spot", "on-demand"]
-  limits:
-    resources:
-      cpu: 200
-  provider:
-    securityGroupSelector:
-      Name: <cluster-name>-node
-    subnetSelector:
-      Name: <cluster-name>-private
-    tags:
-      karpenter.sh/discovery: <cluster-name>
-  ttlSecondsUntilExpired: 86400 # How long to keep the node before cycling
+  template:
+    spec:
+      requirements:
+        - key: "karpenter.k8s.aws/instance-category"
+          operator: In
+          values: ["t", "c", "m"]
+        - key: "kubernetes.io/arch"
+          operator: In
+          values: ["amd64"]
+        - key: "karpenter.k8s.aws/instance-cpu"
+          operator: In
+          values: ["1", "2", "4", "8", "16"]
+        - key: "karpenter.k8s.aws/instance-hypervisor"
+          operator: In
+          values: ["nitro"]
+        - key: karpenter.sh/capacity-type
+          operator: In
+          values: ["spot", "on-demand"]
+      nodeClassRef:
+        name: default
+  disruption:
+    consolidationPolicy: WhenUnderutilized
+    expireAfter: 2h # 30 * 24h = 720h
+---
+apiVersion: karpenter.k8s.aws/v1beta1
+kind: EC2NodeClass
+metadata:
+  name: default
+spec:
+  amiFamily: Bottlerocket # Amazon Linux 2
+  role: "Karpenter-opszero" # Set the name of the cluster
+  subnetSelectorTerms:
+    - tags:
+        Name: opszero-public
+  securityGroupSelectorTerms:
+    - tags:
+        Name: eks-cluster-sg-opszero-1249901478
 ```
 
 # Knative
@@ -101,7 +109,62 @@ spec:
 ```
 brew install knative/client/kn
 brew tap knative-extensions/kn-plugins
-brew install func
+
+kubectl apply -f https://github.com/knative/serving/releases/download/knative-v1.13.1/serving-crds.yaml
+kubectl apply -f https://github.com/knative/serving/releases/download/knative-v1.13.1/serving-core.yaml
+kubectl apply -f https://github.com/knative/net-kourier/releases/download/knative-v1.13.0/kourier.yaml
+
+kubectl patch configmap/config-network --namespace knative-serving --type merge --patch '{"data":{"ingress-class":"kourier.ingress.networking.knative.dev"}}'
+kubectl patch configmap/config-domain --namespace knative-serving --type merge --patch '{"data":{"fn.opszero.com":""}}'
+
+kubectl apply -f https://github.com/knative/serving/releases/download/knative-v1.13.1/serving-hpa.yaml
+kubectl apply -f https://github.com/knative/net-certmanager/releases/download/knative-v1.13.0/release.yaml
+
+kubectl edit configmap config-network -n knative-serving
+# Turn the tls
+#data:
+#  external-domain-tls: Enabled
+  http-protocol: Redirected
+
+kubectl edit --namespace knative-serving configmap config-network
+
+namespace-wildcard-cert-selector:
+  matchExpressions:
+    - key: "kubernetes.io/metadata.name"
+      operator: "In"
+      values: ["my-namespace", "my-other-namespace"]
+
+
+kubectl edit configmap config-certmanager -n knative-serving
+
+# apiVersion: v1
+# kind: ConfigMap
+# metadata:
+#   name: config-certmanager
+#   namespace: knative-serving
+#   labels:
+#     networking.knative.dev/certificate-provider: cert-manager
+# data:
+#   issuerRef: |
+#     kind: ClusterIssuer
+#     name: letsencrypt-http01-issuer
+```
+
+Apply the following:
+```
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: letsencrypt-http01-issuer
+spec:
+  acme:
+    privateKeySecretRef:
+      name: letsencrypt
+    server: https://acme-v02.api.letsencrypt.org/directory
+    solvers:
+    - http01:
+       ingress:
+         class: kourier.ingress.networking.knative.dev
 ```
 
 # Cluster Setup
