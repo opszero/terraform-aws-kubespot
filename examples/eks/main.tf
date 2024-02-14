@@ -68,6 +68,7 @@ module "opszero-eks" {
 
   node_groups = {
     "t3a-medium-spot" = {
+      # Have to use a custom launch template to get encrypted root volumes.
       instance_types = [
         "t3a.medium",
       ]
