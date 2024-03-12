@@ -27,6 +27,10 @@ resource "aws_launch_template" "encrypted_launch_template" {
   image_id    = data.aws_ssm_parameter.bottlerocket_image_id.value
   user_data   = module.eks_mng_bottlerocket_custom_ami.user_data
 
+  metadata_options {
+    http_endpoint = "disabled"
+  }
+
   monitoring {
     enabled = true
   }
