@@ -178,6 +178,25 @@ resource "aws_cloudwatch_metric_alarm" "database_free_disk_database5" {
   }
 }
 
+resource "aws_cloudwatch_metric_alarm" "database_io_rds" {
+  count                     = var.sql_instance_enabled ? 1 : 0
+  alarm_name                = "${var.environment_name}-io-postgres"
+  comparison_operator       = "GreaterThanOrEqualToThreshold"
+  evaluation_periods        = "2"
+  metric_name               = "DiskQueueDepth"
+  namespace                 = "AWS/RDS"
+  period                    = "300"
+  statistic                 = "Average"
+  threshold                 = "80"
+  alarm_description         = "This metric monitors RDS free disk space"
+  insufficient_data_actions = []
+
+  dimensions = {
+    DBInstanceIdentifier = aws_db_instance.default[0].identifier
+  }
+  tags = local.tags
+}
+
 resource "aws_cloudwatch_metric_alarm" "database_io_postgres" {
   count                     = var.sql_cluster_enabled ? 1 : 0
   alarm_name                = "${var.environment_name}-io-postgres"
