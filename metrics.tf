@@ -50,6 +50,27 @@ resource "aws_cloudwatch_metric_alarm" "database_cpu_database" {
   }
 }
 
+resource "aws_cloudwatch_metric_alarm" "database_cpu_database-rds" {
+  count                     = var.sql_instance_enabled ? 1 : 0
+  alarm_name                = "${var.environment_name}-cpu-database"
+  comparison_operator       = "GreaterThanOrEqualToThreshold"
+  evaluation_periods        = "2"
+  metric_name               = "CPUUtilization"
+  namespace                 = "AWS/RDS"
+  period                    = "300"
+  statistic                 = "Average"
+  threshold                 = "80"
+  alarm_description         = "This metric monitors RDS cpu utilization"
+  insufficient_data_actions = []
+
+  dimensions = {
+    DBInstanceIdentifier = aws_db_instance.default[0].identifier
+  }
+  tags = {
+    "KubespotEnvironment" = var.environment_name
+  }
+}
+
 resource "aws_cloudwatch_metric_alarm" "database_disk_database" {
   count                     = var.sql_cluster_enabled ? 1 : 0
   alarm_name                = "${var.environment_name}-disk-database"
