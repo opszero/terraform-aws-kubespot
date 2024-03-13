@@ -7,9 +7,10 @@ module "eks_mng_bottlerocket_custom_ami" {
 
   platform = "bottlerocket"
 
-  cluster_name        = var.environment_name
-  cluster_endpoint    = aws_eks_cluster.cluster.endpoint
-  cluster_auth_base64 = aws_eks_cluster.cluster.certificate_authority[0].data
+  cluster_name         = var.environment_name
+  cluster_endpoint     = aws_eks_cluster.cluster.endpoint
+  cluster_auth_base64  = aws_eks_cluster.cluster.certificate_authority[0].data
+  cluster_service_cidr = aws_eks_cluster.cluster.kubernetes_network_config.0.service_ipv4_cidr
 
   enable_bootstrap_user_data = true
 
