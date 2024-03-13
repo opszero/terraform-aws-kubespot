@@ -171,7 +171,7 @@ resource "aws_cloudwatch_metric_alarm" "database_free_disk_database5" {
   insufficient_data_actions = []
 
   dimensions = {
-    DBInstanceIdentifier = aws_rds_instance.default[0].identifier
+    DBInstanceIdentifier = aws_rds_instance.default[0].arn
   }
   tags = {
     "KubespotEnvironment" = var.environment_name
