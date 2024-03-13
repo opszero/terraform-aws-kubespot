@@ -12,7 +12,6 @@ module "eks_mng_bottlerocket_custom_ami" {
   cluster_auth_base64 = aws_eks_cluster.cluster.certificate_authority[0].data
 
   enable_bootstrap_user_data = true
-  create                     = false
 
   bootstrap_extra_args = <<-EOT
     # extra args added
