@@ -256,6 +256,15 @@ the PSP to the [equivalent new standard](https://kubernetes.io/docs/tasks/config
 | 5.5.1   | Manage Kubernetes RBAC users with AWS IAM Authenticator for Kubernetes                                   | L2    | Active    | `iam_users` use AWS IAM Authenticator                                                                        |
 | **5.6** | **Other Cluster Configurations**                                                                         |       |           |                                                                                                              |
 | 5.6.1   | Consider Fargate for running untrusted workloads                                                         | L1    | Active    | Set the `fargate_selector`                                                                                   |
+# Pro Support
+
+<a href="https://www.opszero.com"><img src="https://media.opszero.com/insights/brands/logo/2023/04/26/02/04/12/opsZero_logo.svg" width="300px"/></a>
+
+[opsZero provides support](https://www.opszero.com/devops) for our modules including:
+
+-   Slack & Email support
+-   One on One Video Calls
+-   Implementation Guidance
 ## Providers
 
 | Name | Version |
@@ -455,13 +464,4 @@ the PSP to the [equivalent new standard](https://kubernetes.io/docs/tasks/config
 | <a name="output_public_subnet_ids"></a> [public\_subnet\_ids](#output\_public\_subnet\_ids) | n/a |
 | <a name="output_redis_elasticache_subnet_group_name"></a> [redis\_elasticache\_subnet\_group\_name](#output\_redis\_elasticache\_subnet\_group\_name) | n/a |
 | <a name="output_vpc_id"></a> [vpc\_id](#output\_vpc\_id) | n/a |
-# Pro Support
-
-<a href="https://www.opszero.com"><img src="https://assets.opszero.com/images/opszero_11_29_2016.png" width="300px"/></a>
-
-[opsZero provides support](https://www.opszero.com/devops) for our modules including:
-
-- Email support
-- Zoom Calls
-- Implementation Guidance
 <!-- END_TF_DOCS -->
