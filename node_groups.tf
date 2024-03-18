@@ -72,6 +72,7 @@ resource "aws_eks_node_group" "node_group" {
   instance_types = lookup(each.value, "instance_types", ["t2.micro"])
   disk_size      = lookup(each.value, "node_disk_encrypted", false) ? null : lookup(each.value, "node_disk_size", null)
   capacity_type  = lookup(each.value, "capacity_type", "ON_DEMAND")
+  labels         = lookup(each.value, "labels", {})
 
   dynamic "launch_template" {
     for_each = lookup(each.value, "node_disk_encrypted", false) ? [{
