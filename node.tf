@@ -29,6 +29,7 @@ resource "aws_launch_configuration" "asg_nodes" {
 
   metadata_options {
     http_endpoint = "enabled"
+    http_tokens   = "required"
   }
 
   root_block_device {
