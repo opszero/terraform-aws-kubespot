@@ -29,7 +29,8 @@ resource "aws_launch_template" "encrypted_launch_template" {
   user_data   = module.eks_mng_bottlerocket_custom_ami.user_data
 
   metadata_options {
-    http_endpoint = "disabled"
+    http_endpoint = "enabled"
+    http_tokens   = "required"
   }
 
   monitoring {

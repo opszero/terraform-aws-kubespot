@@ -28,7 +28,8 @@ resource "aws_launch_configuration" "asg_nodes" {
   associate_public_ip_address = each.value.nodes_in_public_subnet
 
   metadata_options {
-    http_endpoint = "disabled"
+    http_endpoint = "enabled"
+    http_tokens   = "required"
   }
 
   root_block_device {
