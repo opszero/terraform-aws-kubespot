@@ -27,9 +27,9 @@ resource "aws_launch_configuration" "asg_nodes" {
   user_data_base64            = base64encode(local.node-userdata)
   associate_public_ip_address = each.value.nodes_in_public_subnet
 
-  metadata_options {
-    http_endpoint = "disabled"
-  }
+  # metadata_options {
+  #   http_endpoint = "disabled"
+  # }
 
   root_block_device {
     volume_size = each.value.node_disk_size
