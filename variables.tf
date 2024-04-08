@@ -48,7 +48,7 @@ variable "cluster_logging" {
 }
 
 variable "cluster_private_access" {
-  default     = false
+  default     = true
   description = "Whether the Amazon EKS private API server endpoint is enabled"
 }
 
