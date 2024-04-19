@@ -9,6 +9,8 @@ data "aws_eks_cluster_auth" "cluster" {
 }
 
 resource "kubernetes_config_map" "aws_auth" {
+  count = var.cluster_authentication_mode == "API_AND_CONFIG_MAP" ? 1 : 0
+
   metadata {
     name      = "aws-auth"
     namespace = "kube-system"
