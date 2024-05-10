@@ -8,6 +8,12 @@ variable "cluster_version" {
   description = "Desired Kubernetes master version"
 }
 
+variable "cluster_authentication_mode" {
+  default     = "API"
+  description = "Desired Kubernetes authentication. API or API_AND_CONFIG_MAP"
+
+}
+
 variable "cloudwatch_retention_in_days" {
   default     = 30
   description = "How long to keep CloudWatch logs in days"

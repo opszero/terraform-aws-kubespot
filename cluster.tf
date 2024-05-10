@@ -26,7 +26,7 @@ resource "aws_eks_cluster" "cluster" {
   }
 
   access_config {
-    authentication_mode = "API_AND_CONFIG_MAP"
+    authentication_mode = var.cluster_authentication_mode
   }
 
   dynamic "encryption_config" {
