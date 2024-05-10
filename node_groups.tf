@@ -110,6 +110,7 @@ resource "aws_eks_node_group" "node_group" {
   tags = merge(
     local.tags,
     {
+      "Name"                   = "${var.environment_name}-${each.key}"
       "karpenter.sh/discovery" = var.environment_name
     },
   )
