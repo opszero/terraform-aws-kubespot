@@ -17,7 +17,9 @@ resource "aws_subnet" "private" {
 
 resource "aws_eip" "eips" {
   count = var.nat_enabled && length(var.eips) == 0 ? 2 : 0
-  tags  = local.tags
+  tags = merge(local.tags, {
+    "Name" = "${var.environment_name}-${count.index}"
+  })
 }
 
 resource "aws_nat_gateway" "gw" {
