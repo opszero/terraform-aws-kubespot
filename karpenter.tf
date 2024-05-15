@@ -22,6 +22,7 @@ module "karpenter" {
   node_iam_role_arn             = aws_iam_role.node.arn
 
   create_instance_profile = true
+  create_access_entry     = false
 
   queue_name = "${var.environment_name}-spot-termination"
 
