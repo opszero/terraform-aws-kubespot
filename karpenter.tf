@@ -38,7 +38,7 @@ resource "helm_release" "karpenter" {
   name       = "karpenter"
   repository = "oci://public.ecr.aws/karpenter"
   chart      = "karpenter"
-  version    = "0.36.1"
+  version    = var.karpenter_version
 
   set {
     name  = "settings.clusterName"
@@ -69,5 +69,39 @@ resource "helm_release" "karpenter_crd" {
   name       = "karpenter-crd"
   repository = "oci://public.ecr.aws/karpenter"
   chart      = "karpenter-crd"
-  version    = "0.36.1"
+  version    = var.karpenter_version
+}
+
+resource "kubernetes_manifest" "karpenter_ec2_node_class" {
+  count = var.karpenter_enabled ? 1 : 0
+
+  manifest = {
+    "apiVersion" = "karpenter.k8s.aws/v1beta1"
+    "kind"       = "EC2NodeClass"
+    "metadata" = {
+      "name" = "default"
+    }
+    "spec" = {
+      "amiFamily" = "Bottlerocket"
+      "role"      = aws_iam_role.node.name
+      "securityGroupSelectorTerms" = [
+        {
+          "id" = aws_eks_cluster.cluster.vpc_config[0].cluster_security_group_id
+        }
+      ]
+      "subnetSelectorTerms" = [
+        {
+          "id" = aws_subnet.public[0].id
+        },
+        {
+          "id" = aws_subnet.public[1].id
+        }
+      ]
+    }
+  }
+
+  depends_on = [
+    helm_release.karpenter_crd,
+    helm_release.karpenter
+  ]
 }
