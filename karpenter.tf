@@ -101,6 +101,7 @@ resource "kubernetes_manifest" "karpenter_ec2_node_class" {
   }
 
   depends_on = [
+    aws_eks_cluster.cluster,
     helm_release.karpenter_crd,
     helm_release.karpenter
   ]
