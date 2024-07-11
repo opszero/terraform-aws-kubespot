@@ -442,3 +442,15 @@ variable "access_policies" {
   description = "access policies"
   default     = []
 }
+
+variable "s3_csi_driver_enabled" {
+  description = "Enable or disable the S3 CSI driver"
+  type        = bool
+  default     = false
+}
+
+variable "csi_bucket_name" {
+  description = "The name of the S3 bucket for the CSI driver"
+  type        = string
+  default     = ""
+}

@@ -384,3 +384,47 @@ resource "aws_iam_policy" "ebs" {
 }
 EOF
 }
+
+
+resource "aws_iam_policy" "s3_policy" {
+  count = var.s3_csi_driver_enabled ? 1 : 0
+  name        = "${var.environment_name}-s3-access-policy"
+  description = "IAM policy for S3 access"
+
+  policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Sid    = "MountpointFullBucketAccess",
+        Effect = "Allow",
+        Action = [
+          "s3:ListBucket"
+        ],
+        Resource = [
+          "arn:aws:s3:::${var.csi_bucket_name}"
+        ],
+      },
+      {
+        Sid    = "MountpointFullObjectAccess",
+        Effect = "Allow",
+        Action = [
+          "s3:GetObject",
+          "s3:PutObject",
+          "s3:AbortMultipartUpload",
+          "s3:DeleteObject",
+        ],
+        Resource = [
+          "arn:aws:s3:::${var.csi_bucket_name}/*"
+        ],
+      },
+    ],
+  })
+}
+
+
+resource "aws_iam_role_policy_attachment" "csi" {
+  count = var.s3_csi_driver_enabled ? 1 : 0
+
+  policy_arn = join("", aws_iam_policy.s3_policy.*.arn)
+  role       = aws_iam_role.node.name
+}
