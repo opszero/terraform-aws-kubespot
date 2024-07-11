@@ -387,7 +387,7 @@ EOF
 
 
 resource "aws_iam_policy" "s3_policy" {
-  count = var.s3_csi_driver_enabled ? 1 : 0
+  count       = var.s3_csi_driver_enabled ? 1 : 0
   name        = "${var.environment_name}-s3-access-policy"
   description = "IAM policy for S3 access"
 

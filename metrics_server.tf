@@ -1,5 +1,5 @@
 resource "helm_release" "metrics-server" {
-  depends_on = [aws_eks_cluster.cluster]
+  depends_on       = [aws_eks_cluster.cluster]
   name             = "metrics-server"
   repository       = "https://kubernetes-sigs.github.io/metrics-server/"
   chart            = "metrics-server"

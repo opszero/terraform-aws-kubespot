@@ -93,8 +93,8 @@ module "opszero-eks" {
   vpc_flow_logs_enabled = false
   efs_enabled           = false
   # csi
-  s3_csi_driver_enabled  = true
-  csi_bucket_name   = "test-6647373dd"  #name of s3
+  s3_csi_driver_enabled = true
+  csi_bucket_name       = "test-6647373dd" #name of s3
 }
 
 module "helm-common" {
