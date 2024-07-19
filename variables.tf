@@ -306,46 +306,7 @@ variable "metrics_server_version" {
 
 variable "asg_nodes" {
   description = "Map of ASG node configurations"
-  type = map(object({
-    instance_type          = string
-    max_instance_lifetime  = number
-    nodes_desired_capacity = number
-    nodes_max_size         = number
-    nodes_min_size         = number
-    nodes_in_public_subnet = bool
-    node_disk_size         = number
-    node_enabled_metrics   = list(string)
-    spot_price             = string
-    subnet_ids             = list(string)
-  }))
-  default = {
-    #   nodegreen = {
-    #     instance_type           = "t2.micro"
-    #     max_instance_lifetime   = 7200
-    #     nodes_desired_capacity  = 2
-    #     nodes_max_size          = 3
-    #     nodes_min_size          = 1
-    #     nodes_in_public_subnet  = true
-    #     node_disk_size          = 20
-    #     node_enabled_metrics    = [
-    #       "GroupDesiredCapacity",
-    #       "GroupInServiceCapacity",
-    #       "GroupInServiceInstances",
-    #       "GroupMaxSize",
-    #       "GroupMinSize",
-    #       "GroupPendingCapacity",
-    #       "GroupPendingInstances",
-    #       "GroupStandbyCapacity",
-    #       "GroupStandbyInstances",
-    #       "GroupTerminatingCapacity",
-    #       "GroupTerminatingInstances",
-    #       "GroupTotalCapacity",
-    #       "GroupTotalInstances"
-    #     ]
-    #     spot_price              = "0.05"
-    #     subnet_ids              = []
-    #   }
-  }
+  default = {}
 }
 
 variable "node_groups" {

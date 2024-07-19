@@ -12,33 +12,46 @@ set -o xtrace
 USERDATA
 }
 
-resource "aws_launch_configuration" "asg_nodes" {
-  for_each = var.asg_nodes
 
-  iam_instance_profile = aws_iam_instance_profile.node.name
-  image_id             = data.aws_ssm_parameter.eks_ami.value
-  instance_type        = each.value.instance_type
-  name_prefix          = "${var.environment_name}-nodes-${each.key}"
-  spot_price           = each.value.spot_price
-  security_groups = [
-    aws_eks_cluster.cluster.vpc_config[0].cluster_security_group_id,
-    aws_security_group.node.id
-  ]
-  user_data_base64            = base64encode(local.node-userdata)
-  associate_public_ip_address = each.value.nodes_in_public_subnet
+
+
+
+resource "aws_launch_template" "asg_encrypted_launch_template" {
+  for_each = var.asg_nodes != null ? { for k, v in var.asg_nodes : k => v if lookup(v, "node_disk_encrypted", false) == true } : {}
+
+  name_prefix = "${var.environment_name}-${each.key}"
+  image_id    = data.aws_ssm_parameter.eks_ami.value
+  user_data   = base64encode(local.node-userdata)
 
   metadata_options {
     http_endpoint = "enabled"
     http_tokens   = "required"
   }
 
-  root_block_device {
-    volume_size = each.value.node_disk_size
-    encrypted   = true
+  monitoring {
+    enabled = true
   }
 
-  lifecycle {
-    create_before_destroy = true
+  block_device_mappings {
+    device_name = "/dev/xvda"
+    no_device   = true
+    ebs {
+      delete_on_termination = true
+      volume_size           = 2
+      volume_type           = "gp3"
+      encrypted             = true
+    }
+  }
+
+  block_device_mappings {
+    device_name = "/dev/xvdb"
+    no_device   = true
+    ebs {
+      delete_on_termination = true
+      volume_size           = lookup(each.value, "node_disk_size", 32)
+      volume_type           = "gp3"
+      encrypted             = true
+    }
   }
 }
 
@@ -46,13 +59,15 @@ resource "aws_autoscaling_group" "asg_nodes" {
   for_each = var.asg_nodes
 
   desired_capacity      = each.value.nodes_desired_capacity
-  launch_configuration  = aws_launch_configuration.asg_nodes[each.key].id
+  launch_template {
+    id    = aws_launch_template.asg_encrypted_launch_template[each.key].id
+    version = aws_launch_template.asg_encrypted_launch_template[each.key].latest_version
+  }
   max_size              = each.value.nodes_max_size
   min_size              = each.value.nodes_min_size
   name                  = "${var.environment_name}-nodes-${each.key}"
-  max_instance_lifetime = each.value.max_instance_lifetime
 
-  vpc_zone_identifier = length(each.value.subnet_ids) == 0 ? (each.value.nodes_in_public_subnet ? aws_subnet.public.*.id : aws_subnet.private.*.id) : each.value.subnet_ids
+  vpc_zone_identifier = aws_subnet.public.*.id
 
   enabled_metrics = lookup(each.value, "node_enabled_metrics", [
     "GroupDesiredCapacity",
