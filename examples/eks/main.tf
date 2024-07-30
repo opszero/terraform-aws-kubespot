@@ -25,17 +25,11 @@ provider "kubernetes" {
   config_path = "./kubeconfig"
 }
 
-module "encrypted-launch-template" {
-  source = "github.com/opszero/terraform-aws-kubespot//module/encrypted-launch-template?ref=developv8"
 
-  eks_cluster         = module.eks_cluster
-  eks_cluster_version = "1.29"
-}
 
 module "opszero-eks" {
   source = "github.com/opszero/terraform-aws-kubespot"
 
-  aws_profile = local.profile
   zones = [
     "us-east-1a",
     "us-east-1b"
@@ -78,21 +72,16 @@ module "opszero-eks" {
       nodes_max_size         = 3,
       nodes_min_size         = 3
       ami_type               = "CUSTOM"
-      launch_template = [{
-        id      = module.encrypted-launch-template.launch_template_id
-        version = "$Latest"
-      }]
     },
     "t3a-medium-spot2" = {
       instance_types = [
         "t3a.medium",
       ]
-      capacity_type          = "SPOT"
-      node_disk_size         = 20
+      node_disk_size         = 32
       nodes_in_public_subnet = false
-      node_desired_capacity  = 3,
-      nodes_max_size         = 3,
-      nodes_min_size         = 3
+      node_desired_capacity  = 1,
+      nodes_max_size         = 1,
+      nodes_min_size         = 1
     }
   }
 
@@ -103,6 +92,9 @@ module "opszero-eks" {
   nat_enabled           = true
   vpc_flow_logs_enabled = false
   efs_enabled           = false
+  #csi
+  s3_csi_driver_enabled = false
+  s3_csi_bucket_names      = ["test-6647373dd"] #name of s3
 }
 
 module "helm-common" {
@@ -113,12 +105,3 @@ module "helm-common" {
   nginx_max_replicas = 3
 }
 
-
-# resource "aws_ecr_repository" "opszero" {
-#   name                 = "opszero"
-#   image_tag_mutability = "MUTABLE"
-
-#   # image_scanning_configuration {
-#   #   scan_on_push = true
-#   # }
-# }
