@@ -449,7 +449,7 @@ variable "s3_csi_driver_enabled" {
   default     = false
 }
 
-variable "csi_bucket_names" {
+variable "s3_csi_bucket_names" {
   description = "The name of the S3 bucket for the CSI driver"
   type        = list(string)
   default     = [""]
