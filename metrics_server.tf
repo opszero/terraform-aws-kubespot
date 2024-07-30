@@ -11,4 +11,6 @@ apiService:
   create: true
 EOF
   ]
+
+  depends_on = [aws_eks_cluster.cluster]
 }
