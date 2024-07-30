@@ -400,9 +400,7 @@ resource "aws_iam_policy" "s3_policy" {
         Action = [
           "s3:ListBucket"
         ],
-        Resource = [
-          "arn:aws:s3:::${var.csi_bucket_name}"
-        ],
+        Resource = [for bucket in var.csi_bucket_names : "arn:aws:s3:::$bucket"]
       },
       {
         Sid    = "MountpointFullObjectAccess",
@@ -413,9 +411,7 @@ resource "aws_iam_policy" "s3_policy" {
           "s3:AbortMultipartUpload",
           "s3:DeleteObject",
         ],
-        Resource = [
-          "arn:aws:s3:::${var.csi_bucket_name}/*"
-        ],
+        Resource = [for bucket in var.csi_bucket_names : "arn:aws:s3:::$bucket/*"]
       },
     ],
   })

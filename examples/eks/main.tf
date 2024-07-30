@@ -37,8 +37,19 @@ module "opszero-eks" {
 
   cluster_version  = "1.27"
   environment_name = local.environment_name
+  iam_users = {
+    "abhi@opszero.com" = {
+      rbac_groups = [
+        "system:masters"
+      ]
+    },
+    "bitbucket-deployer" = {
+      rbac_groups = [
+        "system:masters"
+      ]
+    },
 
-
+  }
   cidr_block = "10.3.0.0/16"
   cidr_block_public_subnet = [
     "10.3.0.0/18",
@@ -48,16 +59,7 @@ module "opszero-eks" {
     "10.3.128.0/18",
     "10.3.192.0/18",
   ]
-asg_nodes = {
-  "test" = {
-    nodes_desired_capacity  = 2
-    nodes_max_size          = 5
-    nodes_min_size          = 1
-    node_disk_encrypted     = true
-    node_disk_size          = 32
-    nodes_in_public_subnet  = false
-  }
-}
+
   node_groups = {
     "t3a-medium-spot" = {
       # Have to use a custom launch template to get encrypted root volumes.
@@ -92,7 +94,7 @@ asg_nodes = {
   efs_enabled           = false
   #csi
   s3_csi_driver_enabled = false
-  csi_bucket_name       = "test-6647373dd" #name of s3
+  csi_bucket_names       = ["test-6647373dd"] #name of s3
 }
 
 module "helm-common" {
