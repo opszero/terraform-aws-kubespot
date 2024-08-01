@@ -256,37 +256,6 @@ the PSP to the [equivalent new standard](https://kubernetes.io/docs/tasks/config
 | 5.5.1   | Manage Kubernetes RBAC users with AWS IAM Authenticator for Kubernetes                                   | L2    | Active    | `iam_users` use AWS IAM Authenticator                                                                        |
 | **5.6** | **Other Cluster Configurations**                                                                         |       |           |                                                                                                              |
 | 5.6.1   | Consider Fargate for running untrusted workloads                                                         | L1    | Active    | Set the `fargate_selector`                                                                                   |
-# 🚀 Built by opsZero!
-
-<a href="https://opszero.com"><img src="https://opszero.com/wp-content/uploads/2024/07/opsZero_logo_svg.svg" width="300px"/></a>
-
-Since 2016 [opsZero](https://opszero.com) has been providing Kubernetes
-expertise to companies of all sizes on any Cloud. With a focus on AI and
-Compliance we can say we seen it all whether SOC2, HIPAA, PCI-DSS, ITAR,
-FedRAMP, CMMC we have you and your customers covered.
-
-We provide support to organizations in the following ways:
-
-- [Modernize or Migrate to Kubernetes](https://opszero.com/solutions/modernization/)
-- [Cloud Infrastructure with Kubernetes on AWS, Azure, Google Cloud, or Bare Metal](https://opszero.com/solutions/cloud-infrastructure/)
-- [Building AI and Data Pipelines on Kubernetes](https://opszero.com/solutions/ai/)
-- [Optimizing Existing Kubernetes Workloads](https://opszero.com/solutions/optimized-workloads/)
-
-We do this with a high-touch support model where you:
-
-- Get access to us on Slack, Microsoft Teams or Email
-- Get 24/7 coverage of your infrastructure
-- Get an accelerated migration to Kubernetes
-
-Please [schedule a call](https://calendly.com/opszero-llc/discovery) if you need support.
-
-<br/><br/>
-
-<div style="display: block">
-  <img src="https://opszero.com/wp-content/uploads/2024/07/aws-advanced.png" width="150px" />
-  <img src="https://opszero.com/wp-content/uploads/2024/07/AWS-public-sector.png" width="150px" />
-  <img src="https://opszero.com/wp-content/uploads/2024/07/AWS-eks.png" width="150px" />
-</div>
 ## Providers
 
 | Name | Version |
@@ -493,4 +462,35 @@ Please [schedule a call](https://calendly.com/opszero-llc/discovery) if you need
 | <a name="output_public_subnet_ids"></a> [public\_subnet\_ids](#output\_public\_subnet\_ids) | n/a |
 | <a name="output_redis_elasticache_subnet_group_name"></a> [redis\_elasticache\_subnet\_group\_name](#output\_redis\_elasticache\_subnet\_group\_name) | n/a |
 | <a name="output_vpc_id"></a> [vpc\_id](#output\_vpc\_id) | n/a |
+# 🚀 Built by opsZero!
+
+<a href="https://opszero.com"><img src="https://opszero.com/wp-content/uploads/2024/07/opsZero_logo_svg.svg" width="300px"/></a>
+
+Since 2016 [opsZero](https://opszero.com) has been providing Kubernetes
+expertise to companies of all sizes on any Cloud. With a focus on AI and
+Compliance we can say we seen it all whether SOC2, HIPAA, PCI-DSS, ITAR,
+FedRAMP, CMMC we have you and your customers covered.
+
+We provide support to organizations in the following ways:
+
+- [Modernize or Migrate to Kubernetes](https://opszero.com/solutions/modernization/)
+- [Cloud Infrastructure with Kubernetes on AWS, Azure, Google Cloud, or Bare Metal](https://opszero.com/solutions/cloud-infrastructure/)
+- [Building AI and Data Pipelines on Kubernetes](https://opszero.com/solutions/ai/)
+- [Optimizing Existing Kubernetes Workloads](https://opszero.com/solutions/optimized-workloads/)
+
+We do this with a high-touch support model where you:
+
+- Get access to us on Slack, Microsoft Teams or Email
+- Get 24/7 coverage of your infrastructure
+- Get an accelerated migration to Kubernetes
+
+Please [schedule a call](https://calendly.com/opszero-llc/discovery) if you need support.
+
+<br/><br/>
+
+<div style="display: block">
+  <img src="https://opszero.com/wp-content/uploads/2024/07/aws-advanced.png" width="150px" />
+  <img src="https://opszero.com/wp-content/uploads/2024/07/AWS-public-sector.png" width="150px" />
+  <img src="https://opszero.com/wp-content/uploads/2024/07/AWS-eks.png" width="150px" />
+</div>
 <!-- END_TF_DOCS -->
