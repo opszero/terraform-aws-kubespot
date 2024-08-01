@@ -1,8 +1,8 @@
 # 🚀 Built by opsZero!
 
-<a href="https://www.opszero.com"><img src="https://media.opszero.com/insights/brands/logo/2023/04/26/02/04/12/opsZero_logo.svg" width="300px"/></a>
+<a href="https://opszero.com"><img src="https://opszero.com/wp-content/uploads/2024/07/opsZero_logo_svg.svg" width="300px"/></a>
 
-Since 2016 [opsZero](https://www.opszero.com) has been providing Kubernetes
+Since 2016 [opsZero](https://opszero.com) has been providing Kubernetes
 expertise to companies of all sizes on any Cloud. With a focus on AI and
 Compliance we can say we seen it all whether SOC2, HIPAA, PCI-DSS, ITAR,
 FedRAMP, CMMC we have you and your customers covered.
