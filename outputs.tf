@@ -26,10 +26,6 @@ output "node_security_group_id" {
   value = aws_security_group.node.id
 }
 
-output "redis_elasticache_subnet_group_name" {
-  value = aws_elasticache_subnet_group.default[0].name
-}
-
 output "eks_cluster" {
   value = aws_eks_cluster.cluster
 }
