@@ -460,7 +460,6 @@ the PSP to the [equivalent new standard](https://kubernetes.io/docs/tasks/config
 | <a name="output_private_subnet_ids"></a> [private\_subnet\_ids](#output\_private\_subnet\_ids) | n/a |
 | <a name="output_public_route_table"></a> [public\_route\_table](#output\_public\_route\_table) | n/a |
 | <a name="output_public_subnet_ids"></a> [public\_subnet\_ids](#output\_public\_subnet\_ids) | n/a |
-| <a name="output_redis_elasticache_subnet_group_name"></a> [redis\_elasticache\_subnet\_group\_name](#output\_redis\_elasticache\_subnet\_group\_name) | n/a |
 | <a name="output_vpc_id"></a> [vpc\_id](#output\_vpc\_id) | n/a |
 # 🚀 Built by opsZero!
 
