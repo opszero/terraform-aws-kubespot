@@ -16,7 +16,7 @@ resource "aws_elasticache_cluster" "default" {
   engine_version  = var.redis_engine_version
   port            = 6379
 
-  subnet_group_name  = aws_elasticache_subnet_group.default.name
+  subnet_group_name  = aws_elasticache_subnet_group.default[0].name
   security_group_ids = [aws_security_group.node.id]
 
   tags = {
