@@ -27,7 +27,7 @@ output "node_security_group_id" {
 }
 
 output "redis_elasticache_subnet_group_name" {
-  value = aws_elasticache_subnet_group.default.name
+  value = aws_elasticache_subnet_group.default[0].name
 }
 
 output "eks_cluster" {
