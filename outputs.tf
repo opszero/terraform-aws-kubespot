@@ -34,6 +34,10 @@ output "eks_cluster_token" {
   value = data.aws_eks_cluster_auth.cluster.token
 }
 
+output "eks_cluster_oidc_provider_arn" {
+  value = aws_iam_openid_connect_provider.cluster.arn
+}
+
 output "nat_gateway_ids" {
   value = aws_nat_gateway.gw.*.id
 }
