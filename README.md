@@ -451,8 +451,8 @@ the PSP to the [equivalent new standard](https://kubernetes.io/docs/tasks/config
 | Name | Description |
 |------|-------------|
 | <a name="output_eks_cluster"></a> [eks\_cluster](#output\_eks\_cluster) | n/a |
-| <a name="output_eks_cluster_token"></a> [eks\_cluster\_token](#output\_eks\_cluster\_token) | n/a |
 | <a name="output_eks_cluster_oidc_provider_arn"></a> [eks\_cluster\_oidc\_provider\_arn](#output\_eks\_cluster\_oidc\_provider\_arn) | n/a |
+| <a name="output_eks_cluster_token"></a> [eks\_cluster\_token](#output\_eks\_cluster\_token) | n/a |
 | <a name="output_internet_gateway_id"></a> [internet\_gateway\_id](#output\_internet\_gateway\_id) | n/a |
 | <a name="output_nat_gateway_ids"></a> [nat\_gateway\_ids](#output\_nat\_gateway\_ids) | n/a |
 | <a name="output_node_role"></a> [node\_role](#output\_node\_role) | n/a |
