@@ -76,7 +76,7 @@ resource "kubernetes_manifest" "karpenter_ec2_node_class" {
   count = var.karpenter_enabled ? 1 : 0
 
   manifest = {
-    "apiVersion" = "karpenter.k8s.aws/v1beta1"
+    "apiVersion" = "karpenter.k8s.aws/v1"
     "kind"       = "EC2NodeClass"
     "metadata" = {
       "name" = "default"
