@@ -4,7 +4,7 @@ variable "environment_name" {
 }
 
 variable "cluster_version" {
-  default     = "1.29"
+  default     = "1.30"
   description = "Desired Kubernetes master version"
 }
 
@@ -386,7 +386,7 @@ variable "karpenter_enabled" {
 }
 
 variable "karpenter_version" {
-  default     = "0.36.1"
+  default     = "1.0.1"
   description = "The version of the karpenter helm chart"
 }
 
