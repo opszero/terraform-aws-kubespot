@@ -32,7 +32,7 @@ module "karpenter" {
 resource "helm_release" "karpenter" {
   count = var.karpenter_enabled ? 1 : 0
 
-  namespace        = "kube-system"
+  namespace        = "karpenter"
   create_namespace = true
 
   name       = "karpenter"
@@ -63,7 +63,7 @@ resource "helm_release" "karpenter" {
 resource "helm_release" "karpenter_crd" {
   count = var.karpenter_enabled ? 1 : 0
 
-  namespace        = "kube-system"
+  namespace        = "karpenter"
   create_namespace = true
 
   name       = "karpenter-crd"
