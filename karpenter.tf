@@ -73,7 +73,7 @@ resource "helm_release" "karpenter_crd" {
 }
 
 data "aws_ssm_parameter" "eks_ami_id" {
-  name = "/aws/service/eks/optimized-ami/${var.cluster_version}//recommended/image_id"
+  name = "/aws/service/eks/optimized-ami/${var.cluster_version}/recommended/image_id"
 }
 
 resource "null_resource" "karpenter_ec2_node_class_apply" {
