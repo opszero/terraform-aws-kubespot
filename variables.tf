@@ -391,7 +391,7 @@ variable "karpenter_version" {
 }
 
 variable "legacy_subnet" {
-  default     = true
+  default     = false
   description = "Specify how the subnets should be created"
 }
 
