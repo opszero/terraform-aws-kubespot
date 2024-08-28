@@ -301,7 +301,7 @@ the PSP to the [equivalent new standard](https://kubernetes.io/docs/tasks/config
 | <a name="input_iam_users"></a> [iam\_users](#input\_iam\_users) | List of IAM users | `list` | `[]` | no |
 | <a name="input_karpenter_enabled"></a> [karpenter\_enabled](#input\_karpenter\_enabled) | Specify whether the karpenter is enabled | `bool` | `false` | no |
 | <a name="input_karpenter_version"></a> [karpenter\_version](#input\_karpenter\_version) | The version of the karpenter helm chart | `string` | `"1.0.1"` | no |
-| <a name="input_legacy_subnet"></a> [legacy\_subnet](#input\_legacy\_subnet) | Specify how the subnets should be created | `bool` | `true` | no |
+| <a name="input_legacy_subnet"></a> [legacy\_subnet](#input\_legacy\_subnet) | Specify how the subnets should be created | `bool` | `false` | no |
 | <a name="input_metrics_server_version"></a> [metrics\_server\_version](#input\_metrics\_server\_version) | The version of the metric server helm chart | `string` | `"3.11.0"` | no |
 | <a name="input_nat_enabled"></a> [nat\_enabled](#input\_nat\_enabled) | Whether the NAT gateway is enabled | `bool` | `true` | no |
 | <a name="input_node_group_cpu_threshold"></a> [node\_group\_cpu\_threshold](#input\_node\_group\_cpu\_threshold) | The value of the CPU threshold | `string` | `"70"` | no |
