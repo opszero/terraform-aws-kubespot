@@ -390,11 +390,6 @@ variable "karpenter_version" {
   description = "The version of the karpenter helm chart"
 }
 
-variable "legacy_subnet" {
-  default     = false
-  description = "Specify how the subnets should be created"
-}
-
 variable "csi_secrets_store_enabled" {
   default     = false
   description = "Specify whether the CSI driver is enabled on the EKS cluster"
