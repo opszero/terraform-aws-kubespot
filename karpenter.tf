@@ -72,32 +72,26 @@ resource "helm_release" "karpenter_crd" {
   version    = var.karpenter_version
 }
 
-resource "kubernetes_manifest" "karpenter_ec2_node_class" {
+resource "null_resource" "karpenter_ec2_node_class_apply" {
   count = var.karpenter_enabled ? 1 : 0
 
-  manifest = {
-    "apiVersion" = "karpenter.k8s.aws/v1"
-    "kind"       = "EC2NodeClass"
-    "metadata" = {
-      "name" = "default"
-    }
-    "spec" = {
-      "amiFamily" = "Bottlerocket"
-      "role"      = aws_iam_role.node.name
-      "securityGroupSelectorTerms" = [
-        {
-          "id" = aws_eks_cluster.cluster.vpc_config[0].cluster_security_group_id
-        }
-      ]
-      "subnetSelectorTerms" = [
-        {
-          "id" = aws_subnet.public[0].id
-        },
-        {
-          "id" = aws_subnet.public[1].id
-        }
-      ]
-    }
+  provisioner "local-exec" {
+    command = <<EOT
+cat <<EOF | kubectl apply -f -
+apiVersion: karpenter.k8s.aws/v1
+kind: EC2NodeClass
+metadata:
+  name: default
+spec:
+  amiFamily: Bottlerocket
+  role: ${aws_iam_role.node.name}
+  securityGroupSelectorTerms:
+  - id: ${aws_eks_cluster.cluster.vpc_config[0].cluster_security_group_id}
+  subnetSelectorTerms:
+  - id: ${aws_subnet.public[0].id}
+  - id: ${aws_subnet.public[1].id}
+EOF
+EOT
   }
 
   depends_on = [
