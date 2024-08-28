@@ -32,7 +32,7 @@ module "karpenter" {
 resource "helm_release" "karpenter" {
   count = var.karpenter_enabled ? 1 : 0
 
-  namespace        = "karpenter"
+  namespace        = "kube-system"
   create_namespace = true
 
   name       = "karpenter"
@@ -63,13 +63,17 @@ resource "helm_release" "karpenter" {
 resource "helm_release" "karpenter_crd" {
   count = var.karpenter_enabled ? 1 : 0
 
-  namespace        = "karpenter"
+  namespace        = "kube-system"
   create_namespace = true
 
   name       = "karpenter-crd"
   repository = "oci://public.ecr.aws/karpenter"
   chart      = "karpenter-crd"
   version    = var.karpenter_version
+}
+
+data "aws_ssm_parameter" "eks_ami_id" {
+  name = "/aws/service/eks/optimized-ami/${var.cluster_version}//recommended/image_id"
 }
 
 resource "null_resource" "karpenter_ec2_node_class_apply" {
@@ -83,13 +87,15 @@ kind: EC2NodeClass
 metadata:
   name: default
 spec:
-  amiFamily: Bottlerocket
+  amiFamily: AL2
   role: ${aws_iam_role.node.name}
   securityGroupSelectorTerms:
   - id: ${aws_eks_cluster.cluster.vpc_config[0].cluster_security_group_id}
   subnetSelectorTerms:
   - id: ${aws_subnet.public[0].id}
   - id: ${aws_subnet.public[1].id}
+  amiSelectorTerms:
+    - id: ${data.aws_ssm_parameter.eks_ami_id.value}
 EOF
 EOT
   }
