@@ -148,7 +148,8 @@ resource "aws_iam_policy" "alb" {
                 "elasticloadbalancing:CreateListener",
                 "elasticloadbalancing:DeleteListener",
                 "elasticloadbalancing:CreateRule",
-                "elasticloadbalancing:DeleteRule"
+                "elasticloadbalancing:DeleteRule",
+                "elasticloadbalancing:AddTags"
             ],
             "Resource": "*"
         },
