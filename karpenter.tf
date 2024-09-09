@@ -88,7 +88,7 @@ kind: EC2NodeClass
 metadata:
   name: default
 spec:
-  amiFamily: AL2
+  amiFamily: ${var.ami_family}
   role: ${aws_iam_role.node.name}
   securityGroupSelectorTerms:
   - id: ${aws_eks_cluster.cluster.vpc_config[0].cluster_security_group_id}
