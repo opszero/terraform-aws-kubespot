@@ -449,3 +449,9 @@ variable "s3_csi_bucket_names" {
   type        = list(string)
   default     = [""]
 }
+
+variable "ami_family" {
+  description = "AMI family to use for the EC2 Node Class. Possible values: AL2 or Bottlerocket"
+  type        = string
+  default     = "AL2"
+}

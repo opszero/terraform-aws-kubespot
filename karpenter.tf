@@ -72,6 +72,11 @@ resource "helm_release" "karpenter_crd" {
   version    = var.karpenter_version
 }
 
+data "aws_ssm_parameter" "eks_al2_ami" {
+  name = "/aws/service/eks/optimized-ami/${var.cluster_version}/amazon-linux-2/recommended/image_id"
+}
+
+
 resource "null_resource" "karpenter_ec2_node_class_apply" {
   count = var.karpenter_enabled ? 1 : 0
 
@@ -92,6 +97,7 @@ spec:
   - id: ${aws_subnet.public[1].id}
   amiSelectorTerms:
     - name: "amazon-eks-node-${var.cluster_version}-*"
+    - id: "${var.ami_family == "AL2" ? data.aws_ssm_parameter.eks_al2_ami.value : data.aws_ssm_parameter.bottlerocket_image_id.value}"
 EOF
 EOT
   }
