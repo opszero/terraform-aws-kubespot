@@ -96,7 +96,6 @@ spec:
   - id: ${aws_subnet.public[0].id}
   - id: ${aws_subnet.public[1].id}
   amiSelectorTerms:
-    - name: "amazon-eks-node-${var.cluster_version}-*"
     - id: "${var.ami_family == "AL2" ? data.aws_ssm_parameter.eks_al2_ami.value : data.aws_ssm_parameter.bottlerocket_image_id.value}"
 EOF
 EOT
