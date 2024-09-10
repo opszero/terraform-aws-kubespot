@@ -88,6 +88,11 @@ kind: EC2NodeClass
 metadata:
   name: default
 spec:
+  metadataOptions:
+    httpEndpoint: enabled
+    httpProtocolIPv6: disabled
+    httpPutResponseHopLimit: 1
+    httpTokens: optional
   amiFamily: ${var.ami_family}
   role: ${aws_iam_role.node.name}
   securityGroupSelectorTerms:
