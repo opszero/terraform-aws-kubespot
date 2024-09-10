@@ -93,6 +93,17 @@ spec:
     httpProtocolIPv6: disabled
     httpPutResponseHopLimit: 1
     httpTokens: optional
+  blockDeviceMappings:
+    - deviceName: /dev/xvda
+      ebs:
+        volumeSize: 20Gi
+        volumeType: gp3
+        encrypted: true
+    - deviceName: /dev/xvdb
+      ebs:
+        volumeSize: 50Gi
+        volumeType: gp3
+        encrypted: true
   amiFamily: ${var.ami_family}
   role: ${aws_iam_role.node.name}
   securityGroupSelectorTerms:
