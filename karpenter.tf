@@ -72,6 +72,9 @@ resource "helm_release" "karpenter_crd" {
   version    = var.karpenter_version
 }
 
+
+
+
 resource "null_resource" "karpenter_ec2_node_class_apply" {
   count = var.karpenter_enabled ? 1 : 0
 
@@ -83,7 +86,23 @@ kind: EC2NodeClass
 metadata:
   name: default
 spec:
-  amiFamily: AL2
+  metadataOptions:
+    httpEndpoint: enabled
+    httpProtocolIPv6: disabled
+    httpPutResponseHopLimit: 1
+    httpTokens: optional
+  blockDeviceMappings:
+    - deviceName: /dev/xvda
+      ebs:
+        volumeSize: 20Gi
+        volumeType: gp3
+        encrypted: true
+    - deviceName: /dev/xvdb
+      ebs:
+        volumeSize: 50Gi
+        volumeType: gp3
+        encrypted: true
+  amiFamily: ${var.karpenter_ami_family}
   role: ${aws_iam_role.node.name}
   securityGroupSelectorTerms:
   - id: ${aws_eks_cluster.cluster.vpc_config[0].cluster_security_group_id}
@@ -91,7 +110,7 @@ spec:
   - id: ${aws_subnet.public[0].id}
   - id: ${aws_subnet.public[1].id}
   amiSelectorTerms:
-    - name: "amazon-eks-node-${var.cluster_version}-*"
+    - id: "${var.karpenter_ami_family == "AL2" ? data.aws_ssm_parameter.eks_al2_ami.value : data.aws_ssm_parameter.bottlerocket_ami.value}"
 EOF
 EOT
   }
