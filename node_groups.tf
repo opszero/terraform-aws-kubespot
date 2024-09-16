@@ -1,5 +1,9 @@
-data "aws_ssm_parameter" "bottlerocket_image_id" {
+data "aws_ssm_parameter" "bottlerocket_ami" {
   name = "/aws/service/bottlerocket/aws-k8s-${var.cluster_version}/x86_64/latest/image_id"
+}
+
+data "aws_ssm_parameter" "eks_al2_ami" {
+  name = "/aws/service/eks/optimized-ami/${var.cluster_version}/amazon-linux-2/recommended/image_id"
 }
 
 module "eks_mng_bottlerocket_custom_ami" {

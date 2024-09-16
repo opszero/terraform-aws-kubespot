@@ -72,9 +72,7 @@ resource "helm_release" "karpenter_crd" {
   version    = var.karpenter_version
 }
 
-data "aws_ssm_parameter" "eks_al2_ami" {
-  name = "/aws/service/eks/optimized-ami/${var.cluster_version}/amazon-linux-2/recommended/image_id"
-}
+
 
 
 resource "null_resource" "karpenter_ec2_node_class_apply" {
@@ -104,7 +102,7 @@ spec:
         volumeSize: 50Gi
         volumeType: gp3
         encrypted: true
-  amiFamily: ${var.ami_family}
+  amiFamily: ${var.karpenter_ami_family}
   role: ${aws_iam_role.node.name}
   securityGroupSelectorTerms:
   - id: ${aws_eks_cluster.cluster.vpc_config[0].cluster_security_group_id}
@@ -112,7 +110,7 @@ spec:
   - id: ${aws_subnet.public[0].id}
   - id: ${aws_subnet.public[1].id}
   amiSelectorTerms:
-    - id: "${var.ami_family == "AL2" ? data.aws_ssm_parameter.eks_al2_ami.value : data.aws_ssm_parameter.bottlerocket_image_id.value}"
+    - id: "${var.karpenter_ami_family == "AL2" ? data.aws_ssm_parameter.eks_al2_ami.value : data.aws_ssm_parameter.bottlerocket_ami.value}"
 EOF
 EOT
   }
