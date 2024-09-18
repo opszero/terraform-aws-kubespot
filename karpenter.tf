@@ -15,7 +15,7 @@ module "karpenter" {
   irsa_namespace_service_accounts = ["karpenter:karpenter"]
 
   create_iam_role = true
-  iam_role_name   = substr("${var.environment_name}-karpenter-controller", 0, 38)
+  iam_role_name   = substr("${var.environment_name}-karpenter-controller", 0, 37)
 
   create_node_iam_role          = false
   node_iam_role_use_name_prefix = false
