@@ -104,69 +104,6 @@ spec:
         Name: eks-cluster-sg-opszero-1249901478
 ```
 
-# Knative
-
-```
-brew install knative/client/kn
-brew tap knative-extensions/kn-plugins
-
-kubectl apply -f https://github.com/knative/serving/releases/download/knative-v1.13.1/serving-crds.yaml
-kubectl apply -f https://github.com/knative/serving/releases/download/knative-v1.13.1/serving-core.yaml
-kubectl apply -f https://github.com/knative/net-kourier/releases/download/knative-v1.13.0/kourier.yaml
-
-kubectl patch configmap/config-network --namespace knative-serving --type merge --patch '{"data":{"ingress-class":"kourier.ingress.networking.knative.dev"}}'
-kubectl patch configmap/config-domain --namespace knative-serving --type merge --patch '{"data":{"fn.opszero.com":""}}'
-
-kubectl apply -f https://github.com/knative/serving/releases/download/knative-v1.13.1/serving-hpa.yaml
-kubectl apply -f https://github.com/knative/net-certmanager/releases/download/knative-v1.13.0/release.yaml
-
-kubectl edit configmap config-network -n knative-serving
-# Turn the tls
-#data:
-#  external-domain-tls: Enabled
-  http-protocol: Redirected
-
-kubectl edit --namespace knative-serving configmap config-network
-
-namespace-wildcard-cert-selector:
-  matchExpressions:
-    - key: "kubernetes.io/metadata.name"
-      operator: "In"
-      values: ["my-namespace", "my-other-namespace"]
-
-
-kubectl edit configmap config-certmanager -n knative-serving
-
-# apiVersion: v1
-# kind: ConfigMap
-# metadata:
-#   name: config-certmanager
-#   namespace: knative-serving
-#   labels:
-#     networking.knative.dev/certificate-provider: cert-manager
-# data:
-#   issuerRef: |
-#     kind: ClusterIssuer
-#     name: letsencrypt-http01-issuer
-```
-
-Apply the following:
-```
-apiVersion: cert-manager.io/v1
-kind: ClusterIssuer
-metadata:
-  name: letsencrypt-http01-issuer
-spec:
-  acme:
-    privateKeySecretRef:
-      name: letsencrypt
-    server: https://acme-v02.api.letsencrypt.org/directory
-    solvers:
-    - http01:
-       ingress:
-         class: kourier.ingress.networking.knative.dev
-```
-
 # Cluster Setup
 
 ```
