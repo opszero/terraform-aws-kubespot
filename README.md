@@ -197,10 +197,10 @@ the PSP to the [equivalent new standard](https://kubernetes.io/docs/tasks/config
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | >= 5.31.0 |
-| <a name="provider_helm"></a> [helm](#provider\_helm) | >= 2.11 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | n/a |
+| <a name="provider_helm"></a> [helm](#provider\_helm) | n/a |
 | <a name="provider_http"></a> [http](#provider\_http) | n/a |
-| <a name="provider_kubernetes"></a> [kubernetes](#provider\_kubernetes) | >= 2.23 |
+| <a name="provider_kubernetes"></a> [kubernetes](#provider\_kubernetes) | n/a |
 | <a name="provider_null"></a> [null](#provider\_null) | n/a |
 | <a name="provider_tls"></a> [tls](#provider\_tls) | n/a |
 ## Inputs
