@@ -209,22 +209,22 @@ the PSP to the [equivalent new standard](https://kubernetes.io/docs/tasks/config
 |------|-------------|------|---------|:--------:|
 | <a name="input_access_policies"></a> [access\_policies](#input\_access\_policies) | access policies | `list` | `[]` | no |
 | <a name="input_alb_controller_version"></a> [alb\_controller\_version](#input\_alb\_controller\_version) | The chart version of the ALB controller helm chart | `string` | `"1.4.4"` | no |
-| <a name="input_asg_nodes"></a> [asg\_nodes](#input\_asg\_nodes) | Map of ASG node configurations | <pre>map(object({<br>    instance_type          = string<br>    max_instance_lifetime  = number<br>    nodes_desired_capacity = number<br>    nodes_max_size         = number<br>    nodes_min_size         = number<br>    nodes_in_public_subnet = bool<br>    node_disk_size         = number<br>    node_enabled_metrics   = list(string)<br>    spot_price             = string<br>    subnet_ids             = list(string)<br>  }))</pre> | `{}` | no |
+| <a name="input_asg_nodes"></a> [asg\_nodes](#input\_asg\_nodes) | Map of ASG node configurations | <pre>map(object({<br/>    instance_type          = string<br/>    max_instance_lifetime  = number<br/>    nodes_desired_capacity = number<br/>    nodes_max_size         = number<br/>    nodes_min_size         = number<br/>    nodes_in_public_subnet = bool<br/>    node_disk_size         = number<br/>    node_enabled_metrics   = list(string)<br/>    spot_price             = string<br/>    subnet_ids             = list(string)<br/>  }))</pre> | `{}` | no |
 | <a name="input_aws_load_balancer_controller_enabled"></a> [aws\_load\_balancer\_controller\_enabled](#input\_aws\_load\_balancer\_controller\_enabled) | Enable ALB controller by default | `bool` | `true` | no |
 | <a name="input_calico_enabled"></a> [calico\_enabled](#input\_calico\_enabled) | Whether calico add-on is installed | `bool` | `false` | no |
 | <a name="input_calico_version"></a> [calico\_version](#input\_calico\_version) | The version of the calico helm chart | `string` | `"v3.26.1"` | no |
 | <a name="input_cidr_block"></a> [cidr\_block](#input\_cidr\_block) | The CIDR block used by the VPC | `string` | `"10.2.0.0/16"` | no |
-| <a name="input_cidr_block_private_subnet"></a> [cidr\_block\_private\_subnet](#input\_cidr\_block\_private\_subnet) | The CIDR block used by the private subnet | `list` | <pre>[<br>  "10.2.2.0/24",<br>  "10.2.3.0/24"<br>]</pre> | no |
-| <a name="input_cidr_block_public_subnet"></a> [cidr\_block\_public\_subnet](#input\_cidr\_block\_public\_subnet) | The CIDR block used by the private subnet | `list` | <pre>[<br>  "10.2.0.0/24",<br>  "10.2.1.0/24"<br>]</pre> | no |
+| <a name="input_cidr_block_private_subnet"></a> [cidr\_block\_private\_subnet](#input\_cidr\_block\_private\_subnet) | The CIDR block used by the private subnet | `list` | <pre>[<br/>  "10.2.2.0/24",<br/>  "10.2.3.0/24"<br/>]</pre> | no |
+| <a name="input_cidr_block_public_subnet"></a> [cidr\_block\_public\_subnet](#input\_cidr\_block\_public\_subnet) | The CIDR block used by the private subnet | `list` | <pre>[<br/>  "10.2.0.0/24",<br/>  "10.2.1.0/24"<br/>]</pre> | no |
 | <a name="input_cloudwatch_pod_logs_enabled"></a> [cloudwatch\_pod\_logs\_enabled](#input\_cloudwatch\_pod\_logs\_enabled) | Stream EKS pod logs to cloudwatch | `bool` | `false` | no |
 | <a name="input_cloudwatch_retention_in_days"></a> [cloudwatch\_retention\_in\_days](#input\_cloudwatch\_retention\_in\_days) | How long to keep CloudWatch logs in days | `number` | `30` | no |
 | <a name="input_cluster_authentication_mode"></a> [cluster\_authentication\_mode](#input\_cluster\_authentication\_mode) | Desired Kubernetes authentication. API or API\_AND\_CONFIG\_MAP | `string` | `"API"` | no |
-| <a name="input_cluster_encryption_config"></a> [cluster\_encryption\_config](#input\_cluster\_encryption\_config) | Cluster Encryption Config Resources to encrypt, e.g. ['secrets'] | `list(any)` | <pre>[<br>  "secrets"<br>]</pre> | no |
+| <a name="input_cluster_encryption_config"></a> [cluster\_encryption\_config](#input\_cluster\_encryption\_config) | Cluster Encryption Config Resources to encrypt, e.g. ['secrets'] | `list(any)` | <pre>[<br/>  "secrets"<br/>]</pre> | no |
 | <a name="input_cluster_kms_policy"></a> [cluster\_kms\_policy](#input\_cluster\_kms\_policy) | Cluster Encryption Config KMS Key Resource argument - key policy | `string` | `null` | no |
-| <a name="input_cluster_logging"></a> [cluster\_logging](#input\_cluster\_logging) | List of the desired control plane logging to enable. https://docs.aws.amazon.com/eks/latest/userguide/control-plane-logs.html | `list` | <pre>[<br>  "api",<br>  "audit",<br>  "authenticator",<br>  "controllerManager",<br>  "scheduler"<br>]</pre> | no |
+| <a name="input_cluster_logging"></a> [cluster\_logging](#input\_cluster\_logging) | List of the desired control plane logging to enable. https://docs.aws.amazon.com/eks/latest/userguide/control-plane-logs.html | `list` | <pre>[<br/>  "api",<br/>  "audit",<br/>  "authenticator",<br/>  "controllerManager",<br/>  "scheduler"<br/>]</pre> | no |
 | <a name="input_cluster_private_access"></a> [cluster\_private\_access](#input\_cluster\_private\_access) | Whether the Amazon EKS private API server endpoint is enabled | `bool` | `true` | no |
 | <a name="input_cluster_public_access"></a> [cluster\_public\_access](#input\_cluster\_public\_access) | Whether the Amazon EKS private API server endpoint is enabled | `bool` | `true` | no |
-| <a name="input_cluster_public_access_cidrs"></a> [cluster\_public\_access\_cidrs](#input\_cluster\_public\_access\_cidrs) | List of CIDR blocks. Indicates which CIDR blocks can access the Amazon EKS public API server endpoint when enabled | `list` | <pre>[<br>  "0.0.0.0/0"<br>]</pre> | no |
+| <a name="input_cluster_public_access_cidrs"></a> [cluster\_public\_access\_cidrs](#input\_cluster\_public\_access\_cidrs) | List of CIDR blocks. Indicates which CIDR blocks can access the Amazon EKS public API server endpoint when enabled | `list` | <pre>[<br/>  "0.0.0.0/0"<br/>]</pre> | no |
 | <a name="input_cluster_version"></a> [cluster\_version](#input\_cluster\_version) | Desired Kubernetes master version | `string` | `"1.30"` | no |
 | <a name="input_csi_secrets_store_enabled"></a> [csi\_secrets\_store\_enabled](#input\_csi\_secrets\_store\_enabled) | Specify whether the CSI driver is enabled on the EKS cluster | `bool` | `false` | no |
 | <a name="input_csi_secrets_store_version"></a> [csi\_secrets\_store\_version](#input\_csi\_secrets\_store\_version) | The version of the CSI store helm chart | `string` | `"1.3.4"` | no |
@@ -233,7 +233,7 @@ the PSP to the [equivalent new standard](https://kubernetes.io/docs/tasks/config
 | <a name="input_enable_egress_only_internet_gateway"></a> [enable\_egress\_only\_internet\_gateway](#input\_enable\_egress\_only\_internet\_gateway) | Create an egress-only Internet gateway for your VPC0 | `bool` | `false` | no |
 | <a name="input_enable_ipv6"></a> [enable\_ipv6](#input\_enable\_ipv6) | Enable an Amazon-provided IPv6 CIDR block with a /56 prefix length for the VPC | `bool` | `false` | no |
 | <a name="input_environment_name"></a> [environment\_name](#input\_environment\_name) | Name of the environment to create AWS resources | `string` | n/a | yes |
-| <a name="input_fargate_selector"></a> [fargate\_selector](#input\_fargate\_selector) | Terraform object to create the EKS fargate profiles | `map` | <pre>{<br>  "serverless": {}<br>}</pre> | no |
+| <a name="input_fargate_selector"></a> [fargate\_selector](#input\_fargate\_selector) | Terraform object to create the EKS fargate profiles | `map` | <pre>{<br/>  "serverless": {}<br/>}</pre> | no |
 | <a name="input_iam_roles"></a> [iam\_roles](#input\_iam\_roles) | Terraform object of the IAM roles | `map` | `{}` | no |
 | <a name="input_iam_users"></a> [iam\_users](#input\_iam\_users) | List of IAM users | `list` | `[]` | no |
 | <a name="input_karpenter_ami_family"></a> [karpenter\_ami\_family](#input\_karpenter\_ami\_family) | AMI family to use for the EC2 Node Class. Possible values: AL2 or Bottlerocket | `string` | `"Bottlerocket"` | no |
@@ -248,7 +248,7 @@ the PSP to the [equivalent new standard](https://kubernetes.io/docs/tasks/config
 | <a name="input_redis_engine_version"></a> [redis\_engine\_version](#input\_redis\_engine\_version) | Version number of the cache engine to be used for the cache clusters in this replication group | `string` | `"7.1"` | no |
 | <a name="input_redis_node_type"></a> [redis\_node\_type](#input\_redis\_node\_type) | Instance class of the redis cluster to be used | `string` | `"cache.t4g.micro"` | no |
 | <a name="input_redis_num_nodes"></a> [redis\_num\_nodes](#input\_redis\_num\_nodes) | Number of nodes for redis | `number` | `1` | no |
-| <a name="input_s3_csi_bucket_names"></a> [s3\_csi\_bucket\_names](#input\_s3\_csi\_bucket\_names) | The name of the S3 bucket for the CSI driver | `list(string)` | <pre>[<br>  ""<br>]</pre> | no |
+| <a name="input_s3_csi_bucket_names"></a> [s3\_csi\_bucket\_names](#input\_s3\_csi\_bucket\_names) | The name of the S3 bucket for the CSI driver | `list(string)` | <pre>[<br/>  ""<br/>]</pre> | no |
 | <a name="input_s3_csi_driver_enabled"></a> [s3\_csi\_driver\_enabled](#input\_s3\_csi\_driver\_enabled) | Enable or disable the S3 CSI driver | `bool` | `false` | no |
 | <a name="input_sql_cluster_enabled"></a> [sql\_cluster\_enabled](#input\_sql\_cluster\_enabled) | Whether the sql cluster is enabled | `bool` | `false` | no |
 | <a name="input_sql_cluster_monitoring_interval"></a> [sql\_cluster\_monitoring\_interval](#input\_sql\_cluster\_monitoring\_interval) | Monitoring Interval for SQL Cluster | `any` | `null` | no |
@@ -277,7 +277,7 @@ the PSP to the [equivalent new standard](https://kubernetes.io/docs/tasks/config
 | <a name="input_sql_subnet_group_include_public"></a> [sql\_subnet\_group\_include\_public](#input\_sql\_subnet\_group\_include\_public) | Include public subnets as part of the clusters subnet configuration. | `bool` | `false` | no |
 | <a name="input_tags"></a> [tags](#input\_tags) | Terraform map to create custom tags for the AWS resources | `map` | `{}` | no |
 | <a name="input_vpc_flow_logs_enabled"></a> [vpc\_flow\_logs\_enabled](#input\_vpc\_flow\_logs\_enabled) | Specify whether the vpc flow log is enabled | `bool` | `false` | no |
-| <a name="input_zones"></a> [zones](#input\_zones) | AZs for the subnets | `list` | <pre>[<br>  "us-west-2a",<br>  "us-west-2b"<br>]</pre> | no |
+| <a name="input_zones"></a> [zones](#input\_zones) | AZs for the subnets | `list` | <pre>[<br/>  "us-west-2a",<br/>  "us-west-2b"<br/>]</pre> | no |
 ## Resources
 
 | Name | Type |
