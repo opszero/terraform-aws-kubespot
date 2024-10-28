@@ -45,7 +45,7 @@ resource "aws_iam_policy" "secrets_policy" {
           "secretsmanager:DescribeSecret"
         ],
         Resource = [
-          "arn:aws:secretsmanager:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:secret:testing-KBgXuY"
+          "arn:aws:secretsmanager:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:secret:*"
         ]
       }
     ]
@@ -59,15 +59,20 @@ data "aws_iam_policy_document" "trust_relationship" {
 
     principals {
       type        = "Federated"
-      identifiers = [replace(aws_eks_cluster.cluster.identity[0].oidc.issuer, "https://", "")]
+      identifiers = [replace(aws_eks_cluster.cluster.identity[0].oidc[0].issuer, "https://", "")]
     }
 
     actions = ["sts:AssumeRoleWithWebIdentity"]
 
     condition {
       test     = "StringEquals"
-      variable = "${replace(aws_eks_cluster.cluster.identity[0].oidc.issuer, "https://", "")}:aud"
+      variable = "${replace(aws_eks_cluster.cluster.identity[0].oidc[0].issuer, "https://", "")}:aud"
       values   = ["sts.amazonaws.com"]
+    }
+    condition {
+      test     = "StringEquals"
+      variable = "${replace(aws_eks_cluster.cluster.identity[0].oidc[0].issuer, "https://", "")}:sub"
+      values   = ["system:serviceaccount:*:*"]
     }
   }
 }

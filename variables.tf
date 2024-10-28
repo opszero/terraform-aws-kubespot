@@ -397,12 +397,12 @@ variable "karpenter_ami_family" {
 }
 
 variable "csi_secrets_store_enabled" {
-  default     = false
+  default     = true
   description = "Specify whether the CSI driver is enabled on the EKS cluster"
 }
 
 variable "csi_secrets_store_version" {
-  default     = "1.3.4"
+  default     = "1.4.6"
   description = "The version of the CSI store helm chart"
 }
 
