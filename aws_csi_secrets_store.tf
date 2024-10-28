@@ -29,3 +29,56 @@ resource "null_resource" "csi_secrets_store_aws_provider" {
   }
 }
 
+
+resource "aws_iam_policy" "secrets_policy" {
+  name        = "secrets-access-policy"
+  description = "Policy for accessing secrets in AWS Secrets Manager"
+
+  policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Effect = "Allow",
+        Action = [
+          "secretsmanager:GetSecretValue",
+          "ssm:GetParameters",
+          "secretsmanager:DescribeSecret"
+        ],
+        Resource = [
+          "arn:aws:secretsmanager:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:secret:testing-KBgXuY"
+        ]
+      }
+    ]
+  })
+}
+
+
+data "aws_iam_policy_document" "trust_relationship" {
+  statement {
+    effect = "Allow"
+
+    principals {
+      type        = "Federated"
+      identifiers = [replace(aws_eks_cluster.cluster.identity[0].oidc.issuer, "https://", "")]
+    }
+
+    actions = ["sts:AssumeRoleWithWebIdentity"]
+
+    condition {
+      test     = "StringEquals"
+      variable = "${replace(aws_eks_cluster.cluster.identity[0].oidc.issuer, "https://", "")}:aud"
+      values   = ["sts.amazonaws.com"]
+    }
+  }
+}
+
+resource "aws_iam_role" "secrets_manager_role" {
+  name               = "secrets_manager_role"
+  assume_role_policy = data.aws_iam_policy_document.trust_relationship.json
+}
+
+# Step 3: Attach Policy to Role
+resource "aws_iam_role_policy_attachment" "secrets_policy_attachment" {
+  role       = aws_iam_role.secrets_manager_role.name
+  policy_arn = aws_iam_policy.secrets_policy.arn
+}
