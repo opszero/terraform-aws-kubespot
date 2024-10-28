@@ -40,8 +40,10 @@ resource "null_resource" "csi_secrets_store_aws_provider" {
 }
 
 
+
 resource "aws_iam_policy" "secrets_policy" {
-  name        = "secrets-access-policy"
+  count = var.csi_secrets_store_enabled ? 1 : 0
+  name        = "csi-secrets-access-policy-${var.environment_name}"
   description = "Policy for accessing secrets in AWS Secrets Manager"
 
   policy = jsonencode({
@@ -62,38 +64,56 @@ resource "aws_iam_policy" "secrets_policy" {
   })
 }
 
-
 data "aws_iam_policy_document" "trust_relationship" {
-  statement {
-    effect = "Allow"
+  # Create a statement for each namespace
+  dynamic "statement" {
+    for_each = var.csi_enabled_namespaces
 
-    principals {
-      type        = "Federated"
-      identifiers = [replace(aws_eks_cluster.cluster.identity[0].oidc[0].issuer, "https://", "")]
-    }
+    content {
+      effect = "Allow"
 
-    actions = ["sts:AssumeRoleWithWebIdentity"]
+      principals {
+        type        = "Federated"
+        identifiers = [local.oidc_provider_arn]
+      }
 
-    condition {
-      test     = "StringEquals"
-      variable = "${replace(aws_eks_cluster.cluster.identity[0].oidc[0].issuer, "https://", "")}:aud"
-      values   = ["sts.amazonaws.com"]
-    }
-    condition {
-      test     = "StringEquals"
-      variable = "${replace(aws_eks_cluster.cluster.identity[0].oidc[0].issuer, "https://", "")}:sub"
-      values   = ["system:serviceaccount:*:*"]
+      actions = ["sts:AssumeRoleWithWebIdentity"]
+
+      condition {
+        test     = "StringEquals"
+        variable = "${replace(aws_eks_cluster.cluster.identity[0].oidc[0].issuer, "https://", "")}:aud"
+        values   = ["sts.amazonaws.com"]
+      }
+
+      condition {
+        test     = "StringEquals"
+        variable = "${replace(aws_eks_cluster.cluster.identity[0].oidc[0].issuer, "https://", "")}:sub"
+        values   = ["system:serviceaccount:${statement.value}:csi-secrets-service-account"]
+      }
     }
   }
 }
 
 resource "aws_iam_role" "secrets_manager_role" {
-  name               = "secrets_manager_role"
+  count = var.csi_secrets_store_enabled ? 1 : 0
+  name               = "shared_secrets_manager_role"
   assume_role_policy = data.aws_iam_policy_document.trust_relationship.json
 }
 
-# Step 3: Attach Policy to Role
-resource "aws_iam_role_policy_attachment" "secrets_policy_attachment" {
-  role       = aws_iam_role.secrets_manager_role.name
-  policy_arn = aws_iam_policy.secrets_policy.arn
+resource "aws_iam_role_policy_attachment" "secrets_manager_attachment" {
+  role       = join("",aws_iam_role.secrets_manager_role.*.name)
+  policy_arn = join ("", aws_iam_policy.secrets_policy.*.arn)
+}
+
+
+resource "kubernetes_service_account" "main" {
+  for_each = var.csi_secrets_store_enabled ? toset(var.csi_enabled_namespaces) : []
+
+  metadata {
+    name      = "csi-secrets-service-account"
+    namespace = each.key
+    annotations = {
+      "eks.amazonaws.com/role-arn" = join("",aws_iam_role.secrets_manager_role.*.name)
+    }
+  }
 }
