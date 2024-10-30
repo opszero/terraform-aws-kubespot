@@ -113,7 +113,7 @@ resource "kubernetes_service_account" "main" {
     name      = "csi-secrets-service-account"
     namespace = each.key
     annotations = {
-      "eks.amazonaws.com/role-arn" = join("",aws_iam_role.secrets_manager_role.*.name)
+      "eks.amazonaws.com/role-arn" = join("",aws_iam_role.secrets_manager_role.*.arn)
     }
   }
 }
