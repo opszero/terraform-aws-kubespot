@@ -107,7 +107,7 @@ resource "aws_iam_role_policy_attachment" "secrets_manager_attachment" {
 
 
 resource "kubernetes_service_account" "main" {
-  for_each = var.csi_secrets_store_enabled ? toset(var.csi_enabled_namespaces) : []
+  for_each = toset(var.csi_enabled_namespaces) 
 
   metadata {
     name      = "csi-secrets-service-account"
