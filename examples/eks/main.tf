@@ -94,7 +94,7 @@ module "opszero-eks" {
   efs_enabled           = false
   #csi
   s3_csi_driver_enabled = false
-  s3_csi_bucket_names      = ["test-6647373dd"] #name of s3
+  s3_csi_bucket_names   = ["test-6647373dd"] #name of s3
 }
 
 module "helm-common" {
