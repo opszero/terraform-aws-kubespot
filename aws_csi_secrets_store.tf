@@ -101,6 +101,7 @@ resource "aws_iam_role" "secrets_manager_role" {
 }
 
 resource "aws_iam_role_policy_attachment" "secrets_manager_attachment" {
+  count = var.csi_secrets_store_enabled ? 1 : 0
   role       = join("",aws_iam_role.secrets_manager_role.*.name)
   policy_arn = join ("", aws_iam_policy.secrets_policy.*.arn)
 }
