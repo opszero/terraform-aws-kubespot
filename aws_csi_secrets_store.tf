@@ -65,32 +65,15 @@ resource "aws_iam_policy" "secrets_policy" {
 }
 
 data "aws_iam_policy_document" "trust_relationship" {
-  # Create a statement for each namespace
-  dynamic "statement" {
-    for_each = var.csi_enabled_namespaces
+  statement {
+    effect = "Allow"
 
-    content {
-      effect = "Allow"
-
-      principals {
-        type        = "Federated"
-        identifiers = [local.oidc_provider_arn]
-      }
-
-      actions = ["sts:AssumeRoleWithWebIdentity"]
-
-      condition {
-        test     = "StringEquals"
-        variable = "${replace(aws_eks_cluster.cluster.identity[0].oidc[0].issuer, "https://", "")}:aud"
-        values   = ["sts.amazonaws.com"]
-      }
-
-      condition {
-        test     = "StringEquals"
-        variable = "${replace(aws_eks_cluster.cluster.identity[0].oidc[0].issuer, "https://", "")}:sub"
-        values   = ["system:serviceaccount:${statement.value}:csi-secrets-service-account"]
-      }
+    principals {
+      type        = "Federated"
+      identifiers = [local.oidc_provider_arn]
     }
+
+    actions = ["sts:AssumeRoleWithWebIdentity"]
   }
 }
 
