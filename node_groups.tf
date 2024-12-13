@@ -26,15 +26,16 @@ module "eks_mng_bottlerocket_custom_ami" {
 }
 
 resource "aws_launch_template" "encrypted_launch_template" {
-  for_each = var.node_groups != null ? { for k, v in var.node_groups : k => v if lookup(v, "node_disk_encrypted", false) == true } : {}
+  for_each = { for k, v in var.node_groups : k => v if lookup(v, "node_disk_encrypted", false) }
 
   name_prefix = "${var.environment_name}-${each.key}"
   image_id    = data.aws_ssm_parameter.bottlerocket_ami.value
   user_data   = module.eks_mng_bottlerocket_custom_ami.user_data
 
   metadata_options {
-    http_endpoint = "enabled"
-    http_tokens   = "required"
+    http_endpoint               = "enabled"
+    http_tokens                 = "required"
+    http_put_response_hop_limit = 5
   }
 
   monitoring {

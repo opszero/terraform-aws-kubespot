@@ -72,6 +72,7 @@ module "opszero-eks" {
       nodes_max_size         = 3,
       nodes_min_size         = 3
       ami_type               = "CUSTOM"
+      node_disk_encrypted    = true
     },
     "t3a-medium-spot2" = {
       instance_types = [
@@ -82,6 +83,7 @@ module "opszero-eks" {
       node_desired_capacity  = 1,
       nodes_max_size         = 1,
       nodes_min_size         = 1
+      node_disk_encrypted    = true
     }
   }
 
