@@ -461,3 +461,8 @@ variable "s3_csi_bucket_names" {
   default     = [""]
 }
 
+variable "eks_auto_mode_enabled" {
+  description = "Enable Auto Mode for EKS cluster"
+  type        = bool
+  default     = true
+}
