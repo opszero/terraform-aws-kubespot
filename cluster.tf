@@ -40,7 +40,7 @@ resource "aws_eks_cluster" "cluster" {
   }
   # Compute Config (conditional setup for Auto Mode)
   dynamic "compute_config" {
-    for_each = var.enable_auto_mode ? [1] : []
+    for_each = var.eks_auto_mode_enabled ? [1] : []
     content {
       enabled       = true
       node_pools    = ["system"]
@@ -49,7 +49,7 @@ resource "aws_eks_cluster" "cluster" {
   }
   # Kubernetes Network Config (Auto Mode specific)
   dynamic "kubernetes_network_config" {
-    for_each = var.enable_auto_mode ? [1] : []
+    for_each = var.eks_auto_mode_enabled ? [1] : []
     content {
       elastic_load_balancing {
         enabled = true
@@ -58,7 +58,7 @@ resource "aws_eks_cluster" "cluster" {
   }
   # Storage Config (Auto Mode specific)
   dynamic "storage_config" {
-    for_each = var.enable_auto_mode ? [1] : []
+    for_each = var.eks_auto_mode_enabled ? [1] : []
     content {
       block_storage {
         enabled = true
