@@ -425,3 +425,14 @@ resource "aws_iam_role_policy_attachment" "csi" {
   policy_arn = join("", aws_iam_policy.s3_policy.*.arn)
   role       = aws_iam_role.node.name
 }
+
+# Attach the AWS-managed CloudWatchAgentServerPolicy to the node IAM role.
+# We may want to harden this down a bit later, but it's essentially scoped
+# to a few read-only calls and the ability to write logs, metrics, and traces
+# to CloudWatch (metrics), CloudWatch Logs (logs), and X-Ray (traces).
+resource "aws_iam_role_policy_attachment" "cloudwatch_observability" {
+  count = var.cloudwatch_observability_enabled ? 1 : 0
+
+  policy_arn = "arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy"
+  role       = aws_iam_role.node.name
+}

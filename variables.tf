@@ -466,3 +466,9 @@ variable "eks_auto_mode_enabled" {
   type        = bool
   default     = true
 }
+
+variable "cloudwatch_observability_enabled" {
+  description = "Enable or disable the CloudWatch Observability Add-on for EKS"
+  type        = bool
+  default     = false
+}

@@ -88,6 +88,7 @@ resource "aws_eks_addon" "core" {
     "aws-ebs-csi-driver",
     var.s3_csi_driver_enabled ? ["aws-mountpoint-s3-csi-driver"] : [],
     var.efs_enabled ? ["aws-efs-csi-driver"] : [],
+    var.cloudwatch_observability_enabled ? ["amazon-cloudwatch-observability"] : [],
   ]))
 
   cluster_name                = aws_eks_cluster.cluster.name

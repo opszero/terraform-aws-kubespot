@@ -216,6 +216,7 @@ the PSP to the [equivalent new standard](https://kubernetes.io/docs/tasks/config
 | <a name="input_cidr_block"></a> [cidr\_block](#input\_cidr\_block) | The CIDR block used by the VPC | `string` | `"10.2.0.0/16"` | no |
 | <a name="input_cidr_block_private_subnet"></a> [cidr\_block\_private\_subnet](#input\_cidr\_block\_private\_subnet) | The CIDR block used by the private subnet | `list` | <pre>[<br/>  "10.2.2.0/24",<br/>  "10.2.3.0/24"<br/>]</pre> | no |
 | <a name="input_cidr_block_public_subnet"></a> [cidr\_block\_public\_subnet](#input\_cidr\_block\_public\_subnet) | The CIDR block used by the private subnet | `list` | <pre>[<br/>  "10.2.0.0/24",<br/>  "10.2.1.0/24"<br/>]</pre> | no |
+| <a name="input_cloudwatch_observability_enabled"></a> [cloudwatch\_observability\_enabled](#input\_cloudwatch\_observability\_enabled) | Enable or disable the CloudWatch Observability Add-on for EKS | `bool` | `false` | no |
 | <a name="input_cloudwatch_pod_logs_enabled"></a> [cloudwatch\_pod\_logs\_enabled](#input\_cloudwatch\_pod\_logs\_enabled) | Stream EKS pod logs to cloudwatch | `bool` | `false` | no |
 | <a name="input_cloudwatch_retention_in_days"></a> [cloudwatch\_retention\_in\_days](#input\_cloudwatch\_retention\_in\_days) | How long to keep CloudWatch logs in days | `number` | `30` | no |
 | <a name="input_cluster_authentication_mode"></a> [cluster\_authentication\_mode](#input\_cluster\_authentication\_mode) | Desired Kubernetes authentication. API or API\_AND\_CONFIG\_MAP | `string` | `"API"` | no |
@@ -325,6 +326,7 @@ the PSP to the [equivalent new standard](https://kubernetes.io/docs/tasks/config
 | [aws_iam_role.vpc](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role) | resource |
 | [aws_iam_role_policy.vpc](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy) | resource |
 | [aws_iam_role_policy_attachment.alb](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy_attachment) | resource |
+| [aws_iam_role_policy_attachment.cloudwatch_observability](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy_attachment) | resource |
 | [aws_iam_role_policy_attachment.cluster-AmazonEKSClusterPolicy](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy_attachment) | resource |
 | [aws_iam_role_policy_attachment.cluster-AmazonEKSServicePolicy](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy_attachment) | resource |
 | [aws_iam_role_policy_attachment.csi](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy_attachment) | resource |
