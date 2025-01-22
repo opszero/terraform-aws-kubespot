@@ -464,7 +464,7 @@ variable "s3_csi_bucket_names" {
 variable "eks_auto_mode_enabled" {
   description = "Enable Auto Mode for EKS cluster"
   type        = bool
-  default     = true
+  default     = false
 }
 
 variable "cloudwatch_observability_enabled" {
