@@ -38,11 +38,43 @@ resource "aws_eks_cluster" "cluster" {
       }
     }
   }
+  # Compute Config (conditional setup for Auto Mode)
+  dynamic "compute_config" {
+    for_each = var.eks_auto_mode_enabled ? [1] : []
+    content {
+      enabled       = true
+      node_pools    = ["system"]
+      node_role_arn = aws_iam_role.node.arn
+    }
+  }
+  # Kubernetes Network Config (Auto Mode specific)
+  dynamic "kubernetes_network_config" {
+    for_each = var.eks_auto_mode_enabled ? [1] : []
+    content {
+      elastic_load_balancing {
+        enabled = true
+      }
+    }
+  }
+  # Storage Config (Auto Mode specific)
+  dynamic "storage_config" {
+    for_each = var.eks_auto_mode_enabled ? [1] : []
+    content {
+      block_storage {
+        enabled = true
+      }
+    }
+  }
+
   enabled_cluster_log_types = var.cluster_logging
 
   depends_on = [
     aws_iam_role_policy_attachment.cluster-AmazonEKSClusterPolicy,
     aws_iam_role_policy_attachment.cluster-AmazonEKSServicePolicy,
+    aws_iam_role_policy_attachment.cluster_AmazonEKSComputePolicy,
+    aws_iam_role_policy_attachment.cluster_AmazonEKSBlockStoragePolicy,
+    aws_iam_role_policy_attachment.cluster_AmazonEKSLoadBalancingPolicy,
+    aws_iam_role_policy_attachment.cluster_AmazonEKSNetworkingPolicy,
   ]
 
   tags = local.tags
@@ -102,6 +134,26 @@ resource "aws_iam_role_policy_attachment" "cluster-AmazonEKSClusterPolicy" {
 
 resource "aws_iam_role_policy_attachment" "cluster-AmazonEKSServicePolicy" {
   policy_arn = "arn:${local.partition}:iam::aws:policy/AmazonEKSServicePolicy"
+  role       = aws_iam_role.cluster.name
+}
+
+resource "aws_iam_role_policy_attachment" "cluster_AmazonEKSComputePolicy" {
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEKSComputePolicy"
+  role       = aws_iam_role.cluster.name
+}
+
+resource "aws_iam_role_policy_attachment" "cluster_AmazonEKSLoadBalancingPolicy" {
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEKSLoadBalancingPolicy"
+  role       = aws_iam_role.cluster.name
+}
+
+resource "aws_iam_role_policy_attachment" "cluster_AmazonEKSNetworkingPolicy" {
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEKSNetworkingPolicy"
+  role       = aws_iam_role.cluster.name
+}
+
+resource "aws_iam_role_policy_attachment" "cluster_AmazonEKSBlockStoragePolicy" {
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEKSBlockStoragePolicy"
   role       = aws_iam_role.cluster.name
 }
 
