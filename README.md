@@ -216,6 +216,7 @@ the PSP to the [equivalent new standard](https://kubernetes.io/docs/tasks/config
 | <a name="input_cidr_block"></a> [cidr\_block](#input\_cidr\_block) | The CIDR block used by the VPC | `string` | `"10.2.0.0/16"` | no |
 | <a name="input_cidr_block_private_subnet"></a> [cidr\_block\_private\_subnet](#input\_cidr\_block\_private\_subnet) | The CIDR block used by the private subnet | `list` | <pre>[<br/>  "10.2.2.0/24",<br/>  "10.2.3.0/24"<br/>]</pre> | no |
 | <a name="input_cidr_block_public_subnet"></a> [cidr\_block\_public\_subnet](#input\_cidr\_block\_public\_subnet) | The CIDR block used by the private subnet | `list` | <pre>[<br/>  "10.2.0.0/24",<br/>  "10.2.1.0/24"<br/>]</pre> | no |
+| <a name="input_cloudwatch_observability_config"></a> [cloudwatch\_observability\_config](#input\_cloudwatch\_observability\_config) | Configuration values for the amazon-cloudwatch-observability addon | `string` | `null` | no |
 | <a name="input_cloudwatch_observability_enabled"></a> [cloudwatch\_observability\_enabled](#input\_cloudwatch\_observability\_enabled) | Enable or disable the CloudWatch Observability Add-on for EKS | `bool` | `false` | no |
 | <a name="input_cloudwatch_pod_logs_enabled"></a> [cloudwatch\_pod\_logs\_enabled](#input\_cloudwatch\_pod\_logs\_enabled) | Stream EKS pod logs to cloudwatch | `bool` | `false` | no |
 | <a name="input_cloudwatch_retention_in_days"></a> [cloudwatch\_retention\_in\_days](#input\_cloudwatch\_retention\_in\_days) | How long to keep CloudWatch logs in days | `number` | `30` | no |
