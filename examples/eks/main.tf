@@ -106,4 +106,3 @@ module "helm-common" {
   nginx_min_replicas = 1
   nginx_max_replicas = 3
 }
-

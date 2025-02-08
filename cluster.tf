@@ -38,6 +38,8 @@ resource "aws_eks_cluster" "cluster" {
       }
     }
   }
+
+  bootstrap_self_managed_addons = var.eks_auto_mode_enabled == true ? false : true
   # Compute Config (conditional setup for Auto Mode)
   dynamic "compute_config" {
     for_each = var.eks_auto_mode_enabled ? [1] : []
@@ -90,7 +92,9 @@ resource "aws_eks_addon" "core" {
     var.efs_enabled ? ["aws-efs-csi-driver"] : [],
     var.cloudwatch_observability_enabled ? ["amazon-cloudwatch-observability"] : [],
   ]))
-
+  configuration_values = lookup({
+    "amazon-cloudwatch-observability" = var.cloudwatch_observability_config
+  }, each.key, null)
   cluster_name                = aws_eks_cluster.cluster.name
   addon_name                  = each.key
   resolve_conflicts_on_create = "OVERWRITE"
@@ -138,21 +142,25 @@ resource "aws_iam_role_policy_attachment" "cluster-AmazonEKSServicePolicy" {
 }
 
 resource "aws_iam_role_policy_attachment" "cluster_AmazonEKSComputePolicy" {
+  count      = var.eks_auto_mode_enabled ? 1 : 0
   policy_arn = "arn:aws:iam::aws:policy/AmazonEKSComputePolicy"
   role       = aws_iam_role.cluster.name
 }
 
 resource "aws_iam_role_policy_attachment" "cluster_AmazonEKSLoadBalancingPolicy" {
+  count      = var.eks_auto_mode_enabled ? 1 : 0
   policy_arn = "arn:aws:iam::aws:policy/AmazonEKSLoadBalancingPolicy"
   role       = aws_iam_role.cluster.name
 }
 
 resource "aws_iam_role_policy_attachment" "cluster_AmazonEKSNetworkingPolicy" {
+  count      = var.eks_auto_mode_enabled ? 1 : 0
   policy_arn = "arn:aws:iam::aws:policy/AmazonEKSNetworkingPolicy"
   role       = aws_iam_role.cluster.name
 }
 
 resource "aws_iam_role_policy_attachment" "cluster_AmazonEKSBlockStoragePolicy" {
+  count      = var.eks_auto_mode_enabled ? 1 : 0
   policy_arn = "arn:aws:iam::aws:policy/AmazonEKSBlockStoragePolicy"
   role       = aws_iam_role.cluster.name
 }

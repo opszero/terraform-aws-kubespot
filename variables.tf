@@ -472,3 +472,9 @@ variable "cloudwatch_observability_enabled" {
   type        = bool
   default     = false
 }
+
+variable "cloudwatch_observability_config" {
+  description = "Configuration values for the amazon-cloudwatch-observability addon"
+  type        = string
+  default     = null
+}
