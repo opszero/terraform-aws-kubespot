@@ -1,7 +1,7 @@
 <!-- BEGIN_TF_DOCS -->
 # Kubespot (AWS)
 
-AWS EKS Setup for PCI-DSS, SOC2, HIPAA
+AWS EKS Setup for PCI-DSS, SOC2, HIPAA, FedRAMP
 
 Kubespot is [AWS EKS](https://aws.amazon.com/eks/) customized to add security
 postures around SOC2, HIPAA, and PCI compliance. It is distributed as [an open
