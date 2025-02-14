@@ -87,8 +87,8 @@ spec:
   metadataOptions:
     httpEndpoint: enabled
     httpProtocolIPv6: disabled
-    httpPutResponseHopLimit: 1
-    httpTokens: optional
+    httpPutResponseHopLimit: 5
+    httpTokens: required
   blockDeviceMappings:
     - deviceName: /dev/xvda
       ebs:
