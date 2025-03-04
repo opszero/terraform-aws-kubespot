@@ -6,10 +6,28 @@ data "aws_ssm_parameter" "eks_al2_ami" {
   name = "/aws/service/eks/optimized-ami/${var.cluster_version}/amazon-linux-2/recommended/image_id"
 }
 
-module "eks_mng_bottlerocket_custom_ami" {
+module "eks_custom_ami" {
   source = "github.com/terraform-aws-modules/terraform-aws-eks/modules/_user_data"
 
-  platform = "bottlerocket"
+  # https://docs.aws.amazon.com/eks/latest/APIReference/API_Nodegroup.html#AmazonEKS-Type-Nodegroup-amiType
+  for_each = toset([
+    "AL2_x86_64",
+    "AL2_x86_64_GPU",
+    "AL2_ARM_64",
+    "CUSTOM",
+    "BOTTLEROCKET_ARM_64",
+    "BOTTLEROCKET_x86_64",
+    "BOTTLEROCKET_ARM_64_NVIDIA",
+    "BOTTLEROCKET_x86_64_NVIDIA",
+    "WINDOWS_CORE_2019_x86_64",
+    "WINDOWS_FULL_2019_x86_64",
+    "WINDOWS_CORE_2022_x86_64",
+    "WINDOWS_FULL_2022_x86_64",
+    "AL2023_x86_64_STANDARD",
+    "AL2023_ARM_64_STANDARD",
+    "AL2023_x86_64_NEURON",
+    "AL2023_x86_64_NVIDIA",
+  ])
 
   cluster_name         = var.environment_name
   cluster_endpoint     = aws_eks_cluster.cluster.endpoint
@@ -30,7 +48,7 @@ resource "aws_launch_template" "encrypted_launch_template" {
 
   name_prefix = "${var.environment_name}-${each.key}"
   image_id    = data.aws_ssm_parameter.bottlerocket_ami.value
-  user_data   = module.eks_mng_bottlerocket_custom_ami.user_data
+  user_data   = module.eks_custom_ami.user_data[lookup(v, "ami_type", "BOTTLEROCKET_x86_64")]
 
   metadata_options {
     http_endpoint = "enabled"
