@@ -29,6 +29,8 @@ module "eks_custom_ami" {
     "AL2023_x86_64_NVIDIA",
   ])
 
+  ami_type = each.key
+
   cluster_name         = var.environment_name
   cluster_endpoint     = aws_eks_cluster.cluster.endpoint
   cluster_auth_base64  = aws_eks_cluster.cluster.certificate_authority[0].data
