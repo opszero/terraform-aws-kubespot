@@ -11,22 +11,7 @@ module "eks_custom_ami" {
 
   # https://docs.aws.amazon.com/eks/latest/APIReference/API_Nodegroup.html#AmazonEKS-Type-Nodegroup-amiType
   for_each = toset([
-    "AL2_x86_64",
-    "AL2_x86_64_GPU",
-    "AL2_ARM_64",
-    "CUSTOM",
-    "BOTTLEROCKET_ARM_64",
-    "BOTTLEROCKET_x86_64",
-    "BOTTLEROCKET_ARM_64_NVIDIA",
-    "BOTTLEROCKET_x86_64_NVIDIA",
-    "WINDOWS_CORE_2019_x86_64",
-    "WINDOWS_FULL_2019_x86_64",
-    "WINDOWS_CORE_2022_x86_64",
-    "WINDOWS_FULL_2022_x86_64",
-    "AL2023_x86_64_STANDARD",
-    "AL2023_ARM_64_STANDARD",
-    "AL2023_x86_64_NEURON",
-    "AL2023_x86_64_NVIDIA",
+    for k, v in var.node_groups : v.ami_type if lookup(v, "node_disk_encrypted", false) == true
   ])
 
   ami_type = each.key
