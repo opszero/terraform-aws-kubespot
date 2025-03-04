@@ -44,7 +44,7 @@ resource "aws_launch_template" "encrypted_launch_template" {
   for_each = var.node_groups != null ? { for k, v in var.node_groups : k => v if lookup(v, "node_disk_encrypted", false) == true } : {}
 
   name_prefix = "${var.environment_name}-${each.key}"
-  image_id    = data.aws_ssm_parameter.bottlerocket_ami.value
+  image_id    = data.aws_ssm_parameter.amis[each.value.ami_type].value
   user_data   = module.eks_custom_ami[each.value.ami_type].user_data
 
   metadata_options {
