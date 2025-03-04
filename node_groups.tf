@@ -34,13 +34,13 @@ module "eks_custom_ami" {
   cluster_auth_base64  = aws_eks_cluster.cluster.certificate_authority[0].data
   cluster_service_cidr = aws_eks_cluster.cluster.kubernetes_network_config.0.service_ipv4_cidr
 
-  enable_bootstrap_user_data = true
+  # enable_bootstrap_user_data = true
 
-  bootstrap_extra_args = <<-EOT
-    # extra args added
-    [settings.kernel]
-    lockdown = "integrity"
-  EOT
+  # bootstrap_extra_args = <<-EOT
+  #   # extra args added
+  #   [settings.kernel]
+  #   lockdown = "integrity"
+  # EOT
 }
 
 resource "aws_launch_template" "encrypted_launch_template" {
