@@ -48,7 +48,7 @@ resource "aws_launch_template" "encrypted_launch_template" {
 
   name_prefix = "${var.environment_name}-${each.key}"
   image_id    = data.aws_ssm_parameter.bottlerocket_ami.value
-  user_data   = module.eks_custom_ami.user_data[lookup(each.value, "ami_type", "BOTTLEROCKET_x86_64")]
+  user_data   = module.eks_custom_ami[lookup(each.value, "ami_type", "BOTTLEROCKET_x86_64")].user_data
 
   metadata_options {
     http_endpoint = "enabled"
