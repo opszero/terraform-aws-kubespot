@@ -61,7 +61,7 @@ resource "aws_launch_template" "encrypted_launch_template" {
     no_device   = true
     ebs {
       delete_on_termination = true
-      volume_size           = 2
+      volume_size           = 20
       volume_type           = "gp3"
       encrypted             = true
     }
