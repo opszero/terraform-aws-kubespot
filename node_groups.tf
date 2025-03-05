@@ -1,15 +1,30 @@
-data "aws_ssm_parameter" "bottlerocket_ami" {
-  name = "/aws/service/bottlerocket/aws-k8s-${var.cluster_version}/x86_64/latest/image_id"
+data "aws_ssm_parameter" "amis" {
+  for_each = {
+    "AL2_x86_64"                 = "/aws/service/eks/optimized-ami/${var.cluster_version}/amazon-linux-2/recommended/image_id",
+    "AL2_x86_64_GPU"             = "/aws/service/eks/optimized-ami/${var.cluster_version}/amazon-linux-2-gpu/recommended/image_id",
+    "AL2_ARM_64"                 = "/aws/service/eks/optimized-ami/${var.cluster_version}/amazon-linux-2-arm64/recommended/image_id",
+    "BOTTLEROCKET_ARM_64"        = "/aws/service/bottlerocket/aws-k8s-${var.cluster_version}/arm64/latest/image_id",
+    "BOTTLEROCKET_x86_64"        = "/aws/service/bottlerocket/aws-k8s-${var.cluster_version}/x86_64/latest/image_id",
+    "BOTTLEROCKET_ARM_64_NVIDIA" = "/aws/service/bottlerocket/aws-k8s-${var.cluster_version}-nvidia/arm64/latest/image_id",
+    "BOTTLEROCKET_x86_64_NVIDIA" = "/aws/service/bottlerocket/aws-k8s-${var.cluster_version}-nvidia/x86_64/latest/image_id",
+    "AL2023_x86_64_STANDARD"     = "/aws/service/eks/optimized-ami/${var.cluster_version}/amazon-linux-2023/x86_64/standard/recommended/image_id",
+    "AL2023_ARM_64_STANDARD"     = "/aws/service/eks/optimized-ami/${var.cluster_version}/amazon-linux-2023/arm64/standard/recommended/image_id",
+    "AL2023_x86_64_NEURON"       = "/aws/service/eks/optimized-ami/${var.cluster_version}/amazon-linux-2023/x86_64/standard/recommended/image_id",
+    "AL2023_x86_64_NVIDIA"       = "/aws/service/eks/optimized-ami/${var.cluster_version}/amazon-linux-2023/x86_64/standard/recommended/image_id"
+  }
+
+  name = each.value
 }
 
-data "aws_ssm_parameter" "eks_al2_ami" {
-  name = "/aws/service/eks/optimized-ami/${var.cluster_version}/amazon-linux-2/recommended/image_id"
-}
-
-module "eks_mng_bottlerocket_custom_ami" {
+module "eks_custom_ami" {
   source = "github.com/terraform-aws-modules/terraform-aws-eks/modules/_user_data"
 
-  platform = "bottlerocket"
+  # https://docs.aws.amazon.com/eks/latest/APIReference/API_Nodegroup.html#AmazonEKS-Type-Nodegroup-amiType
+  for_each = toset([
+    for k, v in var.node_groups : v.ami_type if lookup(v, "node_disk_encrypted", false) == true
+  ])
+
+  ami_type = each.key
 
   cluster_name         = var.environment_name
   cluster_endpoint     = aws_eks_cluster.cluster.endpoint
@@ -18,19 +33,19 @@ module "eks_mng_bottlerocket_custom_ami" {
 
   enable_bootstrap_user_data = true
 
-  bootstrap_extra_args = <<-EOT
-    # extra args added
-    [settings.kernel]
-    lockdown = "integrity"
-  EOT
+  # bootstrap_extra_args = <<-EOT
+  #   # extra args added
+  #   [settings.kernel]
+  #   lockdown = "integrity"
+  # EOT
 }
 
 resource "aws_launch_template" "encrypted_launch_template" {
   for_each = { for k, v in var.node_groups : k => v if lookup(v, "node_disk_encrypted", false) }
 
   name_prefix = "${var.environment_name}-${each.key}"
-  image_id    = data.aws_ssm_parameter.bottlerocket_ami.value
-  user_data   = module.eks_mng_bottlerocket_custom_ami.user_data
+  image_id    = data.aws_ssm_parameter.amis[each.value.ami_type].value
+  user_data   = module.eks_custom_ami[each.value.ami_type].user_data
 
   metadata_options {
     http_endpoint               = "enabled"
@@ -47,7 +62,7 @@ resource "aws_launch_template" "encrypted_launch_template" {
     no_device   = true
     ebs {
       delete_on_termination = true
-      volume_size           = 2
+      volume_size           = 20
       volume_type           = "gp3"
       encrypted             = true
     }
