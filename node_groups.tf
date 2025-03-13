@@ -98,7 +98,7 @@ resource "aws_eks_node_group" "node_group" {
   dynamic "launch_template" {
     for_each = lookup(each.value, "node_disk_encrypted", false) ? [{
       id      = aws_launch_template.encrypted_launch_template[each.key].id
-      version = "$Latest"
+      version = aws_launch_template.encrypted_launch_template[each.key].latest_version
     }] : lookup(each.value, "launch_template", [])
 
     content {
