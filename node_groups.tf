@@ -33,7 +33,7 @@ module "eks_custom_ami" {
 
   enable_bootstrap_user_data = true
 
-  bootstrap_extra_args = lookup(each.value, "ami_bootstrap_extra_args", null)
+  bootstrap_extra_args = lookup(each.value, "ami_bootstrap_extra_args", "")
 }
 
 resource "aws_launch_template" "encrypted_launch_template" {
