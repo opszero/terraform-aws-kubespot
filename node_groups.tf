@@ -41,7 +41,7 @@ resource "aws_launch_template" "encrypted_launch_template" {
 
   name_prefix = "${var.environment_name}-${each.key}"
   image_id    = data.aws_ssm_parameter.amis[each.value.ami_type].value
-  user_data   = module.eks_custom_ami[each.value.ami_type].user_data
+  user_data   = module.eks_custom_ami[each.key].user_data
 
   metadata_options {
     http_endpoint               = "enabled"
