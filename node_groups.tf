@@ -32,8 +32,7 @@ module "eks_custom_ami" {
   cluster_service_cidr = aws_eks_cluster.cluster.kubernetes_network_config.0.service_ipv4_cidr
 
   enable_bootstrap_user_data = true
-
-  bootstrap_extra_args = lookup(each.value, "ami_bootstrap_extra_args", "")
+  bootstrap_extra_args       = each.value.ami_bootstrap_extra_args
 }
 
 resource "aws_launch_template" "encrypted_launch_template" {
