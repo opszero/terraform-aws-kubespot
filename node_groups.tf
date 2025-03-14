@@ -20,11 +20,11 @@ module "eks_custom_ami" {
   source = "github.com/terraform-aws-modules/terraform-aws-eks/modules/_user_data"
 
   # https://docs.aws.amazon.com/eks/latest/APIReference/API_Nodegroup.html#AmazonEKS-Type-Nodegroup-amiType
-  for_each = toset([
-    for k, v in var.node_groups : v.ami_type if lookup(v, "node_disk_encrypted", false) == true
-  ])
+  for_each = {
+    for k, v in var.node_groups : k => v if lookup(v, "node_disk_encrypted", false) == true
+  }
 
-  ami_type = each.key
+  ami_type = each.value.ami_type
 
   cluster_name         = var.environment_name
   cluster_endpoint     = aws_eks_cluster.cluster.endpoint
@@ -33,11 +33,7 @@ module "eks_custom_ami" {
 
   enable_bootstrap_user_data = true
 
-  # bootstrap_extra_args = <<-EOT
-  #   # extra args added
-  #   [settings.kernel]
-  #   lockdown = "integrity"
-  # EOT
+  bootstrap_extra_args = lookup(each.value, "ami_bootstrap_extra_args", null)
 }
 
 resource "aws_launch_template" "encrypted_launch_template" {
