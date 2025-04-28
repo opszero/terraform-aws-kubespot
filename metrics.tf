@@ -95,7 +95,7 @@ resource "aws_cloudwatch_metric_alarm" "database_disk_database" {
 resource "aws_cloudwatch_metric_alarm" "database_free_disk_database" {
   count                     = var.sql_cluster_enabled ? 1 : 0
   alarm_name                = "${var.environment_name}-free-disk-database"
-  comparison_operator       = "GreaterThanOrEqualToThreshold"
+  comparison_operator       = "LessThanOrEqualToThreshold"
   evaluation_periods        = "2"
   metric_name               = "AuroraVolumeBytesLeftTotal"
   namespace                 = "AWS/RDS"
@@ -116,7 +116,7 @@ resource "aws_cloudwatch_metric_alarm" "database_free_disk_database" {
 resource "aws_cloudwatch_metric_alarm" "database_free_disk_database2" {
   count                     = var.sql_cluster_enabled ? 1 : 0
   alarm_name                = "${var.environment_name}-free-disk-database2"
-  comparison_operator       = "GreaterThanOrEqualToThreshold"
+  comparison_operator       = "LessThanOrEqualToThreshold"
   evaluation_periods        = "2"
   metric_name               = "FreeStorageSpace"
   namespace                 = "AWS/RDS"
@@ -137,7 +137,7 @@ resource "aws_cloudwatch_metric_alarm" "database_free_disk_database2" {
 resource "aws_cloudwatch_metric_alarm" "database_free_disk_database3" {
   count                     = var.sql_cluster_enabled ? 1 : 0
   alarm_name                = "${var.environment_name}-free-disk-database3"
-  comparison_operator       = "GreaterThanOrEqualToThreshold"
+  comparison_operator       = "LessThanOrEqualToThreshold"
   evaluation_periods        = "2"
   metric_name               = "FreeLocalStorage"
   namespace                 = "AWS/RDS"
@@ -160,7 +160,7 @@ resource "aws_cloudwatch_metric_alarm" "database_free_disk_database3" {
 resource "aws_cloudwatch_metric_alarm" "database_free_disk_database4" {
   count                     = var.sql_cluster_enabled ? 1 : 0
   alarm_name                = "${var.environment_name}-free-disk-database4"
-  comparison_operator       = "GreaterThanOrEqualToThreshold"
+  comparison_operator       = "LessThanOrEqualToThreshold"
   evaluation_periods        = "2"
   metric_name               = "FreeableMemory"
   namespace                 = "AWS/RDS"
@@ -181,7 +181,7 @@ resource "aws_cloudwatch_metric_alarm" "database_free_disk_database4" {
 resource "aws_cloudwatch_metric_alarm" "database_free_disk_database5" {
   count                     = var.sql_instance_enabled ? 1 : 0
   alarm_name                = "${var.environment_name}-free-disk-database5"
-  comparison_operator       = "GreaterThanOrEqualToThreshold"
+  comparison_operator       = "LessThanOrEqualToThreshold"
   evaluation_periods        = "2"
   metric_name               = "FreeLocalStorage"
   namespace                 = "AWS/RDS"
