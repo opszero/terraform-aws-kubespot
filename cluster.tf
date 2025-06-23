@@ -178,17 +178,11 @@ resource "helm_release" "calico" {
     {
       name  = "kubernetesProvider"
       value = "EKS"
-    }
-  ]
-
-  set = [
+    },
     {
       name  = "cni.type"
       value = "Calico"
-    }
-  ]
-
-  set = [
+    },
     {
       name  = "calicoNetwork.bgp"
       value = "Disabled"

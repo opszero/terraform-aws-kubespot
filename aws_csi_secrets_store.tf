@@ -12,10 +12,7 @@ resource "helm_release" "csi_secrets_store" {
     {
       name  = "syncSecret.enabled"
       value = "true"
-    }
-  ]
-
-  set = [
+    },
     {
       name  = "enableSecretRotation"
       value = "true"

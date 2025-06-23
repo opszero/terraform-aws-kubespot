@@ -44,17 +44,11 @@ resource "helm_release" "karpenter" {
     {
       name  = "settings.clusterName"
       value = aws_eks_cluster.cluster.name
-    }
-  ]
-
-  set = [
+    },
     {
       name  = "settings.clusterEndpoint"
       value = aws_eks_cluster.cluster.endpoint
-    }
-  ]
-
-  set = [
+    },
     {
       name  = "serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn"
       value = module.karpenter[0].iam_role_arn
