@@ -8,15 +8,16 @@ resource "helm_release" "csi_secrets_store" {
   namespace        = "kube-system"
   create_namespace = false
 
-  set {
-    name  = "syncSecret.enabled"
-    value = "true"
-  }
-
-  set {
-    name  = "enableSecretRotation"
-    value = "true"
-  }
+  set = [
+    {
+      name  = "syncSecret.enabled"
+      value = "true"
+    },
+    {
+      name  = "enableSecretRotation"
+      value = "true"
+    }
+  ]
 }
 
 data "http" "csi_secrets_store_aws_provider" {

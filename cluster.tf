@@ -174,20 +174,20 @@ resource "helm_release" "calico" {
   version    = var.calico_version
 
   # Set Calico-specific configuration values
-  set {
-    name  = "kubernetesProvider"
-    value = "EKS"
-  }
-
-  set {
-    name  = "cni.type"
-    value = "Calico"
-  }
-
-  set {
-    name  = "calicoNetwork.bgp"
-    value = "Disabled"
-  }
+  set = [
+    {
+      name  = "kubernetesProvider"
+      value = "EKS"
+    },
+    {
+      name  = "cni.type"
+      value = "Calico"
+    },
+    {
+      name  = "calicoNetwork.bgp"
+      value = "Disabled"
+    }
+  ]
 }
 
 resource "null_resource" "delete_aws_node" {
