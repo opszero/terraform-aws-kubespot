@@ -1,5 +1,5 @@
 data "aws_ssm_parameter" "amis" {
-  for_each = concat(var.cluster_version <= 1.33 ? {
+  for_each = merge(var.cluster_version <= 1.33 ? {
     "AL2_x86_64"     = "/aws/service/eks/optimized-ami/${var.cluster_version}/amazon-linux-2/recommended/image_id",
     "AL2_x86_64_GPU" = "/aws/service/eks/optimized-ami/${var.cluster_version}/amazon-linux-2-gpu/recommended/image_id",
     "AL2_ARM_64"     = "/aws/service/eks/optimized-ami/${var.cluster_version}/amazon-linux-2-arm64/recommended/image_id",
