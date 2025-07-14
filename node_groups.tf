@@ -1,22 +1,4 @@
-data "aws_ssm_parameter" "amis" {
-  for_each = merge(var.cluster_version <= 1.33 ? {
-    "AL2_x86_64"     = "/aws/service/eks/optimized-ami/${var.cluster_version}/amazon-linux-2/recommended/image_id",
-    "AL2_x86_64_GPU" = "/aws/service/eks/optimized-ami/${var.cluster_version}/amazon-linux-2-gpu/recommended/image_id",
-    "AL2_ARM_64"     = "/aws/service/eks/optimized-ami/${var.cluster_version}/amazon-linux-2-arm64/recommended/image_id",
-    } : {},
-    {
-      "BOTTLEROCKET_ARM_64"        = "/aws/service/bottlerocket/aws-k8s-${var.cluster_version}/arm64/latest/image_id",
-      "BOTTLEROCKET_x86_64"        = "/aws/service/bottlerocket/aws-k8s-${var.cluster_version}/x86_64/latest/image_id",
-      "BOTTLEROCKET_ARM_64_NVIDIA" = "/aws/service/bottlerocket/aws-k8s-${var.cluster_version}-nvidia/arm64/latest/image_id",
-      "BOTTLEROCKET_x86_64_NVIDIA" = "/aws/service/bottlerocket/aws-k8s-${var.cluster_version}-nvidia/x86_64/latest/image_id",
-      "AL2023_x86_64_STANDARD"     = "/aws/service/eks/optimized-ami/${var.cluster_version}/amazon-linux-2023/x86_64/standard/recommended/image_id",
-      "AL2023_ARM_64_STANDARD"     = "/aws/service/eks/optimized-ami/${var.cluster_version}/amazon-linux-2023/arm64/standard/recommended/image_id",
-      "AL2023_x86_64_NEURON"       = "/aws/service/eks/optimized-ami/${var.cluster_version}/amazon-linux-2023/x86_64/standard/recommended/image_id",
-      "AL2023_x86_64_NVIDIA"       = "/aws/service/eks/optimized-ami/${var.cluster_version}/amazon-linux-2023/x86_64/standard/recommended/image_id"
-  })
 
-  name = each.value
-}
 
 module "eks_custom_ami" {
   source = "github.com/terraform-aws-modules/terraform-aws-eks/modules/_user_data"

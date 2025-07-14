@@ -16,7 +16,7 @@ resource "aws_launch_configuration" "asg_nodes" {
   for_each = var.asg_nodes
 
   iam_instance_profile = aws_iam_instance_profile.node.name
-  image_id             = data.aws_ssm_parameter.eks_ami.value
+  image_id             = data.aws_ssm_parameter.amis["AL2023_x86_64_STANDARD"].value
   instance_type        = each.value.instance_type
   name_prefix          = "${var.environment_name}-nodes-${each.key}"
   spot_price           = each.value.spot_price
