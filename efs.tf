@@ -2,7 +2,7 @@
 module "iam_assumable_role_efs_csi" {
   count            = var.efs_enabled ? 1 : 0
   source           = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
-  version          = "6.1.0"
+  version          = "6.2.0"
   create_role      = true
   role_name        = "${var.environment_name}-AmazonEFSCSIDriverPolicy"
   provider_url     = replace(aws_iam_openid_connect_provider.cluster.url, "https://", "")
