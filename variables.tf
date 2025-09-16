@@ -1,5 +1,6 @@
 variable "environment_name" {
   type        = string
+  default     = "testing"
   description = "Name of the environment to create AWS resources"
 }
 
