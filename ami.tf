@@ -7,7 +7,7 @@ data "aws_ssm_parameter" "amis" {
     "AL2023_x86_64_STANDARD"     = "/aws/service/eks/optimized-ami/${var.cluster_version}/amazon-linux-2023/x86_64/standard/recommended/image_id",
     "AL2023_ARM_64_STANDARD"     = "/aws/service/eks/optimized-ami/${var.cluster_version}/amazon-linux-2023/arm64/standard/recommended/image_id",
     "AL2023_x86_64_NEURON"       = "/aws/service/eks/optimized-ami/${var.cluster_version}/amazon-linux-2023/x86_64/standard/recommended/image_id",
-    "AL2023_x86_64_NVIDIA"       = "/aws/service/eks/optimized-ami/${var.cluster_version}/amazon-linux-2023/x86_64/standard/recommended/image_id"
+    "AL2023_x86_64_NVIDIA"       = "/aws/service/eks/optimized-ami/${var.cluster_version}/amazon-linux-2023/x86_64/nvidia/recommended/image_id"
   }
 
   name = each.value
