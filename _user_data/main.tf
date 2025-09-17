@@ -19,27 +19,27 @@ locals {
 
   # Converts AMI type into user data template path
   ami_type_to_user_data_path = {
-    AL2_ARM_64     = "./_user_data/templates/al2_user_data.tpl"
-    AL2_x86_64     = "./_user_data/templates/al2_user_data.tpl"
-    AL2_x86_64_GPU = "./_user_data/templates/al2_user_data.tpl"
+    AL2_ARM_64     = "${path.module}/templates/al2_user_data.tpl"
+    AL2_x86_64     = "${path.module}/templates/al2_user_data.tpl"
+    AL2_x86_64_GPU = "${path.module}/templates/al2_user_data.tpl"
 
-    AL2023_x86_64_STANDARD = "./_user_data/templates/al2023_user_data.tpl"
-    AL2023_ARM_64_STANDARD = "./_user_data/templates/al2023_user_data.tpl"
-    AL2023_x86_64_NEURON   = "./_user_data/templates/al2023_user_data.tpl"
-    AL2023_x86_64_NVIDIA   = "./_user_data/templates/al2023_user_data.tpl"
-    AL2023_ARM_64_NVIDIA   = "./_user_data/templates/al2023_user_data.tpl"
+    AL2023_x86_64_STANDARD = "${path.module}/templates/al2023_user_data.tpl"
+    AL2023_ARM_64_STANDARD = "${path.module}/templates/al2023_user_data.tpl"
+    AL2023_x86_64_NEURON   = "${path.module}/templates/al2023_user_data.tpl"
+    AL2023_x86_64_NVIDIA   = "${path.module}/templates/al2023_user_data.tpl"
+    AL2023_ARM_64_NVIDIA   = "${path.module}/templates/al2023_user_data.tpl"
 
-    BOTTLEROCKET_ARM_64        = "./_user_data/templates/bottlerocket_user_data.tpl"
-    BOTTLEROCKET_x86_64        = "./_user_data/templates/bottlerocket_user_data.tpl"
-    BOTTLEROCKET_ARM_64_FIPS   = "./_user_data/templates/bottlerocket_user_data.tpl"
-    BOTTLEROCKET_x86_64_FIPS   = "./_user_data/templates/bottlerocket_user_data.tpl"
-    BOTTLEROCKET_ARM_64_NVIDIA = "./_user_data/templates/bottlerocket_user_data.tpl"
-    BOTTLEROCKET_x86_64_NVIDIA = "./_user_data/templates/bottlerocket_user_data.tpl"
+    BOTTLEROCKET_ARM_64        = "${path.module}/templates/bottlerocket_user_data.tpl"
+    BOTTLEROCKET_x86_64        = "${path.module}/templates/bottlerocket_user_data.tpl"
+    BOTTLEROCKET_ARM_64_FIPS   = "${path.module}/templates/bottlerocket_user_data.tpl"
+    BOTTLEROCKET_x86_64_FIPS   = "${path.module}/templates/bottlerocket_user_data.tpl"
+    BOTTLEROCKET_ARM_64_NVIDIA = "${path.module}/templates/bottlerocket_user_data.tpl"
+    BOTTLEROCKET_x86_64_NVIDIA = "${path.module}/templates/bottlerocket_user_data.tpl"
 
-    WINDOWS_CORE_2019_x86_64 = "./_user_data/templates/windows_user_data.tpl"
-    WINDOWS_FULL_2019_x86_64 = "./_user_data/templates/windows_user_data.tpl"
-    WINDOWS_CORE_2022_x86_64 = "./_user_data/templates/windows_user_data.tpl"
-    WINDOWS_FULL_2022_x86_64 = "./_user_data/templates/windows_user_data.tpl"
+    WINDOWS_CORE_2019_x86_64 = "${path.module}/templates/windows_user_data.tpl"
+    WINDOWS_FULL_2019_x86_64 = "${path.module}/templates/windows_user_data.tpl"
+    WINDOWS_CORE_2022_x86_64 = "${path.module}/templates/windows_user_data.tpl"
+    WINDOWS_FULL_2022_x86_64 = "${path.module}/templates/windows_user_data.tpl"
 
     CUSTOM = var.user_data_template_path
   }
