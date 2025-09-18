@@ -1,7 +1,7 @@
 
 
 module "eks_custom_ami" {
-  source = "github.com/terraform-aws-modules/terraform-aws-eks/modules/_user_data"
+  source = "./_user_data"
 
   # https://docs.aws.amazon.com/eks/latest/APIReference/API_Nodegroup.html#AmazonEKS-Type-Nodegroup-amiType
   for_each = {

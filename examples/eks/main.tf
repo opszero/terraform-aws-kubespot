@@ -1,18 +1,11 @@
 provider "aws" {
-  # TODO: Change this
-  profile = "opszero"
-  # TODO: Change this
-  region = "us-west-2"
+  profile = local.profile
+  region  = "us-east-1"
 }
 
 locals {
   environment_name = "appcensus-dev"
   profile          = "appcensus-staging"
-}
-
-provider "aws" {
-  profile = local.profile
-  region  = "us-east-1"
 }
 
 provider "helm" {
@@ -28,14 +21,14 @@ provider "kubernetes" {
 
 
 module "opszero-eks" {
-  source = "github.com/opszero/terraform-aws-kubespot"
+  source = "./../../"
 
   zones = [
     "us-east-1a",
     "us-east-1b"
   ]
 
-  cluster_version  = "1.27"
+  cluster_version  = "1.32"
   environment_name = local.environment_name
   iam_users = {
     "abhi@opszero.com" = {
@@ -71,7 +64,7 @@ module "opszero-eks" {
       node_desired_capacity  = 3,
       nodes_max_size         = 3,
       nodes_min_size         = 3
-      ami_type               = "CUSTOM"
+      ami_type               = "BOTTLEROCKET_x86_64"
       node_disk_encrypted    = true
     },
     "t3a-medium-spot2" = {
@@ -84,6 +77,7 @@ module "opszero-eks" {
       nodes_max_size         = 1,
       nodes_min_size         = 1
       node_disk_encrypted    = true
+      ami_type               = "BOTTLEROCKET_x86_64"
     }
   }
 
@@ -100,7 +94,7 @@ module "opszero-eks" {
 }
 
 module "helm-common" {
-  source             = "github.com/opszero/terraform-helm-kubespot"
+  source             = "github.com/opszero/terraform-helm-kubespot?ref=v3.0.1"
   cert_manager_email = "ops@opszero.com"
 
   nginx_min_replicas = 1

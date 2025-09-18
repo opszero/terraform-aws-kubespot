@@ -1,6 +1,5 @@
 module "iam_assumable_role_alb" {
-  source           = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
-  version          = "5.44.0"
+  source           = "./iam-assumable-role-with-oidc"
   create_role      = true
   role_name        = "${var.environment_name}-${local.alb_name}"
   provider_url     = replace(aws_iam_openid_connect_provider.cluster.url, "https://", "")
