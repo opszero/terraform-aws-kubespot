@@ -94,7 +94,7 @@ module "opszero-eks" {
 }
 
 module "helm-common" {
-  source             = "github.com/opszero/terraform-helm-kubespot?ref=v3.0.0"
+  source             = "github.com/opszero/terraform-helm-kubespot?ref=v3.0.1"
   cert_manager_email = "ops@opszero.com"
 
   nginx_min_replicas = 1
