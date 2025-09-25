@@ -1,11 +1,12 @@
-provider "aws" {
-  profile = local.profile
-  region  = "us-east-1"
-}
 
+data "aws_caller_identity" "current" {}
 locals {
   environment_name = "appcensus-dev"
   profile          = "appcensus-staging"
+}
+
+provider "aws" {
+  region = "us-east-1"
 }
 
 provider "helm" {
@@ -21,28 +22,40 @@ provider "kubernetes" {
 
 
 module "opszero-eks" {
-  source = "./../../"
+  source = "./../../."
 
   zones = [
     "us-east-1a",
     "us-east-1b"
   ]
 
-  cluster_version  = "1.32"
+  cluster_version  = "1.33"
   environment_name = local.environment_name
-  iam_users = {
-    "abhi@opszero.com" = {
-      rbac_groups = [
-        "system:masters"
-      ]
-    },
-    "bitbucket-deployer" = {
-      rbac_groups = [
-        "system:masters"
-      ]
-    },
+  #  iam_users = {
+  #    "abhi@opszero.com" = {
+  #      rbac_groups = [
+  #        "system:masters"
+  #      ]
+  #    },
+  #    "bitbucket-deployer" = {
+  #      rbac_groups = [
+  #        "system:masters"
+  #      ]
+  #    },
+  #
+  #  }
 
-  }
+
+
+  access_policies = concat([
+    {
+      principal_arn = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:user/WePegasus"
+      policy_arn    = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"
+      access_scope = {
+        type = "cluster"
+      }
+    }
+  ])
   cidr_block = "10.3.0.0/16"
   cidr_block_public_subnet = [
     "10.3.0.0/18",
@@ -61,9 +74,9 @@ module "opszero-eks" {
       ]
       capacity_type          = "SPOT"
       nodes_in_public_subnet = false
-      node_desired_capacity  = 3,
+      node_desired_capacity  = 1,
       nodes_max_size         = 3,
-      nodes_min_size         = 3
+      nodes_min_size         = 1
       ami_type               = "BOTTLEROCKET_x86_64"
       node_disk_encrypted    = true
     },
@@ -74,7 +87,7 @@ module "opszero-eks" {
       node_disk_size         = 32
       nodes_in_public_subnet = false
       node_desired_capacity  = 1,
-      nodes_max_size         = 1,
+      nodes_max_size         = 2,
       nodes_min_size         = 1
       node_disk_encrypted    = true
       ami_type               = "BOTTLEROCKET_x86_64"
@@ -90,13 +103,13 @@ module "opszero-eks" {
   efs_enabled           = false
   #csi
   s3_csi_driver_enabled = false
-  s3_csi_bucket_names   = ["test-6647373dd"] #name of s3
+  # s3_csi_bucket_names   = ["test-6647373dd"] #name of s3
 }
 
-module "helm-common" {
-  source             = "github.com/opszero/terraform-helm-kubespot?ref=v3.0.1"
-  cert_manager_email = "ops@opszero.com"
-
-  nginx_min_replicas = 1
-  nginx_max_replicas = 3
-}
+#module "helm-common" {
+#  source             = "github.com/opszero/terraform-helm-kubespot"
+#  cert_manager_email = "ops@opszero.com"
+#
+#  nginx_min_replicas = 1
+#  nginx_max_replicas = 3
+#}
