@@ -10,16 +10,6 @@ data "aws_caller_identity" "current" {
   count = var.create ? 1 : 0
 }
 
-data "aws_eks_cluster" "this" {
-  count = local.create_iam_role ? 1 : 0
-  name  = var.cluster_name
-}
-
-data "aws_iam_openid_connect_provider" "oidc" {
-  count = local.create_iam_role ? 1 : 0
-  url   = data.aws_eks_cluster.this[0].identity[0].oidc[0].issuer
-}
-
 locals {
   account_id = try(data.aws_caller_identity.current[0].account_id, "")
   dns_suffix = try(data.aws_partition.current[0].dns_suffix, "")
@@ -38,20 +28,20 @@ locals {
 data "aws_iam_policy_document" "controller_assume_role" {
   count = local.create_iam_role ? 1 : 0
 
+  override_policy_documents = var.iam_role_override_assume_policy_documents
+  source_policy_documents   = var.iam_role_source_assume_policy_documents
+
+  # Pod Identity
   statement {
-    effect = "Allow"
+    sid = "PodIdentity"
+    actions = [
+      "sts:AssumeRole",
+      "sts:TagSession",
+    ]
 
     principals {
-      type        = "Federated"
-      identifiers = [data.aws_iam_openid_connect_provider.oidc[0].arn]
-    }
-
-    actions = ["sts:AssumeRoleWithWebIdentity"]
-
-    condition {
-      test     = "StringEquals"
-      variable = "${replace(data.aws_eks_cluster.this[0].identity[0].oidc[0].issuer, "https://", "")}:sub"
-      values   = ["system:serviceaccount:karpenter:karpenter"]
+      type        = "Service"
+      identifiers = ["pods.eks.amazonaws.com"]
     }
   }
 }
