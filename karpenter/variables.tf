@@ -231,6 +231,11 @@ variable "node_iam_role_name" {
   type        = string
   default     = null
 }
+variable "node_iam_role" {
+  description = "Name to use on node IAM role created"
+  type        = string
+  default     = null
+}
 
 variable "node_iam_role_use_name_prefix" {
   description = "Determines whether the Node IAM role name (`node_iam_role_name`) is used as a prefix"

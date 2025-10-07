@@ -10,32 +10,28 @@ locals {
   profile          = "appcensus-staging"
 }
 
-provider "aws" {
-  profile = local.profile
-  region  = "us-east-1"
+
+provider "kubernetes" {
+  config_path = "~/.kube/config"
 }
 
 provider "helm" {
-  kubernetes {
-    config_path = "./kubeconfig"
+  kubernetes = {
+    config_path = "~/.kube/config"
   }
 }
 
-provider "kubernetes" {
-  config_path = "./kubeconfig"
-}
 
-
-
+data "aws_caller_identity" "current" {}
 module "opszero-eks" {
-  source = "github.com/opszero/terraform-aws-kubespot"
+  source = "./../../"
 
   zones = [
     "us-east-1a",
     "us-east-1b"
   ]
 
-  cluster_version  = "1.27"
+  cluster_version  = "1.33"
   environment_name = local.environment_name
   iam_users = {
     "abhi@opszero.com" = {
@@ -50,6 +46,15 @@ module "opszero-eks" {
     },
 
   }
+  access_policies = concat([
+    {
+      principal_arn = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:user/WePegasus"
+      policy_arn    = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"
+      access_scope = {
+        type = "cluster"
+      }
+    }
+  ])
   cidr_block = "10.3.0.0/16"
   cidr_block_public_subnet = [
     "10.3.0.0/18",
@@ -71,7 +76,7 @@ module "opszero-eks" {
       node_desired_capacity  = 3,
       nodes_max_size         = 3,
       nodes_min_size         = 3
-      ami_type               = "CUSTOM"
+      ami_type               = "BOTTLEROCKET_x86_64"
       node_disk_encrypted    = true
     },
     "t3a-medium-spot2" = {
@@ -84,6 +89,7 @@ module "opszero-eks" {
       nodes_max_size         = 1,
       nodes_min_size         = 1
       node_disk_encrypted    = true
+      ami_type               = "BOTTLEROCKET_x86_64"
     }
   }
 

@@ -356,3 +356,69 @@ resource "aws_iam_instance_profile" "this" {
 
   tags = merge(var.tags, var.node_iam_role_tags)
 }
+
+resource "aws_iam_role_policy" "karpenter_node" {
+  count = var.create ? 1 : 0
+
+  name = "KarpenterNodePolicy"
+  role = var.node_iam_role
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = [
+          "ec2:CreateFleet",
+          "ec2:DescribeImages",
+          "ec2:DescribeInstanceTypes",
+          "ec2:DescribeInstanceTypeOfferings",
+          "ec2:DescribeLaunchTemplates",
+          "ec2:CreateLaunchTemplate",
+          "ec2:CreateLaunchTemplateVersion",
+          "ec2:DeleteLaunchTemplate",
+          "ec2:RunInstances",
+          "ec2:TerminateInstances",
+          "ec2:CreateTags",
+          "ec2:DescribeSecurityGroups",
+          "ec2:DescribeSubnets",
+          "ec2:DescribeVpcs",
+          "ec2:DescribeKeyPairs",
+          "ec2:DescribeSpotPriceHistory",
+          "ec2:DescribeAvailabilityZones",
+          "ec2:DescribeInstances"
+        ]
+        Resource = "*"
+      },
+      {
+        Effect = "Allow"
+        Action = [
+          "iam:PassRole",
+          "iam:GetInstanceProfile",
+          "iam:ListInstanceProfiles",
+          "iam:CreateInstanceProfile",
+          "iam:DeleteInstanceProfile",
+          "iam:AddRoleToInstanceProfile",
+          "iam:RemoveRoleFromInstanceProfile"
+        ]
+        Resource = "*"
+      },
+      {
+        Effect = "Allow"
+        Action = [
+          "ssm:GetParameter",
+          "pricing:GetProducts"
+        ]
+        Resource = "*"
+      },
+      {
+        Effect = "Allow"
+        Action = [
+          "iam:TagInstanceProfile",
+          "iam:TagRole",
+          "iam:TagPolicy",
+        ]
+        Resource = "*"
+      }
+    ]
+  })
+}
