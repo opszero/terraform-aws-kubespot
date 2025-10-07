@@ -15,6 +15,7 @@ module "karpenter" {
   create_node_iam_role          = false
   node_iam_role_use_name_prefix = false
   node_iam_role_arn             = aws_iam_role.node.arn
+  node_iam_role                 = aws_iam_role.node.name
 
   create_instance_profile = true
   create_access_entry     = false
