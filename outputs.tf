@@ -31,7 +31,8 @@ output "eks_cluster" {
 }
 
 output "eks_cluster_token" {
-  value = data.aws_eks_cluster_auth.cluster.token
+  value     = data.aws_eks_cluster_auth.cluster.token
+  sensitive = true
 }
 
 output "eks_cluster_oidc_provider_arn" {

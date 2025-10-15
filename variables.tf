@@ -1,5 +1,6 @@
 variable "environment_name" {
   type        = string
+  default     = "testing"
   description = "Name of the environment to create AWS resources"
 }
 
@@ -386,7 +387,7 @@ variable "karpenter_enabled" {
 }
 
 variable "karpenter_version" {
-  default     = "1.0.1"
+  default     = "1.7.1"
   description = "The version of the karpenter helm chart"
 }
 

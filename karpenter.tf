@@ -5,8 +5,7 @@ data "aws_iam_policy" "ssm_managed_instance" {
 module "karpenter" {
   count = var.karpenter_enabled ? 1 : 0
 
-  source  = "terraform-aws-modules/eks/aws//modules/karpenter"
-  version = "21.3.2"
+  source = "./karpenter"
 
   cluster_name = var.environment_name
 
@@ -16,6 +15,7 @@ module "karpenter" {
   create_node_iam_role          = false
   node_iam_role_use_name_prefix = false
   node_iam_role_arn             = aws_iam_role.node.arn
+  node_iam_role                 = aws_iam_role.node.name
 
   create_instance_profile = true
   create_access_entry     = false
@@ -44,10 +44,6 @@ resource "helm_release" "karpenter" {
     {
       name  = "settings.clusterEndpoint"
       value = aws_eks_cluster.cluster.endpoint
-    },
-    {
-      name  = "serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn"
-      value = module.karpenter[0].iam_role_arn
     }
   ]
 
