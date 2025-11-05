@@ -21,7 +21,3 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
-
-
-
-#testing
