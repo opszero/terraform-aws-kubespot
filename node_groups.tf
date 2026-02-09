@@ -1,27 +1,11 @@
-data "aws_ssm_parameter" "amis" {
-  for_each = {
-    "AL2_x86_64"                 = "/aws/service/eks/optimized-ami/${var.cluster_version}/amazon-linux-2/recommended/image_id",
-    "AL2_x86_64_GPU"             = "/aws/service/eks/optimized-ami/${var.cluster_version}/amazon-linux-2-gpu/recommended/image_id",
-    "AL2_ARM_64"                 = "/aws/service/eks/optimized-ami/${var.cluster_version}/amazon-linux-2-arm64/recommended/image_id",
-    "BOTTLEROCKET_ARM_64"        = "/aws/service/bottlerocket/aws-k8s-${var.cluster_version}/arm64/latest/image_id",
-    "BOTTLEROCKET_x86_64"        = "/aws/service/bottlerocket/aws-k8s-${var.cluster_version}/x86_64/latest/image_id",
-    "BOTTLEROCKET_ARM_64_NVIDIA" = "/aws/service/bottlerocket/aws-k8s-${var.cluster_version}-nvidia/arm64/latest/image_id",
-    "BOTTLEROCKET_x86_64_NVIDIA" = "/aws/service/bottlerocket/aws-k8s-${var.cluster_version}-nvidia/x86_64/latest/image_id",
-    "AL2023_x86_64_STANDARD"     = "/aws/service/eks/optimized-ami/${var.cluster_version}/amazon-linux-2023/x86_64/standard/recommended/image_id",
-    "AL2023_ARM_64_STANDARD"     = "/aws/service/eks/optimized-ami/${var.cluster_version}/amazon-linux-2023/arm64/standard/recommended/image_id",
-    "AL2023_x86_64_NEURON"       = "/aws/service/eks/optimized-ami/${var.cluster_version}/amazon-linux-2023/x86_64/standard/recommended/image_id",
-    "AL2023_x86_64_NVIDIA"       = "/aws/service/eks/optimized-ami/${var.cluster_version}/amazon-linux-2023/x86_64/standard/recommended/image_id"
-  }
 
-  name = each.value
-}
 
 module "eks_custom_ami" {
-  source = "github.com/terraform-aws-modules/terraform-aws-eks/modules/_user_data"
+  source = "./_user_data"
 
   # https://docs.aws.amazon.com/eks/latest/APIReference/API_Nodegroup.html#AmazonEKS-Type-Nodegroup-amiType
   for_each = {
-    for k, v in var.node_groups : k => v if lookup(v, "node_disk_encrypted", false) == true
+  for k, v in var.node_groups : k => v if lookup(v, "node_disk_encrypted", false) == true
   }
 
   ami_type = each.value.ami_type
@@ -112,6 +96,10 @@ resource "aws_eks_node_group" "node_group" {
 
   update_config {
     max_unavailable_percentage = lookup(each.value, "update_unavailable_percent", 50)
+  }
+
+  node_repair_config {
+    enabled = lookup(each.value, "node_repair_enabled", true)
   }
 
   dynamic "taint" {
