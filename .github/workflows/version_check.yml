@@ -11,7 +11,7 @@ jobs:
       issues: write
     steps:
       - name: Create issues to update helm chart version
-        uses: imjohnbo/issue-bot@572eed14422c4d6ca37e870f97e7da209422f5bd
+        uses: imjohnbo/issue-bot@3188c6ce06249206709d3b1f274d0d4c5a521601
         with:
           title: "Update helm charts version"
           labels: routine
