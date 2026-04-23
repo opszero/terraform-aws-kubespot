@@ -70,6 +70,8 @@ resource "aws_eks_cluster" "cluster" {
 
   enabled_cluster_log_types = var.cluster_logging
 
+  deletion_protection = var.eks_delete_protection
+
   depends_on = [
     aws_iam_role_policy_attachment.cluster-AmazonEKSClusterPolicy,
     aws_iam_role_policy_attachment.cluster-AmazonEKSServicePolicy,
