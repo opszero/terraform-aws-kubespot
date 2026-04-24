@@ -479,3 +479,9 @@ variable "cloudwatch_observability_config" {
   type        = string
   default     = null
 }
+
+variable "eks_delete_protection" {
+  description = "Enable delete protection for the EKS cluster"
+  type        = bool
+  default     = true
+}
