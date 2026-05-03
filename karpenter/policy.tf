@@ -353,6 +353,14 @@ data "aws_iam_policy_document" "controller" {
     resources = ["arn:${local.partition}:eks:${local.region}:${local.account_id}:cluster/${var.cluster_name}"]
     actions   = ["eks:DescribeCluster"]
   }
+  statement {
+    sid       = "AllowInstanceProfileListActions"
+    resources = ["*"]
+
+    actions = [
+      "iam:ListInstanceProfiles"
+    ]
+  }
 
   dynamic "statement" {
     for_each = var.iam_policy_statements != null ? var.iam_policy_statements : []
