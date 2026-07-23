@@ -349,6 +349,12 @@ data "aws_iam_policy_document" "controller" {
   }
 
   statement {
+    sid       = "AllowInstanceProfileListActions"
+    resources = ["*"]
+    actions   = ["iam:ListInstanceProfiles"]
+  }
+
+  statement {
     sid       = "AllowAPIServerEndpointDiscovery"
     resources = ["arn:${local.partition}:eks:${local.region}:${local.account_id}:cluster/${var.cluster_name}"]
     actions   = ["eks:DescribeCluster"]
