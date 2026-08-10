@@ -2,13 +2,28 @@ resource "aws_iam_role" "node" {
   name = "${var.environment_name}-node"
 
   assume_role_policy = jsonencode({
-    Statement = [{
-      Action = "sts:AssumeRole"
-      Effect = "Allow"
-      Principal = {
-        Service = "ec2.amazonaws.com"
+    Statement = [
+      {
+        Action = "sts:AssumeRole"
+        Effect = "Allow"
+        Principal = {
+          Service = "ec2.amazonaws.com"
+        }
+      },
+      # Required for EKS Auto Mode — control plane assumes this role to provision nodes
+      {
+        Action = "sts:AssumeRole"
+        Effect = "Allow"
+        Condition = {
+          StringEquals = {
+            "aws:SourceAccount" = data.aws_caller_identity.current.account_id
+          }
+        }
+        Principal = {
+          Service = "eks.amazonaws.com"
+        }
       }
-    }]
+    ]
     Version = "2012-10-17"
   })
 
@@ -16,11 +31,13 @@ resource "aws_iam_role" "node" {
 }
 
 resource "aws_iam_role_policy_attachment" "node-AmazonEKSWorkerNodePolicy" {
+  count      = var.eks_auto_mode_enabled ? 0 : 1
   policy_arn = "arn:${local.partition}:iam::aws:policy/AmazonEKSWorkerNodePolicy"
   role       = aws_iam_role.node.name
 }
 
 resource "aws_iam_role_policy_attachment" "node-AmazonEKS_CNI_Policy" {
+  count      = var.eks_auto_mode_enabled ? 0 : 1
   policy_arn = "arn:${local.partition}:iam::aws:policy/AmazonEKS_CNI_Policy"
   role       = aws_iam_role.node.name
 }
