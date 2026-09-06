@@ -45,7 +45,7 @@ resource "aws_eks_cluster" "cluster" {
     for_each = var.eks_auto_mode_enabled ? [1] : []
     content {
       enabled       = true
-      node_pools    = ["system"]
+      node_pools    = var.eks_auto_mode_node_pools
       node_role_arn = aws_iam_role.node.arn
     }
   }
@@ -86,10 +86,10 @@ resource "aws_eks_cluster" "cluster" {
 
 resource "aws_eks_addon" "core" {
   for_each = toset(flatten([
-    "kube-proxy",
-    "vpc-cni",
-    "coredns",
-    "aws-ebs-csi-driver",
+    var.eks_auto_mode_enabled ? [] : ["kube-proxy"],
+    var.eks_auto_mode_enabled ? [] : ["vpc-cni"],
+    var.eks_auto_mode_enabled ? [] : ["coredns"],
+    var.eks_auto_mode_enabled ? [] : ["aws-ebs-csi-driver"],
     var.s3_csi_driver_enabled ? ["aws-mountpoint-s3-csi-driver"] : [],
     var.efs_enabled ? ["aws-efs-csi-driver"] : [],
     var.cloudwatch_observability_enabled ? ["amazon-cloudwatch-observability"] : [],
