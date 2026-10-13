@@ -1,9 +1,12 @@
+locals {
+  karpenter_active = var.karpenter_enabled && !var.eks_auto_mode_enabled
+}
 data "aws_iam_policy" "ssm_managed_instance" {
   arn = "arn:${local.partition}:iam::aws:policy/AmazonSSMManagedInstanceCore"
 }
 
 module "karpenter" {
-  count = var.karpenter_enabled ? 1 : 0
+  count = local.karpenter_active ? 1 : 0
 
   source = "./karpenter"
 
@@ -26,7 +29,7 @@ module "karpenter" {
 }
 
 resource "helm_release" "karpenter" {
-  count = var.karpenter_enabled ? 1 : 0
+  count = local.karpenter_active ? 1 : 0
 
   namespace        = "karpenter"
   create_namespace = true
@@ -53,7 +56,7 @@ resource "helm_release" "karpenter" {
 }
 
 resource "helm_release" "karpenter_crd" {
-  count = var.karpenter_enabled ? 1 : 0
+  count = local.karpenter_active ? 1 : 0
 
   namespace        = "karpenter"
   create_namespace = true
@@ -66,7 +69,7 @@ resource "helm_release" "karpenter_crd" {
 
 
 resource "null_resource" "karpenter_ec2_node_class_apply" {
-  count = var.karpenter_enabled ? 1 : 0
+  count = local.karpenter_active ? 1 : 0
 
   provisioner "local-exec" {
     command = <<EOT
@@ -109,5 +112,73 @@ EOT
     aws_eks_cluster.cluster,
     helm_release.karpenter_crd,
     helm_release.karpenter
+  ]
+}
+
+resource "null_resource" "eks_auto_mode_node_class_apply" {
+  count = var.eks_auto_mode_enabled && var.karpenter_node_pool_enabled ? 1 : 0
+
+  provisioner "local-exec" {
+    command = <<EOT
+cat <<EOF | kubectl apply -f -
+apiVersion: eks.amazonaws.com/v1
+kind: NodeClass
+metadata:
+  name: default
+spec:
+  role: ${aws_iam_role.node.name}
+  subnetSelectorTerms:
+    - tags:
+        kubernetes.io/cluster/${aws_eks_cluster.cluster.name}: owned
+  securityGroupSelectorTerms:
+    - id: ${aws_eks_cluster.cluster.vpc_config[0].cluster_security_group_id}
+  amiSelectorTerms:
+    - alias: bottlerocket@latest
+EOF
+EOT
+  }
+
+  depends_on = [
+    aws_eks_cluster.cluster,
+  ]
+}
+
+resource "null_resource" "eks_auto_mode_node_pool_apply" {
+  count = var.eks_auto_mode_enabled && var.karpenter_node_pool_enabled ? 1 : 0
+
+  provisioner "local-exec" {
+    command = <<EOT
+cat <<EOF | kubectl apply -f -
+apiVersion: karpenter.sh/v1
+kind: NodePool
+metadata:
+  name: general-purpose
+spec:
+  template:
+    spec:
+      nodeClassRef:
+        group: eks.amazonaws.com      # <-- this was correct
+        kind: NodeClass               # <-- this was correct
+        name: default
+      requirements:
+        - key: "eks.amazonaws.com/instance-category"
+          operator: In
+          values: ["c", "m", "r"]
+        - key: "karpenter.sh/capacity-type"
+          operator: In
+          values: ["on-demand"]
+  disruption:
+    consolidationPolicy: WhenEmptyOrUnderutilized
+    consolidateAfter: 1m
+  limits:
+    cpu: "1000"
+    memory: 1000Gi
+EOF
+EOT
+  }
+
+  depends_on = [
+    aws_eks_cluster.cluster,
+    null_resource.eks_auto_mode_node_class_apply, # <-- ADD THIS dependency
   ]
 }

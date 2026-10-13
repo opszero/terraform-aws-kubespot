@@ -485,3 +485,15 @@ variable "eks_delete_protection" {
   type        = bool
   default     = true
 }
+
+variable "eks_auto_mode_node_pools" {
+  description = "Built-in node pools to enable for EKS Auto Mode. Valid values: 'system', 'general-purpose'"
+  type        = list(string)
+  default     = ["system"]
+}
+
+variable "karpenter_node_pool_enabled" {
+  description = "Create a general-purpose NodePool for EKS Auto Mode workloads (requires eks_auto_mode_enabled = true)"
+  type        = bool
+  default     = false
+}
